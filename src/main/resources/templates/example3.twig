@@ -1,0 +1,19 @@
+{#
+template: Basic Page Objects Java
+#}
+class TestPage (Page) {
+  // {{ ElementText }}
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+  @FindBy( how = How.CSS, using = "{{ ElementCssSelector }}" )
+{% elseif (ElementSelectedBy == 'ElementXPath') -%}
+  @FindBy( how = How.XPATH, using = "{{ ElementXPath }}" )
+{% elseif (ElementSelectedBy == 'ElementId') -%}
+  @FindBy( how = How.ID, using = "{{ ElementId }}" )
+{% elseif (ElementSelectedBy == 'ElementText') -%}
+@FindBy( how = How.XPATH, using = "//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]" ) #}
+{% endif -%}
+{% if (ElementVariable != '') -%}
+  private WebElement {{ ElementVariable }};
+{% else -%}
+  private WebElement element;
+{% endif -%}

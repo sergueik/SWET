@@ -1,0 +1,8 @@
+{% if (useCss) %}
+  driver.findElement(By.cssSelector("{{ ElementCssSelector }}");
+{% elseif (useXPath) %}
+  driver.findElement(By.cssSelector("{{ ElementXPath }}");
+{% elseif (useId)%}
+  driver.findElement(By.Id("{{ ElementId }}");
+{% else %}
+{% endif %}

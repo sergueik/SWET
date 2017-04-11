@@ -1,0 +1,19 @@
+{#
+template: Core Selenium Java
+#}
+
+// {{ ElementCodeName }}
+{% if (ElementText != '') -%}
+// {{ ElementText }}
+{% endif -%}
+WebElement element = driver.findElement( 
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+  By.cssSelector("{{ ElementCssSelector }}")
+{% elseif (ElementSelectedBy == 'ElementXPath') -%}
+  By.Xpath("{{ ElementXPath }}")
+{% elseif (ElementSelectedBy == 'ElementId') -%}
+  By.Id("{{ ElementId }}")
+{% elseif (ElementSelectedBy == 'ElementText') -%}
+  By.Xpath("//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]")
+{% endif -%}
+)
