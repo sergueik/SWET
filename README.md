@@ -16,6 +16,8 @@ on Ubuntu 16.04 and Windows.
 For Mac / Safari testing, the [Sierra Final 10.12](https://techsviewer.com/install-macos-sierra-virtualbox-windows/) Virtual Box by TechReviews is being used.
 Currently, working with Safari browser is somewhat flaky.
 
+The Virtualbox images are setup for Selenium 3.x testing (work in progress).
+
 ![OSX Example](https://github.com/sergueik/SWET/blob/master/screenshots/capture1.png)
 
 ![Ubuntu Example](https://github.com/sergueik/SWET/blob/master/screenshots/capture2.png)
@@ -181,7 +183,6 @@ Currently project is hardcoded to use Chrome browser on Windows os, and Firefox 
 The YAML configuration will be fuly integrated shotly.
 Eventually other common formats: YAML, JSON, POI or Java properties file - will be supported.
 
-
 ### Operation
 Both __SWD__ and __SWET__ inject certain Javascript code `ElementSearch.js` into the page, that the user can interct with with the mouse right-click.
 After injecting the script the IDE waits polling for the speficic
@@ -226,7 +227,7 @@ Examples of partially supported version combinations are listed below (exception
 | SELENIUM_VERSION     | __3.0.1__    |
 | FIREFOX_VERSION      | __52.0__     |
 | GECKODRIVER_VERSION  | __0.14__     |
-| CHROME_VERSION       | __56.0.X__   |
+| CHROME_VERSION       | __57.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
 |                      |              |

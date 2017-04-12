@@ -35,6 +35,7 @@ Driver info: driver.version: BrowserDriver
   org.swet.BrowserDriver.initialize(BrowserDriver.java:96)
   // 			driver = new FirefoxDriver(capabilities);
 ```
+possibly related to http://stackoverflow.com/questions/40106844/selenium-3-0-firefx-driver-fails-with-org-openqa-selenium-sessionnotcreatedexcep
 
 the error with capabilities.setCapability("marionette", false);
 becomes
@@ -94,3 +95,5 @@ Unable to connect to host 127.0.0.1 on port 7055 after 45000 ms. Firefox console
   org.swet.BrowserDriver.initialize(BrowserDriver.java:96)
 
 ```
+
+possibly related to https://github.com/SeleniumHQ/selenium/issues/2411
