@@ -118,8 +118,20 @@ set M2_HOME=c:\java\apache-maven-%MAVEN_VERSION%
 ```bash
 JAVA_VERSION='1.8.0_121'
 MAVEN_VERSION='3.3.9'
-
 ```
+
+After the project compiled once, it can be run the jar through the command (assuming java is in the `PATH`):
+```cmd
+java.exe -cp target\swet-0.0.5-SNAPSHOT.jar;target\lib\* org.swet.SimpleToolBarEx
+```
+or
+
+```bash
+java.exe -cp target/swet-0.0.5-SNAPSHOT.jar:target/lib/* org.swet.SimpleToolBarEx
+```
+- without changing to the source, there is little reason to recompile it every time. Adding the `META-INF/MANIFEST.MF`
+is a work in progress.
+
 The runner script can also be used to launch individual forms that have been largely based on
 examples from the Standard Widget Toolkit study
 project [lshamsutdinov/study_swt](https://github.com/lshamsutdinov/study_swt),
