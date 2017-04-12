@@ -51,7 +51,13 @@ public class ExceptionDialogEx {
 		if (debug) {
 			System.err.println("Show the dialog");
 		}
-		ErrorDialog.openError(shell, "Error", "Exception thrown", status);
+    
+    // IconAndMessageDialog
+    // http://stackoverflow.com/questions/26428799/simple-swt-alert-message-with-custom-icon
+    // http://www.vogella.com/tutorials/EclipseDialogs/article.html
+    // http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fjface%2Fdialogs%2FIconAndMessageDialog.html
+		// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/JFacesIconAndMessageDialog.htm
+    ErrorDialog.openError(shell, "Error", "Exception thrown", status);
 		if (debug) {
 			System.err.println("Shown the dialog");
 		}

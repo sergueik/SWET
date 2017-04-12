@@ -257,7 +257,7 @@
   };
 
   rightClickHandler = function(event) {
-    var jsonData, body, eventPreventingResult, mxy, root, target, txy, xpath, css_selector, id, elementText, tagName;
+    var jsonData, body, eventPreventingResult, mxy, root, target, txy, xpath, css_selector, id, elementText;
     hello("rightClickHandler");
     if (document.SWD_Page_Recorder == null) {
       return;
@@ -274,7 +274,6 @@
       css_selector = getCssSelectorOF(target);
       id = getElementId(target);
       elementText = getText(target, true);
-      tagName = target.tagName;
       body = document.getElementsByTagName('body')[0];
       jsonData = {
         'Command': 'GetXPathFromElement',
@@ -284,10 +283,9 @@
         'ElementId': id,
         'XPathValue': xpath,
         'ElementText': elementText,
-        'ElementTagName': tagName,
       };
       createCommand(jsonData);
-      document.SWD_Page_Recorder.showPos(event, xpath, css_selector, id, elementText, tagName );
+      document.SWD_Page_Recorder.showPos(event, xpath, css_selector, id,elementText);
       eventPreventingResult = preventEvent(event);
       bye('rightClickHandler');
       return eventPreventingResult;
@@ -316,7 +314,7 @@
       return bye("displaySwdForm");
     };
 
-    SWD_Page_Recorder.prototype.showPos = function(event, xpath, css_selector, id, elementText, tagName ) {
+    SWD_Page_Recorder.prototype.showPos = function(event, xpath, css_selector, id, elementText) {
       var x, y;
       hello("showPos");
       if (window.event) {
@@ -336,7 +334,6 @@
       document.getElementById("SwdPR_PopUp_ElementGUID").innerHTML = pseudoGuid();
       document.getElementById("SwdPR_PopUp_CodeIDText").value = '';
       document.getElementById("SwdPR_PopUp_ElementText").innerHTML = elementText;
-      document.getElementById("SwdPR_PopUp_ElementTagName").innerHTML = tagName;
       say(x + ";" + y);
       return bye('showPos');
     };
@@ -390,10 +387,6 @@
               <td>Text:</td>\
               <td><span id="SwdPR_PopUp_ElementText">Element Text</span></td>\
             </tr>\
-            <tr>\
-              <td>TagName:</td>\
-              <td><span id="SwdPR_PopUp_ElementTagName">Element TagName</span></td>\
-            </tr>\
             </table>\
         <input type="button" value="Add element" onclick="document.SWD_Page_Recorder.addElement()">\
         ';
@@ -408,7 +401,6 @@
       var cssSelectorElement = document.getElementById('SwdPR_PopUp_CssSelector');
       var xPathLocatorElement = document.getElementById('SwdPR_PopUp_XPathLocator');
       var elementTextElement = document.getElementById('SwdPR_PopUp_ElementText');
-      var elementTagName = document.getElementById('SwdPR_PopUp_ElementTagName');
       var JsonData = {
         'Command': 'AddElement',
         'Caller': 'addElement',
@@ -418,7 +410,6 @@
         'ElementCssSelector': (cssSelectorElement.hasChildNodes())?cssSelectorElement.firstChild.nodeValue : '',
         'ElementXPath': (xPathLocatorElement.hasChildNodes())? xPathLocatorElement.firstChild.nodeValue : '',
         'ElementText': (elementTextElement.hasChildNodes())? elementTextElement.firstChild.nodeValue: '',
-        'ElementTagName': (elementTagName.hasChildNodes())? elementTagName.firstChild.nodeValue: '',
       };
       createCommand(JsonData);
       return bye('addElement ' + codeIDTextElement.value + '>');

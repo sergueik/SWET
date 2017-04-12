@@ -4,31 +4,7 @@ template: Core Selenium with wait / Java
 // {{ ElementCodeName }}
 {% if (ElementText != '') -%}
 // {{ ElementText }}
-WebElement element = 
 {% endif -%}
-{% if (ElementSelectedBy == 'ElementText') -%}
-wait.until( new ExpectedCondition<Webelement>(){
-  @Override
-  public WebElement apply(WebDriver _driver) {
-    Iterator<WebElement> _elements = _driver
-      .findElements(
-        By.XPath("//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]"))
-      .iterator();
-    WebElement result = null;
-    Pattern pattern = Pattern.compile("^ *" + Pattern.quote("{{ ElementText }}"),
-      Pattern.CASE_INSENSITIVE);
-    while (_elements.hasNext()) {
-      WebElement _element = (WebElement) _elements.next();
-      Matcher matcher = pattern.matcher(_element.getText);
-      if (matcher.find()) {
-        result = _element;
-        break;
-      }
-    }
-    return result;
-  }
-});
-{% else -%}
 WebElement element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(
 {% if (ElementSelectedBy == 'ElementCssSelector') -%}
   By.cssSelector("{{ ElementCssSelector }}")
@@ -38,4 +14,3 @@ WebElement element = wait.until(ExpectedConditions.visibilityOf(driver.findEleme
   By.Id("{{ ElementId }}")
 {% endif -%}
  )));
-{% endif -%}

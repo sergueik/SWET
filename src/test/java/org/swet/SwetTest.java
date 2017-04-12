@@ -51,15 +51,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.junit.Test;
-import org.junit.Ignore;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -83,6 +74,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import org.junit.Test;
+import org.junit.Ignore;
+
 import org.swet.BrowserDriver;
 import org.swet.Utils;
 
@@ -92,18 +93,18 @@ public class SwetTest {
 	private static WebDriverWait wait;
 	private static Actions actions;
 	private static Alert alert;
-	private static Keys keyCTRL;
 	private static int flexibleWait = 5;
 	private static int implicitWait = 1;
 	private static long pollingInterval = 500;
 	private static String baseURL = "about:blank";
 	private static final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private static HashMap<String, String> data = new HashMap<String, String>();
-	private static String osName = OSUtils.getOsName();
+	private static String osName;
 
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
 
+		getOsName();
 		if (osName.toLowerCase().startsWith("windows")) {
 			driver = BrowserDriver.initialize("chrome");
 			/*
@@ -119,7 +120,6 @@ public class SwetTest {
 		wait = new WebDriverWait(driver, flexibleWait);
 		wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
 		actions = new Actions(driver);
-		keyCTRL = osName.startsWith("Mac") ? Keys.COMMAND : Keys.CONTROL;
 	}
 
 	@AfterClass
@@ -149,15 +149,21 @@ public class SwetTest {
 				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
 		injectKeyMaster(Optional.<String> empty());
 		highlight(element);
-		// Act
-
+		// Assert
 		if (osName.startsWith("Mac")) {
-			actions.keyDown(keyCTRL).build().perform();
+			actions.keyDown(Keys.COMMAND).build().perform();
 			actions.moveToElement(element).contextClick().build().perform();
-			actions.keyUp(keyCTRL).build().perform();
+			actions.keyUp(Keys.COMMAND).build().perform();
 		} else {
+			/*
+			actions.keyDown(Keys.CONTROL).build().perform();
+			actions.moveToElement(element).contextClick().build().perform();
+			actions.keyUp(Keys.CONTROL).build().perform();
+			*/
+			//
 			actions.moveToElement(element).build().perform();
-			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
+			actions.keyDown(Keys.CONTROL).contextClick().keyUp(Keys.CONTROL).build()
+					.perform();
 		}
 		// Assert
 		try {
@@ -182,9 +188,14 @@ public class SwetTest {
 		WebElement element = wait.until(
 				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
 		highlight(element);
-		// Act
-		actions.moveToElement(element).keyDown(keyCTRL).contextClick()
-				.keyUp(keyCTRL).build().perform();
+
+		/*
+		actions.keyDown(Keys.CONTROL).build().perform();
+		actions.moveToElement(element).contextClick().build().perform();
+		actions.keyUp(Keys.CONTROL).build().perform();
+		*/
+		actions.moveToElement(element).keyDown(Keys.CONTROL).contextClick()
+				.keyUp(Keys.CONTROL).build().perform();
 		// Assert
 		try {
 			Thread.sleep(100);
@@ -247,125 +258,35 @@ public class SwetTest {
 	}
 
 	private void completeVisualSearch(String elementCodeName) {
-		/*
-		WebElement swdControl = wait.until(new Function<WebDriver, WebElement>() {
-			@Override
-			public WebElement apply(WebDriver d) {
-				WebElement e = d.findElement(By.id("SWDTable"));
-				return e.isDisplayed() ? e : null;
-			}
-		});
-		*/
-		WebElement swdControl = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		WebElement swdControl = wait.until(ExpectedConditions
+				.visibilityOf(driver.findElement(By.id("SwdPR_PopUp"))));
 		assertThat(swdControl, notNullValue());
-		/*
-		WebElement swdCodeID = wait.until(new Function<WebDriver, WebElement>() {
-			@Override
-			public WebElement apply(WebDriver d) {
-				WebElement e = d.findElement(By.id("SwdPR_PopUp_CodeIDText"));
-				return e.isDisplayed() ? e : null;
-			}
-		});
-		*/
+
+		// System.err.println("Swd Control:" +
+		// swdControl.getAttribute("innerHTML"));
 		WebElement swdCodeID = wait.until(ExpectedConditions
 				.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
 		assertThat(swdCodeID, notNullValue());
 		swdCodeID.sendKeys(elementCodeName);
-		/*
-		WebElement swdAddElementButton = wait
-		.until(new Function<WebDriver, WebElement>() {
-			@Override
-			public WebElement apply(WebDriver d) {
-				WebElement e = d.findElement(By.cssSelector(
-						"div#SwdPR_PopUp > input[type='button'][value='Add element']"));
-				System.err.println(
-						"in apply iterator (1): Text = " + e.getAttribute("value"));
-				return e.isDisplayed() ? e : null;
-			}
-		});
-		*/
-		/*
 		WebElement swdAddElementButton = wait
 				.until(ExpectedConditions.visibilityOf(swdControl.findElement(
 						By.xpath("//input[@type='button'][@value='Add element']"))));
 		assertThat(swdAddElementButton, notNullValue());
-		*/
-		WebElement swdAddElementButton = null;
-		try {
-			swdAddElementButton = wait.until(new ExpectedCondition<WebElement>() {
-				@Override
-				public WebElement apply(WebDriver _driver) {
-					Iterator<WebElement> _elements = _driver
-							.findElements(
-									By.cssSelector("div#SwdPR_PopUp > input[type='button']"))
-							.iterator();
-					WebElement result = null;
-					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
-							Pattern.CASE_INSENSITIVE);
-					while (_elements.hasNext()) {
-						WebElement _element = (WebElement) _elements.next();
-						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
-						if (matcher.find()) {
-							result = _element;
-							break;
-						}
-					}
-					return result;
-				}
-			});
-		} catch (Exception e) {
-			// TODO: dialog
-			// (new ExceptionDialogEx(Display.getCurrent(), shell, e)).execute();
-			System.err.println("Exception: " + e.toString());
-		}
 
-		assertThat(swdAddElementButton, notNullValue());
+		// html body div#SwdPR_PopUp input
 		highlight(swdAddElementButton);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
 		// Act
 		swdAddElementButton.click();
 	}
 
-	// http://stackoverflow.com/questions/34176392/fluentwait-throwing-the-method-unti-in-the-type-waitwebdriver-is-not-applicab
 	private void closeVisualSearch() {
-
 		WebElement swdControl = wait.until(
 				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
 		assertThat(swdControl, notNullValue());
-		/*
-		WebElement swdCloseButton = null;
-		try {
-			swdCloseButton = wait.until(new Function<WebDriver, WebElement>() {
-				@Override
-				public WebElement apply(WebDriver d) {
-					Iterator<WebElement> i = d
-							.findElements(By.id("SwdPR_PopUp_CloseButton")).iterator();
-					WebElement result = null;
-					// "(?:" + "Navigate Back" + ")"
-					Pattern pattern = Pattern.compile(Pattern.quote("X"),
-							Pattern.CASE_INSENSITIVE);
-					while (i.hasNext()) {
-						WebElement e = (WebElement) i.next();
-						String t = e.getText();
-						// System.err.println("in apply iterator (2): Text = " + t);
-						Matcher matcher = pattern.matcher(t);
-						if (matcher.find()) {
-							result = e;
-							break;
-						}
-					}
-					return result;
-				}
-			});
-			assertThat(swdCloseButton, notNullValue());
-			highlight(swdCloseButton);
-			swdCloseButton.click();
-		
-		} catch (Exception e) {
-			// TODO: dialog
-			System.err.println("Exception: " + e.toString());
-		}
-		*/
 
 		WebElement swdCloseButton = wait.until(ExpectedConditions.visibilityOf(
 				swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));

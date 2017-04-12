@@ -15,10 +15,9 @@ import java.lang.RuntimeException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.function.Function;
@@ -40,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
@@ -79,7 +76,6 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.TimeoutException;
 // incompatible types: org.eclipse.swt.graphics.Point cannot be converted to org.openqa.selenium.Point
 // import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
@@ -173,6 +169,7 @@ import org.swet.OSUtils;
 public class SimpleToolBarEx {
 
 	private Shell shell;
+
 	private WebDriver driver;
 	private WebDriverWait wait;
 	private Actions actions;
@@ -187,7 +184,6 @@ public class SimpleToolBarEx {
 	private Configuration config = null;
 	private static String configFilePath; // TODO: rename
 	private static Map<String, String> configData = new HashMap<String, String>();
-	private static HashMap<String, Boolean> browserStatus = new HashMap<String, Boolean>();
 	static {
 		configData.put("Browser", "Chrome");
 		configData.put("Template", "Core Selenium Java (embedded)");
@@ -199,7 +195,6 @@ public class SimpleToolBarEx {
 	private static final int browserDemoHeight = 800;
 	private static int step_index = 0;
 	private static String osName = OSUtils.getOsName();
-	private static Display display;
 	private String generatedScript = null;
 	private Label statusMessage;
 
@@ -232,6 +227,16 @@ public class SimpleToolBarEx {
 
 	public String getGearImage() {
 		return this.gearImage;
+	}
+
+	private String flowchartImage = "flowchart_36.png";
+
+	public void setFlowChartImage(final String data) {
+		this.flowchartImage = data;
+	}
+
+	public String getFlowChartImage() {
+		return this.flowchartImage;
 	}
 
 	private String pageImage = "page_36.png";
@@ -296,14 +301,14 @@ public class SimpleToolBarEx {
 
 	// http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
 	private Image resize(Image image, int width, int height) {
-		Image scaled = new Image(display, width, height);
+		Image scaled = new Image(Display.getDefault(), width, height);
 		GC gc = new GC(scaled);
 		gc.setAntialias(SWT.ON);
 		gc.setInterpolation(SWT.HIGH);
 		gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height,
 				0, 0, width, height);
 		gc.dispose();
-		image.dispose();
+		image.dispose(); // don't forget about me!
 		return scaled;
 	}
 
@@ -320,8 +325,11 @@ public class SimpleToolBarEx {
 		shell.setBounds(boundRect);
 		shell.setImage(SWTResourceManager.getImage(this.getClass(),
 				"/document_wrench_color.ico"));
+		Device dev = shell.getDisplay();
+
 		try {
 
+			System.err.println();
 			iconData.put("launch icon",
 					resize(new Image(display, this.getClass().getClassLoader()
 							.getResourceAsStream(String.format("images/%s", launchImage))),
@@ -367,46 +375,46 @@ public class SimpleToolBarEx {
 
 		ToolItem launchTool = new ToolItem(toolBar, SWT.PUSH);
 		launchTool.setImage(iconData.get("launch icon"));
-		launchTool.setToolTipText("Launch browser");
+		launchTool.setToolTipText("Launches the browser");
 
-		ToolItem pageExploreTool = new ToolItem(toolBar, SWT.PUSH);
-		pageExploreTool.setImage(iconData.get("find icon"));
+		ToolItem findTool = new ToolItem(toolBar, SWT.PUSH);
+		findTool.setImage(iconData.get("find icon"));
 		// TODO: setDisabledImage
-		pageExploreTool.setToolTipText("Explore page");
+		findTool.setToolTipText("Injects the script");
 
-		ToolItem codeGenTool = new ToolItem(toolBar, SWT.PUSH);
-		codeGenTool.setImage(iconData.get("codeGen icon"));
-		codeGenTool.setToolTipText("Generate program");
+		ToolItem flowChartTool = new ToolItem(toolBar, SWT.PUSH);
+		flowChartTool.setImage(iconData.get("codeGen icon"));
+		flowChartTool.setToolTipText("Generates the script");
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		ToolItem openTool = new ToolItem(toolBar, SWT.PUSH);
 		openTool.setImage(iconData.get("open icon"));
-		openTool.setToolTipText("Load session");
+		openTool.setToolTipText("Reads the saved session");
 
 		ToolItem saveTool = new ToolItem(toolBar, SWT.PUSH);
 		saveTool.setImage(iconData.get("save icon"));
-		saveTool.setToolTipText("Save session");
+		saveTool.setToolTipText("Saves the session");
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		ToolItem demoTool = new ToolItem(toolBar, SWT.PUSH);
 		demoTool.setImage(iconData.get("demo icon"));
-		demoTool.setToolTipText("Demo app");
+		demoTool.setToolTipText("Demonstrates the app");
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		ToolItem preferencesTool = new ToolItem(toolBar, SWT.PUSH);
 		preferencesTool.setImage(iconData.get("prefs icon"));
 
-		preferencesTool.setToolTipText("Configure");
+		preferencesTool.setToolTipText("Configures the app");
 
 		ToolItem shutdownTool = new ToolItem(toolBar, SWT.PUSH);
 		shutdownTool.setImage(iconData.get("shutdown icon"));
-		shutdownTool.setToolTipText("Quit");
+		shutdownTool.setToolTipText("Quits the app");
 
-		pageExploreTool.setEnabled(false);
-		codeGenTool.setEnabled(false);
+		findTool.setEnabled(false);
+		flowChartTool.setEnabled(false);
 		demoTool.setEnabled(false);
 		saveTool.setEnabled(false);
 
@@ -452,29 +460,31 @@ public class SimpleToolBarEx {
 			}
 			try {
 				driver = BrowserDriver.initialize(browser);
-				driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
-						.implicitlyWait(implicitWait, TimeUnit.SECONDS)
-						.setScriptTimeout(30, TimeUnit.SECONDS);
-				driver.get(baseURL);
-				// prevent the customer from launching multiple instances
-				// launchTool.setEnabled(true);
-				pageExploreTool.setEnabled(true);
-				if (!osName.startsWith("Mac")) {
-					// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
-					// combinations
-					demoTool.setEnabled(true);
-				}
-				codeGenTool.setEnabled(true);
-				// driver.get(getResourceURI("blankpage.html"));
 			} catch (Exception e) {
+				ExceptionDialogEx o = new ExceptionDialogEx(display, shell, e);
 				// show the error dialog with exception trace
-				(new ExceptionDialogEx(display, shell, e)).execute();
+				o.execute();
 			}
+
+			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
+					.implicitlyWait(implicitWait, TimeUnit.SECONDS)
+					.setScriptTimeout(30, TimeUnit.SECONDS);
+			driver.get(baseURL);
+			// prevent the customer from launching multiple instances
+			// launchTool.setEnabled(true);
+			findTool.setEnabled(true);
+			if (!osName.startsWith("Mac")) {
+				// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
+				// combinations
+				demoTool.setEnabled(true);
+			}
+			flowChartTool.setEnabled(true);
+			// driver.get(getResourceURI("blankpage.html"));
 			updateStatus("Ready");
 		});
 
-		codeGenTool.addListener(SWT.Selection, event -> {
-			codeGenTool.setEnabled(false);
+		flowChartTool.addListener(SWT.Selection, event -> {
+			flowChartTool.setEnabled(false);
 			RenderTemplate renderTemplate = new RenderTemplate();
 			updateStatus(String.format("Reading template %s \u2026",
 					configData.get("Template")));
@@ -482,15 +492,10 @@ public class SimpleToolBarEx {
 			// TODO:
 			// relative path => setTemplateName
 			// absolute path => setTemplateAbsolutePath
-			if (configData.containsKey("Template Path")) {
-				/*
-				System.err.println(
-						"Using specific template path: " + configData.get("Template Path"));
-				*/
+			if (configData.containsValue("Template Path")) {
 				renderTemplate.setTemplateAbsolutePath(configData.get("Template Path")
 						.replace("\\\\", "\\").replace("\\", "/"));
 			} else {
-				// System.err.println("Using default template");
 				renderTemplate.setTemplateName("templates/example2.twig");
 			}
 			generatedScript = "";
@@ -501,7 +506,7 @@ public class SimpleToolBarEx {
 			}
 			shell.setData("payload", generatedScript);
 			ScrolledTextEx test = new ScrolledTextEx(Display.getCurrent(), shell);
-			codeGenTool.setEnabled(true);
+			flowChartTool.setEnabled(true);
 		});
 
 		openTool.addListener(SWT.Selection, event -> {
@@ -543,7 +548,7 @@ public class SimpleToolBarEx {
 				saveTool.setEnabled(true);
 			}
 			openTool.setEnabled(true);
-			codeGenTool.setEnabled(true);
+			flowChartTool.setEnabled(true);
 			updateStatus("Ready");
 		});
 
@@ -580,7 +585,6 @@ public class SimpleToolBarEx {
 		preferencesTool.addListener(SWT.Selection, event -> {
 			preferencesTool.setEnabled(true);
 			shell.setData("updated", false);
-
 			shell.setData("CurrentConfig", new Utils().writeDataJSON(configData,
 					"{ \"Browser\": \"Chrome\", \"Template\": \"Basic Java\", }"));
 			ConfigFormEx o = new ConfigFormEx(Display.getCurrent(), shell);
@@ -592,57 +596,43 @@ public class SimpleToolBarEx {
 			preferencesTool.setEnabled(true);
 		});
 
-		pageExploreTool.addSelectionListener(new SelectionListener() {
+		findTool.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {
 			}
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-
 				if (driver != null) {
-
-					browserStatus.put("runaway", false);
-					getTask2(driver, browserStatus).start();
-					pageExploreTool.setEnabled(false);
-					updateStatus("Inject script");
+					findTool.setEnabled(false);
+					updateStatus("Injecting the script");
 					wait = new WebDriverWait(driver, flexibleWait);
 					wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
-					/*
-					wait = new FluentWait<>(driver)
-						.withTimeout(flexibleWait, TimeUnit.SECONDS)
-						.pollingEvery(pollingInterval, TimeUnit.SECONDS)
-						.ignoring(NoSuchElementException.class);
-					*/
 					actions = new Actions(driver);
 					injectElementSearch(Optional.<String> empty());
 
 					updateStatus("Waiting for data");
 					HashMap<String, String> elementData = addElement();
-					if (!elementData.containsKey("CommandId")) {
-						// TODO: better handle invalid elementData
-					} else {
-						// TODO: add radios to the ElementSearch Form
-						if (!elementData.containsKey("ElementSelectedBy")) {
-							elementData.put("ElementSelectedBy", "ElementCssSelector");
-						}
-						// System.err.println(
-						// "ElementSelectedBy : " + elementData.get("ElementSelectedBy"));
-						// Append a Breadcrumb Item Button
-						String commandId = elementData.get("CommandId");
-						elementData.put("ElementStepNumber",
-								String.format("%d", step_index));
 
-						testData.put(commandId, elementData);
-						stepKeys.add(commandId);
-						addBreadCrumpItem(elementData.get("ElementCodeName"), commandId,
-								elementData, bc);
-						shell.layout(true, true);
-						shell.pack();
+					// TODO: add radios to the ElementSearch Form
+					if (!elementData.containsKey("ElementSelectedBy")) {
+						elementData.put("ElementSelectedBy", "ElementCssSelector");
 					}
-					pageExploreTool.setEnabled(true);
+					System.err.println(
+							"ElementSelectedBy : " + elementData.get("ElementSelectedBy"));
+
+					// Append Breadcrump Button
+					String commandId = elementData.get("CommandId");
+					elementData.put("ElementStepNumber", String.format("%d", step_index));
+
+					testData.put(commandId, elementData);
+					stepKeys.add(commandId);
+					addBreadCrumpItem(elementData.get("ElementCodeName"), commandId,
+							elementData, bc);
+					shell.layout(true, true);
+					shell.pack();
+					findTool.setEnabled(true);
 					updateStatus("Ready");
-					browserStatus.put("runaway", false);
 					saveTool.setEnabled(true);
 				}
 			}
@@ -665,20 +655,18 @@ public class SimpleToolBarEx {
 							.setPosition(new org.openqa.selenium.Point(600, 0));
 					driver.manage().window()
 							.setSize(new Dimension(browserDemoWidth, browserDemoHeight));
-					final String demoURL = "https://www.ryanair.com/ie/en/";
-					final String demoSelector = "#home div.specialofferswidget h3 > span:nth-child(1)";
-					HashMap<String, String> elementData = demoAddElement(demoURL,
-							By.cssSelector(demoSelector));
+					// TODO: debug timeoutException in closeVisualSearch
+					HashMap<String, String> elementData = demoAddElement(
+							"https://www.ryanair.com/ie/en/", By.cssSelector(
+									"#home div.specialofferswidget h3 > span:nth-child(1)"));
 					String name = elementData.get("ElementCodeName");
 					elementData.put("ElementStepNumber", String.format("%d", step_index));
 					addButton(name, elementData, composite);
-					/*
-						final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-								true);
-						if (newSize.x > 500) {
-							shell.setBounds(boundRect);
-						}
-					*/
+					final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+							true);
+					if (newSize.x > 500) {
+						shell.setBounds(boundRect);
+					}
 					updateStatus("Ready");
 					statusMessage.pack();
 					demoTool.setEnabled(true);
@@ -752,7 +740,6 @@ public class SimpleToolBarEx {
 
 		HashMap<String, String> elementData = new HashMap<String, String>(); // empty
 		Boolean waitingForData = true;
-		Boolean browserRunaway = false;
 		String name = null;
 		while (waitingForData) {
 			String payload = executeScript(getCommand).toString();
@@ -770,15 +757,11 @@ public class SimpleToolBarEx {
 					break;
 				}
 			}
-			if ((Boolean) browserStatus.get("runaway")) {
-				System.err.println("Detected URL change");
-				browserRunaway = true;
-				waitingForData = false;
-			}
 			if (waitingForData) {
 				try {
-					// TODO: add the alternative code to
-					// bail if waited long enough already
+					// TODO: add the code to
+					// check if waited long enough already
+					// test17
 					System.err.println("Waiting: ");
 					Thread.sleep(1000);
 				} catch (InterruptedException exception) {
@@ -787,59 +770,40 @@ public class SimpleToolBarEx {
 		}
 		// clear results on the page
 		flushVisualSearchResult();
-		if (!browserRunaway) {
-			closeVisualSearch();
-		}
+		closeVisualSearch();
 		return elementData;
 	}
 
 	private HashMap<String, String> demoAddElement(String URL, By by) {
 		driver.get(URL);
-		/*
-		wait.until(new Function<WebDriver, Boolean>() {
-			@Override
-			public Boolean apply(WebDriver d) {
-				WebElement e = d.findElement(by);
-				return e.isDisplayed();
-			}
-		});
-		*/
-		WebElement element = null;
-		try {
-			element = wait
-					.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
-			highlight(element);
-		} catch (TimeoutException e) {
-			(new ExceptionDialogEx(Display.getCurrent(), shell, e)).execute();
-		}
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
 		injectElementSearch(Optional.<String> empty());
-
 		// NOTE: with FF the CONTROL mouse pointer appears to be misplaced
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException exception) {
 		}
-		/*
-		WebElement element = wait.until(new Function<WebDriver, WebElement>() {
-			@Override
-			public WebElement apply(WebDriver d) {
-				WebElement e = d.findElement(by);
-				return e.isDisplayed() ? e : null;
+		WebElement element = wait
+				.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
+		highlight(element);
+		if (osName.startsWith("Mac")) {
+			// "Demo" functionality appears to be currently broken on Mac with
+			// not passing the Keys.COMMAND
+			try {
+				actions.keyDown(Keys.COMMAND).build().perform();
+				actions.moveToElement(element).contextClick().build().perform();
+				actions.keyUp(Keys.COMMAND).build().perform();
+			} catch (WebDriverException e) {
+				// TODO: print a message box
+				System.err.println("Ignoring exception: " + e.toString());
 			}
-		});
-		*/
-		// "Demo" functionality appears to be currently broken on Mac with
-		// not passing the Keys.COMMAND
-		Keys keyCTRL = osName.startsWith("Mac") ? Keys.COMMAND : Keys.CONTROL;
-		try {
-			actions.keyDown(keyCTRL).build().perform();
+		} else {
+			actions.keyDown(Keys.CONTROL).build().perform();
 			actions.moveToElement(element).contextClick().build().perform();
-			actions.keyUp(keyCTRL).build().perform();
-		} catch (WebDriverException e) {
-			// TODO: print a message box
-			System.err.println("Ignoring exception: " + e.toString());
+			actions.keyUp(Keys.CONTROL).build().perform();
 		}
-		executeScript(String.format("scroll(0, %d);", -600));
+
+		executeScript(String.format("scroll(0, %d);", -400));
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -849,7 +813,7 @@ public class SimpleToolBarEx {
 		String payload = executeScript(getCommand).toString();
 		assertFalse(payload.isEmpty());
 		HashMap<String, String> data = new HashMap<String, String>();
-		readVisualSearchResult(payload, Optional.of(data));
+		String name = readVisualSearchResult(payload, Optional.of(data));
 		closeVisualSearch();
 		flushVisualSearchResult();
 		return data;
@@ -860,6 +824,10 @@ public class SimpleToolBarEx {
 	}
 
 	private void highlight(WebElement element, long highlight_interval) {
+		if (wait == null) {
+			wait = new WebDriverWait(driver, flexibleWait);
+		}
+		wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
 		try {
 			wait.until(ExpectedConditions.visibilityOf(element));
 			executeScript("arguments[0].style.border='3px solid yellow'", element);
@@ -871,56 +839,39 @@ public class SimpleToolBarEx {
 	}
 
 	private void completeVisualSearch(String elementCodeName) {
-		WebElement swdAddElementButton = null;
-		try {
-			WebElement swdControl = wait.until(ExpectedConditions
-					.visibilityOf(driver.findElement(By.id("SWDTable"))));
-			assertThat(swdControl, notNullValue());
-			WebElement swdCodeID = wait.until(ExpectedConditions.visibilityOf(
-					swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
-			assertThat(swdCodeID, notNullValue());
-			// Act
-			swdCodeID.sendKeys(elementCodeName);
-			swdAddElementButton = wait.until(new ExpectedCondition<WebElement>() {
-				@Override
-				public WebElement apply(WebDriver _driver) {
-					Iterator<WebElement> _elements = _driver
-							.findElements(
-									By.cssSelector("div#SwdPR_PopUp > input[type='button']"))
-							.iterator();
-					WebElement result = null;
-					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
-							Pattern.CASE_INSENSITIVE);
-					while (_elements.hasNext()) {
-						WebElement _element = (WebElement) _elements.next();
-						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
-						if (matcher.find()) {
-							result = _element;
-							break;
-						}
-					}
-					return result;
-				}
-			});
-		} catch (Exception e) {
-			(new ExceptionDialogEx(Display.getCurrent(), shell, e)).execute();
-			System.err.println("Exception: " + e.toString());
-			if (driver != null) {
-				try {
-					BrowserDriver.close();
-				} catch (Exception ex) {
-					System.err.println("Ignored exception: " + ex.toString());
-				}
-			}
-		}
+		WebElement swdControl = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		assertThat(swdControl, notNullValue());
 
+		// System.err.println("Swd Control:" +
+		// swdControl.getAttribute("innerHTML"));
+		WebElement swdCodeID = wait.until(ExpectedConditions
+				.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
+		assertThat(swdCodeID, notNullValue());
+		swdCodeID.sendKeys(elementCodeName);
+		// WebElement swdAddElementButton =
+		// wait.until(ExpectedConditions.visibilityOf(swdControl.findElement(
+		// By.xpath("//input[@type='button'][@value='Add element']"))));
+
+		// TODO: debug this
+		WebElement swdAddElementButton = wait
+				.until(new Function<WebDriver, WebElement>() {
+					@Override
+					public WebElement apply(WebDriver d) {
+						WebElement e = d.findElement(By.cssSelector(
+								"div#SwdPR_PopUp > input[type='button'][value='Add element']"));
+						System.err.println(
+								"in apply iterator (1): Text = " + e.getAttribute("value"));
+						return e.isDisplayed() ? e : null;
+					}
+				});
 		assertThat(swdAddElementButton, notNullValue());
 		highlight(swdAddElementButton);
 		// Act
 		swdAddElementButton.click();
 	}
 
-	private void closeVisualSearch() {
+	private void closeVisualSearch_ORIG() {
 		WebElement swdControl = wait.until(
 				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
 		assertThat(swdControl, notNullValue());
@@ -930,6 +881,52 @@ public class SimpleToolBarEx {
 		assertThat(swdCloseButton, notNullValue());
 		highlight(swdCloseButton);
 		swdCloseButton.click();
+	}
+
+	private void closeVisualSearch() {
+		WebElement swdControl = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		assertThat(swdControl, notNullValue());
+		WebElement swdCloseButton = null;
+		// NOTE: Selenium 2.53.x => Selenium 3.3.x problem
+		// method until in class org.openqa.selenium.support.ui.FluentWait<T> cannot
+		// be applied to given types;
+		//
+		// http://stackoverflow.com/questions/34176392/fluentwait-throwing-the-method-unti-in-the-type-waitwebdriver-is-not-applicab
+		try {
+			swdCloseButton = wait.until(new Function<WebDriver, WebElement>() {
+				@Override
+				public WebElement apply(WebDriver d) {
+					Iterator<WebElement> i = d
+							.findElements(By.id("SwdPR_PopUp_CloseButton")).iterator();
+					WebElement result = null;
+					// "(?:" + "Navigate Back" + ")"
+					Pattern pattern = Pattern.compile(Pattern.quote("X"),
+							Pattern.CASE_INSENSITIVE);
+					while (i.hasNext()) {
+						WebElement e = (WebElement) i.next();
+						System.err.println(
+								"in apply iterator (2): html = " + e.getAttribute("outerHTML"));
+
+						String t = e.getText();
+						System.err.println("in apply iterator (2): Text = " + t);
+						Matcher matcher = pattern.matcher(t);
+						if (matcher.find()) {
+							result = e;
+							break;
+						}
+					}
+					return result;
+				}
+			});
+			assertThat(swdCloseButton, notNullValue());
+			highlight(swdCloseButton);
+			swdCloseButton.click();
+
+		} catch (Exception e) {
+			// TODO: dialog
+			System.err.println("Exception: " + e.toString());
+		}
 	}
 
 	private Object executeScript(String script, Object... arguments) {
@@ -1083,44 +1080,12 @@ public class SimpleToolBarEx {
 
 	public static void main(String[] args) {
 
-		display = new Display();
+		Display display = new Display();
 		SimpleToolBarEx simpleToolBarEx = new SimpleToolBarEx();
 		simpleToolBarEx.setCodeGenImage("code_128.png");
 
 		simpleToolBarEx.open(display);
 		simpleToolBarEx.finalize();
 		display.dispose();
-	}
-
-	// NOTE: currently contains the inverse of the
-	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
-	// run Selenium url change detection in a separat thread then update the UI
-	// thread through shared data,
-	// but not using execAsync
-
-	public static Thread getTask2(WebDriver driver,
-			HashMap<String, Boolean> browserStatus) {
-		final String URL = driver.getCurrentUrl();
-
-		return new Thread() {
-			public void run() {
-
-				while (true) {
-					try {
-						// System.out.println("Thread: wait .5 sec");
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					// System.out
-					// .println("Thread: inspecting URL " + driver.getCurrentUrl());
-					if (driver.getCurrentUrl().indexOf(URL) != 0) {
-						System.err.println("Signaling URL change ");
-						browserStatus.replace("runaway", true);
-						break;
-					}
-				}
-			}
-		};
 	}
 }

@@ -36,18 +36,42 @@ public class BrowserDriver {
 	private static String location = "";
 	private static String chromeDriverPath = "c:/java/selenium/chromedriver.exe";
 	private static String iEDriverPath = "c:/java/selenium/IEDriverServer.exe";
-	private static String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
+  private static String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
 
 	public static WebDriver initialize(String browser) {
 
 		DesiredCapabilities capabilities = null;
 		browser = browser.toLowerCase();
 		if (browser.equals("firefox")) {
+			/*
+      NOTE: with Selenium 3.3.x
+      Exception in thread "main" java.lang.NoSuchMethodError:			 
+			 com.google.common.base.Preconditions.checkArgument(ZLjava/lang/String;I)V
+			 at org.openqa.selenium.remote.service.DriverService$Builder.usingPort(DriverService.java:241)
+			 at org.openqa.selenium.firefox.FirefoxDriver.toExecutor(FirefoxDriver.java:228)
+			 at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:125)
+			 at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:150)
+      */
 			capabilities = capabilitiesFirefox();
 		} else if (browser.equals("phantomjs")) {
 			capabilities = capabilitiesPhantomJS();
 		} else if (browser.equals("chrome")) {
 			capabilities = capabilitiesChrome();
+			/*
+      NOTE: with Selenium 3.3.x
+      https:github.com/SeleniumHQ/selenium/issues/3540
+      Unable to launch chrome browser using selenium 3.1.0
+      https:github.com/SeleniumHQ/selenium/issues/3703
+      Unable to launch chrome browser using selenium 3.3.1
+			Exception in thread "main" java.lang.NoSuchMethodError: 
+			com.google.common.base.Preconditions.checkState(ZLjava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+			  at org.openqa.selenium.remote.service.DriverService.findExecutable(DriverService.java:111)
+			  at org.openqa.selenium.chrome.ChromeDriverService.access$000(ChromeDriverService.java:32)
+			  at org.openqa.selenium.chrome.ChromeDriverService$Builder.findDefaultExecutable(ChromeDriverService.java:137)
+			  at org.openqa.selenium.remote.service.DriverService$Builder.build(DriverService.java:302)
+			  at org.openqa.selenium.chrome.ChromeDriverService.createDefaultService(ChromeDriverService.java:88)
+			  at org.openqa.selenium.chrome.ChromeDriver.<init>(ChromeDriver.java:146)
+			*/
 		} else if (browser.equals("iexplore")) {
 			capabilities = capabilitiesInternetExplorer();
 		} else if (browser.equals("android")) {
@@ -76,6 +100,7 @@ public class BrowserDriver {
 			SafariOptions options = new SafariOptions();
 			driver = new SafariDriver(options);
 		} else if (browser.equals("chrome")) {
+      System.err.println("webdriver.chrome.driver = " + System.getProperty("webdriver.chrome.driver"));
 			driver = new ChromeDriver(capabilities);
 		} else if (browser.equals("iexplore")) {
 			File file = new File(iEDriverPath);
@@ -151,9 +176,11 @@ public class BrowserDriver {
 	}
 
 	private static DesiredCapabilities capabilitiesFirefox() {
-		System.setProperty("webdriver.gecko.driver", geckoDriverPath);
+    // http://navyuginfo.com/selenium-3-0-resolved-firefox-compatibility-issues/
+		// http://toolsqa.com/selenium-webdriver/how-to-use-geckodriver/
+    // needs the gecko driver regardless
+    System.setProperty("webdriver.gecko.driver", geckoDriverPath);
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		// Exception:
 		// capabilities.setCapability("marionette", false);
 		capabilities.setCapability("firefox_binary",
 				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
@@ -173,7 +200,7 @@ public class BrowserDriver {
 	// http://www.programcreek.com/java-api-examples/index.php?api=org.openqa.selenium.chrome.ChromeOptions
 	private static DesiredCapabilities capabilitiesChrome() {
 
-		System.setProperty("webdriver.chrome.driver",
+    System.setProperty("webdriver.chrome.driver",
 				(new File(chromeDriverPath)).getAbsolutePath());
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 		ChromeOptions options = new ChromeOptions();

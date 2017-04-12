@@ -1,30 +1,33 @@
 
 ### Info
 
-![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color.png)
+![icon](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/document_wrench_color.png)
 
-__Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__)of
-Dmytro Zharii and author. __SWET__ is using the
-[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) (currently, with third party [Opal](https://github.com/lcaron/opal) widget library) instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax).
-
+__Selenium WebDriver Elementor Toolkit__ (__SWET__) is a OS-independent successor to the [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) of
+Dmytro Zharii (and author) - a.k.a. __SWD__. __SWET__ is using the
+[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party widgets
+(currently, [Opal](https://github.com/lcaron/opal) instead of .Net Windows Forms for user interface and
+[Jtwig](http://jtwig.org/documentation/reference/tags/control-flow)
+ template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax)..
 Therefore __SWET__ runs on Windows, Mac or Linux, 32 or 64 bit platforms.
-__SWET__ is currently beta quality: one can create a session and collect Page Element information and convert it to a
-fragment of the code in the Java or C# language; eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
+Eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
 
-The application is being developed in Ecipse with [SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html),
+The application is developed in Ecipse with [SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html),
 on Ubuntu 16.04 and Windows.
 For Mac / Safari testing, the [Sierra Final 10.12](https://techsviewer.com/install-macos-sierra-virtualbox-windows/) Virtual Box by TechReviews is being used.
 Currently, working with Safari browser is somewhat flaky.
 
-![OSX Example](https://github.com/sergueik/SWET/blob/master/screenshots/capture1.png)
 
-![Ubuntu Example](https://github.com/sergueik/SWET/blob/master/screenshots/capture2.png)
+![OSX Example](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/capture1.png)
 
-![Windows Example](https://github.com/sergueik/SWET/blob/master/screenshots/capture3.png)
+![Ubuntu Example](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/capture2.png)
+
+![Windows Example](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/capture3.png)
 
 ### Usage
 
-In order to use __SWET__ one will need to compile the application jar from the source - it is not difficult.
+__SWET__ is currently beta quality, it may not be very useful: one can create a session Page Element recording in Java or C#,
+In order to use one will have to compile the application - it is not difficult.
 Continue reading for info on how to get the dev environment setup.
 
 ### Prerequisites
@@ -40,15 +43,10 @@ M2
 ```
 or updated in the project runner scripts as explained below.
 
-The Eclipse is not required.
-
-With the exception of one jar, the project dependencies are pulled by Maven.
-
-On the Mac, the
+The Eclipse is not required. With the exception of one jar, the project dependencies are pulled by Maven. On a Mac, the
 JDK is expected to be installed to
 `/Library/Java/JavaVirtualMachines/jdk$JAVA_VERSION.jdk/Contents/Home` which is the default location.
-In the checked-in runner scripts, the Java and Maven were conveniently installed to `c:\java\` for Windows .
-
+On Windows Java and Maven were conveniently installed to `c:\java\`.
 #### Updating the platform-specific information in the `pom.xml`
 
 The project `pom.xml` currently is declaring the main `swt.jar` dependency in a platform-specific fashion:
@@ -76,9 +74,8 @@ One willl have to uncomment the relevant `artifactId` property definition and co
 Due to some problem with JVM loader, these platform-dependent jars cannot be included simultaneously.
 The alternative is to package the spring-boot jar file as explained in
 [Multiplatform SWT](https://github.com/jendap/multiplatform-swt) project.
-Unfortulately the resulting bare-bones `multiplatform-swt-loader.jar` file is almost 10 Mb and with all dependencies the
-__SWET__ jar is over 30 Mb which is not very practical.
-Therefore,  we recommend to modify the `pom.xml` and use runner scripts to compile it as explained below.
+Unfortulately the resulting bare-bones `multiplatform-swt-loader.jar` file is almost 10 Mb and __SWET__ jar is over 30 Mb.
+Therefore,  we recommend to modify the `pom.xml` and use runner scripts explained below.
 
 #### Runner Scripts
 After the project is cloned or downloaded from from github, one will find the following `run.*` scripts helpful to compile and start the application:
@@ -130,40 +127,40 @@ which in turn is based on SWT examples from Jan Bodnar's [website](zetcode.com) 
 ```
 ### Toolbar Buttons
 
-![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/launch.png)
+![launch](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/launch.png)
 launches the browser
 
-![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find.png)
-injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/ElementSearch.js) into the page then
+![launch](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/find.png)
+injects the [SWD Element Searcher script](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/ElementSearch.js) into the page then
 loops polling the page witing for user to select some element via right click and to fill and submit the form:
-![SWD Table](https://github.com/sergueik/SWET/blob/master/screenshots/swd_table.png)
+![SWD Table](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/swd_table.png)
 
 The Java reads back the result once it available and adds a breadcrump button:
-![breadcumps](https://github.com/sergueik/SWET/blob/master/screenshots/breadcumps.png)
+![breadcumps](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/breadcumps.png)
 
 The breadcrump button opens the form dialog with the details of the element:
-![form](https://github.com/sergueik/SWET/blob/master/screenshots/form.png)
+![form](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/form.png)
 
 The save and load buttons
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/save.png)
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/open.png)
+![flowchart](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/save.png)
+![flowchart](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/open.png)
 save  and restore the test session in YAML format.
-![flowchart](https://github.com/sergueik/SWET/blob/master/screenshots/open_sesssion.png)
+![flowchart](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/open_sesssion.png)
 
 The flowchart button
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/flowchart.png)
+![flowchart](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/flowchart.png)
 
 starts codegeneration using [Jtwig](http://jtwig.org/) tempate and `elementData` hash and opens result in a separate dialog:
-![codegen](https://github.com/sergueik/SWET/blob/master/screenshots/codegen.png)
+![codegen](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/codegen.png)
 
 The preferences.png button
-![preferences](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/preferences.png)
+![preferences](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/preferences.png)
 opens the configuration dialog
-![config](https://github.com/sergueik/SWET/blob/master/screenshots/config.png)
+![config](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/screenshots/config.png)
 Currently the browser and template selection are configurable, one also can set the base URL.
 
 There is also a demo button that executes these actions automatically (for one element):
-![demo](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/demo.png)
+![demo](https://github.com/sergueik/selenium_java/blob/master/swd_recorder/src/main/resources/images/demo.png)
 
 Currently project is hardcoded to use Chrome browser on Windows os, and Firefox on the rest of platforms.
 The YAML configuration will be fuly integrated shotly.
@@ -195,39 +192,19 @@ h1 > a > i.fb_logo.img.sp_Mlxwn39jCAE.sx_896ebb
 Currently __SWET__ does not have an algorythm for shortening these locators.
 Adding smart locator generators is a work in progress.
 
-### Dependencies Versions
+### Component Versions
+As typical with Selenium, the __SWET__ application only runnable with the matching combination of versions of Selenium jar,
+browser driver and browser itself is used - making __SWET__ work with the most recent releases of Selenium and browser drivers is not currently a priority.
 
-As typical with Selenium, the __SWET__ application only runnable with the matching combination of versions of Selenium jar, browser driver and browser itself is used.
-The __SWET__ application master branch is being developed with
-
-|                      |              |
-|----------------------|--------------|
-| SELENIUM_VERSION     | __2.53.1__   |
-| FIREFOX_VERSION      | __45.0.1__   |
-| CHROME_VERSION       | __56.0.X__   |
-| CHROMEDRIVER_VERSION | __2.29__     |
-
-Examples of partially supported version combinations are listed below (exceptions may be observed when launching browser). 
+Example of supported version combination is
 
 |                      |              |
 |----------------------|--------------|
-| SELENIUM_VERSION     | __3.0.1__    |
-| FIREFOX_VERSION      | __52.0__     |
-| GECKODRIVER_VERSION  | __0.14__     |
-| CHROME_VERSION       | __56.0.X__   |
-| CHROMEDRIVER_VERSION | __2.29__     |
+| SELENIUM_VERSION     | __2.53.1__       |
+| FIREFOX_VERSION      | __45.0.1__       |
+| CHROME_VERSION       | __54.0.X__ |
+| CHROMEDRIVER_VERSION | __2.24__         |
 
-|                      |              |
-|----------------------|--------------|
-| SELENIUM_VERSION     | __3.3.1__    |
-| FIREFOX_VERSION      | __52.0__     |
-| GECKODRIVER_VERSION  | __0.14__     |
-| CHROME_VERSION       | __56.0.X__   |
-| CHROMEDRIVER_VERSION | __2.29__     |
-
-
-Neither Selenium __3.0.1__ nor __3.3.1__ code is stable yet. Branches selenium_301 and selenium_3x created until this code is stable in the original project location (`https://github.com/sergueik/selenium_java/tree/master/swd_recorder`).
-Stabilizing against the most recent builds of Selenium is a work in progress.
 
 One can download virtually every old build of Firefox from
 https://ftp.mozilla.org/pub/firefox/releases, and selected old builds of Chrome from
@@ -240,6 +217,7 @@ If you have Mac OSX 10.12.X Sierra / Safari 10.X , then the Apple Safari driver 
 but it does not seems to work with Selenium __2.53__.
 For earlier releases, you have to downgrade the Selenium version in the `pom.xml` to __2.48__
 then follow the [Running Selenium Tests in Safari Browser](http://toolsqa.com/selenium-webdriver/running-tests-in-safari-browser).
+
 
 ### Code Templates
 
@@ -348,7 +326,7 @@ elements:
   * [SWT choice dialog customization](https://github.com/prasser/swtchoices)
   * [SWT Browser component based recorder](https://github.com/itspanzi/swt-browser-recorder-spike)
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
-  * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
+
 #### Eclipse Plugins
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
 
@@ -376,15 +354,43 @@ elements:
   * [mono/xwt](https://github.com/mono/xwt)
   * [json2](https://github.com/douglascrockford/JSON-js)
 
+  
+### WIP
+
+
+Currently cannot launch browser with Selenium 3.3.x
+
+chrome:
+```
+Exception in thread "main" java.lang.NoSuchMethodError: com.google.common.base.Preconditions.checkState(ZLjava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Lava/lang/Object;)V
+  at org.openqa.selenium.remote.service.DriverService.findExecutable(DriverService.java:111)
+  at org.openqa.selenium.chrome.ChromeDriverService.access$000(ChromeDriverService.java:32)
+  at org.openqa.selenium.chrome.ChromeDriverService$Builder.findDefaultExecutable(ChromeDriverService.java:137)
+  at org.openqa.selenium.remote.service.DriverService$Builder.build(DriverService.java:302)
+  at org.openqa.selenium.chrome.ChromeDriverService.createDefaultService(ChromeDriverService.java:88)
+  at org.openqa.selenium.chrome.ChromeDriver.<init>(ChromeDriver.java:146)
+  at org.swet.BrowserDriver.initialize(BrowserDriver.java:91)
+  at org.swet.SimpleToolBarEx.lambda$open$0(SimpleToolBarEx.java:463)
+```        
+firefox:
+```     
+Exception in thread "main" java.lang.NoSuchMethodError: com.google.common.base.Preconditions.checkArgument(ZLjava/lang/String;I)V
+  at org.openqa.selenium.remote.service.DriverService$Builder.usingPort(DriverService.java:241)
+  at org.openqa.selenium.firefox.FirefoxDriver.toExecutor(FirefoxDriver.java:228)
+  at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:125)
+  at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:150)
+  at org.swet.BrowserDriver.initialize(BrowserDriver.java:74)
+  at org.swet.SimpleToolBarEx.lambda$open$0(SimpleToolBarEx.java:463)
+
+```   
 ### Note
 
 [Swet](http://www.urbandictionary.com/define.php?term=swet&defid=6820405) - *a word that describes something that's hot. Or something that would typically take a lot of skill and practice to do, therefore causing the person to sweat*.
 
-####  Source Code History
 
-The code was originally located inside a much larger repository: `https://github.com/sergueik/selenium_java/tree/master/swd_recorder`. 
-On April 11 2017 the master branch HEAD was copied into separate project, to track past histories and branches please review the original project location.
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
+
+
 
