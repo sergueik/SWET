@@ -100,16 +100,18 @@ public class SwetTest {
 	private static final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private static HashMap<String, String> data = new HashMap<String, String>();
 	private static String osName = OSUtils.getOsName();
+	private static String browser = "chrome";
 
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
 
 		if (osName.toLowerCase().startsWith("windows")) {
-			driver = BrowserDriver.initialize("chrome");
+			driver = BrowserDriver.initialize(browser);
 			/*
 			// IE 10 works, IE 11 does not			
 			driver = new InternetExplorerDriver(capabilities);
 			*/
+			// https://github.com/SeleniumHQ/selenium/issues/3630
 		} else if (osName.startsWith("Mac")) {
 			driver = BrowserDriver.initialize("safari");
 		} else {
@@ -124,10 +126,12 @@ public class SwetTest {
 
 	@AfterClass
 	public static void afterSuiteMethod() {
-		try {
-			BrowserDriver.close();
-		} catch (Exception e) {
-			System.err.println("Ignored exception: " + e.toString());
+		if (driver != null) {
+			try {
+				BrowserDriver.close();
+			} catch (Exception e) {
+				System.err.println("Ignored exception (after suite): " + e.toString());
+			}
 		}
 	}
 

@@ -34,9 +34,6 @@ public class BrowserDriver {
 
 	public static WebDriver driver;
 	private static String location = "";
-	private static String chromeDriverPath = "c:/java/selenium/chromedriver.exe";
-	private static String iEDriverPath = "c:/java/selenium/IEDriverServer.exe";
-	private static String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
 
 	public static WebDriver initialize(String browser) {
 
@@ -48,7 +45,7 @@ public class BrowserDriver {
 			capabilities = capabilitiesPhantomJS();
 		} else if (browser.equals("chrome")) {
 			capabilities = capabilitiesChrome();
-		} else if (browser.equals("iexplore")) {
+		} else if (browser.equals("internet explorer")) {
 			capabilities = capabilitiesInternetExplorer();
 		} else if (browser.equals("android")) {
 			capabilities = capabilitiesAndroid();
@@ -77,9 +74,7 @@ public class BrowserDriver {
 			driver = new SafariDriver(options);
 		} else if (browser.equals("chrome")) {
 			driver = new ChromeDriver(capabilities);
-		} else if (browser.equals("iexplore")) {
-			File file = new File(iEDriverPath);
-			System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
+		} else if (browser.equals("internet explorer")) {
 			driver = new InternetExplorerDriver(capabilities);
 		} else if (browser.equals("android")) {
 			driver = new ChromeDriver(capabilities);
@@ -150,17 +145,30 @@ public class BrowserDriver {
 		return capabilities;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static DesiredCapabilities capabilitiesFirefox() {
+		final String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
 		System.setProperty("webdriver.gecko.driver", geckoDriverPath);
+		System.setProperty("webdriver.firefox.bin",
+				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
+						.getAbsolutePath());
+		System.setProperty("webdriver.reap_profile", "false");
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		// Exception:
-		// capabilities.setCapability("marionette", false);
+
 		capabilities.setCapability("firefox_binary",
 				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
 						.getAbsolutePath());
+
+		capabilities.setCapability("marionette", false);
 		FirefoxProfile profile = new FirefoxProfile();
 		profile.setEnableNativeEvents(true);
 		profile.setAcceptUntrustedCertificates(true);
+		profile.setAssumeUntrustedCertificateIssuer(false);
+
+		// Disable Firefox Auto-Updating
+		profile.setPreference("app.update.auto", false);
+		profile.setPreference("app.update.enabled", false);
+
 		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		capabilities.setCapability("elementScrollBehavior", 1);
 		capabilities.setBrowserName(DesiredCapabilities.firefox().getBrowserName());
@@ -173,6 +181,7 @@ public class BrowserDriver {
 	// http://www.programcreek.com/java-api-examples/index.php?api=org.openqa.selenium.chrome.ChromeOptions
 	private static DesiredCapabilities capabilitiesChrome() {
 
+		final String chromeDriverPath = "c:/java/selenium/chromedriver.exe";
 		System.setProperty("webdriver.chrome.driver",
 				(new File(chromeDriverPath)).getAbsolutePath());
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
@@ -202,9 +211,13 @@ public class BrowserDriver {
 		return capabilities;
 	}
 
+	// https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver
 	private static DesiredCapabilities capabilitiesInternetExplorer() {
-		DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 
+		DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+		final String iEDriverPath = "c:/java/selenium/IEDriverServer.exe";
+		System.setProperty("webdriver.ie.driver",
+				(new File(iEDriverPath)).getAbsolutePath());
 		capabilities.setCapability(
 				InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
 				true);

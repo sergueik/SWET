@@ -467,7 +467,6 @@ public class SimpleToolBarEx {
 				codeGenTool.setEnabled(true);
 				// driver.get(getResourceURI("blankpage.html"));
 			} catch (Exception e) {
-				// show the error dialog with exception trace
 				(new ExceptionDialogEx(display, shell, e)).execute();
 			}
 			updateStatus("Ready");
@@ -615,7 +614,11 @@ public class SimpleToolBarEx {
 						.ignoring(NoSuchElementException.class);
 					*/
 					actions = new Actions(driver);
-					injectElementSearch(Optional.<String> empty());
+					try {
+						injectElementSearch(Optional.<String> empty());
+					} catch (Exception e) {
+						(new ExceptionDialogEx(display, shell, e)).execute();
+					}
 
 					updateStatus("Waiting for data");
 					HashMap<String, String> elementData = addElement();

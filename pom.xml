@@ -41,7 +41,7 @@
     <opal.version>1.0.4</opal.version>
     <phantomjsdriver.version>1.4.2</phantomjsdriver.version>
     <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
-    <selenium.version>2.53.1</selenium.version>
+    <selenium.version>3.2.0</selenium.version>
     <selenium-chrome-driver.version>3.2.0</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>3.2.0</selenium-firefox-driver.version>
     <snakeyaml.version>1.18</snakeyaml.version>
