@@ -282,4 +282,5 @@ Caused by: org.openqa.selenium.firefox.NotConnectedException: Unable to connect 
 1492139582550	addons.manager	DEBUG	Application has been upgraded
 
 ```
-possibly related to https://github.com/SeleniumHQ/selenium/issues/3630
+possibly related to https://github.com/SeleniumHQ/selenium/issues/3630 and 
+https://github.com/mozilla/geckodriver/issues/524

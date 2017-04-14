@@ -220,13 +220,15 @@ The __SWET__ application master branch is being developed with
 | CHROME_VERSION       | __56.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
-Examples of partially supported version combinations are listed below (exceptions may be observed when launching browser). 
+Examples of partially supported version combinations are listed below.
+With Selenium __3.2.0__ on 32 bit Windows, every browser has differnt kind of instability (for other platforms testing is a work in progress). 
+Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedConditions` signatures.
 
 |                      |              |
 |----------------------|--------------|
-| SELENIUM_VERSION     | __3.0.1__    |
-| FIREFOX_VERSION      | __52.0__     |
-| GECKODRIVER_VERSION  | __0.14__     |
+| SELENIUM_VERSION     | __3.2.0__    |
+| FIREFOX_VERSION      | __52.0__ (32 bit)     |
+| GECKODRIVER_VERSION  | __0.14__ (32 bit)    |
 | CHROME_VERSION       | __57.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
@@ -395,7 +397,7 @@ elements:
 
 ####  Source Code History
 
-The code was originally located inside a much larger repository: `https://github.com/sergueik/selenium_java/tree/master/swd_recorder`. 
+The code was originally located inside a much larger repository: `https://github.com/sergueik/selenium_java/tree/master/swd_recorder`.
 On April 11 2017 the master branch HEAD was copied into separate project, to track past histories and branches please review the original project location.
 
 ### Author
