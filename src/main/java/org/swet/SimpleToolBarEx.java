@@ -461,9 +461,7 @@ public class SimpleToolBarEx {
 			try {
 				driver = BrowserDriver.initialize(browser);
 			} catch (Exception e) {
-				ExceptionDialogEx o = new ExceptionDialogEx(display, shell, e);
-				// show the error dialog with exception trace
-				o.execute();
+				(new ExceptionDialogEx(display, shell, e)).execute();
 			}
 
 			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
@@ -609,7 +607,11 @@ public class SimpleToolBarEx {
 					wait = new WebDriverWait(driver, flexibleWait);
 					wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
 					actions = new Actions(driver);
-					injectElementSearch(Optional.<String> empty());
+					try {
+						injectElementSearch(Optional.<String> empty());
+					} catch (Exception e) {
+						(new ExceptionDialogEx(display, shell, e)).execute();
+					}
 
 					updateStatus("Waiting for data");
 					HashMap<String, String> elementData = addElement();

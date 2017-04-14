@@ -34,9 +34,6 @@ public class BrowserDriver {
 
 	public static WebDriver driver;
 	private static String location = "";
-	private static String chromeDriverPath = "c:/java/selenium/chromedriver.exe";
-	private static String iEDriverPath = "c:/java/selenium/IEDriverServer.exe";
-  private static String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
 
 	public static WebDriver initialize(String browser) {
 
@@ -57,22 +54,7 @@ public class BrowserDriver {
 			capabilities = capabilitiesPhantomJS();
 		} else if (browser.equals("chrome")) {
 			capabilities = capabilitiesChrome();
-			/*
-      NOTE: with Selenium 3.3.x
-      https:github.com/SeleniumHQ/selenium/issues/3540
-      Unable to launch chrome browser using selenium 3.1.0
-      https:github.com/SeleniumHQ/selenium/issues/3703
-      Unable to launch chrome browser using selenium 3.3.1
-			Exception in thread "main" java.lang.NoSuchMethodError: 
-			com.google.common.base.Preconditions.checkState(ZLjava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
-			  at org.openqa.selenium.remote.service.DriverService.findExecutable(DriverService.java:111)
-			  at org.openqa.selenium.chrome.ChromeDriverService.access$000(ChromeDriverService.java:32)
-			  at org.openqa.selenium.chrome.ChromeDriverService$Builder.findDefaultExecutable(ChromeDriverService.java:137)
-			  at org.openqa.selenium.remote.service.DriverService$Builder.build(DriverService.java:302)
-			  at org.openqa.selenium.chrome.ChromeDriverService.createDefaultService(ChromeDriverService.java:88)
-			  at org.openqa.selenium.chrome.ChromeDriver.<init>(ChromeDriver.java:146)
-			*/
-		} else if (browser.equals("iexplore")) {
+		} else if (browser.equals("internet explorer")) {
 			capabilities = capabilitiesInternetExplorer();
 		} else if (browser.equals("android")) {
 			capabilities = capabilitiesAndroid();
@@ -102,9 +84,7 @@ public class BrowserDriver {
 		} else if (browser.equals("chrome")) {
       System.err.println("webdriver.chrome.driver = " + System.getProperty("webdriver.chrome.driver"));
 			driver = new ChromeDriver(capabilities);
-		} else if (browser.equals("iexplore")) {
-			File file = new File(iEDriverPath);
-			System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
+		} else if (browser.equals("internet explorer")) {
 			driver = new InternetExplorerDriver(capabilities);
 		} else if (browser.equals("android")) {
 			driver = new ChromeDriver(capabilities);
@@ -175,19 +155,30 @@ public class BrowserDriver {
 		return capabilities;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static DesiredCapabilities capabilitiesFirefox() {
-    // http://navyuginfo.com/selenium-3-0-resolved-firefox-compatibility-issues/
-		// http://toolsqa.com/selenium-webdriver/how-to-use-geckodriver/
-    // needs the gecko driver regardless
-    System.setProperty("webdriver.gecko.driver", geckoDriverPath);
+		final String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
+		System.setProperty("webdriver.gecko.driver", geckoDriverPath);
+		System.setProperty("webdriver.firefox.bin",
+				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
+						.getAbsolutePath());
+		System.setProperty("webdriver.reap_profile", "false");
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		// capabilities.setCapability("marionette", false);
+
 		capabilities.setCapability("firefox_binary",
 				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
 						.getAbsolutePath());
+
+		capabilities.setCapability("marionette", false);
 		FirefoxProfile profile = new FirefoxProfile();
 		profile.setEnableNativeEvents(true);
 		profile.setAcceptUntrustedCertificates(true);
+		profile.setAssumeUntrustedCertificateIssuer(false);
+
+		// Disable Firefox Auto-Updating
+		profile.setPreference("app.update.auto", false);
+		profile.setPreference("app.update.enabled", false);
+
 		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		capabilities.setCapability("elementScrollBehavior", 1);
 		capabilities.setBrowserName(DesiredCapabilities.firefox().getBrowserName());
@@ -200,7 +191,8 @@ public class BrowserDriver {
 	// http://www.programcreek.com/java-api-examples/index.php?api=org.openqa.selenium.chrome.ChromeOptions
 	private static DesiredCapabilities capabilitiesChrome() {
 
-    System.setProperty("webdriver.chrome.driver",
+		final String chromeDriverPath = "c:/java/selenium/chromedriver.exe";
+		System.setProperty("webdriver.chrome.driver",
 				(new File(chromeDriverPath)).getAbsolutePath());
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 		ChromeOptions options = new ChromeOptions();
@@ -229,9 +221,13 @@ public class BrowserDriver {
 		return capabilities;
 	}
 
+	// https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver
 	private static DesiredCapabilities capabilitiesInternetExplorer() {
-		DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 
+		DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+		final String iEDriverPath = "c:/java/selenium/IEDriverServer.exe";
+		System.setProperty("webdriver.ie.driver",
+				(new File(iEDriverPath)).getAbsolutePath());
 		capabilities.setCapability(
 				InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
 				true);
