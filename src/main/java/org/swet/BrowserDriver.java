@@ -25,6 +25,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
+import org.swet.OSUtils;
+
 /**
  * Browser Driver wrapper class for Selenium Webdriver Elementor Tool (SWET)
  * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -33,6 +35,7 @@ import org.openqa.selenium.safari.SafariOptions;
 public class BrowserDriver {
 
 	public static WebDriver driver;
+	private static String osName = OSUtils.getOsName();
 	private static String location = "";
 
 	public static WebDriver initialize(String browser) {
@@ -147,17 +150,22 @@ public class BrowserDriver {
 
 	@SuppressWarnings("deprecation")
 	private static DesiredCapabilities capabilitiesFirefox() {
-		final String geckoDriverPath = "c:/java/selenium/geckodriver.exe";
-		System.setProperty("webdriver.gecko.driver", geckoDriverPath);
+
+		final String geckoDriverPath = osName.toLowerCase().startsWith("windows")
+				? "c:/java/selenium/geckodriver.exe" : "/var/run/geckodriver";
+		//
+		final String firefoxBrowserPath = osName.toLowerCase().startsWith("windows")
+				? "c:/Program Files (x86)/Mozilla Firefox/firefox.exe"
+				: "/usr/bin/firefox";
+		System.setProperty("webdriver.gecko.driver",
+				new File(geckoDriverPath).getAbsolutePath());
 		System.setProperty("webdriver.firefox.bin",
-				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
-						.getAbsolutePath());
+				new File(firefoxBrowserPath).getAbsolutePath());
 		System.setProperty("webdriver.reap_profile", "false");
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 
 		capabilities.setCapability("firefox_binary",
-				new File("C:/Program Files (x86)/Mozilla Firefox/firefox.exe")
-						.getAbsolutePath());
+				new File(firefoxBrowserPath).getAbsolutePath());
 
 		capabilities.setCapability("marionette", false);
 		FirefoxProfile profile = new FirefoxProfile();
@@ -181,7 +189,8 @@ public class BrowserDriver {
 	// http://www.programcreek.com/java-api-examples/index.php?api=org.openqa.selenium.chrome.ChromeOptions
 	private static DesiredCapabilities capabilitiesChrome() {
 
-		final String chromeDriverPath = "c:/java/selenium/chromedriver.exe";
+		final String chromeDriverPath = osName.toLowerCase().startsWith("windows")
+				? "c:/java/selenium/chromedriver.exe" : "/var/run/chromedriver";
 		System.setProperty("webdriver.chrome.driver",
 				(new File(chromeDriverPath)).getAbsolutePath());
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();

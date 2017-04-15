@@ -210,7 +210,8 @@ Adding smart locator generators is a work in progress.
 
 ### Dependencies Versions
 
-As typical with Selenium, the __SWET__ application only runnable with the matching combination of versions of Selenium jar, browser driver and browser itself is used.
+As typical with Selenium, the __SWET__ application only run smoothly  with certain Selenium jar version and it's compatible 
+version of browser driver and browser itself is used.
 The __SWET__ application master branch is being developed with
 
 |                      |              |
@@ -220,9 +221,8 @@ The __SWET__ application master branch is being developed with
 | CHROME_VERSION       | __56.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
-Examples of partially supported version combinations are listed below.
-With Selenium __3.2.0__ on 32 bit Windows, every browser has differnt kind of instability (for other platforms testing is a work in progress). 
-Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedConditions` signatures.
+
+Examples of partially supported version combinations are listed below. Neither Selenium __3.0.1__ nor __3.3.1__ code is completely stable.
 
 |                      |              |
 |----------------------|--------------|
@@ -231,6 +231,12 @@ Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedCon
 | GECKODRIVER_VERSION  | __0.14__ (32 bit)    |
 | CHROME_VERSION       | __57.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
+
+With Selenium __3.2.0__ on Windows, every browser currently fails with a 
+differnt kind of instability (there is no problem under Linux). A possible workaround that was found helpful 
+is to include the `selenium-server-standalone-3.3.1.jar`
+
+Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedConditions` signatures (currently work in progress).
 
 |                      |              |
 |----------------------|--------------|
@@ -241,7 +247,8 @@ Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedCon
 | CHROMEDRIVER_VERSION | __2.29__     |
 
 
-Neither Selenium __3.0.1__ nor __3.3.1__ code is stable yet. Branches selenium_301 and selenium_3x created until this code is stable in the original project location (`https://github.com/sergueik/selenium_java/tree/master/swd_recorder`).
+
+ Branches selenium_301 and selenium_3x created until this code is stable in the original project location (`https://github.com/sergueik/selenium_java/tree/master/swd_recorder`).
 Stabilizing against the most recent builds of Selenium is a work in progress.
 
 One can download virtually every old build of Firefox from
