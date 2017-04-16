@@ -1,3 +1,11 @@
+# 0.0.6
+
+## 04/16/2017
+
+## Features
+Created branch 'with_opal_library' whered continue to download the opal jar by the runner scripts. Placed a replica of opal widgets into the source tree to allow building / running directly from eclipse.
+
+
 # 0.0.5
 
 ## 04/11/2017

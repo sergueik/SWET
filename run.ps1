@@ -25,37 +25,36 @@ if ($env:M2 -eq $null) {
   $env:M2 = "${env:M2_HOME}\bin"
 }
 
-
 $env:PATH = "${env:JAVA_HOME}\bin;${env:M2};${env:PATH}"
 $env:JAVA_OPTS = $env:MAVEN_OPTS = @('-Xms256m','-Xmx512m')
 
 $PACKAGE_NAME = 'swet'
-$PACKAGE_VERSION = '0.0.5-SNAPSHOT'
+$PACKAGE_VERSION = '0.0.6-SNAPSHOT'
 $MAIN_APP_PACKAGE = 'org.swet'
 
-
 # external dependencies
+$DOWNLOAD_EXTERNAL_JAR = $false
 $DEPENDENCIES = @{ 'opal' = '1.0.4'; }
-
-$DEPENDENCIES.Keys | ForEach-Object {
-  $ALIAS = $_;
-  $JARFILE_VERSION = $DEPENDENCIES[$_];
-  $JARFILE = "${ALIAS}-${JARFILE_VERSION}.jar"
-
-  $JARFILE_LOCALPATH = (Resolve-Path '.\src\main\resources').path + '\' + $JARFILE
-  if (-not (Test-Path -Path $JARFILE_LOCALPATH)) {
-
-    $URI = "https://github.com/lcaron/opal/blob/releases/V${JARFILE_VERSION}/opal-${JARFILE_VERSION}.jar?raw=true"
-    $request = Invoke-WebRequest -uri $URI -MaximumRedirection 0 -ErrorAction ignore
-    if ($request.StatusDescription -eq 'found') {
-      $uri = $request.Headers.Location
-      Write-Output ('downloading from {0}' -f $uri)
+if ($DOWNLOAD_EXTERNAL_JAR -eq $true ) {
+  $DEPENDENCIES.Keys | ForEach-Object {
+    $ALIAS = $_;
+    $JARFILE_VERSION = $DEPENDENCIES[$_];
+    $JARFILE = "${ALIAS}-${JARFILE_VERSION}.jar"
+  
+    $JARFILE_LOCALPATH = (Resolve-Path '.\src\main\resources').path + '\' + $JARFILE
+    if (-not (Test-Path -Path $JARFILE_LOCALPATH)) {
+  
+      $URI = "https://github.com/lcaron/opal/blob/releases/V${JARFILE_VERSION}/opal-${JARFILE_VERSION}.jar?raw=true"
+      $request = Invoke-WebRequest -uri $URI -MaximumRedirection 0 -ErrorAction ignore
+      if ($request.StatusDescription -eq 'found') {
+        $uri = $request.Headers.Location
+        Write-Output ('downloading from {0}' -f $uri)
+      }
+      write-output "Downloading ${JARFILE_LOCALPATH}"
+      Invoke-WebRequest -uri $URI -OutFile $JARFILE_LOCALPATH
     }
-    write-output "Downloading ${JARFILE_LOCALPATH}"
-    Invoke-WebRequest -uri $URI -OutFile $JARFILE_LOCALPATH
   }
 }
-
 # Compile
 & 'mvn.cmd' 'package' 'install'
 

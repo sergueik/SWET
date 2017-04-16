@@ -1,0 +1,49 @@
+!!org.swet.Configuration
+browserConfiguration: null
+browsers: null
+created: null
+elements:
+  2a561c71-2e7f-47fb-89f4-d82ceadba5cf:
+    ElementCssSelector: html > body.container.borderBoxed > header > div.mooseandads
+      > div.clear.headerWrpr > span.moose.fl > img.site-header-logo
+    ElementSelectedBy: ElementCssSelector
+    ElementCodeName: logo
+    Command: AddElement
+    Caller: addElement
+    ElementPageURL: https://coderanch.com/c/java
+    ElementTagName: IMG
+    CommandId: 2a561c71-2e7f-47fb-89f4-d82ceadba5cf
+    ElementStepNumber: '1'
+    ElementText: ''
+    ElementId: ''
+    ElementXPath: /html/body/header[1]/div[2]/div[1]/span[1]/img[@src="https://www.coderanch.com/mooseImages/betaview/moosefly.gif"]
+  6e68d135-148e-4f60-8f22-07a0fa7db831:
+    ElementCssSelector: a#faq
+    ElementSelectedBy: ElementCssSelector
+    ElementCodeName: FAs
+    Command: AddElement
+    Caller: addElement
+    ElementPageURL: https://coderanch.com/c/java
+    ElementTagName: A
+    CommandId: 6e68d135-148e-4f60-8f22-07a0fa7db831
+    ElementStepNumber: '2'
+    ElementText: FAQs
+    ElementId: faq
+    ElementXPath: id("faq")
+  6bb26225-ba9a-4c9a-9de1-3d13295f1829:
+    ElementCssSelector: div#categorySidebar > div > a.catLstBtn.catLstBtn-l1.pointer
+    ElementSelectedBy: ElementCssSelector
+    ElementCodeName: button_java
+    Command: AddElement
+    Caller: addElement
+    ElementPageURL: https://coderanch.com/c/java
+    ElementTagName: A
+    CommandId: 6bb26225-ba9a-4c9a-9de1-3d13295f1829
+    ElementStepNumber: '3'
+    ElementText: Java
+    ElementId: ''
+    ElementXPath: id("categorySidebar")/div[1]/a[@href="/c/java"]
+plugins: null
+seleniumVersion: null
+updated: 2017-04-16T04:00:00Z
+version: null
