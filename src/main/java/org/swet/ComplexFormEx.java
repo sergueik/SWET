@@ -43,7 +43,7 @@ public class ComplexFormEx {
 	private final static int formWidth = 750;
 	private final static int formHeight = 280;
 	private final static int buttonWidth = 120;
-	private final static int buttonHeight = 28  ;
+	private final static int buttonHeight = 28;
 	private static Boolean updated = false;
 	private static String result = null;
 	private static HashMap<String, String> elementData = new HashMap<String, String>(); // empty
@@ -121,15 +121,15 @@ public class ComplexFormEx {
 			final GridLayout gridLayout = new GridLayout();
 			gridLayout.marginWidth = 2;
 			this.setLayout(new GridLayout(3, false));
-      /*
+			/*
 			RowLayout rowLayout = new RowLayout();
 			rowLayout.wrap = false;
 			rowLayout.pack = false;
 			this.setLayout(rowLayout);
-      */
+			*/
 			buttonSave = new Button(this, SWT.BORDER | SWT.PUSH);
 			buttonSave.setText("Save");
-      GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER,
+			GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER,
 					false, false);
 			gridDataSave.widthHint = buttonWidth;
 			gridDataSave.heightHint = buttonHeight;
@@ -137,7 +137,7 @@ public class ComplexFormEx {
 
 			buttonDelete = new Button(this, SWT.PUSH);
 			buttonDelete.setText("Delete");
-      GridData gridDataDelete = new GridData(GridData.FILL, GridData.CENTER,
+			GridData gridDataDelete = new GridData(GridData.FILL, GridData.CENTER,
 					false, false);
 			gridDataDelete.widthHint = buttonWidth;
 			gridDataDelete.heightHint = buttonHeight;
@@ -172,7 +172,7 @@ public class ComplexFormEx {
 
 			buttonCancel = new Button(this, SWT.PUSH);
 			buttonCancel.setText("Cancel");
-      GridData gridDataCancel = new GridData(GridData.FILL, GridData.CENTER,
+			GridData gridDataCancel = new GridData(GridData.FILL, GridData.CENTER,
 					false, false);
 			gridDataCancel.widthHint = buttonWidth;
 			gridDataCancel.heightHint = buttonHeight;
@@ -214,7 +214,7 @@ public class ComplexFormEx {
 					elementData.replace("ElementSelectedBy", selectedKey);
 				} else {
 					// System.out.println(
-					// 		String.format("Skip processing of key '%s'", selectedKey));
+					// String.format("Skip processing of key '%s'", selectedKey));
 				}
 				// } else {
 				// System.out.println("do work for deselection " + button);

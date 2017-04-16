@@ -144,14 +144,14 @@ public class ConfigFormEx {
 
 		public void renderData(HashMap<String, String> data, String configKey) {
 
-      Label valueLabel = new Label(this, SWT.NONE);
+			Label valueLabel = new Label(this, SWT.NONE);
 			valueLabel.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
 			valueLabel.setText(configKey);
 
 			final Text valueText = new Text(this, SWT.SINGLE | SWT.BORDER);
 
-			GridData gridDatevalueText = new GridData(GridData.FILL,
-					GridData.CENTER, true, false);
+			GridData gridDatevalueText = new GridData(GridData.FILL, GridData.CENTER,
+					true, false);
 			gridDatevalueText.widthHint = this.getBounds().width - 70;
 			gridDatevalueText.heightHint = buttonHeight;
 			valueText.setLayoutData(gridDatevalueText);
@@ -174,8 +174,8 @@ public class ConfigFormEx {
 			});
 
 			final Button browse = new Button(this, SWT.PUSH);
-			GridData gridDataBrowse = new GridData(GridData.FILL,
-					GridData.CENTER, false, false);
+			GridData gridDataBrowse = new GridData(GridData.FILL, GridData.CENTER,
+					false, false);
 			gridDataBrowse.widthHint = 70;
 			gridDataBrowse.heightHint = buttonHeight;
 			browse.setLayoutData(gridDataBrowse);

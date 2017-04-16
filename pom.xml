@@ -38,7 +38,7 @@
     <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <opal.version>1.0.4</opal.version>
+    <!-- <opal.version>1.0.4</opal.version> -->
     <phantomjsdriver.version>1.4.2</phantomjsdriver.version>
     <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
     <selenium.version>2.53.1</selenium.version>
@@ -67,6 +67,7 @@
       <artifactId>jface</artifactId>
       <version>3.3.0-I20070606-0010</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.mihalis.opal</groupId>
       <artifactId>opal</artifactId>
@@ -74,6 +75,7 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/src/main/resources/opal-${opal.version}.jar</systemPath>
     </dependency>    
+    -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>

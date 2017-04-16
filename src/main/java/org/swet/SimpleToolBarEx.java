@@ -76,37 +76,24 @@ import static org.junit.Assert.assertFalse;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.TimeoutException;
-// incompatible types: org.eclipse.swt.graphics.Point cannot be converted to org.openqa.selenium.Point
-// import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.internal.ProfilesIni;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.UnreachableBrowserException;
-import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 
 import org.eclipse.swt.SWT;
 
@@ -602,7 +589,7 @@ public class SimpleToolBarEx {
 				if (driver != null) {
 
 					browserStatus.put("runaway", false);
-					getTask2(driver, browserStatus).start();
+					detectPageChange(driver, browserStatus).start();
 					pageExploreTool.setEnabled(false);
 					updateStatus("Inject script");
 					wait = new WebDriverWait(driver, flexibleWait);
@@ -713,6 +700,30 @@ public class SimpleToolBarEx {
 				display.sleep();
 			}
 		}
+	}
+
+	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
+	public static Thread detectPageChange(WebDriver driver,
+			HashMap<String, Boolean> browserStatus) {
+		final String URL = driver.getCurrentUrl();
+
+		return new Thread() {
+			public void run() {
+
+				while (true) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (driver.getCurrentUrl().indexOf(URL) != 0) {
+						System.err.println("Signaling URL change ");
+						browserStatus.replace("runaway", true);
+						break;
+					}
+				}
+			}
+		};
 	}
 
 	String readVisualSearchResult(String payload) {
@@ -1095,37 +1106,5 @@ public class SimpleToolBarEx {
 		simpleToolBarEx.open(display);
 		simpleToolBarEx.finalize();
 		display.dispose();
-	}
-
-	// NOTE: currently contains the inverse of the
-	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
-	// run Selenium url change detection in a separat thread then update the UI
-	// thread through shared data,
-	// but not using execAsync
-
-	public static Thread getTask2(WebDriver driver,
-			HashMap<String, Boolean> browserStatus) {
-		final String URL = driver.getCurrentUrl();
-
-		return new Thread() {
-			public void run() {
-
-				while (true) {
-					try {
-						// System.out.println("Thread: wait .5 sec");
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					// System.out
-					// .println("Thread: inspecting URL " + driver.getCurrentUrl());
-					if (driver.getCurrentUrl().indexOf(URL) != 0) {
-						System.err.println("Signaling URL change ");
-						browserStatus.replace("runaway", true);
-						break;
-					}
-				}
-			}
-		};
 	}
 }

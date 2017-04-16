@@ -14,6 +14,7 @@ import com.sun.jna.win32.W32APITypeMapper;
 public class OSUtils {
 
 	private static String osName = null;
+
 	public static String getOsName() {
 		if (osName == null) {
 			osName = System.getProperty("os.name");

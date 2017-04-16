@@ -44,16 +44,16 @@ public class DirecroryBrowseLayoutEx {
 		Label labelDirPath = new Label(dirBrowseComposite, SWT.NONE);
 		labelDirPath.setLayoutData(new GridData(labelDirPathWidth, SWT.DEFAULT));
 		labelDirPath.setText("Directory");
-
+		
 		final Text dirPathValue = new Text(dirBrowseComposite,
 				SWT.SINGLE | SWT.BORDER);
-
+		
 		GridData gridDateDirPathValue = new GridData(GridData.FILL, GridData.CENTER,
 				true, false);
 		gridDateDirPathValue.widthHint = dirBrowseComposite.getBounds().width - 120;
 		gridDateDirPathValue.heightHint = buttonHeight;
 		dirPathValue.setLayoutData(gridDateDirPathValue);
-
+		
 		final Button buttonDirBrowse = new Button(dirBrowseComposite, SWT.PUSH);
 		GridData gridDataButtonDirBrowse = new GridData(GridData.FILL,
 				GridData.CENTER, true, false);
@@ -61,29 +61,30 @@ public class DirecroryBrowseLayoutEx {
 		gridDataButtonDirBrowse.heightHint = buttonHeight;
 		buttonDirBrowse.setLayoutData(gridDataButtonDirBrowse);
 		buttonDirBrowse.setText("Browse");
-
+		
 		buttonDirBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				DirectoryDialog dlg = new DirectoryDialog(shell);
-
+		
 				dlg.setFilterPath(dirPathValue.getText());
 				dlg.setText("Template Directory Dialog");
 				dlg.setMessage("Select a directory");
-
+		
 				String dir = dlg.open();
 				if (dir != null) {
 					dirPathValue.setText(dir);
 				}
 			}
 		});
-
+		
 		dirBrowseComposite.pack();
 		*/
 
-    Composite dirBrowseComposite = new Composite(shell, SWT.NONE);
+		Composite dirBrowseComposite = new Composite(shell, SWT.NONE);
 		dirBrowseComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		DirBrowseComposite dirBrowseComposite2 = new DirBrowseComposite(dirBrowseComposite);
+		DirBrowseComposite dirBrowseComposite2 = new DirBrowseComposite(
+				dirBrowseComposite);
 		dirBrowseComposite2.pack();
 		DirBrowseComposite dirBrowseComposite3 = new DirBrowseComposite(shell);
 		dirBrowseComposite3.pack();
@@ -100,7 +101,8 @@ public class DirecroryBrowseLayoutEx {
 
 		public DirBrowseComposite(Composite composite) {
 			super(composite, SWT.NONE);
-			this.setSize(this.getParent().getBounds().width, this.getParent().getBounds().height /* buttonHeight*/ );
+			this.setSize(this.getParent().getBounds().width,
+					this.getParent().getBounds().height /* buttonHeight*/ );
 			this.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			GridLayout gridLayout = new GridLayout(3, true);
 			gridLayout.makeColumnsEqualWidth = false;
