@@ -1029,7 +1029,9 @@ public class SimpleToolBarEx {
 						// Clear test data
 						testData.remove(commandId);
 						// Remove the current item
-						item.getParent().removeItem(item);
+						Breadcrumb b = item.getParent();
+						b.removeItem(item);
+						b.pack();
 					}
 				}
 			}
