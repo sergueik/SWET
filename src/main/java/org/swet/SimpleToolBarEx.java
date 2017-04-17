@@ -168,13 +168,13 @@ public class SimpleToolBarEx {
 	private long pollingInterval = 500;
 	private String baseURL = "about:blank";
 	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
-	private ArrayList<String> stepKeys = new ArrayList<String>();
-	private HashMap<String, HashMap<String, String>> testData = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, Image> iconData = new HashMap<String, Image>();
+	private ArrayList<String> stepKeys = new ArrayList<>();
+	private HashMap<String, HashMap<String, String>> testData = new HashMap<>();
+	private HashMap<String, Image> iconData = new HashMap<>();
 	private Configuration config = null;
 	private static String configFilePath; // TODO: rename
-	private static Map<String, String> configData = new HashMap<String, String>();
-	private static HashMap<String, Boolean> browserStatus = new HashMap<String, Boolean>();
+	private static Map<String, String> configData = new HashMap<>();
+	private static HashMap<String, Boolean> browserStatus = new HashMap<>();
 	static {
 		configData.put("Browser", "Chrome");
 		configData.put("Template", "Core Selenium Java (embedded)");
@@ -300,8 +300,7 @@ public class SimpleToolBarEx {
 	}
 
 	public void open(Display display) {
-		testData = new HashMap<String, HashMap<String, String>>();
-
+		testData = new HashMap<>(); // infer
 		shell = new Shell(display, SWT.CENTER | SWT.SHELL_TRIM); // (~SWT.RESIZE)));
 		Rectangle boundRect = new Rectangle(0, 0, shellWidth, shellHeight);
 		shell.setBounds(boundRect);
@@ -736,7 +735,7 @@ public class SimpleToolBarEx {
 		System.err.println("Processing payload: " + payload);
 		Boolean collectResults = parameters.isPresent();
 		HashMap<String, String> collector = (collectResults) ? parameters.get()
-				: new HashMap<String, String>();
+				: new HashMap<>();
 		String result = new Utils().readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
 		// NOTE: elementCodeName will not be set if
@@ -764,7 +763,7 @@ public class SimpleToolBarEx {
 
 	private HashMap<String, String> addElement() {
 
-		HashMap<String, String> elementData = new HashMap<String, String>(); // empty
+		HashMap<String, String> elementData = new HashMap<>();
 		Boolean waitingForData = true;
 		Boolean browserRunaway = false;
 		String name = null;
@@ -772,7 +771,7 @@ public class SimpleToolBarEx {
 			String payload = executeScript(getCommand).toString();
 			if (!payload.isEmpty()) {
 				// objects cannot suicide
-				elementData = new HashMap<String, String>();
+				elementData = new HashMap<>();
 				name = readVisualSearchResult(payload, Optional.of(elementData));
 				if (name == null || name.isEmpty()) {
 					System.err.println("Rejected unfinished visual search");
@@ -862,7 +861,7 @@ public class SimpleToolBarEx {
 		completeVisualSearch("element name");
 		String payload = executeScript(getCommand).toString();
 		assertFalse(payload.isEmpty());
-		HashMap<String, String> data = new HashMap<String, String>();
+		HashMap<String, String> data = new HashMap<>();
 		readVisualSearchResult(payload, Optional.of(data));
 		closeVisualSearch();
 		flushVisualSearchResult();
@@ -961,7 +960,7 @@ public class SimpleToolBarEx {
 	}
 
 	private void injectElementSearch(Optional<String> script) {
-		ArrayList<String> scripts = new ArrayList<String>(
+		ArrayList<String> scripts = new ArrayList<>(
 				Arrays.asList(new Utils().getScriptContent("ElementSearch.js")));
 		if (script.isPresent()) {
 			scripts.add(script.get());
@@ -1029,7 +1028,7 @@ public class SimpleToolBarEx {
 				}
 				cs.render();
 				if ((Boolean) shell.getData("updated")) {
-					HashMap<String, String> data = new HashMap<String, String>();
+					HashMap<String, String> data = new HashMap<>();
 					// form sets result to the modified element attributes JSON
 					String name = new Utils().readData((String) shell.getData("result"),
 							Optional.of(data));

@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+// import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -112,10 +113,10 @@ public class BrowserDriver {
 	private static DesiredCapabilities capabilitiesAndroid() {
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 
-		Map<String, String> mobileEmulation = new HashMap<String, String>();
+		Map<String, String> mobileEmulation = new HashMap<>();
 		mobileEmulation.put("deviceName", "Google Nexus 5");
 
-		Map<String, Object> chromeOptions = new HashMap<String, Object>();
+		Map<String, Object> chromeOptions = new HashMap<>();
 		chromeOptions.put("mobileEmulation", mobileEmulation);
 		capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
@@ -125,10 +126,10 @@ public class BrowserDriver {
 	private static DesiredCapabilities capabilitiesiPhone() {
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 
-		Map<String, String> mobileEmulation = new HashMap<String, String>();
+		Map<String, String> mobileEmulation = new HashMap<>();
 		mobileEmulation.put("deviceName", "Apple iPhone 6");
 
-		Map<String, Object> chromeOptions = new HashMap<String, Object>();
+		Map<String, Object> chromeOptions = new HashMap<>();
 		chromeOptions.put("mobileEmulation", mobileEmulation);
 		capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
@@ -138,10 +139,10 @@ public class BrowserDriver {
 	private static DesiredCapabilities capabilitiesiPad() {
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 
-		Map<String, String> mobileEmulation = new HashMap<String, String>();
+		Map<String, String> mobileEmulation = new HashMap<>();
 		mobileEmulation.put("deviceName", "Apple iPad");
 
-		Map<String, Object> chromeOptions = new HashMap<String, Object>();
+		Map<String, Object> chromeOptions = new HashMap<>();
 		chromeOptions.put("mobileEmulation", mobileEmulation);
 		capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
@@ -164,6 +165,13 @@ public class BrowserDriver {
 		System.setProperty("webdriver.reap_profile", "false");
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 
+		// require Selenium 3.3.1 + ?
+		/*
+		FirefoxOptions firefoxOptions = new FirefoxOptions();
+		firefoxOptions.setBinary(new File(firefoxBrowserPath).getAbsolutePath());
+
+		capabilities.setCapability("moz:firefoxOptions", firefoxOptions);
+		*/
 		capabilities.setCapability("firefox_binary",
 				new File(firefoxBrowserPath).getAbsolutePath());
 
@@ -196,7 +204,7 @@ public class BrowserDriver {
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 		ChromeOptions options = new ChromeOptions();
 
-		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
+		HashMap<String, Object> chromePrefs = new HashMap<>();
 		chromePrefs.put("profile.default_content_settings.popups", 0);
 		String downloadFilepath = System.getProperty("user.dir")
 				+ System.getProperty("file.separator") + "target"

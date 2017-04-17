@@ -46,7 +46,7 @@ public class ComplexFormEx {
 	private final static int buttonHeight = 28;
 	private static Boolean updated = false;
 	private static String result = null;
-	private static HashMap<String, String> elementData = new HashMap<String, String>(); // empty
+	private static HashMap<String, String> elementData = new HashMap<>(); // empty
 
 	ComplexFormEx(Display parentDisplay, Shell parent) {
 		display = (parentDisplay != null) ? parentDisplay : new Display();

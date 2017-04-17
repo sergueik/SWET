@@ -16,11 +16,12 @@ public class PropertiesParser {
 
 	public static HashMap<String, String> getProperties(final String fileName) {
 		Properties p = new Properties();
-		HashMap<String, String> propertiesMap = new HashMap<String, String>();
-		System.err
-				.println(String.format("Reading properties file: '%s'", fileName));
+		HashMap<String, String> propertiesMap = new HashMap<>();
+		// System.err.println(String.format("Reading properties file: '%s'",
+		// fileName));
 		try {
 			p.load(new FileInputStream(fileName));
+			@SuppressWarnings("unchecked")
 			Enumeration<String> e = (Enumeration<String>) p.propertyNames();
 			for (; e.hasMoreElements();) {
 				String key = e.nextElement();

@@ -52,7 +52,7 @@ public class OSUtils {
 	static class HWND extends HANDLE {
 	}
 
-	private static Map<String, Object> OPTIONS = new HashMap<String, Object>();
+	private static Map<String, Object> OPTIONS = new HashMap<>();
 	static {
 		OPTIONS.put(Library.OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
 		OPTIONS.put(Library.OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
@@ -80,5 +80,4 @@ public class OSUtils {
 				int dwFlags, char[] pszPath);
 
 	}
-
 }

@@ -47,14 +47,14 @@ public class ConfigFormEx {
 	private final static int buttonHeight = 28;
 	private final static int labelWidth = 150;
 	private static String osName = OSUtils.getOsName();
-	private static HashMap<String, String> configData = new HashMap<String, String>();
+	private static HashMap<String, String> configData = new HashMap<>();
 	// NOTE: use the same DOM for Browser config options to simplify code
 	// the values for "Browser" hash are not used
-	private static HashMap<String, HashMap<String, String>> configOptions = new HashMap<String, HashMap<String, String>>();
-	private static HashMap<String, String> templates = new HashMap<String, String>();
+	private static HashMap<String, HashMap<String, String>> configOptions = new HashMap<>();
+	private static HashMap<String, String> templates = new HashMap<>();
 
 	ConfigFormEx(Display parentDisplay, Shell parent) {
-		HashMap<String, String> browserOptions = new HashMap<String, String>();
+		HashMap<String, String> browserOptions = new HashMap<>();
 		for (String browser : new ArrayList<String>(Arrays.asList(new String[] {
 				"Chrome", "Firefox", "Internet Explorer", "Edge", "Safari" }))) {
 			browserOptions.put(browser, "unused");

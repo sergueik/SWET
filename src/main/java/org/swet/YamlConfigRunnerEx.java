@@ -15,7 +15,7 @@ public class YamlConfigRunnerEx {
 
 	public static void main(String[] args) throws IOException {
 
-		yamlFile = (args.length == 0) ? String.format("%s/src/main/resources/%s",
+		yamlFile = (args.length == 0) ? String.format("%s/%s",
 				System.getProperty("user.dir"), "sample.yaml") : args[0];
 
 		Configuration config = YamlHelper.loadConfiguration(yamlFile);

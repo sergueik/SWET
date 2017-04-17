@@ -27,7 +27,7 @@ import org.swet.Utils;
 public class RenderTemplate {
 
 	private static final HashMap<String, String> elementData = createSampleElementData();
-	private static HashMap<String, HashMap<String, String>> testData;
+	private static HashMap<String, HashMap<String, String>> testData = new HashMap<>();
 	private String templateName = "templates/example2.twig";
 	private String templateAbsolutePath = "";
 
@@ -48,7 +48,7 @@ public class RenderTemplate {
 	}
 
 	private static HashMap<String, String> createSampleElementData() {
-		HashMap<String, String> elementData = new HashMap<String, String>();
+		HashMap<String, String> elementData = new HashMap<>();
 		elementData.put("ElementId", "id");
 		elementData.put("ElementCodeName",
 				"name of the element, supplied during recoring");
@@ -61,7 +61,7 @@ public class RenderTemplate {
 	}
 
 	private static HashMap<String, HashMap<String, String>> createSampleTestData() {
-		final HashMap<String, HashMap<String, String>> testData = new HashMap<String, HashMap<String, String>>();
+		final HashMap<String, HashMap<String, String>> testData = new HashMap<>();
 		testData.put("1", elementData);
 		return testData;
 	}
@@ -74,7 +74,7 @@ public class RenderTemplate {
 	public String renderTest(HashMap<String, HashMap<String, String>> testData) {
 		Iterator<String> testDataKeys = testData.keySet().iterator();
 		String stepId;
-		List<String> scripts = new ArrayList<String>();
+		List<String> scripts = new ArrayList<>();
 		while (testDataKeys.hasNext()) {
 			stepId = testDataKeys.next();
 			HashMap<String, String> elementData = testData.get(stepId);
@@ -172,8 +172,6 @@ public class RenderTemplate {
 	}
 
 	public static void main(String[] args) {
-		// TODO:
-		// C:\developer\sergueik\selenium_java\swd_recorder\src\main\resources\templates\example3.twig
 		String templatePath = "C:\\developer\\sergueik\\selenium_java\\swd_recorder\\src\\main\\resources\\templates\\example3.twig";
 		RenderTemplate renderTemplate = new RenderTemplate();
 		System.err

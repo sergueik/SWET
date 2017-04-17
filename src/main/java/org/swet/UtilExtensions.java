@@ -93,7 +93,7 @@ public class UtilExtensions {
 	public static List<Model> jsonArrayToModel(JSONArray jsonArray, Class model,
 			Mapper mapper) throws JSONException, IllegalAccessException,
 			NoSuchFieldException, InstantiationException {
-		List<Model> list = new ArrayList<Model>();
+		List<Model> list = new ArrayList<>();
 		int length = jsonArray.length();
 		for (int index = 0; index < length; index++) {
 			list.add(
@@ -104,10 +104,8 @@ public class UtilExtensions {
 
 	private static abstract class Mapper {
 
-		protected HashMap<String, String> mapper = new HashMap<String, String>();
-
+		protected HashMap<String, String> mapper = new HashMap<>();
 		abstract public void init();
-
 		public Mapper() {
 			init();
 		}
@@ -131,7 +129,7 @@ public class UtilExtensions {
 		abstract public String keyToString();
 
 		public List<String> getProperties() {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (Field field : this.getClass().getDeclaredFields()) {
 				list.add(field.getName());
 			}

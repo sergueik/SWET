@@ -23,7 +23,7 @@ public class ListJavaFonts {
 
 	public static void main(String[] args) {
 
-		List<String> monospaceFontFamilyNames = new ArrayList<String>();
+		List<String> monospaceFontFamilyNames = new ArrayList<>();
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		String[] fontFamilyNames = graphicsEnvironment
@@ -39,8 +39,8 @@ public class ListJavaFonts {
 			int fontStyle = Font.PLAIN;
 			int fontSize = 12;
 			Font font = new Font(fontFamilyName, fontStyle, fontSize);
-			List<Integer> codePoints = new ArrayList<Integer>(Arrays.asList(
-					108 /* l */, 109 /* m */, 119 /* w */, 49 /* 1 */ , 52 /* 4 */));
+			List<Integer> codePoints = new ArrayList<>(Arrays.asList(108 /* l */,
+					109 /* m */, 119 /* w */, 49 /* 1 */ , 52 /* 4 */));
 			FontMetrics fontMetrics = graphics.getFontMetrics(font);
 
 			int firstCharacterWidth = 0;
@@ -73,5 +73,4 @@ public class ListJavaFonts {
 			System.out.println(fontFamily);
 		}
 	}
-
 }

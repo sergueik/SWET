@@ -94,7 +94,7 @@ public class SwetTest {
 	private static long pollingInterval = 500;
 	private static String baseURL = "about:blank";
 	private static final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
-	private static HashMap<String, String> data = new HashMap<String, String>();
+	private static HashMap<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
 	private static String browser = "chrome";
 
@@ -195,7 +195,7 @@ public class SwetTest {
 		// Assert
 		String payload = (String) executeScript(getCommand);
 		assertFalse(payload.isEmpty());
-		HashMap<String, String> elementData = new HashMap<String, String>(); // empty
+		HashMap<String, String> elementData = new HashMap<>();
 		String elementName = readVisualSearchResult(payload,
 				Optional.of(elementData));
 		Configuration config = new Configuration();
@@ -208,7 +208,7 @@ public class SwetTest {
 		config.created = new Date();
 		config.browserConfiguration = browserConfiguration;
 		config.updated = new Date();
-		HashMap<String, HashMap<String, String>> testData = new HashMap<String, HashMap<String, String>>();
+		HashMap<String, HashMap<String, String>> testData = new HashMap<>();
 		String commandId = elementData.get("CommandId");
 		testData.put(commandId, elementData);
 		config.elements = testData;
@@ -237,7 +237,7 @@ public class SwetTest {
 		System.err.println("Processing payload: " + payload);
 		Boolean collectResults = parameters.isPresent();
 		HashMap<String, String> collector = (collectResults) ? parameters.get()
-				: new HashMap<String, String>();
+				: new HashMap<>();
 		String result = new Utils().readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
 		// NOTE: elementCodeName will not be set if
@@ -385,7 +385,7 @@ public class SwetTest {
 	}
 
 	private void injectKeyMaster(Optional<String> script) {
-		ArrayList<String> scripts = new ArrayList<String>(
+		ArrayList<String> scripts = new ArrayList<>(
 				Arrays.asList(new Utils().getScriptContent("ElementSearch.js")));
 		if (script.isPresent()) {
 			scripts.add(script.get());
