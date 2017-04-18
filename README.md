@@ -8,8 +8,10 @@ Dmytro Zharii and author. __SWET__ is using the
 [Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) (currently, with third party [Opal](https://github.com/lcaron/opal) widget library) instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax).
 
 Therefore __SWET__ runs on Windows, Mac or Linux, 32 or 64 bit platforms.
-__SWET__ is currently beta quality: one can create a session and collect Page Element information and convert it to a
-fragment of the code in the Java or C# language; eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
+__SWET__ is currently beta quality: one can create a session and collect Page Elements information and convert it to a
+fragment of the code in the Java or C# or other language. 
+Eventually the full functionality of __SWD__ is to be achieved. 
+Also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
 
 The application is being developed in Ecipse with [SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html),
 on Ubuntu 16.04 and Windows.
@@ -27,6 +29,8 @@ The Virtualbox images are setup for Selenium 3.x testing (work in progress).
 ### Usage
 
 In order to use __SWET__ one will need to compile the application jar from the source - it is not difficult.
+Latest versions of __SWET__ can be compiled and run directly from Eclipse - 
+the Maven project still needs to be updated for the developer host OS.
 Continue reading for info on how to get the dev environment setup.
 
 ### Prerequisites
@@ -170,33 +174,28 @@ The flowchart button
 starts codegeneration using [Jtwig](http://jtwig.org/) tempate and `elementData` hash and opens result in a separate dialog:
 ![codegen](https://github.com/sergueik/SWET/blob/master/screenshots/codegen.png)
 
-The preferences.png button
+The preferences button
 ![preferences](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/preferences.png)
 opens the configuration dialog
 ![config](https://github.com/sergueik/SWET/blob/master/screenshots/config.png)
 Currently the browser and template selection are configurable, one also can set the base URL.
 
-There is also a demo button that executes these actions automatically (for one element):
-![demo](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/demo.png)
-
-Currently project is hardcoded to use Chrome browser on Windows os, and Firefox on the rest of platforms.
-The YAML configuration will be fuly integrated shotly.
-Eventually other common formats: YAML, JSON, POI or Java properties file - will be supported.
+Currently project starts with Chrome browser on Windows OS, and Firefox on Linux. This can be changed using preferences dialog.
 
 ### Operation
 Both __SWD__ and __SWET__ inject certain Javascript code `ElementSearch.js` into the page, that the user can interct with with the mouse right-click.
-After injecting the script the IDE waits polling for the speficic
-`document.swdpr_command` object to be present on that page. This object is created  by the `ElementSearch.js`
-when user selects the specific element on the page he is interested to access in the test script,
-and confirms the selection by entering the name of the element and clicking the 'Add Element' button.
-The `document.swdpr_command` object will contain certain properties of the selected element:
+After injecting the script the IDE waits polling for the specific
+`document.swdpr_command` object is created on the page by `ElementSearch.js`
+when user chooses the element of interest on the page, confirms the selection by entering the name of the element and clicking the 'Add Element' button.
+The `document.swdpr_command` object will convey certain properties of the selected element:
 
 * Absolute XPath, that looks like `/html/body/*[@id = "www-wikipedia-org"]/div[1]/div[1]/img[1]`
 * Attribute-extended XPath that looks like `//a[@href="/script/answers"]/img[@src="question.png"]`
-* Firebug-style cssSelector (all classes attached to all parent nodes), that look like `ul.nav-links li.nav-links__item div.central.featured.logo-wrapper > img.central.featured-logo`
-* Element text (transalted under the hood into XPath `[contains()]` expression).
+* Firebug-style cssSelector, that look like `ul.nav-links li.nav-links__item div.central.featured.logo-wrapper > img.central.featured-logo` - all classes attached to target node and every parent node
+* Element text, that is transalted under the hood into XPath `//<tag name>[contains(text(),'<text>')]` expression.
 * Input for Angular Protractor-specific locators `repeater`, `binding`, `model`, `repeaterRow` etc. (WIP)
 * Element ID (when available)
+* Element tag name (used when building the selector via Element Text)
 
 #### Automation of Locator Shortening
 Auto-generated locators often become unnecessarily long, e.g. for the facebook logo one may get:
@@ -210,7 +209,7 @@ Adding smart locator generators is a work in progress.
 
 ### Dependencies Versions
 
-As typical with Selenium, the __SWET__ application only run smoothly  with certain Selenium jar version and it's compatible 
+As typical with Selenium, the __SWET__ application only run smoothly  with certain Selenium jar version and it's compatible
 version of browser driver and browser itself is used.
 The __SWET__ application master branch is being developed with
 
@@ -232,8 +231,8 @@ Examples of partially supported version combinations are listed below. Neither S
 | CHROME_VERSION       | __57.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
-With Selenium __3.2.0__ on Windows, every browser currently fails with a 
-differnt kind of instability (there is no problem under Linux). A possible workaround that was found helpful 
+With Selenium __3.2.0__ on Windows, every browser currently fails with a
+differnt kind of instability (there is no problem under Linux). A possible workaround that was found helpful
 is to include the `selenium-server-standalone-3.3.1.jar`
 
 Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedConditions` signatures (currently work in progress).
@@ -371,8 +370,11 @@ elements:
   * [SWT Browser component based recorder](https://github.com/itspanzi/swt-browser-recorder-spike)
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
   * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
+
 #### Eclipse Plugins
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
+  * [eclipse-extras](https://rherrmann.github.io/eclipse-extras/)
+  * [eclipse-plugin-tutorial](http://www.wideskills.com/eclipse-plugin-tutorial/introduction-to-eclipse-plugin-development)
 
 #### Code Generation
 

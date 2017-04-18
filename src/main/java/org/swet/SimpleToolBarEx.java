@@ -183,8 +183,6 @@ public class SimpleToolBarEx {
 
 	private static final int shellWidth = 768;
 	private static final int shellHeight = 324;
-	private static final int browserDemoWidth = 900;
-	private static final int browserDemoHeight = 800;
 	private static int step_index = 0;
 	private static String osName = OSUtils.getOsName();
 	private static Display display;
@@ -230,16 +228,6 @@ public class SimpleToolBarEx {
 
 	public String getPageImage() {
 		return this.pageImage;
-	}
-
-	private String demoImage = "demo_36.png";
-
-	public void setDemoImage(final String data) {
-		this.demoImage = data;
-	}
-
-	public String getDemoImage() {
-		return this.demoImage;
 	}
 
 	private String openImage = "open_36.png";
@@ -322,9 +310,6 @@ public class SimpleToolBarEx {
 			iconData.put("shutdown icon",
 					new Image(display, this.getClass().getClassLoader()
 							.getResourceAsStream(String.format("images/%s", quitImage))));
-			iconData.put("demo icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", demoImage))));
 			iconData.put("step icon",
 					new Image(display,
 							this.getClass().getClassLoader().getResourceAsStream(
@@ -375,14 +360,6 @@ public class SimpleToolBarEx {
 		saveTool.setImage(iconData.get("save icon"));
 		saveTool.setToolTipText("Save session");
 
-		new ToolItem(toolBar, SWT.SEPARATOR);
-
-		ToolItem demoTool = new ToolItem(toolBar, SWT.PUSH);
-		demoTool.setImage(iconData.get("demo icon"));
-		demoTool.setToolTipText("Demo app");
-
-		new ToolItem(toolBar, SWT.SEPARATOR);
-
 		ToolItem preferencesTool = new ToolItem(toolBar, SWT.PUSH);
 		preferencesTool.setImage(iconData.get("prefs icon"));
 
@@ -394,7 +371,6 @@ public class SimpleToolBarEx {
 
 		pageExploreTool.setEnabled(false);
 		codeGenTool.setEnabled(false);
-		demoTool.setEnabled(false);
 		saveTool.setEnabled(false);
 
 		toolBar.pack();
@@ -449,7 +425,6 @@ public class SimpleToolBarEx {
 				if (!osName.startsWith("Mac")) {
 					// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
 					// combinations
-					demoTool.setEnabled(true);
 				}
 				codeGenTool.setEnabled(true);
 				// driver.get(getResourceURI("blankpage.html"));
@@ -638,58 +613,6 @@ public class SimpleToolBarEx {
 			}
 		});
 
-		demoTool.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent event) {
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				if (driver != null) {
-					updateStatus("Running the demo");
-					demoTool.setEnabled(false);
-					wait = new WebDriverWait(driver, flexibleWait);
-					wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
-					actions = new Actions(driver);
-					driver.manage().window()
-							.setPosition(new org.openqa.selenium.Point(600, 0));
-					driver.manage().window()
-							.setSize(new Dimension(browserDemoWidth, browserDemoHeight));
-					final String demoURL = "https://www.ryanair.com/ie/en/";
-					final String demoSelector = "#home div.specialofferswidget h3 > span:nth-child(1)";
-					HashMap<String, String> elementData = demoAddElement(demoURL,
-							By.cssSelector(demoSelector));
-					String name = elementData.get("ElementCodeName");
-					elementData.put("ElementStepNumber", String.format("%d", step_index));
-
-					// addButton(name, elementData, composite);
-					// TODO: branch
-
-					if (!elementData.containsKey("ElementSelectedBy")) {
-						elementData.put("ElementSelectedBy", "ElementCssSelector");
-					}
-
-					// Append a Breadcrumb Item Button
-					String commandId = String.format("%s-demo-%d",
-							elementData.get("CommandId"), step_index);
-
-					if (!testData.containsKey("commandId")) {
-						testData.put(commandId, elementData);
-						stepKeys.add(commandId);
-						addBreadCrumpItem(elementData.get("ElementCodeName"), commandId,
-								elementData, bc);
-						shell.layout(true, true);
-						shell.pack();
-					} else {
-						testData.replace(commandId, elementData);
-					}
-					updateStatus("Ready");
-					statusMessage.pack();
-					demoTool.setEnabled(true);
-				}
-			}
-		});
-
 		shutdownTool.addListener(SWT.Selection, event -> {
 			updateStatus("Shutting down");
 			if (driver != null) {
@@ -819,68 +742,6 @@ public class SimpleToolBarEx {
 			closeVisualSearch();
 		}
 		return elementData;
-	}
-
-	private HashMap<String, String> demoAddElement(String URL, By by) {
-		driver.get(URL);
-		/*
-		wait.until(new Function<WebDriver, Boolean>() {
-			@Override
-			public Boolean apply(WebDriver d) {
-				WebElement e = d.findElement(by);
-				return e.isDisplayed();
-			}
-		});
-		*/
-		WebElement element = null;
-		try {
-			element = wait
-					.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
-			highlight(element);
-		} catch (TimeoutException e) {
-			(new ExceptionDialogEx(Display.getCurrent(), shell, e)).execute();
-		}
-		injectElementSearch(Optional.<String> empty());
-
-		// NOTE: with FF the CONTROL mouse pointer appears to be misplaced
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException exception) {
-		}
-		/*
-		WebElement element = wait.until(new Function<WebDriver, WebElement>() {
-			@Override
-			public WebElement apply(WebDriver d) {
-				WebElement e = d.findElement(by);
-				return e.isDisplayed() ? e : null;
-			}
-		});
-		*/
-		// "Demo" functionality appears to be currently broken on Mac with
-		// not passing the Keys.COMMAND
-		Keys keyCTRL = osName.startsWith("Mac") ? Keys.COMMAND : Keys.CONTROL;
-		try {
-			actions.keyDown(keyCTRL).build().perform();
-			actions.moveToElement(element).contextClick().build().perform();
-			actions.keyUp(keyCTRL).build().perform();
-		} catch (WebDriverException e) {
-			// TODO: print a message box
-			System.err.println("Ignoring exception: " + e.toString());
-		}
-		executeScript(String.format("scroll(0, %d);", -600));
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-
-		completeVisualSearch("element name");
-		String payload = executeScript(getCommand).toString();
-		assertFalse(payload.isEmpty());
-		HashMap<String, String> data = new HashMap<>();
-		readVisualSearchResult(payload, Optional.of(data));
-		closeVisualSearch();
-		flushVisualSearchResult();
-		return data;
 	}
 
 	private void highlight(WebElement element) {
@@ -1021,7 +882,6 @@ public class SimpleToolBarEx {
 				if (event.button == 3) {
 				}
 			}
-
 		});
 
 		item.addSelectionListener(new SelectionAdapter() {
@@ -1064,41 +924,10 @@ public class SimpleToolBarEx {
 		step_index++;
 	}
 
-	// Adds a button with attached dialog
-	private void addButton(String name, HashMap<String, String> data,
-			Composite composite) {
-
-		Button button = new Button(composite, SWT.PUSH | SWT.BORDER);
-		button.setText(String.format("Step %d: %s", (int) (step_index + 1), name));
-		button.setData("origin", data);
-		button.setData("text",
-				String.format("Step %d: %s", (int) (step_index + 1), name));
-
-		button.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				Object into = event.widget.getData("origin");
-				String text = (String) event.widget.getData("text");
-				boolean answer = MessageDialog.openConfirm(shell, button.getText(),
-						String.format("Details of %s\u2026", text));
-			}
-		});
-
-		step_index++;
-		Control[] children = shell.getChildren();
-		if (children.length == 0) {
-			button.setParent(shell);
-		} else {
-			button.moveBelow(children[children.length - 1]);
-		}
-		shell.layout(new Control[] { button });
-	}
-
 	@Override
 	public void finalize() {
 
 		Iterator<Image> iconIterator = iconData.values().iterator();
-
 		while (iconIterator.hasNext()) {
 			Image icon = (Image) iconIterator.next();
 			icon.dispose();
