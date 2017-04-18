@@ -6,14 +6,14 @@ template: Core Selenium Java
 {% if (ElementText != '') -%}
 // {{ ElementText }}
 {% endif -%}
-WebElement element = driver.findElement( 
+WebElement element = driver.findElement(
 {% if (ElementSelectedBy == 'ElementCssSelector') -%}
   By.cssSelector("{{ ElementCssSelector }}")
 {% elseif (ElementSelectedBy == 'ElementXPath') -%}
-  By.Xpath("{{ ElementXPath }}")
+  By.xpath("{{ ElementXPath }}")
 {% elseif (ElementSelectedBy == 'ElementId') -%}
-  By.Id("{{ ElementId }}")
+  By.id("{{ ElementId }}")
 {% elseif (ElementSelectedBy == 'ElementText') -%}
-  By.Xpath("//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]")
+  By.xpath("//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]")
 {% endif -%}
 )

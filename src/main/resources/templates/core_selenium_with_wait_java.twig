@@ -4,7 +4,7 @@ template: Core Selenium with wait / Java
 // {{ ElementCodeName }}
 {% if (ElementText != '') -%}
 // {{ ElementText }}
-WebElement element = 
+WebElement element =
 {% endif -%}
 {% if (ElementSelectedBy == 'ElementText') -%}
 wait.until( new ExpectedCondition<Webelement>(){

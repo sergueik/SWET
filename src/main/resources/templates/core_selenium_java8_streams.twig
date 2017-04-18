@@ -1,0 +1,23 @@
+{#
+template: Core Selenium Java8 / Streams
+#}
+// {{ ElementCodeName }}
+{% if (ElementText != '') -%}
+// Text: {{ ElementText }}
+{% endif -%}
+{% if (ElementSelectedBy == 'ElementText') -%}
+WebElement element = driver.findElements(  By.tagName("{{ ElementTagName }}"
+                        .stream().filter(o -> {
+								return (Boolean) (o.getText().contains("{{ ElementText }}"));
+							}).findFirst();
+{% else -%}
+WebElement element = driver.findElement(
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+  By.cssSelector("{{ ElementCssSelector }}")
+{% elseif (ElementSelectedBy == 'ElementXPath') -%}
+  By.xpath("{{ ElementXPath }}")
+{% elseif (ElementSelectedBy == 'ElementId') -%}
+  By.id("{{ ElementId }}")
+{% endif -%}
+)
+{% endif -%}

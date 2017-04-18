@@ -1,0 +1,19 @@
+{#
+template: Core Selenium C#
+#}
+
+// {{ ElementCodeName }}
+{% if (ElementText != '') -%}
+// {{ ElementText }}
+{% endif -%}
+IWebElement button = driver.FindElement(
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+  By.CssSelector("{{ ElementCssSelector }}")
+{% elseif (ElementSelectedBy == 'ElementXPath') -%}
+  By.XPath("{{ ElementXPath }}")
+{% elseif (ElementSelectedBy == 'ElementId') -%}
+  By.Id("{{ ElementId }}")
+{% elseif (ElementSelectedBy == 'ElementText') -%}
+  By.XPath("//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]")
+{% endif -%}
+)

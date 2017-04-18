@@ -1,0 +1,24 @@
+{#
+template: Selenium with LINQ C#
+#}
+
+// {{ ElementCodeName }}
+{% if (ElementText != '') -%}
+// {{ ElementText }}
+{% endif -%}
+IWebElement element =
+{% if (ElementSelectedBy == 'ElementText') -%}
+  driver.FindElements(By.TagName("{{ ElementTagName }}"))
+        .First(o => String.Compare("{{ElementText}}", o.Text, StringComparison.InvariantCulture) == 0);
+{% else -%}
+  driver.FindElement(
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+  By.CssSelector("{{ ElementCssSelector }}")
+{% elseif (ElementSelectedBy == 'ElementXPath') -%}
+  By.XPath("{{ ElementXPath }}")
+{% elseif (ElementSelectedBy == 'ElementId') -%}
+  By.Id("{{ ElementId }}")
+{% endif -%}
+)
+{% endif -%}
+)
