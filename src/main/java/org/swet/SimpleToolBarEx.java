@@ -172,13 +172,14 @@ public class SimpleToolBarEx {
 	private HashMap<String, HashMap<String, String>> testData = new HashMap<>();
 	private HashMap<String, Image> iconData = new HashMap<>();
 	private Configuration config = null;
+	private static HashMap<String, Boolean> browserStatus = new HashMap<>();
 	private static String configFilePath; // TODO: rename
 	private static Map<String, String> configData = new HashMap<>();
-	private static HashMap<String, Boolean> browserStatus = new HashMap<>();
 	static {
 		configData.put("Browser", "Chrome");
 		configData.put("Template", "Core Selenium Java (embedded)");
 	}
+	private static final String defaultConfig = "{ \"Browser\": \"Chrome\", \"Template\": \"Core Selenium Java (embedded)\", }";
 
 	private static final int shellWidth = 768;
 	private static final int shellHeight = 324;
@@ -563,11 +564,11 @@ public class SimpleToolBarEx {
 		});
 
 		preferencesTool.addListener(SWT.Selection, event -> {
-			preferencesTool.setEnabled(true);
+			preferencesTool.setEnabled(false);
 			shell.setData("updated", false);
 
-			shell.setData("CurrentConfig", new Utils().writeDataJSON(configData,
-					"{ \"Browser\": \"Chrome\", \"Template\": \"Basic Java\", }"));
+			shell.setData("CurrentConfig",
+					new Utils().writeDataJSON(configData, defaultConfig));
 			ConfigFormEx o = new ConfigFormEx(Display.getCurrent(), shell);
 			o.render();
 			if ((Boolean) shell.getData("updated")) {
@@ -660,14 +661,28 @@ public class SimpleToolBarEx {
 							By.cssSelector(demoSelector));
 					String name = elementData.get("ElementCodeName");
 					elementData.put("ElementStepNumber", String.format("%d", step_index));
-					addButton(name, elementData, composite);
-					/*
-						final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-								true);
-						if (newSize.x > 500) {
-							shell.setBounds(boundRect);
-						}
-					*/
+
+					// addButton(name, elementData, composite);
+					// TODO: branch
+
+					if (!elementData.containsKey("ElementSelectedBy")) {
+						elementData.put("ElementSelectedBy", "ElementCssSelector");
+					}
+
+					// Append a Breadcrumb Item Button
+					String commandId = String.format("%s-demo-%d",
+							elementData.get("CommandId"), step_index);
+
+					if (!testData.containsKey("commandId")) {
+						testData.put(commandId, elementData);
+						stepKeys.add(commandId);
+						addBreadCrumpItem(elementData.get("ElementCodeName"), commandId,
+								elementData, bc);
+						shell.layout(true, true);
+						shell.pack();
+					} else {
+						testData.replace(commandId, elementData);
+					}
 					updateStatus("Ready");
 					statusMessage.pack();
 					demoTool.setEnabled(true);
