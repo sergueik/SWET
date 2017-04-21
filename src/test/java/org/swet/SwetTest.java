@@ -93,7 +93,8 @@ public class SwetTest {
 	private static int implicitWait = 1;
 	private static long pollingInterval = 500;
 	private static String baseURL = "about:blank";
-	private static final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
+	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
+	private static String defaultScript = "ElementSearch.js";
 	private static HashMap<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
 	private static String browser = "chrome";
@@ -147,7 +148,7 @@ public class SwetTest {
 		driver.get("https://www.codeproject.com/");
 		WebElement element = wait.until(ExpectedConditions.visibilityOf(driver
 				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
-		injectKeyMaster(Optional.<String> empty());
+		injectScripts(Optional.<String> empty());
 		highlight(element);
 		// Act
 
@@ -167,7 +168,7 @@ public class SwetTest {
 		completeVisualSearch("element name");
 
 		// Assert
-		String payload = (String) executeScript(getCommand);
+		String payload = (String) executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		String result = readVisualSearchResult(payload);
 	}
@@ -176,7 +177,7 @@ public class SwetTest {
 	@Test
 	public void testStatic() {
 		driver.get(new Utils().getPageContent("ElementSearch.html"));
-		injectKeyMaster(Optional.<String> empty());
+		injectScripts(Optional.<String> empty());
 		// Unsupported URL protocol:
 		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
 		WebElement element = wait.until(
@@ -193,7 +194,7 @@ public class SwetTest {
 		completeVisualSearch("this element name");
 
 		// Assert
-		String payload = (String) executeScript(getCommand);
+		String payload = (String) executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		HashMap<String, String> elementData = new HashMap<>();
 		String elementName = readVisualSearchResult(payload,
@@ -384,9 +385,11 @@ public class SwetTest {
 		}
 	}
 
-	private void injectKeyMaster(Optional<String> script) {
-		ArrayList<String> scripts = new ArrayList<>(
-				Arrays.asList(new Utils().getScriptContent("ElementSearch.js")));
+	// TODO: array
+	private void injectScripts(Optional<String> script) {
+		ArrayList<String> scripts = (defaultScript == null) ? new ArrayList<>()
+				: new ArrayList<>(
+						Arrays.asList(new Utils().getScriptContent(defaultScript)));
 		if (script.isPresent()) {
 			scripts.add(script.get());
 		}
