@@ -394,6 +394,7 @@ elements:
   * [Jtwig](https://github.com/jtwig/jtwig)
   * [Thymeleaf](http://www.thymeleaf.org/)
   * [StringTemplate](http://www.stringtemplate.org/)
+  * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
 
 #### Selenium Locator Strategies
 
@@ -408,6 +409,7 @@ elements:
 
 #### Misc.
 
+  * [AnarSultanov/InstalledBrowsers](https://github.com/AnarSultanov/InstalledBrowsers)
   * [how to define conditional properties in maven](http://stackoverflow.com/questions/14430122/how-to-define-conditional-properties-in-maven)
   * [eclipse xwt](https://wiki.eclipse.org/XWT_Documentation)
   * [mono/xwt](https://github.com/mono/xwt)
@@ -422,6 +424,9 @@ elements:
 
 The code was originally located inside a much larger repository: `https://github.com/sergueik/selenium_java/tree/master/swd_recorder`.
 On April 11 2017 the master branch HEAD was copied into separate project, to track past histories and branches please review the original project location.
+
+### License
+This project is licensed under the terms of the MIT license.
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
