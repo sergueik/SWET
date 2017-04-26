@@ -269,16 +269,17 @@ public class ConfigFormEx {
 				if (configOptions.containsKey(configKey)) {
 					final Label configLabel = new Label(this, SWT.NONE);
 					configLabel.setText(configKey);
-
+					// http://www.codejava.net/java-se/swing/jcombobox-basic-tutorial-and-examples
+					// http://stackoverflow.com/questions/19800033/java-swt-list-make-it-unselectable
 					final Combo configValue = new Combo(this, SWT.READ_ONLY);
 					// Set<String> itemsSet = configOptions.get(configKey).keySet();
 					// String[] items = (String[])itemsSet.toArray();
 					String[] items = (String[]) configOptions.get(configKey).keySet()
 							.toArray(new String[0]);
 					configValue.setItems(items);
-					System.err.println(String.format("Setting index of %s to %d",
-							configData.get(configKey),
-							Arrays.asList(items).indexOf(configData.get(configKey))));
+					// System.err.println(String.format("Setting index of %s to %d",
+					// configData.get(configKey),
+					// Arrays.asList(items).indexOf(configData.get(configKey))));
 					configValue
 							.select(Arrays.asList(items).indexOf(configData.get(configKey)));
 					configValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

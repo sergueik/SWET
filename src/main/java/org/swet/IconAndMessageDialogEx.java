@@ -27,13 +27,14 @@ class IconAndMessageDialogEx extends IconAndMessageDialog {
 	private Image image;
 	private Label label;
 	private String message;
-	
+
 	public IconAndMessageDialogEx(Shell parent) {
 		super(parent);
 
 		// Create the image
 		try {
-			image = new Image(parent.getDisplay(), new FileInputStream("facepalm.png"));
+			image = new Image(parent.getDisplay(),
+					new FileInputStream("facepalm.png"));
 		} catch (FileNotFoundException e) {
 		}
 

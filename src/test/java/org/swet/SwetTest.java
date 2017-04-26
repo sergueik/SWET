@@ -81,6 +81,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import org.swet.BrowserDriver;
 import org.swet.Utils;
+import org.swet.OSUtils;
 
 public class SwetTest {
 
@@ -98,7 +99,7 @@ public class SwetTest {
 	private static HashMap<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
 	private static String browser = "chrome";
-
+	
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
 
@@ -228,6 +229,34 @@ public class SwetTest {
 		return osName;
 	}
 
+ private static Map<String, String> browserNames = new HashMap<>();
+	static {
+		browserNames.put("chrome.exe", "Google Chrome");
+		browserNames.put("iexplore.exe", "Internet Explorer");
+		browserNames.put("firefox.exe", "Mozilla Firefox");
+	}
+
+	@Test
+	public void test() {
+		List<String> browsers = OSUtils.getInstalledBrowsers();
+		assertTrue(browsers.size() > 0);
+		System.out.println("Your browsers: " + browsers);
+
+		for (String browserName : browserNames.keySet()) {
+			if (browsers.contains(browserName)) {
+				assertTrue(OSUtils.isInstalled(browserName));
+				assertTrue(OSUtils.getMajorVersion(browserName) > 0);
+				System.out.println(
+						String.format("%s version: %s", browserNames.get(browserName),
+								OSUtils.getVersion(browserName)));
+			} else {
+				assertFalse(OSUtils.isInstalled(browserName));
+				assertTrue(OSUtils.getMajorVersion(browserName) == 0);
+			}
+		}
+	}
+
+   
 	String readVisualSearchResult(String payload) {
 		return readVisualSearchResult(payload,
 				Optional.<HashMap<String, String>> empty());

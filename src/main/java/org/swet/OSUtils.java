@@ -1,19 +1,38 @@
 package org.swet;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.VerRsrc.VS_FIXEDFILEINFO;
+import com.sun.jna.platform.win32.WinReg;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.NativeMapped;
 import com.sun.jna.PointerType;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
 
+import static org.junit.Assert.*;
+
 // origin: http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java 
 public class OSUtils {
 
 	private static String osName = null;
+	private static boolean is64bit = false;
+	private static Map<String, String> installedBrowsers;
 
 	public static String getOsName() {
 		if (osName == null) {
@@ -24,10 +43,34 @@ public class OSUtils {
 
 	public static void main(String[] args) {
 		try {
-			System.err.println(OSUtils.getDesktopPath());
+			System.err.println("Desktop: " + OSUtils.getDesktopPath());
 		} catch (Exception e) {
 			System.err.println(e.toString());
 		}
+
+		Map<String, String> browserNames = new HashMap<>();
+		browserNames.put("chrome.exe", "Google Chrome");
+		browserNames.put("iexplore.exe", "Internet Explorer");
+		browserNames.put("firefox.exe", "Mozilla Firefox");
+
+		List<String> browsers = OSUtils.getInstalledBrowsers();
+		assertTrue(browsers.size() > 0);
+		System.out.println("Your browsers: " + browsers);
+
+		for (String browserName : browserNames.keySet()) {
+		System.out.println("Probing browser: " + browserName);
+			if (browsers.contains(browserName)) {
+				System.out.println(
+						String.format("%s version: %s", browserNames.get(browserName),
+								getVersion(browserName)));
+				assertTrue(isInstalled(browserName));        
+				assertTrue(getMajorVersion(browserName) > 0);
+			} else {
+				assertFalse(isInstalled(browserName));
+				assertTrue(getMajorVersion(browserName) == 0);
+			}
+		}
+
 	}
 
 	public static String getDesktopPath() throws Exception {
@@ -79,5 +122,159 @@ public class OSUtils {
 		public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken,
 				int dwFlags, char[] pszPath);
 
+	}
+
+	// based on: https://github.com/AnarSultanov/InstalledBrowsers
+	public static List<String> getInstalledBrowsers() {
+		if (installedBrowsers == null) {
+			findInstalledBrowsers();
+		}
+		List<String> browsersList = new ArrayList<>();
+		installedBrowsers.keySet().forEach(o -> browsersList.add(o));
+		return browsersList;
+	}
+
+	public static String getPath(String browserName) {
+		if (installedBrowsers == null) {
+			findInstalledBrowsers();
+		}
+		return installedBrowsers.containsKey(browserName)
+				? installedBrowsers.get(browserName) : null;
+	}
+
+	public static boolean isInstalled(String browserName) {
+		if (installedBrowsers == null) {
+			findInstalledBrowsers();
+		}
+		return installedBrowsers.containsKey(browserName);
+	}
+
+	public static String getVersion(String browserName) {
+		if (!isInstalled(browserName))
+			return null;
+		int[] version = getVersionInfo(installedBrowsers.get(browserName));
+		return String.valueOf(version[0]) + "." + String.valueOf(version[1]) + "."
+				+ String.valueOf(version[2]) + "." + String.valueOf(version[3]);
+	}
+
+	public static int getMajorVersion(String browserName) {
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[0] : 0;
+	}
+
+	public static int getMinorVersion(String browserName) {
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[1] : 0;
+	}
+
+	public static int getBuildVersion(String browserName) {
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[2] : 0;
+	}
+
+	public static int getRevisionVersion(String browserName) {
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[3] : 0;
+	}
+
+	private static void findInstalledBrowsers() {
+		if (System.getProperty("os.arch").contains("64")) {
+			is64bit = true;
+		}
+		installedBrowsers = new HashMap<>();
+		Set<String> pathsList = new HashSet<>();
+		pathsList.addAll(findBrowsersInProgramFiles());
+		pathsList.addAll(findBrowsersInRegistry());
+		for (String path : pathsList) {
+			String[] tmp = (path.split("\\\\"));
+			String browser = tmp[tmp.length - 1];
+			installedBrowsers.put(browser, path);
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private static int[] getVersionInfo(String path) {
+		if (installedBrowsers == null) {
+			findInstalledBrowsers();
+		}
+		IntByReference dwDummy = new IntByReference();
+		dwDummy.setValue(0);
+
+		int versionlength = com.sun.jna.platform.win32.Version.INSTANCE
+				.GetFileVersionInfoSize(path, dwDummy);
+
+		byte[] bufferarray = new byte[versionlength];
+		Pointer lpData = new Memory(bufferarray.length);
+		PointerByReference lplpBuffer = new PointerByReference();
+		IntByReference puLen = new IntByReference();
+		boolean fileInfoResult = com.sun.jna.platform.win32.Version.INSTANCE
+				.GetFileVersionInfo(path, 0, versionlength, lpData);
+		boolean verQueryVal = com.sun.jna.platform.win32.Version.INSTANCE
+				.VerQueryValue(lpData, "\\", lplpBuffer, puLen);
+
+		VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(
+				lplpBuffer.getValue());
+		lplpBufStructure.read();
+
+		int v1 = (lplpBufStructure.dwFileVersionMS).intValue() >> 16;
+		int v2 = (lplpBufStructure.dwFileVersionMS).intValue() & 0xffff;
+		int v3 = (lplpBufStructure.dwFileVersionLS).intValue() >> 16;
+		int v4 = (lplpBufStructure.dwFileVersionLS).intValue() & 0xffff;
+		return new int[] { v1, v2, v3, v4 };
+	}
+
+  
+	private static List<String> findBrowsersInProgramFiles() {
+		// find possible root
+		File[] rootPaths = File.listRoots();
+		List<String> browsers = new ArrayList<>();
+		String[] defaultPath = (is64bit)
+				? new String[] {
+						"Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+						"Program Files (x86)\\Internet Explorer\\iexplore.exe",
+						"Program Files (x86)\\Mozilla Firefox\\firefox.exe" }
+				: new String[] {
+						"Program Files\\Google\\Chrome\\Application\\chrome.exe",
+						"Program Files\\Internet Explorer\\iexplore.exe",
+						"Program Files\\Mozilla Firefox\\firefox.exe" };
+
+		// check file existence
+		for (File rootPath : rootPaths) {
+			for (String defPath : defaultPath) {
+				File exe = new File(rootPath + defPath);
+				if (exe.exists()) {
+					browsers.add(exe.toString());
+				}
+			}
+		}
+		return browsers;
+	}
+
+	// http://www.programcreek.com/java-api-examples/index.php?api=com.sun.jna.platform.win32.Advapi32Util
+	// https://java-native-access.github.io/jna/4.2.0/com/sun/jna/platform/win32/Advapi32Util.html
+	private static List<String> findBrowsersInRegistry() {
+		// String regPath = "SOFTWARE\\Clients\\StartMenuInternet\\";
+		String regPath = is64bit
+				? "SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\"
+				: "SOFTWARE\\Clients\\StartMenuInternet\\";
+
+		List<String> browsers = new ArrayList<>();
+		String path = null;
+		try {
+			for (String browserName : Advapi32Util
+					.registryGetKeys(WinReg.HKEY_LOCAL_MACHINE, regPath)) {
+				path = Advapi32Util
+						.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
+								regPath + "\\" + browserName + "\\shell\\open\\command", "")
+						.replace("\"", "");
+				if (path != null && new File(path).exists()) {
+          System.err.println("Browser path: " + path);
+					browsers.add(path);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return browsers;
 	}
 }
