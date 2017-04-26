@@ -1,14 +1,15 @@
 
 ### Info
 
-![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color.png)
+![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color_36.png)
 
 __Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__)of
 Dmytro Zharii and author. __SWET__ is using the
-[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) (currently, with third party [Opal](https://github.com/lcaron/opal) widget library) instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax).
+[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library
+instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax).
 
 Therefore __SWET__ runs on Windows, Mac or Linux, 32 or 64 bit platforms.
-__SWET__ is currently beta quality: one can create a session and collect Page Element information and convert it to a
+__SWET__ is currently beta quality: one can create a session and ealuate and save Page Element information and convert it to a
 fragment of the code in the Java or C# language; eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
 
 The application is being developed in Ecipse with [SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html),
@@ -30,26 +31,15 @@ In order to use __SWET__ one will need to compile the application jar from the s
 Continue reading for info on how to get the dev environment setup.
 
 ### Prerequisites
-Project needs JDK 1.8 or later and Maven to be installed and in the `PATH`. This means the following environment variables are to
-either be defined globally:
-
-```bash
-JAVA_VERSION
-JAVA_HOME
-M2_HOME
-MAVEN_VERSION
-M2
-```
-or updated in the project runner scripts as explained below.
-
-The Eclipse is not required.
-
-With the exception of one jar, the project dependencies are pulled by Maven.
+The project can be compiled and run from Eclipse or standalone.
+To build the project outside of Eclipse, JDK 1.8 or later and Maven need to be installed and in the `PATH`. There launcher  scripts is  explained below.
+In the checked-in runner scripts, the Java and Maven were conveniently installed to `c:\java\` for Windows.
 
 On the Mac, the
 JDK is expected to be installed to
 `/Library/Java/JavaVirtualMachines/jdk$JAVA_VERSION.jdk/Contents/Home` which is the default location.
-In the checked-in runner scripts, the Java and Maven were conveniently installed to `c:\java\` for Windows .
+
+With the exception of one jar, the project dependencies are pulled by Maven (NOTE: this is being changed towards having no non-maven dependencies).
 
 #### Updating the platform-specific information in the `pom.xml`
 
@@ -97,11 +87,11 @@ On Umix /Mac, run Bash script
 ./run.sh
 ```
 
-The script downloads those dependency jar(s), that are not hosted on Maven Central repository,
-compiles and packages the project using maven
-and runs the application jar from the `target` directory.
+The script will download the dependency jar(s), that is(are) not hosted on Maven Central repository, 
+compile and package the project using maven
+and run the application jar from the `target` directory.
 
-The script configuration needs to be updated with the actual paths to Java and Maven:
+The script configuration has to be updated with the actual paths to Java and Maven:
 ```powershell
 $MAVEN_VERSION = '3.3.9'
 $JAVA_VERSION = '1.8.0_101'
@@ -134,22 +124,17 @@ java.exe -cp target/swet-0.0.5-SNAPSHOT.jar:target/lib/* org.swet.SimpleToolBarE
 - without changing to the source, there is little reason to recompile it every time. Adding the `META-INF/MANIFEST.MF`
 is a work in progress.
 
-The runner script can also be used to launch individual forms that have been largely based on
-examples from the Standard Widget Toolkit study
-project [lshamsutdinov/study_swt](https://github.com/lshamsutdinov/study_swt),
-which in turn is based on SWT examples from Jan Bodnar's [website](zetcode.com) as:
 
-```shell
-./run.sh [ConfigFormEx|ScrolledTextEx|ComplexFormEx]
-```
-### Toolbar Buttons
+### Recording the page elements with SWET.
 
-![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/launch.png)
+#### Toolbar Buttons
+
+![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/launch_36.png)
 launches the browser
 
-![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find.png)
-injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/ElementSearch.js) into the page then
-loops polling the page witing for user to select some element via right click and to fill and submit the form:
+![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find_36.png)
+injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/ElementSearch.js) 
+into the page, then starts polling the page waiting for user to select some element via right click and to fill and submit the form:
 ![SWD Table](https://github.com/sergueik/SWET/blob/master/screenshots/swd_table.png)
 
 The Java reads back the result once it available and adds a breadcrump button:
@@ -159,31 +144,28 @@ The breadcrump button opens the form dialog with the details of the element:
 ![form](https://github.com/sergueik/SWET/blob/master/screenshots/form.png)
 
 The save and load buttons
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/save.png)
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/open.png)
+![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/save_36.png)
+![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/open_36.png)
 save  and restore the test session in YAML format.
 ![flowchart](https://github.com/sergueik/SWET/blob/master/screenshots/open_sesssion.png)
 
-The flowchart button
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/flowchart.png)
+The code generation button
+![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/codegen_36.png)
 
-starts codegeneration using [Jtwig](http://jtwig.org/) tempate and `elementData` hash and opens result in a separate dialog:
+starts code generation using [Jtwig](http://jtwig.org/) tempate and `elementData` hash and opens result in a separate dialog:
 ![codegen](https://github.com/sergueik/SWET/blob/master/screenshots/codegen.png)
 
-The preferences.png button
-![preferences](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/preferences.png)
+The preferences button
+![preferences](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/gear_36.png)
 opens the configuration dialog
 ![config](https://github.com/sergueik/SWET/blob/master/screenshots/config.png)
 Currently the browser and template selection are configurable, one also can set the base URL.
 
-There is also a demo button that executes these actions automatically (for one element):
-![demo](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/demo.png)
-
-Currently project is hardcoded to use Chrome browser on Windows os, and Firefox on the rest of platforms.
-The YAML configuration will be fuly integrated shotly.
+Currently project is hardcoded to start using Chrome browser on Windows, Safari on Mac and Firefox on the rest of platforms -  browser choice is configurable.
+Saving / loading the YAML configuration file is a work in progress.
 Eventually other common formats: YAML, JSON, POI or Java properties file - will be supported.
 
-### Operation
+#### Operation
 Both __SWD__ and __SWET__ inject certain Javascript code `ElementSearch.js` into the page, that the user can interct with with the mouse right-click.
 After injecting the script the IDE waits polling for the speficic
 `document.swdpr_command` object to be present on that page. This object is created  by the `ElementSearch.js`
@@ -258,8 +240,6 @@ Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedCon
 | GECKODRIVER_VERSION  | __0.14__     |
 | CHROME_VERSION       | __56.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
-
-
 
  Branches selenium_301 and selenium_3x created until this code is stable in the original project location (`https://github.com/sergueik/selenium_java/tree/master/swd_recorder`).
 Stabilizing against the most recent builds of Selenium is a work in progress.
@@ -353,9 +333,6 @@ elements:
 ### Work in Progress
 * UI improvements adding more form elements
 * Testing with Safari and variety of IE / Edge browsers
-* Adding the code generator templates
-* Codebase cleanup
-* Adding Threads to Element Finder button
 
 ### Links
 
@@ -430,4 +407,3 @@ This project is licensed under the terms of the MIT license.
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
-
