@@ -87,7 +87,7 @@ On Umix /Mac, run Bash script
 ./run.sh
 ```
 
-The script will download the dependency jar(s), that is(are) not hosted on Maven Central repository, 
+The script will download the dependency jar(s), that is(are) not hosted on Maven Central repository,
 compile and package the project using maven
 and run the application jar from the `target` directory.
 
@@ -133,7 +133,7 @@ is a work in progress.
 launches the browser
 
 ![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find_36.png)
-injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/ElementSearch.js) 
+injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/ElementSearch.js)
 into the page, then starts polling the page waiting for user to select some element via right click and to fill and submit the form:
 ![SWD Table](https://github.com/sergueik/SWET/blob/master/screenshots/swd_table.png)
 
@@ -364,7 +364,9 @@ elements:
 
 #### Eclipse Plugins
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
-  * [Eclipse IDE Plug-in Development] (http://www.vogella.com/tutorials/EclipsePlugin/article.html#firstplugin_migratione4_toolbar)
+  * [eclipse IDE Plug-in Development] (http://www.vogella.com/tutorials/EclipsePlugin/article.html#firstplugin_migratione4_toolbar)
+  * [SeleniumPlus Eclipse plugin](https://github.com/SAFSDEV/SeleniumPlus-Plugin/tree/master/samples)
+  * [SelenumPlus Core](https://github.com/SAFSDEV/Core/tree/master/src/org/safs/selenium)
 
 #### Code Generation
 
@@ -383,6 +385,7 @@ elements:
 
 #### Javascript injection
   * [Keymaster](https://github.com/madrobby/keymaster)
+  * [SeleniumPlus WebDriver user-extensions.js](https://github.com/SAFSDEV/Core/blob/master/src/org/safs/selenium/user-extensions.js)
 
 #### Misc.
 
@@ -392,6 +395,7 @@ elements:
   * [mono/xwt](https://github.com/mono/xwt)
   * [json2](https://github.com/douglascrockford/JSON-js)
   * [geckodriver](http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/)
+  * [jProcesses](https://github.com/profesorfalken/jProcesses)
 
 ### Note
 
