@@ -173,9 +173,9 @@ when user selects the specific element on the page he is interested to access in
 and confirms the selection by entering the name of the element and clicking the 'Add Element' button.
 The `document.swdpr_command` object will contain certain properties of the selected element:
 
-* Absolute XPath, that looks like `/html/body/*[@id = "www-wikipedia-org"]/div[1]/div[1]/img[1]`
-* Attribute-extended XPath that looks like `//a[@href="/script/answers"]/img[@src="question.png"]`
-* Firebug-style cssSelector (all classes attached to all parent nodes), that look like `ul.nav-links li.nav-links__item div.central.featured.logo-wrapper > img.central.featured-logo`
+* Legacy "indexed" XPath, that looks like `/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/a[1]/img[1]` - all node attributes are ignored, sibling counts are evaluated.
+* Attribute-extended XPath that looks like `//a[@href="/script/answers"]/img[@src="https://codeproject.net/images/question.png" and @alt = 'post an article' ]`
+* Firebug-style cssSelector, that look like `ul.nav-links li.nav-links__item div.central.featured.logo-wrapper > img.central.featured-logo` every classes node has all class attributes attached.
 * Element text (transalted under the hood into XPath `[contains()]` expression).
 * Input for Angular Protractor-specific locators `repeater`, `binding`, `model`, `repeaterRow` etc. (WIP)
 * Element ID (when available)

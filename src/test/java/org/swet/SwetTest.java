@@ -93,21 +93,32 @@ public class SwetTest {
 	private static int flexibleWait = 5;
 	private static int implicitWait = 1;
 	private static long pollingInterval = 500;
+	private static String browser = "chrome";
+	private static Map<String, String> browserNames = new HashMap<>();
+	static {
+		browserNames.put("chrome.exe", "Google Chrome");
+		browserNames.put("iexplore.exe", "Internet Explorer");
+		browserNames.put("firefox.exe", "Mozilla Firefox");
+	}
 	private static String baseURL = "about:blank";
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private static String defaultScript = "ElementSearch.js";
 	private static HashMap<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
-	private static String browser = "chrome";
-	
+	private static boolean pause_after_script_injection = false;
+	private static long timeout_after_script_injection = 1000000;
+	private static boolean pause_after_test = false;
+	private static long timeout_after_test = 1000000;
+
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
 
 		if (osName.toLowerCase().startsWith("windows")) {
 			driver = BrowserDriver.initialize(browser);
 			/*
-			// IE 10 works, IE 11 does not			
-			driver = new InternetExplorerDriver(capabilities);
+			// Chrome works best
+			// Firefox having trouble with CTRL + ontext menu
+			// IE 10 works, IE 11 does not
 			*/
 			// https://github.com/SeleniumHQ/selenium/issues/3630
 		} else if (osName.startsWith("Mac")) {
@@ -143,13 +154,21 @@ public class SwetTest {
 		driver.get("about:blank");
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
 	public void testWebPageElementSearch() {
 		driver.get("https://www.codeproject.com/");
 		WebElement element = wait.until(ExpectedConditions.visibilityOf(driver
 				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
 		injectScripts(Optional.<String> empty());
+		// pause_after_script_injection
+		if (pause_after_script_injection) {
+			try {
+				Thread.sleep(timeout_after_script_injection);
+			} catch (InterruptedException e) {
+			}
+
+		}
 		highlight(element);
 		// Act
 
@@ -172,9 +191,16 @@ public class SwetTest {
 		String payload = (String) executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		String result = readVisualSearchResult(payload);
+		System.err.println("Result:\n" + result);
+		if (pause_after_test) {
+			try {
+				Thread.sleep(timeout_after_test);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void testStatic() {
 		driver.get(new Utils().getPageContent("ElementSearch.html"));
@@ -229,13 +255,6 @@ public class SwetTest {
 		return osName;
 	}
 
- private static Map<String, String> browserNames = new HashMap<>();
-	static {
-		browserNames.put("chrome.exe", "Google Chrome");
-		browserNames.put("iexplore.exe", "Internet Explorer");
-		browserNames.put("firefox.exe", "Mozilla Firefox");
-	}
-
 	@Test
 	public void test() {
 		List<String> browsers = OSUtils.getInstalledBrowsers();
@@ -246,9 +265,8 @@ public class SwetTest {
 			if (browsers.contains(browserName)) {
 				assertTrue(OSUtils.isInstalled(browserName));
 				assertTrue(OSUtils.getMajorVersion(browserName) > 0);
-				System.out.println(
-						String.format("%s version: %s", browserNames.get(browserName),
-								OSUtils.getVersion(browserName)));
+				System.out.println(String.format("%s version: %s",
+						browserNames.get(browserName), OSUtils.getVersion(browserName)));
 			} else {
 				assertFalse(OSUtils.isInstalled(browserName));
 				assertTrue(OSUtils.getMajorVersion(browserName) == 0);
@@ -256,7 +274,6 @@ public class SwetTest {
 		}
 	}
 
-   
 	String readVisualSearchResult(String payload) {
 		return readVisualSearchResult(payload,
 				Optional.<HashMap<String, String>> empty());
