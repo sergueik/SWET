@@ -141,7 +141,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import org.mihalis.opal.breadcrumb.*;
 
@@ -293,8 +292,8 @@ public class SimpleToolBarEx {
 		shell = new Shell(display, SWT.CENTER | SWT.SHELL_TRIM); // (~SWT.RESIZE)));
 		Rectangle boundRect = new Rectangle(0, 0, shellWidth, shellHeight);
 		shell.setBounds(boundRect);
-		shell.setImage(SWTResourceManager.getImage(this.getClass(),
-				"/images/document_wrench_color.ico"));
+		shell.setImage(new Image(display, this.getClass().getClassLoader()
+				.getResourceAsStream("images/document_wrench_color.ico")));
 		try {
 
 			iconData.put("launch icon",
