@@ -292,36 +292,30 @@ public class SimpleToolBarEx {
 		shell = new Shell(display, SWT.CENTER | SWT.SHELL_TRIM); // (~SWT.RESIZE)));
 		Rectangle boundRect = new Rectangle(0, 0, shellWidth, shellHeight);
 		shell.setBounds(boundRect);
-		shell.setImage(new Image(display, this.getClass().getClassLoader()
-				.getResourceAsStream("images/document_wrench_color.ico")));
+		shell.setImage(new Image(display,
+				new Utils().getResourceStream("images/document_wrench_color.ico")));
 		try {
 
-			iconData.put("launch icon",
-					resize(new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", launchImage))),
-							36, 36));
-			iconData.put("find icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", findImage))));
-			iconData.put("prefs icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", gearImage))));
-			iconData.put("shutdown icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", quitImage))));
-			iconData.put("step icon",
+			iconData.put("launch icon", resize(
 					new Image(display,
-							this.getClass().getClassLoader().getResourceAsStream(
-									String.format("images/%s", "document_wrench_bw.png"))));
-			iconData.put("codeGen icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", codeGenImage))));
-			iconData.put("open icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", openImage))));
-			iconData.put("save icon",
-					new Image(display, this.getClass().getClassLoader()
-							.getResourceAsStream(String.format("images/%s", saveImage))));
+							new Utils()
+									.getResourceStream(String.format("images/%s", launchImage))),
+					36, 36));
+			iconData.put("find icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", findImage))));
+			iconData.put("prefs icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", gearImage))));
+			iconData.put("shutdown icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", quitImage))));
+			iconData.put("step icon",
+					new Image(display, new Utils().getResourceStream(
+							String.format("images/%s", "document_wrench_bw.png"))));
+			iconData.put("codeGen icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", codeGenImage))));
+			iconData.put("open icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", openImage))));
+			iconData.put("save icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", saveImage))));
 
 		} catch (Exception e) {
 

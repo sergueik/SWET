@@ -59,6 +59,11 @@ public class Utils {
 		}
 	}
 
+	public InputStream getResourceStream(String resourceFilePath) {
+		return this.getClass().getClassLoader()
+				.getResourceAsStream(resourceFilePath);
+	}
+
 	public String writeDataJSON(Map<String, String> data, String defaultData) {
 		String result = defaultData;
 		JSONObject json = new JSONObject();
