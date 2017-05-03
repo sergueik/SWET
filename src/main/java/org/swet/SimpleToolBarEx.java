@@ -294,7 +294,7 @@ public class SimpleToolBarEx {
 		Rectangle boundRect = new Rectangle(0, 0, shellWidth, shellHeight);
 		shell.setBounds(boundRect);
 		shell.setImage(SWTResourceManager.getImage(this.getClass(),
-				"/document_wrench_color.ico"));
+				"/images/document_wrench_color.ico"));
 		try {
 
 			iconData.put("launch icon",
