@@ -254,7 +254,7 @@ public class ComplexFormEx {
 					locatorRadio.setText(locatorKeyLabel);
 					locatorRadio.setData("key", locatorKey);
 					locatorRadio.setSelection(
-							locatorKey.contains((String) data.get("ElementSelectedBy")));
+							locatorKey.contains(data.get("ElementSelectedBy")));
 
 					locatorRadio.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
 					locatorRadio.addListener(SWT.Selection, listener);
@@ -286,7 +286,7 @@ public class ComplexFormEx {
 					locatorRadio.setText(locatorKeyLabel);
 					locatorRadio.setData("key", locatorKey);
 					locatorRadio.setSelection(
-							locatorKey.contains((String) data.get("ElementSelectedBy")));
+							locatorKey.contains(data.get("ElementSelectedBy")));
 					locatorRadio.addListener(SWT.Selection, listener);
 
 					final Text locatorValue;

@@ -20,6 +20,7 @@ public class JavaScanner {
 	public static final int NUMBER = 7;
 	public static final int MAXIMUM_TOKEN = 8;
 
+	@SuppressWarnings("rawtypes")
 	protected Hashtable fgKeys = null;
 	protected StringBuffer fBuffer = new StringBuffer();
 	protected String fDoc;
@@ -51,6 +52,7 @@ public class JavaScanner {
 	/**
 	 * Initialize the lookup table.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void initialize() {
 		fgKeys = new Hashtable();
 		Integer k = new Integer(KEY);

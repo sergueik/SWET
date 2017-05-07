@@ -274,7 +274,7 @@ public class ConfigFormEx {
 					final Combo configValue = new Combo(this, SWT.READ_ONLY);
 					// Set<String> itemsSet = configOptions.get(configKey).keySet();
 					// String[] items = (String[])itemsSet.toArray();
-					String[] items = (String[]) configOptions.get(configKey).keySet()
+					String[] items = configOptions.get(configKey).keySet()
 							.toArray(new String[0]);
 					configValue.setItems(items);
 					// System.err.println(String.format("Setting index of %s to %d",

@@ -43,7 +43,8 @@ public class UtilExtensions {
 			NoSuchMethodException, InvocationTargetException {
 		JSONObject jsonObject = new JSONObject();
 		if (mapper.size() > 0) {
-			for (Entry entry : mapper.getEntrySet()) {
+			for (@SuppressWarnings("rawtypes")
+			Entry entry : mapper.getEntrySet()) {
 				String value = entry.getValue().toString();
 				String key = entry.getKey().toString();
 				jsonObject.put(value, model.getProperty(key));
@@ -57,7 +58,8 @@ public class UtilExtensions {
 		}
 	}
 
-	public static JSONArray modelsToJSON(List models, Mapper mapper)
+	public static JSONArray modelsToJSON(
+			@SuppressWarnings("rawtypes") List models, Mapper mapper)
 			throws IllegalAccessException, NoSuchFieldException, JSONException,
 			NoSuchMethodException, InvocationTargetException {
 		JSONArray jsonArray = new JSONArray();
@@ -67,13 +69,15 @@ public class UtilExtensions {
 		return jsonArray;
 	}
 
-	public static Model jsonObjectToModel(JSONObject jsonObject, Class model,
-			Mapper mapper) throws IllegalAccessException, InstantiationException,
-			JSONException, NoSuchFieldException {
+	public static Model jsonObjectToModel(JSONObject jsonObject,
+			@SuppressWarnings("rawtypes") Class model, Mapper mapper)
+			throws IllegalAccessException, InstantiationException, JSONException,
+			NoSuchFieldException {
 		Model m = null;
 		if (mapper.size() > 0) {
 			m = (Model) model.newInstance();
-			for (Entry entry : mapper.getEntrySet()) {
+			for (@SuppressWarnings("rawtypes")
+			Entry entry : mapper.getEntrySet()) {
 				String value = entry.getValue().toString();
 				String key = entry.getKey().toString();
 				String jValue = jsonObject.get(value).toString();
@@ -90,9 +94,10 @@ public class UtilExtensions {
 		}
 	}
 
-	public static List<Model> jsonArrayToModel(JSONArray jsonArray, Class model,
-			Mapper mapper) throws JSONException, IllegalAccessException,
-			NoSuchFieldException, InstantiationException {
+	public static List<Model> jsonArrayToModel(JSONArray jsonArray,
+			@SuppressWarnings("rawtypes") Class model, Mapper mapper)
+			throws JSONException, IllegalAccessException, NoSuchFieldException,
+			InstantiationException {
 		List<Model> list = new ArrayList<>();
 		int length = jsonArray.length();
 		for (int index = 0; index < length; index++) {
@@ -105,7 +110,9 @@ public class UtilExtensions {
 	private static abstract class Mapper {
 
 		protected HashMap<String, String> mapper = new HashMap<>();
+
 		abstract public void init();
+
 		public Mapper() {
 			init();
 		}

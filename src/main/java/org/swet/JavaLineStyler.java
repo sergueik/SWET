@@ -38,6 +38,7 @@ class JavaLineStyler implements LineStyleListener {
 
 	Color[] colors;
 
+	@SuppressWarnings("rawtypes")
 	Vector blockComments = new Vector();
 
 	public static final int EOF = -1;
@@ -106,6 +107,7 @@ class JavaLineStyler implements LineStyleListener {
 	 * LineStyleEvent.styles Enumeration of StyleRanges, need to be in order.
 	 * (output) LineStyleEvent.background line background color (output)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void lineGetStyle(LineStyleEvent event) {
 		Vector styles = new Vector();
 		int token;
@@ -172,6 +174,7 @@ class JavaLineStyler implements LineStyleListener {
 		styles.copyInto(event.styles);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void parseBlockComments(String text) {
 		blockComments = new Vector();
 		StringReader buffer = new StringReader(text);

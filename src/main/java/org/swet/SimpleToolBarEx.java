@@ -714,7 +714,7 @@ public class SimpleToolBarEx {
 					break;
 				}
 			}
-			if ((Boolean) browserStatus.get("runaway")) {
+			if (browserStatus.get("runaway")) {
 				System.err.println("Detected URL change");
 				browserRunaway = true;
 				waitingForData = false;
@@ -774,7 +774,7 @@ public class SimpleToolBarEx {
 					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
 							Pattern.CASE_INSENSITIVE);
 					while (_elements.hasNext()) {
-						WebElement _element = (WebElement) _elements.next();
+						WebElement _element = _elements.next();
 						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
 						if (matcher.find()) {
 							result = _element;
@@ -848,7 +848,7 @@ public class SimpleToolBarEx {
 		if (rect.width > shell.getBounds().width - 5
 				|| rect.width > java.awt.Toolkit.getDefaultToolkit()
 						.getScreenSize().width - 100) {
-			Breadcrumb bc2 = new Breadcrumb((Composite) bc.getParent(), SWT.BORDER);
+			Breadcrumb bc2 = new Breadcrumb(bc.getParent(), SWT.BORDER);
 			// NOTE: operates global
 			bc = bc2;
 		}
@@ -863,7 +863,7 @@ public class SimpleToolBarEx {
 		item.setData("CommandId", commandId);
 		int step_number = (data.containsKey("ElementStepNumber"))
 				? Integer.parseInt(data.get("ElementStepNumber")) : step_index;
-		item.setText(String.format("Step %d: %s", (int) (step_number + 1), name));
+		item.setText(String.format("Step %d: %s", step_number + 1, name));
 		item.setImage(iconData.get("step icon"));
 		item.setSelectionImage(iconData.get("step icon"));
 
@@ -922,7 +922,7 @@ public class SimpleToolBarEx {
 
 		Iterator<Image> iconIterator = iconData.values().iterator();
 		while (iconIterator.hasNext()) {
-			Image icon = (Image) iconIterator.next();
+			Image icon = iconIterator.next();
 			icon.dispose();
 		}
 	}

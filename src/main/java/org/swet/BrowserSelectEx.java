@@ -60,7 +60,7 @@ public class BrowserSelectEx {
 		for (String browserName : /* browserNames.keySet() */ browserNames) {
 			MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 			menuItem.setText(browserName);
-			menuItem.setData((String) browserName);
+			menuItem.setData(browserName);
 			menuItem.setEnabled((browserName.indexOf("Safari") == -1));
 			// utils.InstalledBrowsers.isInstalled(browserName);
 			/* 

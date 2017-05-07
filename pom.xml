@@ -181,6 +181,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+<dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-maven-plugin</artifactId>
+    <version>9.4.4.v20170414</version>
+</dependency>
     </dependencies>
   </dependencyManagement>
   <build>
@@ -196,6 +201,9 @@
           <source>${java.version}</source>
           <target>${java.version}</target>
           <encoding>utf-8</encoding>
+          <compilerArgument>-Xlint:all</compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
           <!--
           <compilerArgument>-verbose</compilerArgument>
           -->
@@ -240,6 +248,10 @@
     <repository>
       <id>swt-repo</id>
       <url>https://swt-repo.googlecode.com/svn/repo/</url>
+    </repository>
+    <repository>
+      <id>central</id>
+      <url>http://central.maven.org/maven2/</url>
     </repository>
   </repositories>
 </project>

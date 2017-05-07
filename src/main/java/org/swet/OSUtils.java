@@ -58,12 +58,11 @@ public class OSUtils {
 		System.out.println("Your browsers: " + browsers);
 
 		for (String browserName : browserNames.keySet()) {
-		System.out.println("Probing browser: " + browserName);
+			System.out.println("Probing browser: " + browserName);
 			if (browsers.contains(browserName)) {
-				System.out.println(
-						String.format("%s version: %s", browserNames.get(browserName),
-								getVersion(browserName)));
-				assertTrue(isInstalled(browserName));        
+				System.out.println(String.format("%s version: %s",
+						browserNames.get(browserName), getVersion(browserName)));
+				assertTrue(isInstalled(browserName));
 				assertTrue(getMajorVersion(browserName) > 0);
 			} else {
 				assertFalse(isInstalled(browserName));
@@ -110,8 +109,8 @@ public class OSUtils {
 		public static final int SHGFP_TYPE_DEFAULT = 1;
 		public static final int S_OK = 0;
 
-		static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32",
-				Shell32.class, OPTIONS);
+		static Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class,
+				OPTIONS);
 
 		/**
 		 * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
@@ -223,7 +222,6 @@ public class OSUtils {
 		return new int[] { v1, v2, v3, v4 };
 	}
 
-  
 	private static List<String> findBrowsersInProgramFiles() {
 		// find possible root
 		File[] rootPaths = File.listRoots();
@@ -268,7 +266,7 @@ public class OSUtils {
 								regPath + "\\" + browserName + "\\shell\\open\\command", "")
 						.replace("\"", "");
 				if (path != null && new File(path).exists()) {
-          System.err.println("Browser path: " + path);
+					System.err.println("Browser path: " + path);
 					browsers.add(path);
 				}
 			}

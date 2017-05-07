@@ -116,8 +116,7 @@ class ScrolledTextEx {
 				if (filePath != null) {
 					System.out.println("Save to: " + filePath);
 					try {
-						Files.write(Paths.get(filePath),
-								(List<String>) Arrays.asList(payload.split("\n")),
+						Files.write(Paths.get(filePath), Arrays.asList(payload.split("\n")),
 								Charset.forName("UTF-8"));
 					} catch (IOException e) {
 						new ExceptionDialogEx(display, shell, e).execute();
