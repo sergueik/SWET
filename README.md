@@ -375,6 +375,10 @@ elements:
   * [StringTemplate](http://www.stringtemplate.org/)
   * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
 
+#### Existing Selenium Test Generation plugins
+  * [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
+
+
 #### Selenium Locator Strategies
 
   * [Choosing Effective XPaths](http://toolsqa.com/selenium-webdriver/choosing-effective-xpath/)
