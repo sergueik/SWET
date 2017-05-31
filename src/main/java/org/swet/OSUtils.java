@@ -109,7 +109,7 @@ public class OSUtils {
 		public static final int SHGFP_TYPE_DEFAULT = 1;
 		public static final int S_OK = 0;
 
-		static Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class,
+		static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class,
 				OPTIONS);
 
 		/**
