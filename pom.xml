@@ -36,9 +36,11 @@
     <jna-platform.version>4.4.0</jna-platform.version>
     <jtwig-core.version>5.85.3.RELEASE</jtwig-core.version>
     <junit.version>4.12</junit.version>
+    <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
     <!-- <opal.version>1.0.4</opal.version> -->
     <phantomjsdriver.version>1.4.2</phantomjsdriver.version>
     <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
@@ -77,6 +79,11 @@
       <systemPath>${project.basedir}/src/main/resources/opal-${opal.version}.jar</systemPath>
     </dependency>    
     -->
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <version>${maven-antrun-plugin.version}</version>
+    </dependency>
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna-platform</artifactId>
@@ -181,11 +188,11 @@
           </exclusion>
         </exclusions>
       </dependency>
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-maven-plugin</artifactId>
-    <version>9.4.4.v20170414</version>
-</dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.4.v20170414</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
@@ -219,6 +226,35 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <available file="binaries" property="test.binaries" value=""/>
+		<mkdir dir="binaries"/>
+		<!-- 
+		     NOTE: 
+		     Ant BuildException has occured: Problem: 
+		     mkdir doesn'tupport the "unless" attribute
+		     zip doesn't support the "if" attribute
+		     failed to create task or type target
+		-->
+                <mkdir dir="src/main/resources"/>
+                <zip includes="**" basedir="binaries/" destfile="src/main/resources/native.zip">
+		</zip>
+              </tasks>
             </configuration>
           </execution>
         </executions>
