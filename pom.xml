@@ -37,8 +37,7 @@
     <jtwig-core.version>5.85.3.RELEASE</jtwig-core.version>
     <junit.version>4.12</junit.version>
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
-    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- <opal.version>1.0.4</opal.version> -->
@@ -160,7 +159,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20080701</version>
+      <version>20170516</version>
     </dependency>
     <dependency>
       <groupId>com.codeborne</groupId>
@@ -191,7 +190,7 @@
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.4.v20170414</version>
+        <version>9.4.6.v20170531</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -243,17 +242,17 @@
             <configuration>
               <tasks>
                 <available file="binaries" property="test.binaries" value=""/>
-		<mkdir dir="binaries"/>
-		<!-- 
-		     NOTE: 
-		     Ant BuildException has occured: Problem: 
-		     mkdir doesn'tupport the "unless" attribute
-		     zip doesn't support the "if" attribute
-		     failed to create task or type target
-		-->
+                <mkdir dir="binaries"/>
+                <!-- 
+                     NOTE: 
+                     Ant BuildException has occured: Problem: 
+                     mkdir doesn'tupport the "unless" attribute
+                     zip doesn't support the "if" attribute
+                     failed to create task or type target
+                -->
                 <mkdir dir="src/main/resources"/>
                 <zip includes="**" basedir="binaries/" destfile="src/main/resources/native.zip">
-		</zip>
+                </zip>
               </tasks>
             </configuration>
           </execution>
