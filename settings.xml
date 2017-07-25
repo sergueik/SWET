@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<settings>
+  <activeProfiles>
+    <activeProfile>windows32</activeProfile>
+    <activeProfile>windows64</activeProfile>
+    <activeProfile>unix32</activeProfile>
+    <activeProfile>unix64</activeProfile>
+    <activeProfile>mac64</activeProfile>
+  </activeProfiles>
+</settings>
