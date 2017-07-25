@@ -383,6 +383,9 @@ elements:
 
   * [Choosing Effective XPaths](http://toolsqa.com/selenium-webdriver/choosing-effective-xpath/)
   * [Use XPath locators efficiently](http://bitbar.com/appium-tip-18-how-to-use-xpath-locators-efficiently/)
+  * [XPath-Finder](https://chrome.google.com/webstore/detail/xpath-finder/edglefgecckonkgchckokopkibcpbojb)
+  * [XPath-Helper](https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl)
+  * [CSS Selector Tester](https://chrome.google.com/webstore/detail/css-selector-tester/bbklnaodgoocmcdejoalmbjihhdkbfon)
 
 #### YAML
   * [snakeyaml](https://bitbucket.org/asomov/snakeyaml)
