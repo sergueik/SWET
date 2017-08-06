@@ -34,7 +34,7 @@
     <guava.version>22.0</guava.version>
     <java.version>1.8</java.version>
     <jna-platform.version>4.4.0</jna-platform.version>
-    <jtwig-core.version>5.85.3.RELEASE</jtwig-core.version>
+    <jtwig-core.version>5.86.0.RELEASE</jtwig-core.version>
     <junit.version>4.12</junit.version>
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
@@ -290,6 +290,8 @@
         <build_os>win64</build_os>
       </properties>
     </profile>
+    <!-- 'profiles.profile.id' must be unique -->
+    <!--
     <profile>
       <id>windows64</id>
       <activation>
@@ -302,6 +304,7 @@
         <build_os>win64</build_os>
       </properties>
     </profile>
+    -->
     <profile>
       <id>mac64</id>
       <activation>
