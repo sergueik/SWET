@@ -1,20 +1,32 @@
 package org.swet;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.RuntimeException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * Common utilities class for Selenium Webdriver Elementor Tool (SWET)
@@ -116,4 +128,77 @@ public class Utils {
 		}
 		return collector.get("ElementCodeName");
 	}
+
+	public static boolean createFolder(String path) throws Exception {
+		File dir = new File(path.trim());
+		if (!dir.exists()) {
+			return dir.mkdir();
+		} else
+			return false;
+	}
+
+	
+	/*
+	public static String getDate() {
+		try {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = new Date();
+			return dateFormat.format(date);
+		} catch (Exception e) {
+		}
+		return "";
+	}
+
+	public static String getTime() {
+		try {
+			DateFormat dateFormat = new SimpleDateFormat("HHmmss");
+			Date date = new Date();
+			return dateFormat.format(date);
+		} catch (Exception e) {
+		}
+		return "";
+	}
+	*/
+
+	public static void writeToFile(List<String> content, String filename,
+			Boolean overwriteFlag) {
+		File file = new File(filename);
+		if (overwriteFlag) {
+
+			try {
+				file.createNewFile();
+				FileWriter fw = null;
+				try {
+					fw = new FileWriter(file.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					for (String line : content) {
+						bw.write(line);
+						bw.newLine();
+					}
+					bw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.out.println("Write content to " + filename + " succesfully!");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static List<String> readFileLineByLine(String filename)
+			throws IOException {
+		FileInputStream fis = new FileInputStream(filename);
+		// Construct BufferedReader from InputStreamReader
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		List<String> res = new ArrayList<>();
+
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			res.add(line);
+		}
+		br.close();
+		return res;
+	}
+
 }

@@ -109,8 +109,8 @@ public class OSUtils {
 		public static final int SHGFP_TYPE_DEFAULT = 1;
 		public static final int S_OK = 0;
 
-		static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class,
-				OPTIONS);
+		static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32",
+				Shell32.class, OPTIONS);
 
 		/**
 		 * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
@@ -275,4 +275,18 @@ public class OSUtils {
 		}
 		return browsers;
 	}
+
+	public static void killProcess(String processName) throws Exception {
+		try {
+
+			if (System.getProperty("os.name").startsWith("Windows")) {
+				Runtime.getRuntime().exec("taskkill.exe /F /IM " + processName.trim());
+			} else if (System.getProperty("os.name").startsWith("Mac")) {
+				Runtime.getRuntime().exec("killall " + processName.trim());
+			}
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
 }

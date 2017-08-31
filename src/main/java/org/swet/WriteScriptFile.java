@@ -3,22 +3,24 @@ package org.swet;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.*;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.google.gson.Gson;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+
+import org.swet.Utils;
 
 /**
  * origin:  https://raw.githubusercontent.com/watarus-nt/SeleniumGenerator
@@ -63,7 +65,7 @@ public class WriteScriptFile {
 		List<String> content = createTestScriptContext(testCaseDTO);
 		String testScriptPath = "src/test/java/" + parser.getTestSuiteName() + "/"
 				+ testCaseDTO.getName() + "Test.java";
-		Utility.writeToFile(content, testScriptPath, true);
+		Utils.writeToFile(content, testScriptPath, true);
 	}
 
 	public void writeTestScriptFile(TestCaseDTO testCaseDTO, String path) {
@@ -75,7 +77,7 @@ public class WriteScriptFile {
 				+ parser.getTestSuiteName() + File.separator + testCaseDTO.getName()
 				+ "Test.java";
 
-		Utility.writeToFile(content, testScriptPath, true);
+		Utils.writeToFile(content, testScriptPath, true);
 	}
 
 	private List<String> createTestScriptContext(TestCaseDTO testCaseDTO) {
@@ -141,7 +143,7 @@ public class WriteScriptFile {
 		this.setUpPart.add(
 				"\tpublic void setUp(String browser, String URL) throws Exception {");
 		this.setUpPart
-				.add("\t\tlog = Utility.createLog(this.getClass().getSimpleName());");
+				.add("\t\tlog = Utils.createLog(this.getClass().getSimpleName());");
 		this.setUpPart
 				.add("\t\tdriver = WebDriverManager.createWebDriver(browser, log);");
 		this.setUpPart
@@ -190,8 +192,7 @@ public class WriteScriptFile {
 				+ ActionsMapping.getAction(testStepDTO.getAction().toLowerCase());
 		actionString += "(\"" + testStepDTO.getLocateElement().getBy() + "\"";
 		String locatorValue = testStepDTO.getLocateElement().getValue();
-		actionString += ", \"" + Utility.handleEscapeCharacters(locatorValue)
-				+ "\"";
+		actionString += ", \"" + StringEscapeUtils.escapeJava(locatorValue) + "\"";
 
 		if (testStepDTO.getThirdPara() != null) {
 			actionString += ", \"" + testStepDTO.getThirdPara() + "\");";
@@ -665,7 +666,7 @@ public class WriteScriptFile {
 		}
 
 		public static void initialMapping() throws IOException {
-			List<String> content = Utility.readFileLineByLine("config.properties");
+			List<String> content = Utils.readFileLineByLine("config.properties");
 			for (String line : content) {
 				if (line.contains("selenium.")) {
 					String keyword = line.split("=")[0].split("\\.")[1];
@@ -677,135 +678,29 @@ public class WriteScriptFile {
 
 	}
 
-  private static class LocateElementDTO {
-    private String by;
-    private String value;
+	private static class LocateElementDTO {
+		private String by;
+		private String value;
 
-    @Override
-    public String toString() {
-        return "By: " + by + "\n"
-                + "Value: " + value;
-    }
-
-    public String getBy() {
-        return by;
-    }
-
-    public void setBy(String by) {
-        this.by = by;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-}
-	private static class Utility {
-
-		public static boolean createFolder(String path) throws Exception {
-			File theDir = new File(path.trim());
-
-			// if the directory does not exist, create it
-			if (!theDir.exists()) {
-				return theDir.mkdir();
-
-			} else
-				return false;
+		@Override
+		public String toString() {
+			return "By: " + by + "\n" + "Value: " + value;
 		}
 
-		/**
-		 * Kill Process without log
-		 *
-		 * @param processName
-		 * @throws Exception
-		 * @author pminhhung
-		 */
-		public static void killProcess(String processName) throws Exception {
-			try {
-
-				if (System.getProperty("os.name").startsWith("Windows")) {
-					Runtime.getRuntime().exec("taskkill /F /IM " + processName.trim());
-				} else if (System.getProperty("os.name").startsWith("Mac")) {
-					Runtime.getRuntime().exec("killall " + processName.trim());
-				}
-
-			} catch (Exception ex) {
-				throw ex;
-			}
+		public String getBy() {
+			return by;
 		}
 
-		/**
-		 * Get date.
-		 *
-		 * @return Current date
-		 * @throws Exception
-		 */
-		public static String getDate() throws Exception {
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = new Date();
-			return dateFormat.format(date);
+		public void setBy(String by) {
+			this.by = by;
 		}
 
-		/**
-		 * Get time.
-		 *
-		 * @return Current time
-		 * @throws Exception
-		 */
-		public static String getTime() throws Exception {
-			DateFormat dateFormat = new SimpleDateFormat("HHmmss");
-			Date date = new Date();
-			return dateFormat.format(date);
+		public String getValue() {
+			return value;
 		}
 
-		public static void writeToFile(List<String> content, String filename,
-				Boolean overwriteFlag) {
-			File file = new File(filename);
-			// if file doesnt exists, then create it
-			if (overwriteFlag) {
-				try {
-					file.createNewFile();
-					FileWriter fw = null;
-					try {
-						fw = new FileWriter(file.getAbsoluteFile());
-						BufferedWriter bw = new BufferedWriter(fw);
-						for (String line : content) {
-							bw.write(line);
-							bw.newLine();
-						}
-						bw.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					System.out.println("Write content to " + filename + " succesfully!");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		public void setValue(String value) {
+			this.value = value;
 		}
-
-		public static String handleEscapeCharacters(String input) {
-			return StringEscapeUtils.escapeJava(input);
-		}
-
-		public static List<String> readFileLineByLine(String filename)
-				throws IOException {
-			FileInputStream fis = new FileInputStream(filename);
-			// Construct BufferedReader from InputStreamReader
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			List<String> res = new ArrayList<String>();
-			// List<String> re = new ArrayList<String>();
-
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				res.add(line);
-			}
-			br.close();
-			return res;
-		}
-
 	}
 }
