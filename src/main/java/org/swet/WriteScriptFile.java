@@ -23,7 +23,7 @@ import java.io.FileReader;
 import org.swet.Utils;
 
 /**
- * origin:  https://raw.githubusercontent.com/watarus-nt/SeleniumGenerator
+ * origin:  https://github.com/watarus-nt/SeleniumGenerator
  */
 public class WriteScriptFile {
 	private String packageName;
@@ -39,12 +39,6 @@ public class WriteScriptFile {
 	public WriteScriptFile() throws FileNotFoundException {
 		parser = new AI_Parser();
 
-	}
-
-	public static void main(String[] args) throws FileNotFoundException {
-		WriteScriptFile writeScriptFile = new WriteScriptFile();
-
-		writeScriptFile.generateTestScripts();
 	}
 
 	public void generateTestScripts() {
@@ -275,7 +269,7 @@ public class WriteScriptFile {
 		this.testStepsPart = testStepsPart;
 	}
 
-	private static class AI_Parser {
+	public static class AI_Parser {
 
 		private TestParamsDTO testParamsDTO;
 		private TestSuiteDTO testSuiteDTO;
@@ -337,13 +331,6 @@ public class WriteScriptFile {
 			return testCaseDTO.getStep().length;
 		}
 
-		/*
-		public static void main(String[] args) throws FileNotFoundException {
-		    AI_Parser p = new AI_Parser();
-		    p.printTestSuiteDetails();
-		}
-		*/
-
 		public void printTestSuiteDetails() throws FileNotFoundException {
 			Gson gson = new Gson();
 			TestParamsDTO params = gson.fromJson(new FileReader("sampleAItest.json"),
@@ -376,61 +363,8 @@ public class WriteScriptFile {
 						System.out.println("\t\t" + (k + 5) + ". Text To Write: "
 								+ testStepDTO.getThirdPara());
 					}
-
 				}
-
 			}
-
-		}
-
-		public void example() throws FileNotFoundException {
-			Gson gson = new Gson();
-
-			// 1. JSON to Java object, read it from a file.
-			// Staff staff = gson.fromJson(new FileReader("D:\\file.json"),
-			// Staff.class);
-			// 2. JSON to Java object, read it from a Json String.
-			// String jsonInString = "{'name' : 'mkyong'}";
-			// Staff staff = gson.fromJson(jsonInString, Staff.class);
-
-			// JSON to JsonElement, convert to String later.
-			// JsonElement json = gson.fromJson(new FileReader("D:\\file.json"),
-			// JsonElement.class);
-			// String result = gson.toJson(json);
-
-			// TestSuiteJson suite = gson.fromJson(new
-			// FileReader("sampleAItest.json"), TestSuiteJson.class);
-			/*TestParams[] params = gson.fromJson(new FileReader("sampleAItest.json"), TestParams[].class);
-			System.out.println(params[0].getBrowser());
-			System.out.println(params[0].getURL());
-			System.out.println(params[0].getTestsuite().getName());
-			System.out.println(params[0].getTestsuite().getTestcase()[0].getName());
-			System.out.println(params[0].getTestsuite().getTestcase()[0].getStep()[0].getName());
-			System.out.println(params[0].getTestsuite().getTestcase()[0].getStep()[0].getAction());
-			System.out.println(params[0].getTestsuite().getTestcase()[0].getStep()[0].getLocateElement().getBy());
-			System.out.println(params[0].getTestsuite().getTestcase()[0].getStep()[0].getLocateElement().getValue());
-			System.out.println(params[0].getTestsuite().getTestcase()[0].getStep()[0].getThirdPara());*/
-
-			TestParamsDTO params = gson.fromJson(new FileReader("sampleAItest.json"),
-					TestParamsDTO.class);
-			System.out.println(params.getBrowser());
-			System.out.println(params.getURL());
-			System.out.println(params.getTestsuite().getName());
-			System.out.println(
-					"Number of testcases: " + params.getTestsuite().getTestcase().length);
-			System.out.println(params.getTestsuite().getTestcase()[0].getName());
-			System.out.println("Number of test steps of testcase 1: "
-					+ params.getTestsuite().getTestcase()[0].getStep().length);
-			System.out.println(
-					params.getTestsuite().getTestcase()[0].getStep()[0].getName());
-			System.out.println(
-					params.getTestsuite().getTestcase()[0].getStep()[0].getAction());
-			System.out.println(params.getTestsuite().getTestcase()[0].getStep()[0]
-					.getLocateElement().getBy());
-			System.out.println(params.getTestsuite().getTestcase()[0].getStep()[0]
-					.getLocateElement().getValue());
-			System.out.println(
-					params.getTestsuite().getTestcase()[0].getStep()[0].getThirdPara());
 		}
 
 		public TestParamsDTO getTestParamsDTO() {
@@ -475,7 +409,8 @@ public class WriteScriptFile {
 
 	}
 
-	private static class TestCaseDTO {
+	public static class TestCaseDTO {
+
 		private String name;
 		private TestStepDTO[] step;
 
@@ -488,22 +423,22 @@ public class WriteScriptFile {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setName(String value) {
+			this.name = value;
 		}
 
 		public TestStepDTO[] getStep() {
 			return step;
 		}
 
-		public void setStep(TestStepDTO[] step) {
-			this.step = step;
+		public void setStep(TestStepDTO[] value) {
+			this.step = value;
 		}
 	}
 
-	private static class TestSuiteDTO {
-		private String name;
+	public static class TestSuiteDTO {
 
+		private String name;
 		private TestCaseDTO[] testcase;
 
 		@Override
@@ -515,21 +450,21 @@ public class WriteScriptFile {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setName(String value) {
+			this.name = value;
 		}
 
 		public TestCaseDTO[] getTestcase() {
 			return testcase;
 		}
 
-		public void setTestcase(TestCaseDTO[] testcase) {
-			this.testcase = testcase;
+		public void setTestcase(TestCaseDTO[] value) {
+			this.testcase = value;
 		}
-
 	}
 
-	private static class TestParamsDTO {
+	public static class TestParamsDTO {
+
 		private String browser;
 		private String URL;
 		private TestSuiteDTO testsuite;
@@ -543,28 +478,29 @@ public class WriteScriptFile {
 			return browser;
 		}
 
-		public void setBrowser(String browser) {
-			this.browser = browser;
+		public void setBrowser(String value) {
+			this.browser = value;
 		}
 
 		public String getURL() {
 			return URL;
 		}
 
-		public void setURL(String URL) {
-			this.URL = URL;
+		public void setURL(String value) {
+			this.URL = value;
 		}
 
 		public TestSuiteDTO getTestsuite() {
 			return testsuite;
 		}
 
-		public void setTestsuite(TestSuiteDTO testsuite) {
-			this.testsuite = testsuite;
+		public void setTestsuite(TestSuiteDTO value) {
+			this.testsuite = value;
 		}
 	}
 
-	private static class TestStepDTO {
+	public static class TestStepDTO {
+
 		private String name;
 		private String action;
 		private LocateElementDTO locateElement;
@@ -574,69 +510,69 @@ public class WriteScriptFile {
 		public String toString() {
 			return "TestStep name: " + name + "\n" + "Action name: " + action + "\n"
 					+ locateElement + "\n" + thirdPara;
-
 		}
 
 		public String getName() {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setName(String value) {
+			this.name = value;
 		}
 
 		public String getAction() {
 			return action;
 		}
 
-		public void setAction(String action) {
-			this.action = action;
+		public void setAction(String value) {
+			this.action = value;
 		}
 
 		public LocateElementDTO getLocateElement() {
 			return locateElement;
 		}
 
-		public void setLocateElement(LocateElementDTO locateElement) {
-			this.locateElement = locateElement;
+		public void setLocateElement(LocateElementDTO value) {
+			this.locateElement = value;
 		}
 
 		public String getThirdPara() {
 			return thirdPara;
 		}
 
-		public void setThirdPara(String thirdPara) {
-			this.thirdPara = thirdPara;
+		public void setThirdPara(String value) {
+			this.thirdPara = value;
 		}
 
-		private static class LocateElementDTO {
-			private String by;
-			private String value;
+	}
 
-			@Override
-			public String toString() {
-				return "By: " + by + "\n" + "Value: " + value;
-			}
+	public static class LocateElementDTO {
+		private String by;
+		private String value;
 
-			public String getBy() {
-				return by;
-			}
+		@Override
+		public String toString() {
+			return "By: " + by + "\n" + "Value: " + value;
+		}
 
-			public void setBy(String by) {
-				this.by = by;
-			}
+		public String getBy() {
+			return by;
+		}
 
-			public String getValue() {
-				return value;
-			}
+		public void setBy(String value) {
+			this.by = value;
+		}
 
-			public void setValue(String value) {
-				this.value = value;
-			}
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
 		}
 	}
 
-	private static class ActionsMapping {
+	public static class ActionsMapping {
 		public static Map<String, String> actions = new HashMap<>();
 
 		static {
@@ -657,12 +593,8 @@ public class WriteScriptFile {
 			return actions.containsKey(inputAction);
 		}
 
-		public static String getAction(String inputAction) {
-			if (checkActionExists(inputAction)) {
-				return actions.get(inputAction);
-			} else {
-				return null;
-			}
+		public static String getAction(String value) {
+			return checkActionExists(value) ? actions.get(value) : null;
 		}
 
 		public static void initialMapping() throws IOException {
@@ -674,33 +606,6 @@ public class WriteScriptFile {
 					actions.put(inputAction.trim().replaceAll("\\s+", ""), keyword);
 				}
 			}
-		}
-
-	}
-
-	private static class LocateElementDTO {
-		private String by;
-		private String value;
-
-		@Override
-		public String toString() {
-			return "By: " + by + "\n" + "Value: " + value;
-		}
-
-		public String getBy() {
-			return by;
-		}
-
-		public void setBy(String by) {
-			this.by = by;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		public void setValue(String value) {
-			this.value = value;
 		}
 	}
 }

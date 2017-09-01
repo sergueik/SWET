@@ -1,0 +1,88 @@
+{
+  "browser": "Firefox",
+  "URL": "https://www.amazon.com/",
+  "testsuite": {
+    "name": "BuyTheItem",
+    "testcase": [
+      {
+        "name": "OutofStock",
+        "step": [
+          {
+            "name": "selectAttributes",
+            "action": "Click",
+            "locateElement": {
+              "by": "Xpath",
+              "value": ".//a[@title=\"Echo Dot (2nd Generation) - Black\"]"
+            },
+            "thirdPara": "Step comment."    
+          },
+          {
+            "name": "addAssertion",
+            "action": "CheckValue",
+            "locateElement": {
+              "by": "id",
+              "value": "availability"
+            },
+            "thirdPara": "In Stock."
+          }
+        ]
+      },
+      {
+        "name": "AddtoCart",
+        "step": [
+          {
+            "name": "itemName",
+            "action": "WriteText",
+            "locateElement": {
+              "by": "id",
+              "value": "twotabsearchtextbox"
+            },
+            "thirdPara": "echo dot"
+          },
+          {
+            "name": "searchItem",
+            "action": "Click",
+            "locateElement": {
+              "by": "className",
+              "value": "nav-input"
+            }
+          },
+          {
+            "name": "selectAttributes",
+            "action": "Click",
+            "locateElement": {
+              "by": "Xpath",
+              "value": ".//a[@title=\"Echo Dot (2nd Generation) - White\"]"
+            }
+          },
+          {
+            "name": "selectQty",
+            "action": "SelectOption",
+            "locateElement": {
+              "by": "Xpath",
+              "value": ".//select[@id=\"quantity\"]"
+            },
+            "thirdPara": "3"
+          },
+          {
+            "name": "buy",
+            "action": "Click",
+            "locateElement": {
+              "by": "Xpath",
+              "value": ".//*[@title=\"Add to Shopping Cart\"]"
+            }
+          },
+          {
+            "name": "addAssertion",
+            "action": "CheckContainsValue",
+            "locateElement": {
+              "by": "id",
+              "value": "availability"
+            },
+            "thirdPara": "In Stock."
+          }
+        ]
+      }
+    ]
+  }
+}
