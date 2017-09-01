@@ -36,18 +36,24 @@ public class WriteScriptFile {
 	private List<String> tearDownPart = new ArrayList<String>();
 	private AI_Parser parser;
 
-	public WriteScriptFile() throws FileNotFoundException {
-		parser = new AI_Parser();
+	public WriteScriptFile(String jsonData) throws FileNotFoundException {
+		parser = new AI_Parser(jsonData);
 
 	}
 
+	/*
+	public WriteScriptFile() throws FileNotFoundException {
+		parser = new AI_Parser();
+	
+	}
+	
 	public void generateTestScripts() {
 		TestCaseDTO[] testCaseList = parser.getTestCaseDTO();
 		for (int i = 0; i < testCaseList.length; i++) {
 			writeTestScriptFile(testCaseList[i]);
 		}
 	}
-
+	*/
 	public void generateTestScripts(String path) {
 		TestCaseDTO[] testCaseList = parser.getTestCaseDTO();
 		for (int i = 0; i < testCaseList.length; i++) {
@@ -55,13 +61,14 @@ public class WriteScriptFile {
 		}
 	}
 
-	public void writeTestScriptFile(TestCaseDTO testCaseDTO) {
-		List<String> content = createTestScriptContext(testCaseDTO);
-		String testScriptPath = "src/test/java/" + parser.getTestSuiteName() + "/"
-				+ testCaseDTO.getName() + "Test.java";
-		Utils.writeToFile(content, testScriptPath, true);
-	}
-
+	/*
+		public void writeTestScriptFile(TestCaseDTO testCaseDTO) {
+			List<String> content = createTestScriptContext(testCaseDTO);
+			String testScriptPath = "src/test/java/" + parser.getTestSuiteName() + "/"
+					+ testCaseDTO.getName() + "Test.java";
+			Utils.writeToFile(content, testScriptPath, true);
+		}
+	*/
 	public void writeTestScriptFile(TestCaseDTO testCaseDTO, String path) {
 		List<String> content = createTestScriptContext(testCaseDTO);
 		// String testScriptPath = path + "src/test/java/" +
@@ -71,7 +78,20 @@ public class WriteScriptFile {
 				+ parser.getTestSuiteName() + File.separator + testCaseDTO.getName()
 				+ "Test.java";
 
+		String testScriptFolderPath = path + File.separator + "src" + File.separator
+				+ "test" + File.separator + "java" + File.separator
+				+ parser.getTestSuiteName();
+		File testDirectory = new File(testScriptFolderPath);
+		if (!testDirectory.exists()) {
+			if (testDirectory.mkdir()) {
+			} else {
+				System.out
+						.println("Failed to create directory: " + testScriptFolderPath);
+			}
+		}
+		System.err.println("Writing script to file: " + testScriptPath);
 		Utils.writeToFile(content, testScriptPath, true);
+
 	}
 
 	private List<String> createTestScriptContext(TestCaseDTO testCaseDTO) {
@@ -271,38 +291,24 @@ public class WriteScriptFile {
 
 	public static class AI_Parser {
 
+		private String jsonData;
 		private TestParamsDTO testParamsDTO;
 		private TestSuiteDTO testSuiteDTO;
 		private TestCaseDTO[] testCaseDTO;
 		private TestStepDTO[] testStepDTO;
 		private LocateElementDTO locateElementDTO;
 
-		public AI_Parser() throws FileNotFoundException {
+		public AI_Parser(String jsonData) throws FileNotFoundException {
+			this.jsonData = jsonData;
 			Gson gson = new Gson();
 			try {
-				this.testParamsDTO = gson.fromJson(new FileReader("sampleAItest.json"),
+				this.testParamsDTO = gson.fromJson(new FileReader(jsonData),
 						TestParamsDTO.class);
 				setTestSuiteDTO(testParamsDTO.getTestsuite());
 				setTestCaseDTO(getTestSuiteDTO().getTestcase());
 
 			} catch (FileNotFoundException e) {
-				System.out
-						.println("[FAILED] - Can't find input sampleAItest.json file!");
-				throw e;
-			}
-		}
-
-		public AI_Parser(String inputJsonPath) throws FileNotFoundException {
-			Gson gson = new Gson();
-			try {
-				this.testParamsDTO = gson.fromJson(new FileReader(inputJsonPath),
-						TestParamsDTO.class);
-				setTestSuiteDTO(testParamsDTO.getTestsuite());
-				setTestCaseDTO(getTestSuiteDTO().getTestcase());
-
-			} catch (FileNotFoundException e) {
-				System.out
-						.println("[FAILED] - Can't find input " + inputJsonPath + "file!");
+				System.out.println("[FAILED] - Can't find input file: " + jsonData);
 				throw e;
 			}
 		}
@@ -333,7 +339,7 @@ public class WriteScriptFile {
 
 		public void printTestSuiteDetails() throws FileNotFoundException {
 			Gson gson = new Gson();
-			TestParamsDTO params = gson.fromJson(new FileReader("sampleAItest.json"),
+			TestParamsDTO params = gson.fromJson(new FileReader(jsonData),
 					TestParamsDTO.class);
 			System.out.println("Broswer: " + params.getBrowser());
 			System.out.println("URL: " + params.getURL());
@@ -406,7 +412,6 @@ public class WriteScriptFile {
 		public void setLocateElementDTO(LocateElementDTO locateElementDTO) {
 			this.locateElementDTO = locateElementDTO;
 		}
-
 	}
 
 	public static class TestCaseDTO {
@@ -543,7 +548,6 @@ public class WriteScriptFile {
 		public void setThirdPara(String value) {
 			this.thirdPara = value;
 		}
-
 	}
 
 	public static class LocateElementDTO {
@@ -598,7 +602,8 @@ public class WriteScriptFile {
 		}
 
 		public static void initialMapping() throws IOException {
-			List<String> content = Utils.readFileLineByLine("config.properties");
+			List<String> content = Utils.readFileLineByLine(
+					(new org.swet.Utils()).getResourcePath("config.properties"));
 			for (String line : content) {
 				if (line.contains("selenium.")) {
 					String keyword = line.split("=")[0].split("\\.")[1];

@@ -74,11 +74,42 @@ import com.google.gson.Gson;
 
 public class WriteScriptFileTest {
 
+	private static String workingDirectory;
+	private static Gson gson;
+	private static String resourcePath;
+
+	@BeforeClass
+	public static void Setup() {
+		resourcePath = (new org.swet.Utils()).getResourcePath("sampleTest.json");
+		gson = new Gson();
+		workingDirectory = System.getProperty("user.dir");
+	}
+
+	// TODO: cleanup generated test sources:
+	// those will likely fail to compile under the project pom.xml
+	@AfterClass
+	public static void Cleanup() {
+    
+    
+  }
+
 	@Test
-	public void example() throws FileNotFoundException {
-		Gson gson = new Gson();
-		String resourcePath = (new org.swet.Utils())
-				.getResourcePath("sampleTest.json");
+	public void writeTestScript() throws FileNotFoundException {
+		// Warning: places generated sources into the working girectory
+		WriteScriptFile writeScriptFile = new WriteScriptFile(resourcePath);
+		writeScriptFile.generateTestScripts(workingDirectory);
+	}
+
+	@Test
+	public void dumplJSon() throws FileNotFoundException {
+		WriteScriptFile.AI_Parser parser = new WriteScriptFile.AI_Parser(
+				resourcePath);
+		parser.printTestSuiteDetails();
+	}
+
+	@Test
+	public void dumpRawJSon() throws FileNotFoundException {
+
 		WriteScriptFile.TestParamsDTO params = gson.fromJson(
 				new FileReader(resourcePath), WriteScriptFile.TestParamsDTO.class);
 
@@ -94,12 +125,14 @@ public class WriteScriptFileTest {
 				params.getTestsuite().getTestcase()[0].getStep()[0].getName()));
 		System.out.println(String.format("Step 1 action: \"%s\"",
 				params.getTestsuite().getTestcase()[0].getStep()[0].getAction()));
-		System.out.println(String.format("Step 1 locateElement selector type : \"%s\"",
-				params.getTestsuite().getTestcase()[0].getStep()[0].getLocateElement()
-						.getBy()));
-		System.out.println(String.format("Step 1 locateElement selector value: \"%s\"",
-				params.getTestsuite().getTestcase()[0].getStep()[0].getLocateElement()
-						.getValue()));
+		System.out
+				.println(String.format("Step 1 locateElement selector type : \"%s\"",
+						params.getTestsuite().getTestcase()[0].getStep()[0]
+								.getLocateElement().getBy()));
+		System.out
+				.println(String.format("Step 1 locateElement selector value: \"%s\"",
+						params.getTestsuite().getTestcase()[0].getStep()[0]
+								.getLocateElement().getValue()));
 		System.out.println(String.format("Step 1 extra param: \"%s\"",
 				params.getTestsuite().getTestcase()[0].getStep()[0].getThirdPara()));
 	}
