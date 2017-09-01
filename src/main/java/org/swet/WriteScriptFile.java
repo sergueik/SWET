@@ -41,19 +41,6 @@ public class WriteScriptFile {
 
 	}
 
-	/*
-	public WriteScriptFile() throws FileNotFoundException {
-		parser = new AI_Parser();
-	
-	}
-	
-	public void generateTestScripts() {
-		TestCaseDTO[] testCaseList = parser.getTestCaseDTO();
-		for (int i = 0; i < testCaseList.length; i++) {
-			writeTestScriptFile(testCaseList[i]);
-		}
-	}
-	*/
 	public void generateTestScripts(String path) {
 		TestCaseDTO[] testCaseList = parser.getTestCaseDTO();
 		for (int i = 0; i < testCaseList.length; i++) {
@@ -61,25 +48,10 @@ public class WriteScriptFile {
 		}
 	}
 
-	/*
-		public void writeTestScriptFile(TestCaseDTO testCaseDTO) {
-			List<String> content = createTestScriptContext(testCaseDTO);
-			String testScriptPath = "src/test/java/" + parser.getTestSuiteName() + "/"
-					+ testCaseDTO.getName() + "Test.java";
-			Utils.writeToFile(content, testScriptPath, true);
-		}
-	*/
 	public void writeTestScriptFile(TestCaseDTO testCaseDTO, String path) {
 		List<String> content = createTestScriptContext(testCaseDTO);
-		// String testScriptPath = path + "src/test/java/" +
-		// parser.getTestSuiteName() + "/" + testCaseDTO.getName() + "Test.java";
-		String testScriptPath = path + File.separator + "src" + File.separator
-				+ "test" + File.separator + "java" + File.separator
-				+ parser.getTestSuiteName() + File.separator + testCaseDTO.getName()
-				+ "Test.java";
 
-		String testScriptFolderPath = path + File.separator + "src" + File.separator
-				+ "test" + File.separator + "java" + File.separator
+		String testScriptFolderPath = path + File.separator
 				+ parser.getTestSuiteName();
 		File testDirectory = new File(testScriptFolderPath);
 		if (!testDirectory.exists()) {
@@ -89,6 +61,9 @@ public class WriteScriptFile {
 						.println("Failed to create directory: " + testScriptFolderPath);
 			}
 		}
+
+		String testScriptPath = testScriptFolderPath + File.separator
+				+ testCaseDTO.getName() + "Test.java";
 		System.err.println("Writing script to file: " + testScriptPath);
 		Utils.writeToFile(content, testScriptPath, true);
 
@@ -586,11 +561,6 @@ public class WriteScriptFile {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			// actions.put("Go to URL".toLowerCase(), "getLink");
-			// actions.put("Click".toLowerCase(), "click");
-			// actions.put("Write Text".toLowerCase(), "type_Text");
-			// actions.put("Select Option".toLowerCase(), "selectOption");
-			// actions.put(LoadConfigFile.getPropertyByName())
 		}
 
 		public static Boolean checkActionExists(String inputAction) {

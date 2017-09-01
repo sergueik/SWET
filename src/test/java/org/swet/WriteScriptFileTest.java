@@ -3,6 +3,7 @@ package org.swet;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -40,6 +41,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.hamcrest.CoreMatchers;
@@ -74,7 +76,7 @@ import com.google.gson.Gson;
 
 public class WriteScriptFileTest {
 
-	private static String workingDirectory;
+	private static String scriptsPath;
 	private static Gson gson;
 	private static String resourcePath;
 
@@ -82,22 +84,31 @@ public class WriteScriptFileTest {
 	public static void Setup() {
 		resourcePath = (new org.swet.Utils()).getResourcePath("sampleTest.json");
 		gson = new Gson();
-		workingDirectory = System.getProperty("user.dir");
+		scriptsPath = System.getProperty("user.dir") + File.separator + "scripts";
+		File scriptsDirectory = new File(scriptsPath);
+		if (!scriptsDirectory.exists()) {
+			if (scriptsDirectory.mkdir()) {
+			} else {
+				System.out.println("Failed to create directory: " + scriptsPath);
+			}
+		}
 	}
 
-	// TODO: cleanup generated test sources:
-	// those will likely fail to compile under the project pom.xml
+	// cleanup generated test sources
+	// TODO: error detection
 	@AfterClass
 	public static void Cleanup() {
-    
-    
-  }
+		try {
+			FileUtils.deleteDirectory(new File(scriptsPath));
+		} catch (IOException e) {
+		}
+	}
 
 	@Test
 	public void writeTestScript() throws FileNotFoundException {
 		// Warning: places generated sources into the working girectory
 		WriteScriptFile writeScriptFile = new WriteScriptFile(resourcePath);
-		writeScriptFile.generateTestScripts(workingDirectory);
+		writeScriptFile.generateTestScripts(scriptsPath);
 	}
 
 	@Test
