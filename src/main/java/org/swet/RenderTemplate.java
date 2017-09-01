@@ -77,6 +77,7 @@ public class RenderTemplate {
 		List<String> scripts = new ArrayList<>();
 		while (testDataKeys.hasNext()) {
 			stepId = testDataKeys.next();
+			System.err.println("Step " + stepId);
 			HashMap<String, String> elementData = testData.get(stepId);
 			scripts.add(renderElement(elementData));
 		}
@@ -97,9 +98,11 @@ public class RenderTemplate {
 		}
 		JtwigModel model = JtwigModel.newModel();
 		for (String key : data.keySet()) {
+			System.err.println(String.format("\"%s\" = \"%s\"", key, data.get(key)));
 			model.with(key, data.get(key).replace("\"", "\\\""));
 		}
 		String output = template.render(model);
+		System.err.println("renderElement : " + output);
 		return output;
 	}
 
@@ -169,16 +172,5 @@ public class RenderTemplate {
 				}
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		String templatePath = "C:\\developer\\sergueik\\selenium_java\\swd_recorder\\src\\main\\resources\\templates\\example3.twig";
-		RenderTemplate renderTemplate = new RenderTemplate();
-		System.err
-				.println(String.format("Reading template from %s ...", templatePath));
-		renderTemplate.setTemplateAbsolutePath(
-				templatePath.replace("\\\\", "\\").replace("\\", "/"));
-		String output = renderTemplate.renderTest();
-		System.err.println("Rendered: " + output);
 	}
 }
