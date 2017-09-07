@@ -1,0 +1,8 @@
+  @Parameters({"browser", "URL"})
+  @BeforeTest
+  public void setUp(String browser, String URL) throws Exception {
+    log = Utils.createLog(this.getClass().getSimpleName());
+    driver = WebDriverManager.createWebDriver(browser, log);
+    seleniumKeywords = new SeleniumKeywords(driver, log);
+    seleniumKeywords.open_Url(URL);
+  }

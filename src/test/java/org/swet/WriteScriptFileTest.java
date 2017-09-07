@@ -40,10 +40,12 @@ public class WriteScriptFileTest {
 	// TODO: error detection
 	@AfterClass
 	public static void Cleanup() {
+		/*
 		try {
 			FileUtils.deleteDirectory(new File(scriptsPath));
 		} catch (IOException e) {
 		}
+		*/
 	}
 
 	@Test

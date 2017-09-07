@@ -100,15 +100,8 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialImportList() {
-		this.importList.add("import libs.WebDriverUtils.SeleniumKeywords;");
-		this.importList.add("import libs.WebDriverUtils.WebDriverManager;");
-		this.importList.add("import org.openqa.selenium.WebDriver;");
-		this.importList.add("import org.testng.annotations.AfterTest;");
-		this.importList.add("import org.testng.annotations.BeforeTest;");
-		this.importList.add("import org.testng.annotations.Parameters;");
-		this.importList.add("import org.testng.annotations.Test;");
-		this.importList.add("import utils.Logs.Log;");
-		this.importList.add("import utils.Utility;");
+		this.importList.add(new Utils()
+				.getScriptContent(String.format("templates/%s", "importList.twig")));
 		this.importList.add("");
 		return getImportList();
 	}
@@ -119,27 +112,15 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialObjectDeclarations() {
-		this.objectDeclarations.add("\tLog log;");
-		this.objectDeclarations.add("\tprivate WebDriver driver;");
-		this.objectDeclarations.add("\tprivate SeleniumKeywords seleniumKeywords;");
+		this.objectDeclarations.add(new Utils()
+				.getScriptContent(String.format("templates/%s", "initObjects.twig")));
 		this.objectDeclarations.add("");
 		return getObjectDeclarations();
 	}
 
 	private List<String> initialSetUpPart() {
-		this.setUpPart.add("\t@Parameters({\"browser\", \"URL\"})");
-		this.setUpPart.add("\t@BeforeTest");
-		this.setUpPart.add(
-				"\tpublic void setUp(String browser, String URL) throws Exception {");
-		this.setUpPart
-				.add("\t\tlog = Utils.createLog(this.getClass().getSimpleName());");
-		this.setUpPart
-				.add("\t\tdriver = WebDriverManager.createWebDriver(browser, log);");
-		this.setUpPart
-				.add("\t\tseleniumKeywords = new SeleniumKeywords(driver, log);");
-		this.setUpPart.add("\t\tseleniumKeywords.open_Url(URL);");
-
-		this.setUpPart.add("\t}");
+		this.setUpPart.add(new Utils()
+				.getScriptContent(String.format("templates/%s", "beforeTest.twig")));
 		this.setUpPart.add("");
 		return getSetUpPart();
 	}
@@ -192,11 +173,8 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialTearDownPart() {
-		this.tearDownPart.add("\t@AfterTest");
-		this.tearDownPart.add("\tpublic void tearDown() {");
-		this.tearDownPart.add("\t\tdriver.quit();");
-		this.tearDownPart.add("\t}");
-		this.tearDownPart.add("");
+		this.tearDownPart.add(new Utils()
+				.getScriptContent(String.format("templates/%s", "aftertest.twig")));
 		return getTearDownPart();
 	}
 
