@@ -303,16 +303,18 @@ public class OSUtils {
 				processError.append(line);
 			}
 			int exitCode = process.waitFor();
-			if (exitCode != 0) {
-				System.err.println("Process exit code: " + exitCode);
+			// ignore exit code 128: the process "<browser driver>" not found.
+			if ((exitCode ^ 128) != 0) {
+				System.out.println("Process exit code: " + exitCode);
 				if (processOutput.length() > 0) {
-					System.err.println("<OUTPUT>" + processOutput + "</OUTPUT>");
+					System.out.println("<OUTPUT>" + processOutput + "</OUTPUT>");
 				}
 				if (processError.length() > 0) {
 					// e.g.
-					// The process "chromedriver.exe" with PID 5540 could not be terminated.
+					// The process "chromedriver.exe"
+					// with PID 5540 could not be terminated.
 					// Reason: Access is denied.
-					System.err.println("<ERROR>" + processError + "</ERROR>");
+					System.out.println("<ERROR>" + processError + "</ERROR>");
 				}
 			}
 		} catch (Exception e) {
