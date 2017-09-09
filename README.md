@@ -404,6 +404,7 @@ elements:
   * [json2](https://github.com/douglascrockford/JSON-js)
   * [geckodriver](http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/)
   * [jProcesses](https://github.com/profesorfalken/jProcesses)
+  * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
 
 ### Note
 
