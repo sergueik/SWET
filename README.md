@@ -378,8 +378,9 @@ elements:
 #### Existing Selenium Test Generation plugins
   * [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
   * [ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
-  *[watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
-
+  * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome) - 
+  * [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
+  * [Silk WebDriver](https://www.microfocus.com/products/silk-portfolio/silk-webdriver/)
 #### Selenium Locator Strategies
 
   * [Choosing Effective XPaths](http://toolsqa.com/selenium-webdriver/choosing-effective-xpath/)
