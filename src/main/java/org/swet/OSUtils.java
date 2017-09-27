@@ -276,7 +276,7 @@ public class OSUtils {
 		return browsers;
 	}
 
-	// https://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
+		// https://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
 	public static void killProcess(String processName) {
 
 		String command = String.format((osName.toLowerCase().startsWith("windows"))
@@ -304,7 +304,7 @@ public class OSUtils {
 			}
 			int exitCode = process.waitFor();
 			// ignore exit code 128: the process "<browser driver>" not found.
-			if ((exitCode ^ 128) != 0) {
+			if (exitCode != 0 && (exitCode ^ 128) != 0) {
 				System.out.println("Process exit code: " + exitCode);
 				if (processOutput.length() > 0) {
 					System.out.println("<OUTPUT>" + processOutput + "</OUTPUT>");
