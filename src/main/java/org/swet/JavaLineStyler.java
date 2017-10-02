@@ -2,12 +2,9 @@ package org.swet;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Hashtable;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
-
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
@@ -17,7 +14,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Token color/style processor for Selenium Webdriver Elementor Tool (SWET)
+ * Token color/style processor for Selenium WebDriver Elementor Tool (SWET)
  */
 
 // origin: http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/JavaSourcecodeViewer.htm

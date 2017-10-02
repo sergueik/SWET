@@ -1,17 +1,17 @@
 package org.swet;
 
-import java.util.Locale;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,13 +22,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.Shell;
 
 /**
- * Utilities for Selenium Webdriver Elementor Tool (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Utilities for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 // based on Tip of the Day (c) Laurent Caron

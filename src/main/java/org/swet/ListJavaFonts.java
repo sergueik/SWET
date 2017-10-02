@@ -1,22 +1,17 @@
 package org.swet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static java.lang.Boolean.*;
-
-import org.eclipse.swt.SWT;
-
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Utilities for Selenium Webdriver Elementor Tool (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Utilities for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class ListJavaFonts {

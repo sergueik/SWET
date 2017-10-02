@@ -3,25 +3,20 @@ package org.swet;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
-import org.swet.Utils;
-
 /**
- * Generate source code from testData and twig template for Selenium Webdriver Elementor Tool (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Generate source code from testData and twig template for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class RenderTemplate {

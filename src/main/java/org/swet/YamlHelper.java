@@ -1,27 +1,25 @@
 package org.swet;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Locale;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * Common YAML configuration file utilities for Selenium Webdriver Elementor Tool (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Common utilities for YAML configuration file  for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class YamlHelper {

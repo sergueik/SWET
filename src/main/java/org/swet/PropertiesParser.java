@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * Common configuration / properties file parsers for Selenium Webdriver Elementor Tool  (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Common configuration / properties file parsers for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class PropertiesParser {

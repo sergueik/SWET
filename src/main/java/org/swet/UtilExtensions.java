@@ -1,28 +1,16 @@
 package org.swet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.RuntimeException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 // generic JSONobject (de-)serializer
 // origin: https://www.codeproject.com/Tips/709552/Google-App-Engine-JAVA

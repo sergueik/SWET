@@ -1,9 +1,11 @@
 package org.swet;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,20 +14,18 @@ import java.util.Map;
 import java.util.Set;
 
 import com.sun.jna.Library;
-import com.sun.jna.Native;
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.VerRsrc.VS_FIXEDFILEINFO;
 import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.NativeMapped;
-import com.sun.jna.PointerType;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
-
-import static org.junit.Assert.*;
 
 // origin: http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java 
 public class OSUtils {

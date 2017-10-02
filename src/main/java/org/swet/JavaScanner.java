@@ -3,8 +3,8 @@ package org.swet;
 import java.util.Hashtable;
 
 /**
- * Token scanner for Selenium Webdriver Elementor Tool (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Token scanner for Selenium WebDriver Elementor Tool(SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.cm)
  */
 
 public class JavaScanner {

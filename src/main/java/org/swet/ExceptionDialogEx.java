@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.swet.Utils;
 
 /**
- * Exception dialog for Selenium Webdriver Elementor Tool
+ * Exception dialog for Selenium WebDriver Elementor Tool (SWET)
  * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 

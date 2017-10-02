@@ -8,8 +8,8 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
- * Configuration table helper for Selenium Webdriver Elementor Tool (SWET)
- *  @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Configuration table helper for Selenium WebDriver Elementor Tool (SWET)
+ *  @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class TestConfigurationParser {

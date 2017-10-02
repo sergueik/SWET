@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Test configuration serializer class for Selenium Webdriver Elementor Tool
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Test configuration serializer class for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 final class Configuration {

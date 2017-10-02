@@ -14,7 +14,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-// import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -29,8 +28,8 @@ import org.openqa.selenium.safari.SafariOptions;
 import org.swet.OSUtils;
 
 /**
- * Browser Driver wrapper class for Selenium Webdriver Elementor Tool (SWET)
- * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ * Browser Driver wrapper class for Selenium WebDriver Elementor Tool(SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class BrowserDriver {
@@ -169,7 +168,7 @@ public class BrowserDriver {
 		/*
 		FirefoxOptions firefoxOptions = new FirefoxOptions();
 		firefoxOptions.setBinary(new File(firefoxBrowserPath).getAbsolutePath());
-
+		
 		capabilities.setCapability("moz:firefoxOptions", firefoxOptions);
 		*/
 		capabilities.setCapability("firefox_binary",
