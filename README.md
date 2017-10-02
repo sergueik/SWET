@@ -211,13 +211,22 @@ The __SWET__ application master branch is being developed with
 
 |                      |              |
 |----------------------|--------------|
+| SELENIUM_VERSION     | __3.5.1__    |
+| FIREFOX_VERSION      | __45.0.1__   |
+| CHROME_VERSION       | __61.0.X__   |
+| CHROMEDRIVER_VERSION | __2.32__     |
+
+and
+
+|                      |              |
+|----------------------|--------------|
 | SELENIUM_VERSION     | __2.53.1__   |
 | FIREFOX_VERSION      | __45.0.1__   |
 | CHROME_VERSION       | __56.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
 
-Examples of partially supported version combinations are listed below. Neither Selenium __3.0.1__ nor __3.3.1__ code is completely stable.
+Some of partially supported version combinations are listed below. Some versions of Selenium ( __3.0.1__ or __3.3.1__ ) have been found unstable.
 
 |                      |              |
 |----------------------|--------------|
@@ -227,21 +236,7 @@ Examples of partially supported version combinations are listed below. Neither S
 | CHROME_VERSION       | __57.0.X__   |
 | CHROMEDRIVER_VERSION | __2.29__     |
 
-With Selenium __3.2.0__ on Windows, every browser currently fails with a
-differnt kind of instability (there is no problem under Linux). A possible workaround that was found helpful
-is to include the `selenium-server-standalone-3.3.1.jar`
-
-Upgrade to Selenium __3.3.1__ or later require code refactoring  in `ExpectedConditions` signatures (currently work in progress).
-
-|                      |              |
-|----------------------|--------------|
-| SELENIUM_VERSION     | __3.3.1__    |
-| FIREFOX_VERSION      | __52.0__     |
-| GECKODRIVER_VERSION  | __0.14__     |
-| CHROME_VERSION       | __56.0.X__   |
-| CHROMEDRIVER_VERSION | __2.29__     |
-
- Branches selenium_301 and selenium_3x created until this code is stable in the original project location (`https://github.com/sergueik/selenium_java/tree/master/swd_recorder`).
+Branches selenium_301 and selenium_3x created until this code is stable in the original project location (`https://github.com/sergueik/selenium_java/tree/master/swd_recorder`).
 Stabilizing against the most recent builds of Selenium is a work in progress.
 
 One can download virtually every old build of Firefox from
