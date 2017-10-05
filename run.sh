@@ -36,5 +36,5 @@ then
   # http://stackoverflow.com/questions/3976342/running-swt-based-cross-platform-jar-properly-on-a-mac
   LAUNCH_OPTS='-XstartOnFirstThread'
 fi
-mvn package install
+mvn -Dmaven.test.skip=true package install
 java $LAUNCH_OPTS -cp target/$PACKAGE_NAME-$PACKAGE_VERSION.jar:target/lib/* $MAIN_APP_PACKAGE.$MAIN_APP_CLASS

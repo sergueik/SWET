@@ -56,7 +56,7 @@ if ($DOWNLOAD_EXTERNAL_JAR -eq $true ) {
   }
 }
 # Compile
-& 'mvn.cmd' 'package' 'install'
+& 'mvn.cmd' '-Dmaven.test.skip=true' 'package' 'install'
 
 # Run
 & 'java.exe' `

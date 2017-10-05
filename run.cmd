@@ -19,7 +19,7 @@ set MAIN_APP_PACKAGE=org.swet
 set MAIN_APP_CLASS=%1
 if "%MAIN_APP_CLASS%"=="" set MAIN_APP_CLASS=SimpleToolBarEx
 
-call mvn package install
+call mvn -Dmaven.test.skip=true package install
 
 java -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
 %MAIN_APP_PACKAGE%.%MAIN_APP_CLASS%
