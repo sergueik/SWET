@@ -1,6 +1,8 @@
 package org.swet;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,8 +39,21 @@ import org.swet.YamlHelper;
 
 public class TableEditorEx {
 
+	private static Map<String, String> elementSelectedByToLocatorTable = new HashMap<>();
+	static {
+		// temporarily converting legacy SWD "Element selected By" keys to selectorTable keys
+		elementSelectedByToLocatorTable.put("ElementXPath", "xpath");
+		elementSelectedByToLocatorTable.put("ElementCssSelector", "cssSelector");
+		elementSelectedByToLocatorTable.put("ElementText", "text");
+		elementSelectedByToLocatorTable.put("ElementId", "id");
+		// TODO:
+		// elementSelectedByToLocatorTable.put("ElementLinkText", "linkText");
+		elementSelectedByToLocatorTable.put("ElementTagName", "tagName");
+	}
 	private static Map<String, String> methodTable = new HashMap<>();
-	static { // these are free-hand
+	static {
+		// these are currently free-hand, would become discoverable methods of
+		// keyword-driven framework class
 		methodTable.put("CLICK", "clickButton");
 		methodTable.put("CLICK_BUTTON", "clickButton");
 		methodTable.put("CLICK_CHECKBOX", "clickCheckBox");
@@ -60,9 +75,12 @@ public class TableEditorEx {
 		methodTable.put("WAIT", "wait");
 	}
 
-	private static Map<String, Method> locatorTable = new HashMap<>();
 	private static Configuration testCase = null;
-	private static HashMap<String, HashMap<String, String>> testData = new HashMap<>();
+	private static Map<String, HashMap<String, String>> testData = new HashMap<>();
+	private static LinkedHashMap<String, Integer> sortedElementSteps = new LinkedHashMap<>();
+	private static Map<String, Integer> elementSteps = new HashMap<>();
+	private static Map<String, Method> locatorTable = new HashMap<>();
+	private static Map<String, String> elementData = new HashMap<>();
 	private static String yamlFilePath = null;
 
 	public static void main(String[] args) {
@@ -78,17 +96,17 @@ public class TableEditorEx {
 			YamlHelper.printConfiguration(testCase);
 		}
 
-		Map<String, Integer> elementSteps = testData.keySet().stream()
-				.collect(Collectors.toMap(o -> o,
-						o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
-		LinkedHashMap<String, Integer> sortedElementSteps = sortByValue(
-				elementSteps);
+		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
+				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
+		sortedElementSteps = sortByValue(elementSteps);
 		for (String stepId : sortedElementSteps.keySet()) {
-			HashMap<String, String> elementData = testData.get(stepId);
-			// Append row in the TableEditor
-			String commandId = elementData.get("CommandId");
-			System.out.println(String.format("Loading step %s %s", commandId,
-					elementData.get("ElementCodeName")));
+			elementData = testData.get(stepId);
+			// Append row into the TableEditor
+			System.out.println(String.format("Loading step %d(%s) %s %s %s",
+					Integer.parseInt(elementData.get("ElementStepNumber")),
+					elementData.get("CommandId"), elementData.get("ElementCodeName"),
+					elementData.get("ElementSelectedBy"),
+					elementData.get(elementData.get("ElementSelectedBy"))));
 		}
 		try {
 			locatorTable.put("cssSelector",
@@ -120,41 +138,20 @@ public class TableEditorEx {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setWidth(100);
 		}
-		for (int i = 0; i < 3; i++) {
+		int blankRows = 3;
+		int tableSize = sortedElementSteps.keySet().size();
+
+		for (int i = 0; i < tableSize + blankRows; i++) {
 			new TableItem(table, SWT.NONE);
 		}
+		/*
 		TableItem[] items = table.getItems();
-
-		for (int i = 0; i < 3; i++) {
-			TableItem item = items[i];
-			item.setText(new String[] { String.format("Element %d name", i),
-					String.format("Action %d", i),
-					String.format("Selector type of element %d", i),
-					String.format("Selector %d", i) });
-
-			TableEditor editor1 = new TableEditor(table);
-			CCombo combo1 = new CCombo(table, SWT.NONE);
-			combo1.setText("CHOOSE");
-			for (String keyword : methodTable.values()) {
-				combo1.add(keyword);
-				// System.err.println(keyword);
-			}
-			combo1.select(2);
-			editor1.grabHorizontal = true;
-			editor1.setEditor(combo1, items[i], 1);
-
-			TableEditor editor2 = new TableEditor(table);
-			CCombo combo2 = new CCombo(table, SWT.NONE);
-			combo2.setText("CHOOSE");
-			for (String locator : locatorTable.keySet()) {
-				combo2.add(locator);
-				// System.err.println(locator);
-			}
-			combo2.select(2);
-			editor2.grabHorizontal = true;
-			editor2.setEditor(combo2, items[i], 2);
-
-		}
+				for (int i = 0; i < blankRows; i++) {
+					TableItem item = items[i];
+					appendBlankRowToTable(table, item, i);
+				}
+		*/
+		appendRowToTable(table, sortedElementSteps);
 
 		for (int titleItem = 0; titleItem < titles.length; titleItem++) {
 			table.getColumn(titleItem).pack();
@@ -224,8 +221,43 @@ public class TableEditorEx {
 		display.dispose();
 	}
 
-	private static void appendRowToTable(Table table, TableItem item,
-			HashMap<String, String> elementData) {
+	private static void appendRowToTable(Table table,
+			LinkedHashMap<String, Integer> steps) {
+
+		TableItem[] items = table.getItems();
+		int cnt = 0;
+		for (String stepId : sortedElementSteps.keySet()) {
+
+			TableItem item = items[cnt];
+			elementData = testData.get(stepId);
+			// Append row into the TableEditor
+			/*
+			System.out.println(String.format("Loading step %d %s", stepId,
+					elementData.get("ElementCodeName")));
+			    */
+			item.setText(new String[] { elementData.get("ElementCodeName"),
+					String.format("Action %d", cnt), elementData.get("ElementSelectedBy"),
+					elementData.get(elementData.get("ElementSelectedBy")) });
+
+			TableEditor editor2 = new TableEditor(table);
+			CCombo combo2 = new CCombo(table, SWT.NONE);
+			combo2.setText("CHOOSE");
+			for (String locator : locatorTable.keySet()) {
+				combo2.add(locator);
+				// System.err.println(locator);
+			}
+			int combo2_select = new ArrayList<String>(locatorTable.keySet())
+					.indexOf(elementSelectedByToLocatorTable
+							.get(elementData.get("ElementSelectedBy")));
+			System.err.println(String.format("Selecting: %d for %s", combo2_select,
+					elementSelectedByToLocatorTable
+							.get(elementData.get("ElementSelectedBy"))));
+			combo2.select(combo2_select);
+			editor2.grabHorizontal = true;
+			editor2.setEditor(combo2, item, 2);
+
+			cnt = cnt + 1;
+		}
 
 		return;
 
@@ -246,7 +278,11 @@ public class TableEditorEx {
 			combo1.add(keyword);
 			// System.err.println(keyword);
 		}
-		combo1.select(2);
+		// combo1.select(2);
+		int combo1_select = new ArrayList<String>(methodTable.values())
+				.indexOf("clickLink");
+		System.err.println("Selecting: " + combo1_select);
+		combo1.select(combo1_select);
 		editor1.grabHorizontal = true;
 		editor1.setEditor(combo1, item, 1);
 
@@ -257,7 +293,9 @@ public class TableEditorEx {
 			combo2.add(locator);
 			// System.err.println(locator);
 		}
-		combo2.select(2);
+		int combo2_select = new ArrayList<String>(locatorTable.keySet())
+				.indexOf("xpath");
+		combo2.select(combo2_select);
 		editor2.grabHorizontal = true;
 		editor2.setEditor(combo2, item, 2);
 		return;

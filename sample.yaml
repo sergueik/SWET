@@ -19,8 +19,8 @@ elements:
     ElementXPath: /html/body/header[1]/div[2]/div[1]/span[1]/img[@src="https://www.coderanch.com/mooseImages/betaview/moosefly.gif"]
   6e68d135-148e-4f60-8f22-07a0fa7db831:
     ElementCssSelector: a#faq
-    ElementSelectedBy: ElementCssSelector
-    ElementCodeName: FAs
+    ElementSelectedBy: ElementXPath
+    ElementCodeName: FAQ
     Command: AddElement
     Caller: addElement
     ElementPageURL: https://coderanch.com/c/java
@@ -32,7 +32,7 @@ elements:
     ElementXPath: id("faq")
   6bb26225-ba9a-4c9a-9de1-3d13295f1829:
     ElementCssSelector: div#categorySidebar > div > a.catLstBtn.catLstBtn-l1.pointer
-    ElementSelectedBy: ElementCssSelector
+    ElementSelectedBy: ElementText
     ElementCodeName: button_java
     Command: AddElement
     Caller: addElement
