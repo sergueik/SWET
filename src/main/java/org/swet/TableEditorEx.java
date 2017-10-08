@@ -101,7 +101,36 @@ public class TableEditorEx {
 		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
 				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
 		sortedElementSteps = sortByValue(elementSteps);
+/* 
+// origin: http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTMenuExample.htm 
+    menuBar = new Menu(shell, SWT.BAR);
+    fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+    fileMenuHeader.setText("&File");
 
+    fileMenu = new Menu(shell, SWT.DROP_DOWN);
+    fileMenuHeader.setMenu(fileMenu);
+
+    fileSaveItem = new MenuItem(fileMenu, SWT.PUSH);
+    fileSaveItem.setText("&Save");
+
+    fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
+    fileExitItem.setText("E&xit");
+
+    helpMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+    helpMenuHeader.setText("&Help");
+
+    helpMenu = new Menu(shell, SWT.DROP_DOWN);
+    helpMenuHeader.setMenu(helpMenu);
+
+    helpGetHelpItem = new MenuItem(helpMenu, SWT.PUSH);
+    helpGetHelpItem.setText("&Get Help");
+
+    fileExitItem.addSelectionListener(new fileExitItemListener());
+    fileSaveItem.addSelectionListener(new fileSaveItemListener());
+    helpGetHelpItem.addSelectionListener(new helpGetHelpItemListener());
+
+    shell.setMenuBar(menuBar);
+*/
 		/*
 		for (String stepId : sortedElementSteps.keySet()) {
 			elementData = testData.get(stepId);
