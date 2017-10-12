@@ -359,7 +359,10 @@ elements:
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
   * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
   * [SWING to SWT transformation tool](https://github.com/xgdsmileboy/SWING-SWT-Transformation)
-  
+  * [SWT custom components](https://github.com/SWTCustomComponents)
+  * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
+  * [SWT TreeViewer example](https://github.com/Adarsh-g-s/TreeViewer)
+
 #### Eclipse Plugins
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
   * [eclipse IDE Plug-in Development] (http://www.vogella.com/tutorials/EclipsePlugin/article.html#firstplugin_migratione4_toolbar)
