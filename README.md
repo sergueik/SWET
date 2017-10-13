@@ -1,4 +1,4 @@
-
+﻿
 ### Info
 
 ![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color_36.png)
@@ -362,6 +362,7 @@ elements:
   * [SWT custom components](https://github.com/SWTCustomComponents)
   * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
   * [SWT TreeViewer example](https://github.com/Adarsh-g-s/TreeViewer)
+  * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
 
 #### Eclipse Plugins
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
@@ -381,7 +382,8 @@ elements:
   * [ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
   * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome) - 
   * [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
-  * [Silk WebDriver](https://www.microfocus.com/products/silk-portfolio/silk-webdriver/)
+  * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
+
 #### Selenium Locator Strategies
 
   * [Choosing Effective XPaths](http://toolsqa.com/selenium-webdriver/choosing-effective-xpath/)
@@ -406,7 +408,6 @@ elements:
   * [json2](https://github.com/douglascrockford/JSON-js)
   * [geckodriver](http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/)
   * [jProcesses](https://github.com/profesorfalken/jProcesses)
-  * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
 
 ### Note
 

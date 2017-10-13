@@ -13,12 +13,20 @@ import org.openqa.selenium.By;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -38,6 +46,13 @@ import org.swet.YamlHelper;
 // http://www.java2s.com/Tutorial/Java/0280__SWT/UsingTableEditor.htm
 
 public class TableEditorEx {
+
+	static Display display;
+	static Shell shell;
+	Menu menuBar, fileMenu, helpMenu;
+	MenuItem fileMenuHeader, helpMenuHeader;
+	MenuItem fileExitItem, fileSaveItem, helpGetHelpItem;
+	static Label label;
 
 	private static Map<String, String> elementSelectedByToselectorChoiceTable = new HashMap<>();
 	static {
@@ -101,36 +116,7 @@ public class TableEditorEx {
 		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
 				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
 		sortedElementSteps = sortByValue(elementSteps);
-/* 
-// origin: http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTMenuExample.htm 
-    menuBar = new Menu(shell, SWT.BAR);
-    fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
-    fileMenuHeader.setText("&File");
 
-    fileMenu = new Menu(shell, SWT.DROP_DOWN);
-    fileMenuHeader.setMenu(fileMenu);
-
-    fileSaveItem = new MenuItem(fileMenu, SWT.PUSH);
-    fileSaveItem.setText("&Save");
-
-    fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
-    fileExitItem.setText("E&xit");
-
-    helpMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
-    helpMenuHeader.setText("&Help");
-
-    helpMenu = new Menu(shell, SWT.DROP_DOWN);
-    helpMenuHeader.setMenu(helpMenu);
-
-    helpGetHelpItem = new MenuItem(helpMenu, SWT.PUSH);
-    helpGetHelpItem.setText("&Get Help");
-
-    fileExitItem.addSelectionListener(new fileExitItemListener());
-    fileSaveItem.addSelectionListener(new fileSaveItemListener());
-    helpGetHelpItem.addSelectionListener(new helpGetHelpItemListener());
-
-    shell.setMenuBar(menuBar);
-*/
 		/*
 		for (String stepId : sortedElementSteps.keySet()) {
 			elementData = testData.get(stepId);
@@ -160,7 +146,44 @@ public class TableEditorEx {
 		Display display = new Display();
 
 		Shell shell = new Shell(display);
-		shell.setLayout(new FillLayout());
+		// new FillLayout());
+		shell.setLayout(new FormLayout());
+		label = new Label(shell, SWT.BORDER);
+		FormData labelData = new FormData();
+		labelData.left = new FormAttachment(0);
+		labelData.right = new FormAttachment(100);
+		labelData.bottom = new FormAttachment(100);
+		label.setLayoutData(labelData);
+		// origin:
+		// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTMenuExample.htm
+		Menu menuBar = new Menu(shell, SWT.BAR);
+		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+		fileMenuHeader.setText("&File");
+
+		Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+		fileMenuHeader.setMenu(fileMenu);
+
+		MenuItem fileSaveItem = new MenuItem(fileMenu, SWT.PUSH);
+		fileSaveItem.setText("&Save");
+
+		MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
+		fileExitItem.setText("E&xit");
+
+		MenuItem helpMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+		helpMenuHeader.setText("&Help");
+
+		Menu helpMenu = new Menu(shell, SWT.DROP_DOWN);
+		helpMenuHeader.setMenu(helpMenu);
+
+		MenuItem helpGetHelpItem = new MenuItem(helpMenu, SWT.PUSH);
+		helpGetHelpItem.setText("&Get Help");
+
+		fileExitItem.addSelectionListener(new fileExitItemListener());
+		fileSaveItem.addSelectionListener(new fileSaveItemListener());
+		// helpGetHelpItem.addSelectionListener(new helpGetHelpItemListener());
+
+		shell.setMenuBar(menuBar);
+
 		//
 		final Table table = new Table(shell, SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		table.setLinesVisible(true);
@@ -260,6 +283,30 @@ public class TableEditorEx {
 				display.sleep();
 		}
 		display.dispose();
+	}
+
+	static class fileExitItemListener implements SelectionListener {
+		public void widgetSelected(SelectionEvent event) {
+			shell.close();
+			display.dispose();
+		}
+
+		public void widgetDefaultSelected(SelectionEvent event) {
+			shell.close();
+			display.dispose();
+		}
+	}
+
+	static class fileSaveItemListener implements SelectionListener {
+		public void widgetSelected(SelectionEvent event) {
+			label.setText("Saved");
+			label.update();
+		}
+
+		public void widgetDefaultSelected(SelectionEvent event) {
+			label.setText("Saved");
+			label.update();
+		}
 	}
 
 	private static void appendRowToTable(Table table,
