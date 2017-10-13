@@ -13,9 +13,10 @@ set PACKAGE_NAME=swet
 set PACKAGE_VERSION=0.0.7-SNAPSHOT
 set MAIN_APP_PACKAGE=org.swet
 set MAIN_APP_CLASS=%1
-if NOT "%MAIN_APP_CLASS%"=="" shift
+if NOT "%MAIN_APP_CLASS%" == "" shift
 if "%MAIN_APP_CLASS%"=="" set MAIN_APP_CLASS=SimpleToolBarEx
 call mvn -Dmaven.test.skip=true package install
+REM SHIFT will not affect the value of %* 
 java -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
-%MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% %*
+%MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto :EOF
