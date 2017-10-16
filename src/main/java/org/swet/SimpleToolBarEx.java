@@ -86,7 +86,11 @@ public class SimpleToolBarEx {
 	private Label statusMessage;
 
 	private Breadcrumb bc;
-	private String launchImage = "launch_36.png";
+
+	// https://www.iconfinder.com/icons/131870/book_help_icon#size=32
+	private String excelImage = "o3_calc_app_32.png";
+
+	private String launchImage = "launch_32.png";
 
 	public void setLaunchImage(final String data) {
 		this.launchImage = data;
@@ -96,7 +100,17 @@ public class SimpleToolBarEx {
 		return this.launchImage;
 	}
 
-	private String findImage = "find_36.png";
+	private String helpImage = "help_32.png";
+
+	public void sethelpImage(final String data) {
+		this.helpImage = data;
+	}
+
+	public String gethelpImage() {
+		return this.helpImage;
+	}
+
+	private String findImage = "find_32.png";
 
 	public void setFindImage(final String data) {
 		this.findImage = data;
@@ -106,7 +120,7 @@ public class SimpleToolBarEx {
 		return this.findImage;
 	}
 
-	private String gearImage = "gear_36.png";
+	private String gearImage = "preferences_32.png";
 
 	public void setGearImage(final String data) {
 		this.gearImage = data;
@@ -116,6 +130,7 @@ public class SimpleToolBarEx {
 		return this.gearImage;
 	}
 
+	// TODO: cleanup
 	private String pageImage = "page_36.png";
 
 	public void setPageImage(final String data) {
@@ -126,7 +141,7 @@ public class SimpleToolBarEx {
 		return this.pageImage;
 	}
 
-	private String openImage = "open_36.png";
+	private String openImage = "open_32.png";
 
 	public void setOpenImage(final String data) {
 		this.openImage = data;
@@ -136,7 +151,7 @@ public class SimpleToolBarEx {
 		return this.openImage;
 	}
 
-	private String saveImage = "save_36.png";
+	private String saveImage = "save_32.png";
 
 	public void setSaveImage(final String data) {
 		this.saveImage = data;
@@ -146,7 +161,7 @@ public class SimpleToolBarEx {
 		return this.saveImage;
 	}
 
-	private String quitImage = "quit.png";
+	private String quitImage = "quit_32.png";
 
 	public void setQuitImage(final String data) {
 		this.quitImage = data;
@@ -154,6 +169,16 @@ public class SimpleToolBarEx {
 
 	public String getQuitImage() {
 		return this.quitImage;
+	}
+
+	private String testsuiteImage = "excel_gen_32.png";
+
+	public void settestsuiteImage(final String data) {
+		this.testsuiteImage = data;
+	}
+
+	public String gettestsuiteImage() {
+		return this.testsuiteImage;
 	}
 
 	private String codeGenImage = "codegen_36.png";
@@ -197,7 +222,7 @@ public class SimpleToolBarEx {
 					new Image(display,
 							new Utils()
 									.getResourceStream(String.format("images/%s", launchImage))),
-					36, 36));
+					32, 32));
 			iconData.put("find icon", new Image(display, new Utils()
 					.getResourceStream(String.format("images/%s", findImage))));
 			iconData.put("prefs icon", new Image(display, new Utils()
@@ -213,7 +238,10 @@ public class SimpleToolBarEx {
 					.getResourceStream(String.format("images/%s", openImage))));
 			iconData.put("save icon", new Image(display, new Utils()
 					.getResourceStream(String.format("images/%s", saveImage))));
-
+			iconData.put("help icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", helpImage))));
+			iconData.put("testsuite icon", new Image(display, new Utils()
+					.getResourceStream(String.format("images/%s", testsuiteImage))));
 		} catch (Exception e) {
 
 			System.err.println("Cannot load images: " + e.getMessage());
@@ -240,6 +268,10 @@ public class SimpleToolBarEx {
 		codeGenTool.setImage(iconData.get("codeGen icon"));
 		codeGenTool.setToolTipText("Generate program");
 
+		ToolItem testsuiteTool = new ToolItem(toolBar, SWT.PUSH);
+		testsuiteTool.setImage(iconData.get("testsuite icon"));
+		testsuiteTool.setToolTipText("generate testsuite");
+
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		ToolItem openTool = new ToolItem(toolBar, SWT.PUSH);
@@ -252,14 +284,18 @@ public class SimpleToolBarEx {
 
 		ToolItem preferencesTool = new ToolItem(toolBar, SWT.PUSH);
 		preferencesTool.setImage(iconData.get("prefs icon"));
-
 		preferencesTool.setToolTipText("Configure");
+
+		ToolItem helpTool = new ToolItem(toolBar, SWT.PUSH);
+		helpTool.setImage(iconData.get("help icon"));
+		helpTool.setToolTipText("help using the tool");
 
 		ToolItem shutdownTool = new ToolItem(toolBar, SWT.PUSH);
 		shutdownTool.setImage(iconData.get("shutdown icon"));
 		shutdownTool.setToolTipText("Quit");
 
 		pageExploreTool.setEnabled(false);
+		testsuiteTool.setEnabled(false);
 		codeGenTool.setEnabled(false);
 		saveTool.setEnabled(false);
 

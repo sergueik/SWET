@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -37,7 +38,8 @@ import org.openqa.selenium.By;
 
 import org.swet.YamlHelper;
 
-// origin : 
+// origin:
+// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTMenuExample.htm
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/TableEditorexample.htm
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableSimpleDemo.htm 
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableEditor.htm
@@ -143,19 +145,15 @@ public class TableEditorEx {
 		} catch (NoSuchMethodException e) {
 		}
 
-		Display display = new Display();
-
-		Shell shell = new Shell(display);
-		// new FillLayout());
-		shell.setLayout(new FormLayout());
+		display = new Display();
+		shell = new Shell(display);
+		shell.setLayout(new FormLayout()); 		// new FillLayout());
 		label = new Label(shell, SWT.BORDER);
 		FormData labelData = new FormData();
 		labelData.left = new FormAttachment(0);
 		labelData.right = new FormAttachment(100);
 		labelData.bottom = new FormAttachment(100);
 		label.setLayoutData(labelData);
-		// origin:
-		// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTMenuExample.htm
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
 		fileMenuHeader.setText("&File");
@@ -297,9 +295,30 @@ public class TableEditorEx {
 		}
 	}
 
+	private static String testConfigFilePath; // TODO: rename
+
 	static class fileSaveItemListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent event) {
-			label.setText("Saved");
+
+			FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+			dialog.setFilterNames(new String[] { "Excel Files", "All Files (*.*)" });
+			dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
+			String homeDir = System.getProperty("user.home");
+			dialog.setFilterPath(homeDir); // Windows path
+			String path = null;
+			if (testConfigFilePath != null) {
+				dialog.setFileName(testConfigFilePath);
+				path = new String(testConfigFilePath);
+			} //
+			testConfigFilePath = dialog.open();
+			if (testConfigFilePath != null) {
+				System.out.println(String.format("Saved to \"%s\"", testConfigFilePath));
+			} else {
+				if (path != null) {
+					testConfigFilePath = new String(path);
+				}
+			}
+			label.setText(String.format("Saved to \"%s\"", testConfigFilePath));
 			label.update();
 		}
 
