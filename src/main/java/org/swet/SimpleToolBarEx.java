@@ -270,7 +270,7 @@ public class SimpleToolBarEx {
 
 		ToolItem testsuiteTool = new ToolItem(toolBar, SWT.PUSH);
 		testsuiteTool.setImage(iconData.get("testsuite icon"));
-		testsuiteTool.setToolTipText("generate testsuite");
+		testsuiteTool.setToolTipText("Generate Excel TestSuite");
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
@@ -325,6 +325,19 @@ public class SimpleToolBarEx {
 		statusMessage.setLayoutData(gd);
 		*/
 		updateStatus("Loading");
+
+		testsuiteTool.addListener(SWT.Selection, event -> {
+			testsuiteTool.setEnabled(false);
+			updateStatus("Launching the TestSuite Excel exporter");
+			try {
+				// TableEditorEx tableEditor = new TableEditorEx();
+				TableEditorEx.main(new String[] {});
+			} catch (Exception e) {
+				(new ExceptionDialogEx(display, shell, e)).execute();
+			}
+			updateStatus("Ready");
+		});
+
 		launchTool.addListener(SWT.Selection, event -> {
 			launchTool.setEnabled(false);
 			updateStatus("Launching the browser");
@@ -353,6 +366,7 @@ public class SimpleToolBarEx {
 					// combinations
 				}
 				codeGenTool.setEnabled(true);
+				testsuiteTool.setEnabled(true);
 				// driver.get(getResourceURI("blankpage.html"));
 			} catch (Exception e) {
 				(new ExceptionDialogEx(display, shell, e)).execute();
@@ -362,6 +376,7 @@ public class SimpleToolBarEx {
 
 		codeGenTool.addListener(SWT.Selection, event -> {
 			codeGenTool.setEnabled(false);
+			testsuiteTool.setEnabled(false);
 			RenderTemplate renderTemplate = new RenderTemplate();
 			updateStatus(String.format("Reading template %s \u2026",
 					configData.get("Template")));
@@ -389,6 +404,7 @@ public class SimpleToolBarEx {
 			shell.setData("payload", generatedScript);
 			ScrolledTextEx test = new ScrolledTextEx(Display.getCurrent(), shell);
 			codeGenTool.setEnabled(true);
+			testsuiteTool.setEnabled(true);
 		});
 
 		openTool.addListener(SWT.Selection, event -> {
@@ -431,6 +447,7 @@ public class SimpleToolBarEx {
 			}
 			openTool.setEnabled(true);
 			codeGenTool.setEnabled(true);
+			testsuiteTool.setEnabled(true);
 			updateStatus("Ready");
 		});
 
