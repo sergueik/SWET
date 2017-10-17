@@ -334,7 +334,7 @@ public class SimpleToolBarEx {
 						shell);
 				for (String key : testData.keySet()) {
 					tableEditor.setData(key,
-							new Utils().writeDataJSON(testData.get(key), ""));
+							new Utils().writeDataJSON(testData.get(key), "{}"));
 				}
 				tableEditor.render();
 

@@ -276,7 +276,7 @@ public class OSUtils {
 		return browsers;
 	}
 
-		// https://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
+	// https://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
 	public static void killProcess(String processName) {
 
 		String command = String.format((osName.toLowerCase().startsWith("windows"))

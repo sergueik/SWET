@@ -30,7 +30,7 @@ public class TestConfigurationParser {
 	}
 
 	public static List<String[]> getConfiguration(final String fileName) {
-		ArrayList<String[]> listOfData = new ArrayList<>();
+		List<String[]> listOfData = new ArrayList<>();
 		Scanner scanner = loadTestData(fileName);
 		String separator = "|";
 		while (scanner.hasNext()) {

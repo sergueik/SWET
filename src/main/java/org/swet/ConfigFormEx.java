@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.swt.SWT;
@@ -40,15 +41,15 @@ public class ConfigFormEx {
 	private final static int buttonHeight = 28;
 	private final static int labelWidth = 150;
 	private static String osName = OSUtils.getOsName();
-	private static HashMap<String, String> configData = new HashMap<>();
+	private static Map<String, String> configData = new HashMap<>();
 	// NOTE: use the same DOM for Browser config options to simplify code
 	// the values for "Browser" hash are not used
-	private static HashMap<String, HashMap<String, String>> configOptions = new HashMap<>();
-	private static HashMap<String, String> templates = new HashMap<>();
+	private static Map<String, Map<String, String>> configOptions = new HashMap<>();
+	private static Map<String, String> templates = new HashMap<>();
 
 	ConfigFormEx(Display parentDisplay, Shell parent) {
-		HashMap<String, String> browserOptions = new HashMap<>();
-		for (String browser : new ArrayList<String>(Arrays.asList(new String[] {
+		Map<String, String> browserOptions = new HashMap<>();
+		for (String browser : new ArrayList<String>( Arrays.asList(new String[] {
 				"Chrome", "Firefox", "Internet Explorer", "Edge", "Safari" }))) {
 			browserOptions.put(browser, "unused");
 		}
@@ -135,7 +136,7 @@ public class ConfigFormEx {
 			this.setLayout(gridLayout);
 		}
 
-		public void renderData(HashMap<String, String> data, String configKey) {
+		public void renderData(Map<String, String> data, String configKey) {
 
 			Label valueLabel = new Label(this, SWT.NONE);
 			valueLabel.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
@@ -256,7 +257,7 @@ public class ConfigFormEx {
 			this.setLayout(gridLayout);
 		}
 
-		public void renderData(HashMap<String, String> data) {
+		public void renderData(Map<String, String> data) {
 			for (String configKey : Arrays.asList("Browser", "Base URL",
 					"Template Directory", "Template")) {
 				if (configOptions.containsKey(configKey)) {

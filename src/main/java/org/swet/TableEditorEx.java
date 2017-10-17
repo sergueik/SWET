@@ -47,18 +47,18 @@ public class TableEditorEx {
 	static Shell shell;
 	private static Shell parentShell = null;
 
-	private String dataKey = "CurrentCommandId";
 
-	Menu menuBar, fileMenu, helpMenu;
-	MenuItem fileMenuHeader, helpMenuHeader;
-	MenuItem fileExitItem, fileSaveItem, helpGetHelpItem;
-	static Label label;
+	private Menu menuBar, fileMenu, helpMenu;
+	private MenuItem fileMenuHeader, helpMenuHeader;
+	private MenuItem fileExitItem, fileSaveItem, helpGetHelpItem;
+	private static Label label;
+
 	private static Map<String, String> configData = new HashMap<>();
 
+  // Converting legacy SWD "Element selected By" keys to
+  // selectorTable keys
 	private static Map<String, String> elementSelectedByToselectorChoiceTable = new HashMap<>();
 	static {
-		// temporarily converting legacy SWD "Element selected By" keys to
-		// selectorTable keys
 		elementSelectedByToselectorChoiceTable.put("ElementXPath", "xpath");
 		elementSelectedByToselectorChoiceTable.put("ElementCssSelector",
 				"cssSelector");
@@ -68,10 +68,11 @@ public class TableEditorEx {
 		elementSelectedByToselectorChoiceTable.put("ElementLinkText", "linkText");
 		elementSelectedByToselectorChoiceTable.put("ElementTagName", "tagName");
 	}
+
+  // Currently free-hand, may become discoverable methods of
+  // keyword-driven framework class
 	private static Map<String, String> methodTable = new HashMap<>();
 	static {
-		// these are currently free-hand, would become discoverable methods of
-		// keyword-driven framework class
 		methodTable.put("CLICK", "clickButton");
 		methodTable.put("CLICK_BUTTON", "clickButton");
 		methodTable.put("CLICK_CHECKBOX", "clickCheckBox");
@@ -93,12 +94,13 @@ public class TableEditorEx {
 		methodTable.put("WAIT", "wait");
 	}
 
-	private static Configuration testCase = null;
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private static LinkedHashMap<String, Integer> sortedElementSteps = new LinkedHashMap<>();
 	private static Map<String, Integer> elementSteps = new HashMap<>();
 	private static Map<String, Method> selectorChoiceTable = new HashMap<>();
 	private static Map<String, String> elementData = new HashMap<>();
+	private static Configuration testCase = null;
+	private static String testSutePath; // TODO: rename
 	private static String yamlFilePath = null;
 
 	TableEditorEx(Display parentDisplay, Shell parent) {
@@ -203,7 +205,7 @@ public class TableEditorEx {
 			column.setWidth(100);
 		}
 
-		int blankRows = 3;
+		int blankRows = 1;
 		int tableSize = sortedElementSteps.keySet().size();
 		for (int i = 0; i < tableSize + blankRows; i++) {
 			new TableItem(table, SWT.NONE);
@@ -248,12 +250,12 @@ public class TableEditorEx {
 										break;
 									case SWT.Traverse:
 										switch (e.detail) {
-										case SWT.TRAVERSE_RETURN:
-											item.setText(column, text.getText());
-											// FALL THROUGH
-										case SWT.TRAVERSE_ESCAPE:
-											text.dispose();
-											e.doit = false;
+											case SWT.TRAVERSE_RETURN:
+												item.setText(column, text.getText());
+												// FALL THROUGH
+											case SWT.TRAVERSE_ESCAPE:
+												text.dispose();
+												e.doit = false;
 										}
 										break;
 									}
@@ -286,15 +288,6 @@ public class TableEditorEx {
 		shell.dispose();
 	}
 
-	public static void main(String[] args) {
-		yamlFilePath = (args.length == 0)
-				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
-				: args[0];
-		TableEditorEx o = new TableEditorEx(null, null);
-		o.render();
-		display.dispose();
-	}
-
 	static class fileExitItemListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent event) {
 			shell.close();
@@ -307,8 +300,6 @@ public class TableEditorEx {
 		}
 	}
 
-	private static String testConfigFilePath; // TODO: rename
-
 	static class fileSaveItemListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent event) {
 
@@ -318,20 +309,20 @@ public class TableEditorEx {
 			String homeDir = System.getProperty("user.home");
 			dialog.setFilterPath(homeDir); // Windows path
 			String path = null;
-			if (testConfigFilePath != null) {
-				dialog.setFileName(testConfigFilePath);
-				path = new String(testConfigFilePath);
+			if (testSutePath != null) {
+				dialog.setFileName(testSutePath);
+				path = new String(testSutePath);
 			} //
-			testConfigFilePath = dialog.open();
-			if (testConfigFilePath != null) {
+			testSutePath = dialog.open();
+			if (testSutePath != null) {
 				System.out
-						.println(String.format("Saved to \"%s\"", testConfigFilePath));
+						.println(String.format("Saved to \"%s\"", testSutePath));
 			} else {
 				if (path != null) {
-					testConfigFilePath = new String(path);
+					testSutePath = new String(path);
 				}
 			}
-			label.setText(String.format("Saved to \"%s\"", testConfigFilePath));
+			label.setText(String.format("Saved to \"%s\"", testSutePath));
 			label.update();
 		}
 
@@ -395,9 +386,7 @@ public class TableEditorEx {
 
 			cnt = cnt + 1;
 		}
-
 		return;
-
 	}
 
 	private static void appendBlankRowToTable(Table table, TableItem item,
@@ -429,10 +418,17 @@ public class TableEditorEx {
 	}
 
 	public void setData(String key, String value) {
-
 		new Utils().readData(value, Optional.of(configData));
-
 		testData.put(key, configData);
+	}
+
+	public static void main(String[] args) {
+		yamlFilePath = (args.length == 0)
+				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
+				: args[0];
+		TableEditorEx o = new TableEditorEx(null, null);
+		o.render();
+		display.dispose();
 	}
 
 	// TODO: move to Utils.java

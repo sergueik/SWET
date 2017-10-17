@@ -41,6 +41,9 @@ public class TipDayEx {
 	private static String fontName = null;
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
+	private final List<String> tips = new ArrayList<>();
+	private boolean showOnStartup = true;
+	private Image image;
 
 	@SuppressWarnings("unused")
 	public TipDayEx() {
@@ -52,7 +55,6 @@ public class TipDayEx {
 		return TipDayEx.index;
 	}
 
-	private final List<String> tips = new ArrayList<>();
 
 	public List<String> getTips() {
 		return this.tips;
@@ -63,13 +65,11 @@ public class TipDayEx {
 		return this;
 	}
 
-	private boolean showOnStartup = true;
 
 	public boolean isShowOnStartup() {
 		return this.showOnStartup;
 	}
 
-	private Image image;
 
 	public void setImage(final Image image) {
 		this.image = image;

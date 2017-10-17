@@ -24,6 +24,7 @@ class IconAndMessageDialogEx extends IconAndMessageDialog {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
 		(new IconAndMessageDialogEx(shell)).open();
+		display.dispose();
 	}
 
 	public static final int I_DUNNO_ID = IDialogConstants.CLIENT_ID;

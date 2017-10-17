@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class DirecroryBrowseLayoutEx {
 	private static Shell shell;
-	private static HashMap<String, String> elementData = new HashMap<>();
 	private final static int formWidth = 750;
 	private final static int formHeight = 280;
 	private final static int buttonWidth = 120;

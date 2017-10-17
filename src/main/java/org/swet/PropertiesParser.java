@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -14,9 +15,9 @@ import java.util.Properties;
 
 public class PropertiesParser {
 
-	public static HashMap<String, String> getProperties(final String fileName) {
+	public static Map<String, String> getProperties(final String fileName) {
 		Properties p = new Properties();
-		HashMap<String, String> propertiesMap = new HashMap<>();
+		Map<String, String> propertiesMap = new HashMap<>();
 		// System.err.println(String.format("Reading properties file: '%s'",
 		// fileName));
 		try {
