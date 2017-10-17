@@ -1,3 +1,4 @@
+
 package org.swet;
 
 import static java.lang.String.format;
@@ -5,7 +6,6 @@ import static java.lang.String.format;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Test configuration serializer class for Selenium WebDriver Elementor Tool (SWET)
@@ -19,7 +19,7 @@ final class Configuration {
 	public String seleniumVersion;
 	public BrowserConfiguration browserConfiguration;
 	public List<String> browsers;
-	public HashMap<String, HashMap<String, String>> elements;
+	public Map<String, Map<String, String>> elements;
 	public Map<String, String> plugins;
 
 	public Date getCreated() {
@@ -78,11 +78,11 @@ final class Configuration {
 		this.plugins = data;
 	}
 
-	public HashMap<String, HashMap<String, String>> getElements() {
+	public Map<String, Map<String, String>> getElements() {
 		return elements;
 	}
 
-	public void setElements(HashMap<String, HashMap<String, String>> data) {
+	public void setElements(Map<String, Map<String, String>> data) {
 		this.elements = data;
 	}
 

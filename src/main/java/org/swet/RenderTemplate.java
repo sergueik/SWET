@@ -21,8 +21,8 @@ import org.jtwig.JtwigTemplate;
 
 public class RenderTemplate {
 
-	private static final HashMap<String, String> elementData = createSampleElementData();
-	private static HashMap<String, HashMap<String, String>> testData = new HashMap<>();
+	private static final Map<String, String> elementData = createSampleElementData();
+	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private String templateName = "templates/example2.twig";
 	private String templateAbsolutePath = "";
 
@@ -42,8 +42,8 @@ public class RenderTemplate {
 		return templateAbsolutePath;
 	}
 
-	private static HashMap<String, String> createSampleElementData() {
-		HashMap<String, String> elementData = new HashMap<>();
+	private static Map<String, String> createSampleElementData() {
+		Map<String, String> elementData = new HashMap<>();
 		elementData.put("ElementId", "id");
 		elementData.put("ElementCodeName",
 				"name of the element, supplied during recoring");
@@ -55,8 +55,8 @@ public class RenderTemplate {
 		return elementData;
 	}
 
-	private static HashMap<String, HashMap<String, String>> createSampleTestData() {
-		final HashMap<String, HashMap<String, String>> testData = new HashMap<>();
+	private static Map<String, Map<String, String>> createSampleTestData() {
+		final Map<String, Map<String, String>> testData = new HashMap<>();
 		testData.put("1", elementData);
 		return testData;
 	}
@@ -66,14 +66,14 @@ public class RenderTemplate {
 		return renderTest(testData);
 	}
 
-	public String renderTest(HashMap<String, HashMap<String, String>> testData) {
+	public String renderTest(Map<String, Map<String, String>> testData) {
 		Iterator<String> testDataKeys = testData.keySet().iterator();
 		String stepId;
 		List<String> scripts = new ArrayList<>();
 		while (testDataKeys.hasNext()) {
 			stepId = testDataKeys.next();
 			System.err.println("Step " + stepId);
-			HashMap<String, String> elementData = testData.get(stepId);
+			Map<String, String> elementData = testData.get(stepId);
 			scripts.add(renderElement(elementData));
 		}
 		StringBuilder result = new StringBuilder();
@@ -104,7 +104,7 @@ public class RenderTemplate {
 	// Scan the template directory and build the hash of template name / path
 	// options.
 	public void listFilesForFolder(final File dir, String note,
-			HashMap<String, String> templates) {
+			Map<String, String> templates) {
 		FileReader fileReader = null;
 		String contents = null;
 		if (dir.listFiles().length == 0) {

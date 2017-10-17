@@ -65,10 +65,10 @@ public class SimpleToolBarEx {
 	private String baseURL = "about:blank";
 	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private ArrayList<String> stepKeys = new ArrayList<>();
-	private HashMap<String, HashMap<String, String>> testData = new HashMap<>();
-	private HashMap<String, Image> iconData = new HashMap<>();
+	private Map<String, Map<String, String>> testData = new HashMap<>();
+	private Map<String, Image> iconData = new HashMap<>();
 	private Configuration config = null;
-	private static HashMap<String, Boolean> browserStatus = new HashMap<>();
+	private static Map<String, Boolean> browserStatus = new HashMap<>();
 	private static String configFilePath; // TODO: rename
 	private static Map<String, String> configData = new HashMap<>();
 	static {
@@ -330,8 +330,14 @@ public class SimpleToolBarEx {
 			testsuiteTool.setEnabled(false);
 			updateStatus("Launching the TestSuite Excel exporter");
 			try {
-				// TableEditorEx tableEditor = new TableEditorEx();
-				TableEditorEx.main(new String[] {});
+				TableEditorEx tableEditor = new TableEditorEx(Display.getCurrent(),
+						shell);
+				for (String key : testData.keySet()) {
+					tableEditor.setData(key,
+							new Utils().writeDataJSON(testData.get(key), ""));
+				}
+				tableEditor.render();
+
 			} catch (Exception e) {
 				(new ExceptionDialogEx(display, shell, e)).execute();
 			}
@@ -429,7 +435,7 @@ public class SimpleToolBarEx {
 				for (String stepId : sortedElementSteps.keySet()) {
 					// System.out.println(String.format("Drawing step %d (%s)",
 					// sortedElementSteps.get(stepId), stepId));
-					HashMap<String, String> elementData = testData.get(stepId);
+					Map<String, String> elementData = testData.get(stepId);
 
 					// Append Breadcrump Button
 
@@ -526,7 +532,7 @@ public class SimpleToolBarEx {
 					}
 
 					updateStatus("Waiting for data");
-					HashMap<String, String> elementData = addElement();
+					Map<String, String> elementData = addElement();
 					if (!elementData.containsKey("CommandId")) {
 						// TODO: better handle invalid elementData
 					} else {
@@ -584,7 +590,7 @@ public class SimpleToolBarEx {
 
 	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
 	public static Thread detectPageChange(WebDriver driver,
-			HashMap<String, Boolean> browserStatus) {
+			Map<String, Boolean> browserStatus) {
 		final String URL = driver.getCurrentUrl();
 
 		return new Thread() {
@@ -608,14 +614,14 @@ public class SimpleToolBarEx {
 
 	String readVisualSearchResult(String payload) {
 		return readVisualSearchResult(payload,
-				Optional.<HashMap<String, String>> empty());
+				Optional.<Map<String, String>> empty());
 	}
 
 	private String readVisualSearchResult(final String payload,
-			Optional<HashMap<String, String>> parameters) {
+			Optional<Map<String, String>> parameters) {
 		System.err.println("Processing payload: " + payload);
 		Boolean collectResults = parameters.isPresent();
-		HashMap<String, String> collector = (collectResults) ? parameters.get()
+		Map<String, String> collector = (collectResults) ? parameters.get()
 				: new HashMap<>();
 		String result = new Utils().readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
@@ -642,9 +648,9 @@ public class SimpleToolBarEx {
 						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
-	private HashMap<String, String> addElement() {
+	private Map<String, String> addElement() {
 
-		HashMap<String, String> elementData = new HashMap<>();
+		Map<String, String> elementData = new HashMap<>();
 		Boolean waitingForData = true;
 		Boolean browserRunaway = false;
 		String name = null;
@@ -807,7 +813,7 @@ public class SimpleToolBarEx {
 	// Adds a bredCrump item to BreadCrump canvas
 	// attached Shell / Form for Element editing
 	private void addBreadCrumpItem(String name, String commandId,
-			HashMap<String, String> data, Breadcrumb bc) {
+			Map<String, String> data, Breadcrumb bc) {
 		paginateBreadCrump();
 		final BreadcrumbItem item = new BreadcrumbItem(bc, SWT.CENTER | SWT.TOGGLE);
 		item.setData("CommandId", commandId);
@@ -833,7 +839,7 @@ public class SimpleToolBarEx {
 				String commandId = e.item.getData("CommandId").toString();
 				assertThat(stepKeys, hasItem(commandId));
 				assertTrue(testData.containsKey(commandId));
-				HashMap<String, String> elementData = testData.get(commandId);
+				Map<String, String> elementData = testData.get(commandId);
 				System.err.println(
 						String.format("Clicked %s / %s", item.getText(), commandId));
 				shell.setData("CurrentCommandId", commandId);
@@ -846,7 +852,7 @@ public class SimpleToolBarEx {
 				}
 				cs.render();
 				if ((Boolean) shell.getData("updated")) {
-					HashMap<String, String> data = new HashMap<>();
+					Map<String, String> data = new HashMap<>();
 					// form sets result to the modified element attributes JSON
 					String name = new Utils().readData((String) shell.getData("result"),
 							Optional.of(data));

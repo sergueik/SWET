@@ -132,7 +132,6 @@ public class Utils {
 			return false;
 	}
 
-	
 	/*
 	public static String getDate() {
 		try {
@@ -143,7 +142,7 @@ public class Utils {
 		}
 		return "";
 	}
-
+	
 	public static String getTime() {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("HHmmss");

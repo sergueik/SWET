@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -34,27 +35,25 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import org.openqa.selenium.By;
-
 import org.swet.YamlHelper;
 
-// origin:
-// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTMenuExample.htm
-// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/TableEditorexample.htm
-// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableSimpleDemo.htm 
-// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableEditor.htm
-// http://www.java2s.com/Tutorial/Java/0280__SWT/TableCellEditorComboTextandButton.htm
-// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/DemonstratesTableEditor.htm
-// http://www.java2s.com/Tutorial/Java/0280__SWT/UsingTableEditor.htm
-
+/**
+ * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
 public class TableEditorEx {
 
 	static Display display;
 	static Shell shell;
+	private static Shell parentShell = null;
+
+	private String dataKey = "CurrentCommandId";
+
 	Menu menuBar, fileMenu, helpMenu;
 	MenuItem fileMenuHeader, helpMenuHeader;
 	MenuItem fileExitItem, fileSaveItem, helpGetHelpItem;
 	static Label label;
+	private static Map<String, String> configData = new HashMap<>();
 
 	private static Map<String, String> elementSelectedByToselectorChoiceTable = new HashMap<>();
 	static {
@@ -95,40 +94,21 @@ public class TableEditorEx {
 	}
 
 	private static Configuration testCase = null;
-	private static Map<String, HashMap<String, String>> testData = new HashMap<>();
+	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private static LinkedHashMap<String, Integer> sortedElementSteps = new LinkedHashMap<>();
 	private static Map<String, Integer> elementSteps = new HashMap<>();
 	private static Map<String, Method> selectorChoiceTable = new HashMap<>();
 	private static Map<String, String> elementData = new HashMap<>();
 	private static String yamlFilePath = null;
 
-	public static void main(String[] args) {
+	TableEditorEx(Display parentDisplay, Shell parent) {
+		display = (parentDisplay != null) ? parentDisplay : new Display();
+		shell = new Shell(display);
 
-		yamlFilePath = (args.length == 0)
-				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
-				: args[0];
-
-		if (yamlFilePath != null) {
-			System.err.println("Loading " + yamlFilePath);
-			testCase = YamlHelper.loadConfiguration(yamlFilePath);
-			testData = testCase.getElements();
-			YamlHelper.printConfiguration(testCase);
+		if (parent != null) {
+			parentShell = parent;
+			// parent sets the elementData explicitly
 		}
-
-		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
-				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
-		sortedElementSteps = sortByValue(elementSteps);
-
-		/*
-		for (String stepId : sortedElementSteps.keySet()) {
-			elementData = testData.get(stepId);
-			System.out.println(String.format("Loading step %d(%s) %s %s %s",
-					Integer.parseInt(elementData.get("ElementStepNumber")),
-					elementData.get("CommandId"), elementData.get("ElementCodeName"),
-					elementData.get("ElementSelectedBy"),
-					elementData.get(elementData.get("ElementSelectedBy"))));
-		}
-		*/
 		try {
 			// NOTE: values of selectorChoiceTable are never used
 			selectorChoiceTable.put("cssSelector",
@@ -145,9 +125,32 @@ public class TableEditorEx {
 		} catch (NoSuchMethodException e) {
 		}
 
-		display = new Display();
-		shell = new Shell(display);
-		shell.setLayout(new FormLayout()); 		// new FillLayout());
+	}
+
+	public void render() {
+		if (yamlFilePath != null) {
+			System.err.println("Loading " + yamlFilePath);
+			testCase = YamlHelper.loadConfiguration(yamlFilePath);
+			testData = testCase.getElements();
+			YamlHelper.printConfiguration(testCase);
+		}
+		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
+				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
+		sortedElementSteps = sortByValue(elementSteps);
+		/*
+		for (String stepId : sortedElementSteps.keySet()) {
+			elementData = testData.get(stepId);
+			System.out.println(String.format("Loading step %d(%s) %s %s %s",
+					Integer.parseInt(elementData.get("ElementStepNumber")),
+					elementData.get("CommandId"), elementData.get("ElementCodeName"),
+					elementData.get("ElementSelectedBy"),
+					elementData.get(elementData.get("ElementSelectedBy"))));
+		}
+		*/
+
+		// display = new Display();
+		// shell = new Shell(display);
+		shell.setLayout(new FormLayout()); // new FillLayout());
 		label = new Label(shell, SWT.BORDER);
 		FormData labelData = new FormData();
 		labelData.left = new FormAttachment(0);
@@ -280,18 +283,27 @@ public class TableEditorEx {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
+		shell.dispose();
+	}
+
+	public static void main(String[] args) {
+		yamlFilePath = (args.length == 0)
+				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
+				: args[0];
+		TableEditorEx o = new TableEditorEx(null, null);
+		o.render();
 		display.dispose();
 	}
 
 	static class fileExitItemListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent event) {
 			shell.close();
-			display.dispose();
+			shell.dispose();
 		}
 
 		public void widgetDefaultSelected(SelectionEvent event) {
 			shell.close();
-			display.dispose();
+			shell.dispose();
 		}
 	}
 
@@ -312,7 +324,8 @@ public class TableEditorEx {
 			} //
 			testConfigFilePath = dialog.open();
 			if (testConfigFilePath != null) {
-				System.out.println(String.format("Saved to \"%s\"", testConfigFilePath));
+				System.out
+						.println(String.format("Saved to \"%s\"", testConfigFilePath));
 			} else {
 				if (path != null) {
 					testConfigFilePath = new String(path);
@@ -415,6 +428,13 @@ public class TableEditorEx {
 
 	}
 
+	public void setData(String key, String value) {
+
+		new Utils().readData(value, Optional.of(configData));
+
+		testData.put(key, configData);
+	}
+
 	// TODO: move to Utils.java
 	// sorting example from
 	// http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
@@ -424,5 +444,4 @@ public class TableEditorEx {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
 						(e1, e2) -> e1, LinkedHashMap::new));
 	}
-
 }
