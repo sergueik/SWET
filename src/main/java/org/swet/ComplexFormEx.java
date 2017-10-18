@@ -3,6 +3,7 @@ package org.swet;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.swt.SWT;
@@ -41,7 +42,7 @@ public class ComplexFormEx {
 	private final static int buttonHeight = 28;
 	private static Boolean updated = false;
 	private static String result = null;
-	private static HashMap<String, String> elementData = new HashMap<>(); // empty
+	private static Map<String, String> elementData = new HashMap<>();
 
 	ComplexFormEx(Display parentDisplay, Shell parent) {
 		display = (parentDisplay != null) ? parentDisplay : new Display();
@@ -231,7 +232,7 @@ public class ComplexFormEx {
 			*/
 		}
 
-		public void renderData(HashMap<String, String> data) {
+		public void renderData(Map<String, String> data) {
 
 			List<String> locators = Arrays.asList("ElementCssSelector",
 					"ElementXPath", "ElementId", "ElementText");
@@ -248,8 +249,8 @@ public class ComplexFormEx {
 					locatorRadio.setSelection(true);
 					locatorRadio.setText(locatorKeyLabel);
 					locatorRadio.setData("key", locatorKey);
-					locatorRadio.setSelection(
-							locatorKey.contains(data.get("ElementSelectedBy")));
+					locatorRadio
+							.setSelection(locatorKey.contains(data.get("ElementSelectedBy")));
 
 					locatorRadio.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
 					locatorRadio.addListener(SWT.Selection, listener);
@@ -280,8 +281,8 @@ public class ComplexFormEx {
 					locatorRadio.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
 					locatorRadio.setText(locatorKeyLabel);
 					locatorRadio.setData("key", locatorKey);
-					locatorRadio.setSelection(
-							locatorKey.contains(data.get("ElementSelectedBy")));
+					locatorRadio
+							.setSelection(locatorKey.contains(data.get("ElementSelectedBy")));
 					locatorRadio.addListener(SWT.Selection, listener);
 
 					final Text locatorValue;

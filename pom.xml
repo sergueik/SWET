@@ -45,6 +45,8 @@
     <phantomjsdriver.version>1.4.2</phantomjsdriver.version>
     <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
     <!-- for Selenum versions  3.2.x there are compilation errors with invalid action signatures -->
+    <poi.version>3.14</poi.version>
+    <poiooxml.version>3.14</poiooxml.version>
     <selenium.version>3.5.1</selenium.version>
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
@@ -71,6 +73,26 @@
       <groupId>org.eclipse</groupId>
       <artifactId>jface</artifactId>
       <version>${jface.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${poiooxml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml-schemas</artifactId>
+      <version>${poiooxml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-excelant</artifactId>
+      <version>${poi.version}</version>
     </dependency>
     <!--
     <dependency>
