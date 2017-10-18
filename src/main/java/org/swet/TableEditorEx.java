@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ import org.swet.YamlHelper;
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class TableEditorEx {
-
+	static Table table;
 	static Display display;
 	static Shell shell;
 	private static Shell parentShell = null;
@@ -202,7 +203,7 @@ public class TableEditorEx {
 		shell.setMenuBar(menuBar);
 
 		//
-		final Table table = new Table(shell, SWT.CHECK | SWT.BORDER | SWT.MULTI);
+		table = new Table(shell, SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		table.setLinesVisible(true);
 
 		table.setHeaderVisible(true);
@@ -314,6 +315,9 @@ public class TableEditorEx {
 		}
 	}
 
+	private static List<Map<Integer, String>> tableData = new ArrayList<>();
+	private static Map<Integer, String> rowData = new HashMap<>();
+
 	static class fileSaveItemListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent event) {
 
@@ -330,8 +334,24 @@ public class TableEditorEx {
 			testSutePath = dialog.open();
 			if (testSutePath != null) {
 				System.out.println(String.format("Saved to \"%s\"", testSutePath));
+				TableItem[] tableItems = table.getItems();
+				// TODO: compute
+				int numColumns = table.getColumnCount();
+				// to get the the value of the first row at the 2nd column
+				for (int row = 0; row != tableItems.length; row++) {
+					TableItem tableItem = tableItems[row];
+					rowData =  new HashMap<>();
+					for (int col = 0; col != numColumns; col++) {
+						rowData.put(col, tableItem.getText(col));
+						System.err.println(
+								"cell[" + row + "][" + col + "] = " + tableItem.getText(col));
+					}
+					tableData.add(rowData);
+				}
 
 				ReadWriteExcelFileEx.setExcelFileName(testSutePath);
+				ReadWriteExcelFileEx.setSheetName("test123");
+				ReadWriteExcelFileEx.setTableData(tableData);
 				try {
 					ReadWriteExcelFileEx.writeXLSFile();
 					ReadWriteExcelFileEx.readXLSFile();
@@ -373,7 +393,6 @@ public class TableEditorEx {
 			item.setText(new String[] { elementData.get("ElementCodeName"),
 					String.format("Action %d", cnt), elementData.get("ElementSelectedBy"),
 					elementData.get(elementData.get("ElementSelectedBy")) });
-
 			// some columns require combo selects
 
 			TableEditor keywordChoiceEditor = new TableEditor(table);
@@ -465,19 +484,18 @@ public class TableEditorEx {
 
 	private static class ReadWriteExcelFileEx {
 
+		private static List<Map<Integer, String>> tableData = new ArrayList<>();
+		private static Map<Integer, String> rowData = new HashMap<>();
+
+		public static void setTableData(List<Map<Integer, String>> data) {
+			tableData = data;
+		}
+
 		private static String excelFileName = null; // name of excel file
 		private static String sheetName = "Sheet1";// name of the sheet
 
-		public static String getSheetName() {
-			return sheetName;
-		}
-
 		public static void setSheetName(String data) {
 			ReadWriteExcelFileEx.sheetName = data;
-		}
-
-		public static String getExcelFileName() {
-			return excelFileName;
 		}
 
 		public static void setExcelFileName(String data) {
@@ -520,11 +538,12 @@ public class TableEditorEx {
 			HSSFWorkbook wb = new HSSFWorkbook();
 			HSSFSheet sheet = wb.createSheet(sheetName);
 
-			for (int r = 0; r < 5; r++) {
+			for (int r = 0; r < tableData.size(); r++) {
 				HSSFRow row = sheet.createRow(r);
+				rowData = tableData.get(r);
 				for (int c = 0; c < 5; c++) {
 					HSSFCell cell = row.createCell(c);
-					cell.setCellValue("Cell " + r + " " + c);
+					cell.setCellValue("Cell " + r + " " + c + " = " + rowData.get(c));
 				}
 			}
 

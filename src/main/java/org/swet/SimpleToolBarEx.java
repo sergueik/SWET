@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +65,7 @@ public class SimpleToolBarEx {
 	private long pollingInterval = 500;
 	private String baseURL = "about:blank";
 	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
-	private ArrayList<String> stepKeys = new ArrayList<>();
+	private List<String> stepKeys = new ArrayList<>();
 	private Map<String, Map<String, String>> testData = new HashMap<>();
 	private Map<String, Image> iconData = new HashMap<>();
 	private Configuration config = null;
