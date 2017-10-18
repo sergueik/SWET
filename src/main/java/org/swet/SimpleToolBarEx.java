@@ -97,18 +97,10 @@ public class SimpleToolBarEx {
 		this.launchImage = data;
 	}
 
-	public String getlaunchImage() {
-		return this.launchImage;
-	}
-
 	private String helpImage = "help_32.png";
 
 	public void sethelpImage(final String data) {
 		this.helpImage = data;
-	}
-
-	public String gethelpImage() {
-		return this.helpImage;
 	}
 
 	private String findImage = "find_32.png";
@@ -117,18 +109,10 @@ public class SimpleToolBarEx {
 		this.findImage = data;
 	}
 
-	public String getFindImage() {
-		return this.findImage;
-	}
-
 	private String gearImage = "preferences_32.png";
 
 	public void setGearImage(final String data) {
 		this.gearImage = data;
-	}
-
-	public String getGearImage() {
-		return this.gearImage;
 	}
 
 	// TODO: cleanup
@@ -138,18 +122,10 @@ public class SimpleToolBarEx {
 		this.pageImage = data;
 	}
 
-	public String getPageImage() {
-		return this.pageImage;
-	}
-
 	private String openImage = "open_32.png";
 
 	public void setOpenImage(final String data) {
 		this.openImage = data;
-	}
-
-	public String getOpenImage() {
-		return this.openImage;
 	}
 
 	private String saveImage = "save_32.png";
@@ -158,18 +134,10 @@ public class SimpleToolBarEx {
 		this.saveImage = data;
 	}
 
-	public String getSaveImage() {
-		return this.saveImage;
-	}
-
 	private String quitImage = "quit_32.png";
 
 	public void setQuitImage(final String data) {
 		this.quitImage = data;
-	}
-
-	public String getQuitImage() {
-		return this.quitImage;
 	}
 
 	private String testsuiteImage = "excel_gen_32.png";
@@ -178,18 +146,10 @@ public class SimpleToolBarEx {
 		this.testsuiteImage = data;
 	}
 
-	public String gettestsuiteImage() {
-		return this.testsuiteImage;
-	}
-
 	private String codeGenImage = "codegen_36.png";
 
 	public void setCodeGenImage(final String data) {
 		this.codeGenImage = data;
-	}
-
-	public String getCodeGenImage() {
-		return this.codeGenImage;
 	}
 
 	// http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
@@ -334,11 +294,12 @@ public class SimpleToolBarEx {
 				TableEditorEx tableEditor = new TableEditorEx(Display.getCurrent(),
 						shell);
 				for (String key : testData.keySet()) {
-					tableEditor.setData(key,
-							new Utils().writeDataJSON(testData.get(key), "{}"));
+					String jsonData = new Utils().writeDataJSON(testData.get(key), "{}");
+					System.err.println(
+							String.format("Sending the key %s", key /*, jsonData */ ));
+					tableEditor.setData(key, jsonData);
 				}
 				tableEditor.render();
-
 			} catch (Exception e) {
 				(new ExceptionDialogEx(display, shell, e)).execute();
 			}

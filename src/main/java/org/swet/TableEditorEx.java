@@ -156,16 +156,27 @@ public class TableEditorEx {
 		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
 				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
 		sortedElementSteps = sortByValue(elementSteps);
-		/*
+
+		// Is the data corrupt after sorting it ? seems to be
+		// for (String stepId : sortedElementSteps.keySet()) {
+
+		// for (String stepId : testData.keySet()) {
+
 		for (String stepId : sortedElementSteps.keySet()) {
+			elementData = new HashMap<>();
 			elementData = testData.get(stepId);
+			// debugging the last key defect
+			System.out.println(String.format("Loading step %d (%s) (%s)",
+					Integer.parseInt(elementData.get("ElementStepNumber")), stepId,
+					elementData.get("CommandId")));
+			/*
 			System.out.println(String.format("Loading step %d(%s) %s %s %s",
 					Integer.parseInt(elementData.get("ElementStepNumber")),
 					elementData.get("CommandId"), elementData.get("ElementCodeName"),
 					elementData.get("ElementSelectedBy"),
 					elementData.get(elementData.get("ElementSelectedBy"))));
+					*/
 		}
-		*/
 
 		shell.setLayout(new FormLayout()); // new FillLayout());
 		label = new Label(shell, SWT.BORDER);
@@ -333,18 +344,18 @@ public class TableEditorEx {
 			} //
 			testSutePath = dialog.open();
 			if (testSutePath != null) {
-				System.out.println(String.format("Saved to \"%s\"", testSutePath));
+				System.out
+						.println(String.format("Test Sute saved to \"%s\"", testSutePath));
 				TableItem[] tableItems = table.getItems();
 				// TODO: compute
 				int numColumns = table.getColumnCount();
 				// to get the the value of the first row at the 2nd column
 				for (int row = 0; row != tableItems.length; row++) {
 					TableItem tableItem = tableItems[row];
-					rowData =  new HashMap<>();
+					rowData = new HashMap<>();
 					for (int col = 0; col != numColumns; col++) {
 						rowData.put(col, tableItem.getText(col));
-						System.err.println(
-								"cell[" + row + "][" + col + "] = " + tableItem.getText(col));
+						// TODO: special handling for columns 1,2 combo box selection change
 					}
 					tableData.add(rowData);
 				}
@@ -353,8 +364,10 @@ public class TableEditorEx {
 				ReadWriteExcelFileEx.setSheetName("test123");
 				ReadWriteExcelFileEx.setTableData(tableData);
 				try {
-					ReadWriteExcelFileEx.writeXLSFile();
-					ReadWriteExcelFileEx.readXLSFile();
+					// ReadWriteExcelFileEx.writeXLSFile();
+					// ReadWriteExcelFileEx.readXLSFile();
+					ReadWriteExcelFileEx.writeXLSXFile();
+					ReadWriteExcelFileEx.readXLSXFile();
 				} catch (IOException e) {
 
 				}
@@ -380,16 +393,16 @@ public class TableEditorEx {
 		TableItem[] items = table.getItems();
 		int cnt = 0;
 		for (String stepId : sortedElementSteps.keySet()) {
-
 			// Append row into the TableEditor
 			TableItem item = items[cnt];
 			elementData = testData.get(stepId);
+			/*
 			System.out.println(String.format("Loading step %d(%s) %s %s %s",
 					Integer.parseInt(elementData.get("ElementStepNumber")),
 					elementData.get("CommandId"), elementData.get("ElementCodeName"),
 					elementData.get("ElementSelectedBy"),
 					elementData.get(elementData.get("ElementSelectedBy"))));
-
+			*/
 			item.setText(new String[] { elementData.get("ElementCodeName"),
 					String.format("Action %d", cnt), elementData.get("ElementSelectedBy"),
 					elementData.get(elementData.get("ElementSelectedBy")) });
@@ -418,13 +431,14 @@ public class TableEditorEx {
 					selectorChoiceTable.keySet())
 							.indexOf(elementSelectedByToselectorChoiceTable
 									.get(elementData.get("ElementSelectedBy")));
+			/*
 			System.err.println(String.format("Selecting: %d for %s",
 					selectorChoiceCombo_select, elementSelectedByToselectorChoiceTable
 							.get(elementData.get("ElementSelectedBy"))));
+							*/
 			selectorChoiceCombo.select(selectorChoiceCombo_select);
 			selectorChoiceEditor.grabHorizontal = true;
 			selectorChoiceEditor.setEditor(selectorChoiceCombo, item, 2);
-
 			cnt = cnt + 1;
 		}
 		return;
@@ -461,6 +475,9 @@ public class TableEditorEx {
 	public void setData(String key, String value) {
 		new Utils().readData(value, Optional.of(configData));
 		testData.put(key, configData);
+		System.err.println(String.format("setData %s -> \n %s", key,
+				(new Utils()).writeDataJSON(testData.get(key), "{}")));
+
 	}
 
 	public static void main(String[] args) {
@@ -533,44 +550,24 @@ public class TableEditorEx {
 			}
 		}
 
-		public static void writeXLSFile() throws IOException {
-
-			HSSFWorkbook wb = new HSSFWorkbook();
-			HSSFSheet sheet = wb.createSheet(sheetName);
-
-			for (int r = 0; r < tableData.size(); r++) {
-				HSSFRow row = sheet.createRow(r);
-				rowData = tableData.get(r);
-				for (int c = 0; c < 5; c++) {
-					HSSFCell cell = row.createCell(c);
-					cell.setCellValue("Cell " + r + " " + c + " = " + rowData.get(c));
-				}
-			}
-
-			FileOutputStream fileOut = new FileOutputStream(excelFileName);
-			wb.write(fileOut);
-			fileOut.flush();
-			fileOut.close();
-		}
-
 		public static void readXLSXFile() throws IOException {
 
 			InputStream ExcelFileToRead = new FileInputStream(excelFileName);
 			XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
 			XSSFWorkbook test = new XSSFWorkbook();
 			XSSFSheet sheet = wb.getSheetAt(0);
-			XSSFRow row;
-			XSSFCell cell;
-			Iterator<Row> rows = sheet.rowIterator();
-			while (rows.hasNext()) {
-				row = (XSSFRow) rows.next();
-				Iterator<Cell> cells = row.cellIterator();
-				while (cells.hasNext()) {
-					cell = (XSSFCell) cells.next();
-					if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING) {
-						System.out.print(cell.getStringCellValue() + " ");
-					} else if (cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-						System.out.print(cell.getNumericCellValue() + " ");
+			XSSFRow rowObj;
+			XSSFCell cellObj;
+			Iterator<Row> rowsObj = sheet.rowIterator();
+			while (rowsObj.hasNext()) {
+				rowObj = (XSSFRow) rowsObj.next();
+				Iterator<Cell> cellsObj = rowObj.cellIterator();
+				while (cellsObj.hasNext()) {
+					cellObj = (XSSFCell) cellsObj.next();
+					if (cellObj.getCellType() == XSSFCell.CELL_TYPE_STRING) {
+						System.out.print(cellObj.getStringCellValue() + " ");
+					} else if (cellObj.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+						System.out.print(cellObj.getNumericCellValue() + " ");
 					} else {
 						// TODO: Boolean, Formula, Errors
 					}
@@ -579,19 +576,45 @@ public class TableEditorEx {
 			}
 		}
 
+		public static void writeXLSFile() throws IOException {
+
+			HSSFWorkbook wbObj = new HSSFWorkbook();
+			HSSFSheet sheet = wbObj.createSheet(sheetName);
+
+			for (int row = 0; row < tableData.size(); row++) {
+				HSSFRow rowObj = sheet.createRow(row);
+				rowData = tableData.get(row);
+				for (int col = 0; col < rowData.size(); col++) {
+					HSSFCell cellObj = rowObj.createCell(col);
+					cellObj.setCellValue(rowData.get(col));
+				}
+			}
+
+			FileOutputStream fileOut = new FileOutputStream(excelFileName);
+			wbObj.write(fileOut);
+			wbObj.close();
+			fileOut.flush();
+			fileOut.close();
+		}
+
 		public static void writeXLSXFile() throws IOException {
 
-			XSSFWorkbook wb = new XSSFWorkbook();
-			XSSFSheet sheet = wb.createSheet(sheetName);
-			for (int r = 0; r < 5; r++) {
-				XSSFRow row = sheet.createRow(r);
-				for (int c = 0; c < 5; c++) {
-					XSSFCell cell = row.createCell(c);
-					cell.setCellValue("Cell " + r + " " + c);
+			// @SuppressWarnings("resource")
+			XSSFWorkbook wbObj = new XSSFWorkbook();
+			XSSFSheet sheet = wbObj.createSheet(sheetName);
+			for (int row = 0; row < tableData.size(); row++) {
+				XSSFRow rowObj = sheet.createRow(row);
+				rowData = tableData.get(row);
+				for (int col = 0; col < rowData.size(); col++) {
+					XSSFCell cell = rowObj.createCell(col);
+					cell.setCellValue(rowData.get(col));
+					System.err
+							.println("Writing " + row + " " + col + "  " + rowData.get(col));
 				}
 			}
 			FileOutputStream fileOut = new FileOutputStream(excelFileName);
-			wb.write(fileOut);
+			wbObj.write(fileOut);
+			wbObj.close();
 			fileOut.flush();
 			fileOut.close();
 		}
@@ -605,5 +628,4 @@ public class TableEditorEx {
 			readXLSXFile();
 		}
 	}
-
 }
