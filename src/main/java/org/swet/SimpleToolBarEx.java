@@ -146,7 +146,7 @@ public class SimpleToolBarEx {
 		this.testsuiteImage = data;
 	}
 
-	private String codeGenImage = "codegen_36.png";
+	private String codeGenImage = "codegen_32.png";
 
 	public void setCodeGenImage(final String data) {
 		this.codeGenImage = data;
