@@ -24,14 +24,6 @@
     <eclipse.swt.version>4.3</eclipse.swt.version>
     <jface.version>3.3.0-I20070606-0010</jface.version>
     <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
-    <!--
-    <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86</eclipse.swt.artifactId>
-    -->
     <guava.version>22.0</guava.version>
     <java.version>1.8</java.version>
     <jna-platform.version>4.5.0</jna-platform.version>
@@ -148,7 +140,7 @@
       <artifactId>selenium-server</artifactId>
       <version>${selenium.version}</version>
     </dependency>
-<!--
+    <!--
     <dependency>
       <groupId>org.seleniumhq.selenium.fluent</groupId>
       <artifactId>fluent-selenium</artifactId>
@@ -301,6 +293,7 @@
       </activation>
       <properties>
         <build_os>win32</build_os>
+        <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86</eclipse.swt.artifactId>
       </properties>
     </profile>
     <profile>
@@ -312,6 +305,7 @@
         </os>
       </activation>
       <properties>
+        <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
         <build_os>win64</build_os>
       </properties>
     </profile>
@@ -340,6 +334,8 @@
       </activation>
       <properties>
         <build_os>mac64</build_os>
+        <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</eclipse.swt.artifactId>
+        <selenium.version>2.48.0</selenium.version>
       </properties>
     </profile>
     <profile>
@@ -352,6 +348,8 @@
       </activation>
       <properties>
         <build_os>unix32</build_os>
+        <selenium.version>2.53.1</selenium.version>
+        <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86</eclipse.swt.artifactId>
       </properties>
     </profile>
     <profile>
@@ -364,6 +362,7 @@
       </activation>
       <properties>
         <build_os>unix64</build_os>
+        <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</eclipse.swt.artifactId>
       </properties>
     </profile>
   </profiles>
