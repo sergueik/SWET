@@ -156,7 +156,7 @@ public class BrowserDriver {
 		//
 		final String firefoxBrowserPath = osName.toLowerCase().startsWith("windows")
 				? "c:/Program Files (x86)/Mozilla Firefox/firefox.exe"
-				: "/usr/bin/firefox";
+				: "/usr/bin/firefox/firefox";
 		System.setProperty("webdriver.gecko.driver",
 				new File(geckoDriverPath).getAbsolutePath());
 		System.setProperty("webdriver.firefox.bin",

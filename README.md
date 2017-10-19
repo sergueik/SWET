@@ -5,8 +5,10 @@
 
 __Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__)of
 Dmytro Zharii and author. __SWET__ is using the
-[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library
-instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax).
+[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library'
+instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax). __SWET__ also supports generating the __keyword driven framework__ in e.g. Excel spreadsheet. This is a work in progress, since each keyword driven framework has its own 
+ list of *keywords* it recognizes.
+
 
 Therefore __SWET__ runs on Windows, Mac or Linux, 32 or 64 bit platforms.
 __SWET__ is currently beta quality: one can create a session and ealuate and save Page Element information and convert it to a
@@ -43,18 +45,68 @@ With the exception of one jar, the project dependencies are pulled by Maven (NOT
 
 #### Updating the platform-specific information in the `pom.xml`
 
-The project `pom.xml` currently is declaring the main `swt.jar` dependency in a platform-specific fashion:
+The project `pom.xml` currently is uing Maven prifiles to make selection of the main `swt.jar` dependency in a platform-specific fashion:
 
+```xml
+    <profile>
+      <id>windows64</id>
+      <activation>
+        <os>
+          <family>dos</family>
+          <arch>amd64</arch>
+        </os>
+      </activation>
+      <properties>
+        <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
+        <build_os>win64</build_os>
+      </properties>
+    </profile>
+    <profile>
+      <id>mac64</id>
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>x86_64</arch>
+        </os>
+      </activation>
+      <properties>
+        <build_os>mac64</build_os>
+        <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</eclipse.swt.artifactId>
+      </properties>
+    </profile>
+    <profile>
+      <id>unix32</id>
+      <activation>
+        <os>
+          <family>unix</family>
+          <arch>i386</arch>
+        </os>
+      </activation>
+      <properties>
+        <build_os>unix32</build_os>
+        <selenium.version>2.53.1</selenium.version>
+        <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86</eclipse.swt.artifactId>
+      </properties>
+    </profile>
+    <profile>
+      <id>unix64</id>
+      <activation>
+        <os>
+          <family>unix</family>
+          <arch>amd64</arch>
+        </os>
+      </activation>
+      <properties>
+        <build_os>unix64</build_os>
+        <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</eclipse.swt.artifactId>
+      </properties>
+    </profile>    
+```
+The correct profile is selected automatically. If this fails to work for some reason, one will need to copy the relevant `artifactId` property definition into the 
 ```xml
   <properties>
     <eclipse.swt.version>4.3</eclipse.swt.version>
     <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
-    <!--
-    <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx</eclipse.swt.artifactId>
-    <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</eclipse.swt.artifactId>
-    -->
   </properties>
   <dependencies>
     <dependency>
@@ -64,7 +116,7 @@ The project `pom.xml` currently is declaring the main `swt.jar` dependency in a 
 		</dependency>
     ...
 ```
-One willl have to uncomment the relevant `artifactId` property definition and comment the rest.
+
 Due to some problem with JVM loader, these platform-dependent jars cannot be included simultaneously.
 The alternative is to package the spring-boot jar file as explained in
 [Multiplatform SWT](https://github.com/jendap/multiplatform-swt) project.
