@@ -2,7 +2,6 @@
   var SWD_Page_Recorder, addStyle, bye, createCommand, dbg, getInputElementsByTypeAndValue, getPageXY, getCssSelectorOF, getElementId, getPathTo, handler, hello, prev, preventEvent, pseudoGuid, rightClickHandler, say;
 
   var ELEMENT_NODE = 1;
-
   say = function(context) {
     if (typeof console !== 'undefined' && console !== null) {
       return console.log(context);
@@ -51,7 +50,7 @@
     bye('getInputElementsByTypeAndValue');
     return result;
   };
-  
+
     // http://stackoverflow.com/questions/6743912/get-the-pure-text-without-html-element-by-javascript
 		getText = function(element, addSpaces) {
       var i, result, text, child;
@@ -71,7 +70,7 @@
                 if (addSpaces && /\S$/.test(result) && /^\S/.test(text)) text = ' ' + text;
                 result += text;
             }
-        }        
+        }
       } else {
         result = element.innerText || element.textContent || '';
       }
@@ -83,7 +82,7 @@
     getElementId = function(element) {
          var selector = '';
          hello('getElementId ' + element.tagName);
- 
+
          if (element instanceof Element && element.nodeType === ELEMENT_NODE && element.id) {
              selector = element.id;
          }
@@ -92,7 +91,7 @@
      };
 
       // The code for getCssSelectorOF was partially borrowed from chromium project:
-      // https://chromium.googlesource.com/chromium/src.git 
+      // https://chromium.googlesource.com/chromium/src.git
      getCssSelectorOF = function(element) {
        hello('getCssSelectorOF ' + element.tagName);
        var specialAttributesArray = ['href','src','title','alt'];
@@ -101,7 +100,13 @@
        var path = [];
        while (element.nodeType === ELEMENT_NODE) {
          var selector = element.nodeName.toLowerCase();
-         if (element.id) {
+         // base url: https://www.yahoo.com/
+         // Id: uh-logo
+         // XPath: id("yui_3_18_0_4_1508468726560_1949")/a[ @href = "https://www.yahoo.com/" ]
+         // Css: h1#yui_3_18_0_4_1508468726560_1949 > a.D(ib).Bgr(nr).logo-datauri.W(190px).H(45px).Bgp($twoColLogoPos).Bgz(190px).Bgp($twoColLogoPosSM)!--sm1024.Bgz(90px)!--sm1024.ua-ie7_Bgi($logoImageIe).ua-ie7_Mstart(-185px).ua-ie8_Bgi($logoImageIe).ua-ie9_Bgi($logoImageIe)[ href = "https://www.yahoo.com/" ]
+         // Text: Yahoo
+         // TagName: A
+         if (element.id && path.length != 0) {
            if (element.id.indexOf('-') > -1) {
              selector += '[id = "' + element.id + '"]';
            } else {
@@ -126,7 +131,7 @@
           specialAttribute = specialAttributesArray[i];
           var postfix = probeAttribute(element,specialAttribute,'');
           if (postfix) {
-            selector += '[ ' + postfix + ' ]'; 
+            selector += '[ ' + postfix + ' ]';
           }
           }
          path.unshift(selector);
@@ -139,18 +144,19 @@
     probeAttribute = function(element,attributeName, prefix){
       if (element.hasAttribute(attributeName)) {
         return prefix + attributeName + ' = "' + element.getAttribute(attributeName) + '"';
-      } else {            
+      } else {
         return null;
       }
     }
-    getPathTo = function(element) {
+    getPathTo = function(element, depth) {
+        depth = depth + 1;
         var element_sibling, siblingTagName, siblings, cnt, sibling_count;
         var specialAttributesArray = ['href','src','title','alt'];
         var elementTagName = element.tagName.toLowerCase();
         hello('getPathTo ' +  elementTagName );
-        if (element.id != '') {
+        if (element.id != '' /* and */ && depth != 1) {
             return 'id("' + element.id + '")';
-            // alternative : 
+            // alternative :
             // return '*[@id="' + element.id + '"]';
         } else if (element.name && document.getElementsByName(element.name).length === 1) {
             return '//' + elementTagName + '[@name="' + element.name + '"]';
@@ -158,23 +164,23 @@
           return '/html/' + elementTagName;
         }
         var attribute_postfix = [];
-        var postfix = '';        
+        var postfix = '';
         var arrayLength = specialAttributesArray.length;
         for (var i = 0; i < arrayLength; i++) {
           specialAttribute = specialAttributesArray[i];
           postfix = probeAttribute(element,specialAttribute,'@');
           if (postfix) {
             hello('Found postfix:' + postfix);
-            attribute_postfix.push(postfix); 
+            attribute_postfix.push(postfix);
           }
         }
-        
+
         if (attribute_postfix.length > 0 ) {
           postfix = '[ '+ attribute_postfix.join(' and ') + ' ]';
           hello('Finished building postfix: ' + elementTagName + postfix);
-          return ( getPathTo(element.parentNode) + '/' +  elementTagName + postfix ); 
+          return ( getPathTo(element.parentNode, depth) + '/' +  elementTagName + postfix );
         }
-        
+
         sibling_count = 0;
         siblings = element.parentNode.childNodes;
         siblings_length = siblings.length;
@@ -184,7 +190,7 @@
             continue;
           }
           if (element_sibling === element) {
-            return getPathTo(element.parentNode) + '/' + elementTagName + '[' + (sibling_count + 1) + ']';
+            return getPathTo(element.parentNode, depth) + '/' + elementTagName + '[' + (sibling_count + 1) + ']';
           }
           if (element_sibling.nodeType === 1 && element_sibling.tagName.toLowerCase() === elementTagName) {
             sibling_count++;
@@ -281,7 +287,7 @@
       target = 'target' in event ? event.target : event.srcElement;
       root = document.compatMode === 'CSS1Compat' ? document.documentElement : document.body;
       mxy = [event.clientX + root.scrollLeft, event.clientY + root.scrollTop];
-      xpath = getPathTo(target);
+      xpath = getPathTo(target, 0);
       txy = getPageXY(target);
       css_selector = getCssSelectorOF(target);
       id = getElementId(target);
@@ -299,6 +305,7 @@
         'ElementTagName': tagName,
       };
       createCommand(jsonData);
+      depth = 0;
       document.SWD_Page_Recorder.showPos(event, xpath, css_selector, id, elementText, tagName );
       eventPreventingResult = preventEvent(event);
       bye('rightClickHandler');
@@ -446,24 +453,24 @@
  addStyle('span#SwdPR_PopUp_CloseButton { display:table-cell; -moz-border-radius: 4px; -webkit-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; border: 1px solid #ccc; color: white; background-color: #980000; cursor: pointer; font-size: 10pt; padding: 0px 2px; font-weight: bold; position: absolute; right: 3px; top: 8px; }');
 
   /*
-  addStyle "span#SwdPR_PopUp_CloseButton {  
-              display:table-cell; 
-              width:10px; 
-              border: 2px solid #c2c2c2; 
-              padding: 1px 5px; 
-              top: -20px; 
-              background-color: #980000; 
-              border-radius: 20px; 
-              font-size: 15px; 
-              font-weight: bold; 
-              color: white;text-decoration: none; cursor:pointer; 
+  addStyle "span#SwdPR_PopUp_CloseButton {
+              display:table-cell;
+              width:10px;
+              border: 2px solid #c2c2c2;
+              padding: 1px 5px;
+              top: -20px;
+              background-color: #980000;
+              border-radius: 20px;
+              font-size: 15px;
+              font-weight: bold;
+              color: white;text-decoration: none; cursor:pointer;
             }"
   */
 
 
   addStyle("div#SwdPR_PopUp {             display:none;           }           div#SwdPR_PopUp_Element_Name {             display:table;             width: 100%;           }");
 
-  /* 
+  /*
       Important!
       It wont work if the document has no body, such as top frameset pages.
   */
@@ -492,4 +499,4 @@
   }
 
 }).call(this);
-  
+

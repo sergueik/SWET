@@ -48,7 +48,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.util.regex.Pattern;
 /**
  * Main form for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -73,13 +73,13 @@ public class SimpleToolBarEx {
 	private static String configFilePath; // TODO: rename
 	static Map<String, String> browserDefaults = new HashMap<>();
 	static {
-		browserDefaults.put("Windows 8.1", "Chrome");
+		browserDefaults.put("Windows", "Chrome");
 		browserDefaults.put("Linux", "Firefox");
-		browserDefaults.put("Mac OS X", "Safari");
+		browserDefaults.put("Mac", "Safari");
 	}
 	// "Chrome" or better
 	static String browserDefault = Utils.getPropertyEnv("browser.default",
-			browserDefaults.get(OSUtils.getOsName()));
+			browserDefaults.get(Pattern.compile(" +").split(OSUtils.getOsName())[0]));
 	private static Map<String, String> configData = new HashMap<>();
 	static {
 		configData.put("Browser", browserDefault);
@@ -889,7 +889,7 @@ public class SimpleToolBarEx {
 
 		display = new Display();
 
-		System.err.println("Running on " + OSUtils.getOsName());
+		System.err.println("Running on " + OSUtils.getOsName() + " "  + Pattern.compile(" +").split(OSUtils.getOsName())[0] );
 		SimpleToolBarEx simpleToolBarEx = new SimpleToolBarEx();
 		simpleToolBarEx.setCodeGenImage("code_128.png");
 
