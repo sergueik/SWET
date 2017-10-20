@@ -71,12 +71,23 @@ public class SimpleToolBarEx {
 	private Configuration config = null;
 	private static Map<String, Boolean> browserStatus = new HashMap<>();
 	private static String configFilePath; // TODO: rename
+	static Map<String, String> browserDefaults = new HashMap<>();
+	static {
+		browserDefaults.put("Windows 8.1", "Chrome");
+		browserDefaults.put("Linux", "Firefox");
+		browserDefaults.put("Mac OS X", "Safari");
+	}
+	// "Chrome" or better
+	static String browserDefault = Utils.getPropertyEnv("browser.default",
+			browserDefaults.get(OSUtils.getOsName()));
 	private static Map<String, String> configData = new HashMap<>();
 	static {
-		configData.put("Browser", "Chrome");
+		configData.put("Browser", browserDefault);
 		configData.put("Template", "Core Selenium Java (embedded)");
 	}
-	private static final String defaultConfig = "{ \"Browser\": \"Chrome\", \"Template\": \"Core Selenium Java (embedded)\", }";
+	private static final String defaultConfig = String.format(
+			"{ \"Browser\": \"%s\", \"Template\": \"Core Selenium Java (embedded)\", }",
+			configData.get("Browser"));
 
 	private static final int shellWidth = 768;
 	private static final int shellHeight = 324;
@@ -193,8 +204,11 @@ public class SimpleToolBarEx {
 			iconData.put("step icon",
 					new Image(display, new Utils().getResourceStream(
 							String.format("images/%s", "document_wrench_bw.png"))));
-			iconData.put("codeGen icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", codeGenImage))));
+			iconData.put("codeGen icon", resize(
+					new Image(display,
+							new Utils()
+									.getResourceStream(String.format("images/%s", codeGenImage))),
+					32, 32));
 			iconData.put("open icon", new Image(display, new Utils()
 					.getResourceStream(String.format("images/%s", openImage))));
 			iconData.put("save icon", new Image(display, new Utils()
@@ -308,18 +322,8 @@ public class SimpleToolBarEx {
 
 		launchTool.addListener(SWT.Selection, event -> {
 			launchTool.setEnabled(false);
-			updateStatus("Launching the browser");
 			String browser = configData.get("Browser");
-			if (browser == null || browser == "") {
-				if (osName.toLowerCase().startsWith("windows")) {
-					browser = "chrome";
-				} else if (osName.startsWith("Mac")) {
-					browser = "safari";
-				} else {
-					// Linux
-					browser = "firefox";
-				}
-			}
+			updateStatus(String.format("Launching the %s browser", browser));
 			try {
 				driver = BrowserDriver.initialize(browser);
 				driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
@@ -338,7 +342,10 @@ public class SimpleToolBarEx {
 				// driver.get(getResourceURI("blankpage.html"));
 			} catch (Exception e) {
 				(new ExceptionDialogEx(display, shell, e)).execute();
+				// try again
+				launchTool.setEnabled(true);
 			}
+			// TODO: detect if closed ?
 			updateStatus("Ready");
 		});
 
@@ -548,6 +555,29 @@ public class SimpleToolBarEx {
 				display.sleep();
 			}
 		}
+	}
+
+	// TODO: detect closed browser ?
+	public static Thread detectBrowserClosed(WebDriver driver,
+			Map<String, Boolean> browserStatus) {
+		return new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					try {
+						driver.getCurrentUrl();
+					} catch (Exception e) {
+						// System.err.println("Signaling browser is closed");
+						// browserStatus.replace("closed", true);
+						break;
+					}
+				}
+			}
+		};
 	}
 
 	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
@@ -846,14 +876,20 @@ public class SimpleToolBarEx {
 	}
 
 	private void updateStatus(String newStatus) {
-		this.statusMessage.setText(String.format("%s \u2026", newStatus));
+		// no HORIZONTAL ELLIPSIS in code page 437
+		System.err.println(String.format("%s%s", newStatus,
+				(osName.toLowerCase().startsWith("windows")) ? "..." : "\u2026"));
+		this.statusMessage.setText(String.format("%s\u2026", newStatus));
 		this.statusMessage.pack();
 		this.shell.pack();
+
 	}
 
 	public static void main(String[] args) {
 
 		display = new Display();
+
+		System.err.println("Running on " + OSUtils.getOsName());
 		SimpleToolBarEx simpleToolBarEx = new SimpleToolBarEx();
 		simpleToolBarEx.setCodeGenImage("code_128.png");
 
