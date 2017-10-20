@@ -100,12 +100,6 @@
        var path = [];
        while (element.nodeType === ELEMENT_NODE) {
          var selector = element.nodeName.toLowerCase();
-         // base url: https://www.yahoo.com/
-         // Id: uh-logo
-         // XPath: id("yui_3_18_0_4_1508468726560_1949")/a[ @href = "https://www.yahoo.com/" ]
-         // Css: h1#yui_3_18_0_4_1508468726560_1949 > a.D(ib).Bgr(nr).logo-datauri.W(190px).H(45px).Bgp($twoColLogoPos).Bgz(190px).Bgp($twoColLogoPosSM)!--sm1024.Bgz(90px)!--sm1024.ua-ie7_Bgi($logoImageIe).ua-ie7_Mstart(-185px).ua-ie8_Bgi($logoImageIe).ua-ie9_Bgi($logoImageIe)[ href = "https://www.yahoo.com/" ]
-         // Text: Yahoo
-         // TagName: A
          if (element.id && path.length != 0) {
            if (element.id.indexOf('-') > -1) {
              selector += '[id = "' + element.id + '"]';

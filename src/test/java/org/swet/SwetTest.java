@@ -1,7 +1,9 @@
 package org.swet;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +38,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import org.swet.BrowserDriver;
 import org.swet.Utils;
+
+import junit.framework.Assert;
+
 import org.swet.OSUtils;
 
 public class SwetTest {
@@ -58,7 +63,7 @@ public class SwetTest {
 	private static String baseURL = "about:blank";
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private static String defaultScript = "ElementSearch.js";
-	private static HashMap<String, String> data = new HashMap<>();
+	private static Map<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
 	private static boolean pause_after_script_injection = false;
 	private static long timeout_after_script_injection = 1000000;
@@ -155,7 +160,79 @@ public class SwetTest {
 		}
 	}
 
-	@Ignore
+	// @Ignore
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testNoIds() {
+		driver.get("http://www.yahoo.com/");
+		WebElement element = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.id("uh-logo"))));
+		injectScripts(Optional.<String> empty());
+		// pause_after_script_injection
+		if (pause_after_script_injection) {
+			try {
+				Thread.sleep(timeout_after_script_injection);
+			} catch (InterruptedException e) {
+			}
+
+		}
+		highlight(element);
+		// Act
+
+		if (osName.startsWith("Mac")) {
+			actions.keyDown(keyCTRL).build().perform();
+			actions.moveToElement(element).contextClick().build().perform();
+			actions.keyUp(keyCTRL).build().perform();
+		} else {
+			actions.moveToElement(element).build().perform();
+			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
+		}
+		// Assert
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		completeVisualSearch("Yahoo Logo");
+
+		// Assert
+		String payload = (String) executeScript(getSWDCommand);
+		assertFalse(payload.isEmpty());
+		String result = readVisualSearchResult(payload);
+		System.err.println("Result:\n" + result);
+		Map<String, String> details = new HashMap<>();
+		(new Utils()).readData(payload, Optional.of(details));
+		Map<String, String> expected = new HashMap<>();
+		expected.put("ElementId", "uh-logo");
+		expected.put("ElementXPath",
+				"id(\"yui_3_18_0_4_1508530499248_1058\")/a[ @href = \"https://www.yahoo.com/\" ]");
+		expected.put("ElementCssSelector",
+				"h1#yui_3_18_0_4_1508531183201_1027 > a.D(ib).Bgr(nr).logo-datauri.W(190px).H(45px).Bgp($twoColLogoPos).Bgz(190px).Bgp($twoColLogoPosSM)!--sm1024.Bgz(90px)!--sm1024.ua-ie7_Bgi($logoImageIe).ua-ie7_Mstart(-185px).ua-ie8_Bgi($logoImageIe).ua-ie9_Bgi($logoImageIe)[ href = \"https://www.yahoo.com/\" ]");
+
+		for (String selector : expected.keySet()) {
+			String expectedValue = expected.get(selector);
+			String actualValue = details.get(selector);
+			// NOTE: deprecated
+			Assert
+					.assertEquals(
+							String.format("Expected:\n%s\nActual:\n%s\n", expectedValue,
+									actualValue),
+							replaceID(expectedValue), replaceID(actualValue));
+			assertThat(replaceID(expectedValue), equalTo(replaceID(actualValue)));
+		}
+		if (pause_after_test) {
+			try {
+				Thread.sleep(timeout_after_test);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	private String replaceID(String selectorValue) {
+		return selectorValue.replaceAll("id\\(.+\\)", "id(<ID>)")
+				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
+	}
+
+	// @Ignore
 	@Test
 	public void testStatic() {
 		driver.get(new Utils().getPageContent("ElementSearch.html"));
@@ -178,7 +255,7 @@ public class SwetTest {
 		// Assert
 		String payload = (String) executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
-		HashMap<String, String> elementData = new HashMap<>();
+		Map<String, String> elementData = new HashMap<>();
 		String elementName = readVisualSearchResult(payload,
 				Optional.of(elementData));
 		Configuration config = new Configuration();
@@ -191,7 +268,7 @@ public class SwetTest {
 		config.created = new Date();
 		config.browserConfiguration = browserConfiguration;
 		config.updated = new Date();
-		HashMap<String, HashMap<String, String>> testData = new HashMap<>();
+		Map<String, Map<String, String>> testData = new HashMap<>();
 		String commandId = elementData.get("CommandId");
 		testData.put(commandId, elementData);
 		config.elements = testData;
@@ -210,8 +287,9 @@ public class SwetTest {
 		return osName;
 	}
 
+	// @Ignore
 	@Test
-	public void test() {
+	public void testInstalledBrowserInformaation() {
 		List<String> browsers = OSUtils.getInstalledBrowsers();
 		assertTrue(browsers.size() > 0);
 		System.out.println("Your browsers: " + browsers);
@@ -231,14 +309,14 @@ public class SwetTest {
 
 	String readVisualSearchResult(String payload) {
 		return readVisualSearchResult(payload,
-				Optional.<HashMap<String, String>> empty());
+				Optional.<Map<String, String>> empty());
 	}
 
 	private String readVisualSearchResult(final String payload,
-			Optional<HashMap<String, String>> parameters) {
+			Optional<Map<String, String>> parameters) {
 		System.err.println("Processing payload: " + payload);
 		Boolean collectResults = parameters.isPresent();
-		HashMap<String, String> collector = (collectResults) ? parameters.get()
+		Map<String, String> collector = (collectResults) ? parameters.get()
 				: new HashMap<>();
 		String result = new Utils().readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
