@@ -99,10 +99,7 @@ public class SimpleToolBarEx {
 
 	private Breadcrumb bc;
 
-	// https://www.iconfinder.com/icons/131870/book_help_icon#size=32
-	private String excelImage = "o3_calc_app_32.png";
-
-	private String launchImage = "launch_32.png";
+	private String launchImage = "browsers_32.png";
 
 	public void setLaunchImage(final String data) {
 		this.launchImage = data;
