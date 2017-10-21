@@ -108,8 +108,12 @@
            }
            path.unshift(selector);
            break;
-         } else if (element.className) {
-           selector += '.' + element.className.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/g, '.');
+         } else if (element.className ) {
+           var attr = element.className;
+           // ignore className attributes with special characters
+           if (attr.indexOf('(') == -1 /* && attr.indexOf('*') == -1 && attr.indexOf('.') == -1 */) {
+             selector += '.' + attr.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/g, '.'); 
+           }
          } else {
            var element_sibling = element;
            var sibling_cnt = 1;

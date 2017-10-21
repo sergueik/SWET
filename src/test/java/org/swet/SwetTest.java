@@ -99,7 +99,8 @@ public class SwetTest {
 			try {
 				BrowserDriver.close();
 			} catch (Exception e) {
-				System.err.println("Ignored exception (after suite): " + e.toString());
+				// System.err.println("Ignored exception (after suite): " +
+				// e.toString());
 			}
 		}
 	}
@@ -114,7 +115,7 @@ public class SwetTest {
 		driver.get("about:blank");
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void testWebPageElementSearch() {
 		driver.get("https://www.codeproject.com/");
@@ -151,7 +152,7 @@ public class SwetTest {
 		String payload = (String) executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		String result = readVisualSearchResult(payload);
-		System.err.println("Result:\n" + result);
+		// System.err.println("Result:\n" + result);
 		if (pause_after_test) {
 			try {
 				Thread.sleep(timeout_after_test);
@@ -167,6 +168,20 @@ public class SwetTest {
 		driver.get("http://www.yahoo.com/");
 		WebElement element = wait.until(
 				ExpectedConditions.visibilityOf(driver.findElement(By.id("uh-logo"))));
+		assertThat(element, notNullValue());
+		highlight(element);
+		element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(
+				// TODO: no such element: Unable to locate element: {"method":"css
+				// selector","selector":"h1[id *='yui_'] > a[ href =
+				// 'https://www.yahoo.com/' ]"}(..)
+				// By.cssSelector("h1[id *='yui_'] > a[ href = 'https://www.yahoo.com/'
+				// ]")
+				By.cssSelector("h1 > a[ href = 'https://www.yahoo.com/' ]"))));
+		assertThat(element, notNullValue());
+
+		highlight(element);
+		// System.err.println("Parent (1):\n" +
+		// element.findElement(By.xpath("..")).getAttribute("outerHTML")) ;
 		injectScripts(Optional.<String> empty());
 		// pause_after_script_injection
 		if (pause_after_script_injection) {
@@ -206,12 +221,12 @@ public class SwetTest {
 		expected.put("ElementXPath",
 				"id(\"yui_3_18_0_4_1508530499248_1058\")/a[ @href = \"https://www.yahoo.com/\" ]");
 		expected.put("ElementCssSelector",
-				"h1#yui_3_18_0_4_1508531183201_1027 > a.D(ib).Bgr(nr).logo-datauri.W(190px).H(45px).Bgp($twoColLogoPos).Bgz(190px).Bgp($twoColLogoPosSM)!--sm1024.Bgz(90px)!--sm1024.ua-ie7_Bgi($logoImageIe).ua-ie7_Mstart(-185px).ua-ie8_Bgi($logoImageIe).ua-ie9_Bgi($logoImageIe)[ href = \"https://www.yahoo.com/\" ]");
+				"h1#yui_3_18_0_4_1508531183201_1027 > a[ href = \"https://www.yahoo.com/\" ]");
 
 		for (String selector : expected.keySet()) {
 			String expectedValue = expected.get(selector);
 			String actualValue = details.get(selector);
-			// NOTE: deprecated
+			// NOTE: this assert method is deprecated
 			Assert
 					.assertEquals(
 							String.format("Expected:\n%s\nActual:\n%s\n", expectedValue,
@@ -232,7 +247,7 @@ public class SwetTest {
 				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void testStatic() {
 		driver.get(new Utils().getPageContent("ElementSearch.html"));
@@ -287,12 +302,12 @@ public class SwetTest {
 		return osName;
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void testInstalledBrowserInformaation() {
 		List<String> browsers = OSUtils.getInstalledBrowsers();
 		assertTrue(browsers.size() > 0);
-		System.out.println("Your browsers: " + browsers);
+		// System.out.println("Installled browsers: " + browsers);
 
 		for (String browserName : browserNames.keySet()) {
 			if (browsers.contains(browserName)) {
@@ -314,7 +329,7 @@ public class SwetTest {
 
 	private String readVisualSearchResult(final String payload,
 			Optional<Map<String, String>> parameters) {
-		System.err.println("Processing payload: " + payload);
+		// System.err.println("Processing payload: " + payload);
 		Boolean collectResults = parameters.isPresent();
 		Map<String, String> collector = (collectResults) ? parameters.get()
 				: new HashMap<>();

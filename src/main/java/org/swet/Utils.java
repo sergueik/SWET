@@ -32,8 +32,7 @@ public class Utils {
 
 	public String getScriptContent(String resourceFileName) {
 		try {
-			System.err
-					.println("Script contents: " + getResourceURI(resourceFileName));
+			/* System.err.println("Script contents: " + getResourceURI(resourceFileName));		*/
 			final InputStream stream = this.getClass().getClassLoader()
 					.getResourceAsStream(resourceFileName);
 			final byte[] bytes = new byte[stream.available()];
@@ -207,6 +206,5 @@ public class Utils {
 		}
 		return value;
 	}
-
 
 }
