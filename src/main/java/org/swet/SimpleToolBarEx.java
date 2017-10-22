@@ -48,7 +48,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.passer.ChoiceItem;
+import org.passer.ChoicesDialog;
+
 import java.util.regex.Pattern;
+
 /**
  * Main form for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -425,31 +429,7 @@ public class SimpleToolBarEx {
 
 		saveTool.addListener(SWT.Selection, event -> {
 			saveTool.setEnabled(false);
-			FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-			dialog.setFilterNames(new String[] { "YAML Files", "All Files (*.*)" });
-			dialog.setFilterExtensions(new String[] { "*.yaml", "*.*" });
-			String homeDir = System.getProperty("user.home");
-			dialog.setFilterPath(homeDir); // Windows path
-			String path = null;
-			if (configFilePath != null) {
-				dialog.setFileName(configFilePath);
-				path = new String(configFilePath);
-			} //
-			configFilePath = dialog.open();
-			if (configFilePath != null) {
-				System.out.println("Save to: " + configFilePath);
-				if (config == null) {
-					config = new Configuration();
-				}
-				config.setElements(testData);
-				// Save unordered, order by step index when generating script, drawing
-				// buttons etc.
-				YamlHelper.saveConfiguration(config, path);
-			} else {
-				if (path != null) {
-					configFilePath = new String(path);
-				}
-			}
+			saveWorkspace(shell);
 			saveTool.setEnabled(true);
 		});
 
@@ -529,27 +509,95 @@ public class SimpleToolBarEx {
 		});
 
 		shutdownTool.addListener(SWT.Selection, event -> {
+			shutdownTool.setEnabled(false);
+
+			/*
+			 *  prompt the user confirmation dialog
+			 */
+			ChoiceItem[] items = new ChoiceItem[] {
+					new ChoiceItem("Exit and save my project",
+							"Save your work in progress and exit the program"),
+					new ChoiceItem("Exit and don't save",
+							"Exit the program without saving your project"),
+					new ChoiceItem("Close browser and continue",
+							"Close the browser and continue"),
+					new ChoiceItem("Don't exit", "Return to the program") };
+
+			ChoicesDialog dialog = new ChoicesDialog(shell, SWT.APPLICATION_MODAL);
+
 			updateStatus("Shutting down");
-			if (driver != null) {
-				shutdownTool.setEnabled(false);
-				try {
-					BrowserDriver.close();
-				} catch (Exception e) {
-					System.err.println("Ignored exception: " + e.toString());
-				}
+			dialog.setTitle("Exit");
+			dialog.setMessage("Do you really want to exit?");
+			dialog.setImage(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION));
+			dialog.setChoices(items);
+			dialog.setDefaultChoice(items[3]);
+			dialog.setShowArrows(false);
+
+			int choice = dialog.open();
+
+			if (choice == -1
+					/* dialog closed */ || choice == 3 /* return to the program */) {
+				updateStatus("Ready");
 				shutdownTool.setEnabled(true);
+			} else {
+				if (choice != 3) {
+					if (driver != null) {
+						try {
+							BrowserDriver.close();
+						} catch (Exception e) {
+							System.err.println("Ignored exception: " + e.toString());
+						}
+					}
+					if (choice == 2) {
+						updateStatus("Ready");
+						shutdownTool.setEnabled(true);
+					}
+					if (choice == 0 || choice == 1) {
+						if (choice == 0) {
+							// Save the session
+							saveWorkspace(shell);
+						}
+						shell.getDisplay().dispose();
+						System.exit(0);
+					}
+				}
 			}
-			shell.getDisplay().dispose();
-			System.exit(0);
 		});
 
 		updateStatus("Ready");
 		shell.setText("Selenium WebDriver Elementor Toolkit");
 		shell.open();
-
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
+		}
+	}
+
+	private void saveWorkspace(Shell shell) {
+		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+		dialog.setFilterNames(new String[] { "YAML Files", "All Files (*.*)" });
+		dialog.setFilterExtensions(new String[] { "*.yaml", "*.*" });
+		String homeDir = System.getProperty("user.home");
+		dialog.setFilterPath(homeDir); // Windows path
+		String path = null;
+		if (configFilePath != null) {
+			dialog.setFileName(configFilePath);
+			path = new String(configFilePath);
+		} //
+		configFilePath = dialog.open();
+		if (configFilePath != null) {
+			System.out.println("Save to: " + configFilePath);
+			if (config == null) {
+				config = new Configuration();
+			}
+			config.setElements(testData);
+			// Save unordered, order by step index when generating script, drawing
+			// buttons etc.
+			YamlHelper.saveConfiguration(config, path);
+		} else {
+			if (path != null) {
+				configFilePath = new String(path);
 			}
 		}
 	}
@@ -886,7 +934,8 @@ public class SimpleToolBarEx {
 
 		display = new Display();
 
-		System.err.println("Running on " + OSUtils.getOsName() + " "  + Pattern.compile(" +").split(OSUtils.getOsName())[0] );
+		System.err.println("Running on " + OSUtils.getOsName() + " "
+				+ Pattern.compile(" +").split(OSUtils.getOsName())[0]);
 		SimpleToolBarEx simpleToolBarEx = new SimpleToolBarEx();
 		simpleToolBarEx.setCodeGenImage("code_128.png");
 

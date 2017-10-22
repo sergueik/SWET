@@ -191,8 +191,8 @@ public class ChoicesDialog {
 
 		int x = bounds.x + bounds.width / 2 - size.x / 2;
 		int y = bounds.y + bounds.height / 2 - size.y / 2;
-
-		shell.setLocation(x, y);
+		System.err.println("ChoiceDialog: center: x=" + x + " y=" + y);
+		shell.setLocation(x, (y < 0) ? 0 : y);
 	}
 
 	private void checkNull(Object object) {
