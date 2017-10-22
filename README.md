@@ -401,6 +401,7 @@ elements:
   * [Multiplatform SWT](https://github.com/jendap/multiplatform-swt)
   * [SWT Single Jar Packager](https://github.com/mchr3k/swtjar)
   * [SWT custom preference dialog](https://github.com/prasser/swtpreferences)
+  * [SWT multiple choice dialogs](https://github.com/prasser/swtchoices)
   * [Misc JFace/SWT UI elements and utils](https://github.com/Albertus82/JFaceUtils)
   * [SWT/JFace Utilities](https://github.com/Albertus82/JFaceUtils)
   * [SWT System Tray](https://github.com/dorkbox/SystemTray)
