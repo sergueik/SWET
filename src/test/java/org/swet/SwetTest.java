@@ -5,12 +5,16 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +27,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -30,12 +35,12 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import junit.framework.Assert;
-
+@SuppressWarnings("deprecation")
 public class SwetTest {
 
 	private static WebDriver driver;
@@ -56,6 +61,20 @@ public class SwetTest {
 	private static long timeout_after_script_injection = 1000000;
 	private static boolean pause_after_test = false;
 	private static long timeout_after_test = 1000000;
+
+	// Converting legacy SWD "Element selected By" keys to
+	// selectorTable keys
+	private static Map<String, String> elementSelectedByToselectorChoiceTable = new HashMap<>();
+	static {
+		elementSelectedByToselectorChoiceTable.put("ElementXPath", "xpath");
+		elementSelectedByToselectorChoiceTable.put("ElementCssSelector",
+				"cssSelector");
+		elementSelectedByToselectorChoiceTable.put("ElementText", "text");
+		elementSelectedByToselectorChoiceTable.put("ElementId", "id");
+		// TODO:
+		elementSelectedByToselectorChoiceTable.put("ElementLinkText", "linkText");
+		elementSelectedByToselectorChoiceTable.put("ElementTagName", "tagName");
+	}
 
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
@@ -108,6 +127,7 @@ public class SwetTest {
 		driver.get("https://www.codeproject.com/");
 		WebElement element = wait.until(ExpectedConditions.visibilityOf(driver
 				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
+		assertThat(element, notNullValue());
 		injectScripts(Optional.<String> empty());
 		// pause_after_script_injection
 		if (pause_after_script_injection) {
@@ -125,8 +145,10 @@ public class SwetTest {
 		// Assert
 		String payload = (String) executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
-		String result = readVisualSearchResult(payload);
-		// System.err.println("Result:\n" + result);
+		// System.err.println("Result:\n" + readVisualSearchResult(payload));
+		Map<String, String> resultDetails = new HashMap<>();
+		(new Utils()).readData(payload, Optional.of(resultDetails));
+		verifySelectors(resultDetails);
 		if (pause_after_test) {
 			try {
 				Thread.sleep(timeout_after_test);
@@ -135,7 +157,41 @@ public class SwetTest {
 		}
 	}
 
-	// @Ignore
+	// TODO: automatically discover new methods using reflection ?
+	private void verifySelectors(Map<String, String> result) {
+		List<String> methodKeys = new ArrayList<>(
+				Arrays.asList("ElementCssSelector", "ElementXPath", "ElementId"));
+		for (String methodKey : methodKeys) {
+			if (result.get(methodKey) == null || result.get(methodKey).length() == 0 ) {
+				continue;
+			}
+			System.err.println(String.format("Testing %s with \"%s\"", methodKey,
+					result.get(methodKey)));
+			String methodName = elementSelectedByToselectorChoiceTable.get(methodKey);
+			try {
+				Method method = By.class.getMethod(methodName, String.class);
+				WebElement element = driver
+						.findElement((By) method.invoke(null, result.get(methodKey)));
+				assertThat(element, notNullValue());
+				highlight(element);
+			} catch (NoSuchMethodException | SecurityException
+					| IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		WebElement element = driver
+				.findElement(By.cssSelector(result.get("ElementCssSelector")));
+		assertThat(element, notNullValue());
+		highlight(element);
+		element = driver.findElement(By.xpath(result.get("ElementXPath")));
+		assertThat(element, notNullValue());
+		highlight(element);
+	}
+
+	@Ignore
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testNoIds() {
@@ -203,12 +259,7 @@ public class SwetTest {
 		}
 	}
 
-	private String replaceID(String selectorValue) {
-		return selectorValue.replaceAll("id\\(.+\\)", "id(<ID>)")
-				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
-	}
-
-	// @Ignore
+	@Ignore
 	@Test
 	public void testStatic() {
 		driver.get(new Utils().getPageContent("ElementSearch.html"));
@@ -256,6 +307,11 @@ public class SwetTest {
 			}
 		}
 		return osName;
+	}
+
+	private String replaceID(String selectorValue) {
+		return selectorValue.replaceAll("id\\(.+\\)", "id(<ID>)")
+				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
 	}
 
 	String readVisualSearchResult(String payload) {
