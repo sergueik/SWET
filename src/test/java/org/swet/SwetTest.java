@@ -1,10 +1,9 @@
 package org.swet;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.equalTo;
-
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -36,12 +34,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import org.swet.BrowserDriver;
-import org.swet.Utils;
-
 import junit.framework.Assert;
-
-import org.swet.OSUtils;
 
 public class SwetTest {
 
@@ -54,12 +47,6 @@ public class SwetTest {
 	private static int implicitWait = 1;
 	private static long pollingInterval = 500;
 	private static String browser = "chrome";
-	private static Map<String, String> browserNames = new HashMap<>();
-	static {
-		browserNames.put("chrome.exe", "Google Chrome");
-		browserNames.put("iexplore.exe", "Internet Explorer");
-		browserNames.put("firefox.exe", "Mozilla Firefox");
-	}
 	private static String baseURL = "about:blank";
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private static String defaultScript = "ElementSearch.js";
@@ -77,7 +64,7 @@ public class SwetTest {
 			driver = BrowserDriver.initialize(browser);
 			/*
 			// Chrome works best
-			// Firefox having trouble with CTRL + ontext menu
+			// Firefox having trouble with CTRL + context menu
 			// IE 10 works, IE 11 does not
 			*/
 			// https://github.com/SeleniumHQ/selenium/issues/3630
@@ -115,7 +102,7 @@ public class SwetTest {
 		driver.get("about:blank");
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
 	public void testWebPageElementSearch() {
 		driver.get("https://www.codeproject.com/");
@@ -132,20 +119,7 @@ public class SwetTest {
 		}
 		highlight(element);
 		// Act
-
-		if (osName.startsWith("Mac")) {
-			actions.keyDown(keyCTRL).build().perform();
-			actions.moveToElement(element).contextClick().build().perform();
-			actions.keyUp(keyCTRL).build().perform();
-		} else {
-			actions.moveToElement(element).build().perform();
-			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
-		}
-		// Assert
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
+		inspectElement(element);
 		completeVisualSearch("element name");
 
 		// Assert
@@ -193,20 +167,7 @@ public class SwetTest {
 		}
 		highlight(element);
 		// Act
-
-		if (osName.startsWith("Mac")) {
-			actions.keyDown(keyCTRL).build().perform();
-			actions.moveToElement(element).contextClick().build().perform();
-			actions.keyUp(keyCTRL).build().perform();
-		} else {
-			actions.moveToElement(element).build().perform();
-			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
-		}
-		// Assert
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
+		inspectElement(element);
 		completeVisualSearch("Yahoo Logo");
 
 		// Assert
@@ -247,7 +208,7 @@ public class SwetTest {
 				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
 	public void testStatic() {
 		driver.get(new Utils().getPageContent("ElementSearch.html"));
@@ -258,13 +219,8 @@ public class SwetTest {
 				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
 		highlight(element);
 		// Act
-		actions.moveToElement(element).keyDown(keyCTRL).contextClick()
-				.keyUp(keyCTRL).build().perform();
+		inspectElement(element);
 		// Assert
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
 		completeVisualSearch("this element name");
 
 		// Assert
@@ -300,26 +256,6 @@ public class SwetTest {
 			}
 		}
 		return osName;
-	}
-
-	@Ignore
-	@Test
-	public void testInstalledBrowserInformaation() {
-		List<String> browsers = OSUtils.getInstalledBrowsers();
-		assertTrue(browsers.size() > 0);
-		// System.out.println("Installled browsers: " + browsers);
-
-		for (String browserName : browserNames.keySet()) {
-			if (browsers.contains(browserName)) {
-				assertTrue(OSUtils.isInstalled(browserName));
-				assertTrue(OSUtils.getMajorVersion(browserName) > 0);
-				System.out.println(String.format("%s version: %s",
-						browserNames.get(browserName), OSUtils.getVersion(browserName)));
-			} else {
-				assertFalse(OSUtils.isInstalled(browserName));
-				assertTrue(OSUtils.getMajorVersion(browserName) == 0);
-			}
-		}
 	}
 
 	String readVisualSearchResult(String payload) {
@@ -517,5 +453,22 @@ public class SwetTest {
 		// http://stackoverflow.com/questions/6743912/get-the-pure-text-without-html-element-by-javascript
 		String script = "var element = arguments[0];var text = element.innerText || element.textContent || ''; return text;";
 		return (String) executeScript(script, element);
+	}
+
+	private void inspectElement(WebElement element) {
+
+		if (osName.startsWith("Mac")) {
+			actions.keyDown(keyCTRL).build().perform();
+			actions.moveToElement(element).contextClick().build().perform();
+			actions.keyUp(keyCTRL).build().perform();
+		} else {
+			actions.moveToElement(element).build().perform();
+			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
+		}
+		// Assert
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
 	}
 }
