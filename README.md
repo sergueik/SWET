@@ -379,7 +379,7 @@ elements:
 ### Exporing to Keywod Driven Framework engines
 
 There exist a big number of Keyword Driven Frameworks with Selenium, e.g. [sergueik/keyword_driven_framework](https://github.com/sergueik/keyword_driven_framework). These allow storing the test flow in e.g. Excel file in a format:
-![icon](https://github.com/sergueik/SWET/blob/master/src/main/screenshots/table_editor_view.png)
+![icon](https://github.com/sergueik/SWET/blob/master/screenshots/table_editor_view.png)
 The toolbar buton ![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/excel_gen_32.png) does that from SWET.
 The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form. The rest of the columns come from the saved recording.
 It is possible to save the resul as Excel file.
