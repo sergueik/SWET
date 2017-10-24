@@ -1,12 +1,12 @@
 ﻿
 ### Info
 
-![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color_36.png)
+![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color.png)
 
 __Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__)of
 Dmytro Zharii and author. __SWET__ is using the
 [Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library'
-instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax). __SWET__ also supports generating the __keyword driven framework__ in e.g. Excel spreadsheet. This is a work in progress, since each keyword driven framework has its own 
+instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax). __SWET__ also supports generating the __keyword driven framework__ in e.g. Excel spreadsheet. This is a work in progress, since each keyword driven framework has its own
  list of *keywords* it recognizes.
 
 
@@ -100,9 +100,9 @@ The project `pom.xml` currently is uing Maven prifiles to make selection of the 
         <build_os>unix64</build_os>
         <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</eclipse.swt.artifactId>
       </properties>
-    </profile>    
+    </profile>
 ```
-The correct profile is selected automatically. If this fails to work for some reason, one will need to copy the relevant `artifactId` property definition into the 
+The correct profile is selected automatically. If this fails to work for some reason, one will need to copy the relevant `artifactId` property definition into the
 ```xml
   <properties>
     <eclipse.swt.version>4.3</eclipse.swt.version>
@@ -181,10 +181,10 @@ is a work in progress.
 
 #### Toolbar Buttons
 
-![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/launch_36.png)
+![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/launch_32.png)
 launches the browser
 
-![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find_36.png)
+![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find_32.png)
 injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/ElementSearch.js)
 into the page, then starts polling the page waiting for user to select some element via right click and to fill and submit the form:
 ![SWD Table](https://github.com/sergueik/SWET/blob/master/screenshots/swd_table.png)
@@ -196,13 +196,13 @@ The breadcrump button opens the form dialog with the details of the element:
 ![form](https://github.com/sergueik/SWET/blob/master/screenshots/form.png)
 
 The save and load buttons
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/save_36.png)
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/open_36.png)
+![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/save_32.png)
+![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/open_32.png)
 save  and restore the test session in YAML format.
 ![flowchart](https://github.com/sergueik/SWET/blob/master/screenshots/open_sesssion.png)
 
 The code generation button
-![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/codegen_36.png)
+![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/codegen_32.png)
 
 starts code generation using [Jtwig](http://jtwig.org/) tempate and `elementData` hash and opens result in a separate dialog:
 ![codegen](https://github.com/sergueik/SWET/blob/master/screenshots/codegen.png)
@@ -376,6 +376,13 @@ elements:
     ElementVariable: userSelectedVariableName
     ElementXPath: id("page-body")/div[1]/section[1]/div[2]/div[2]/section[1]/section[2]/header[1]/h3[1]/a[@href="/projects/outlookcaldavsynchronizer/?source=frontpage&position=1"]
 ```
+### Exporing to Keywod Driven Framework engines
+
+There exist a big number of Keyword Driven Frameworks with Selenium, e.g. [sergueik/keyword_driven_framework](https://github.com/sergueik/keyword_driven_framework). These allow storing the test flow in e.g. Excel file in a format:
+![icon](https://github.com/sergueik/SWET/blob/master/src/main/screenshots/table_editor_view.png)
+The toolbar buton ![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/excel_gen_32.png) does that from SWET.
+The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form. The rest of the columns come from the saved recording.
+It is possible to save the resul as Excel file.
 
 ### Work in Progress
 * UI improvements adding more form elements
@@ -418,6 +425,7 @@ elements:
   * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
 
 #### Eclipse Plugins
+  * [Eclipse Plugin documentation](https://github.com/vtrao/Eclipse-Plugin/tree/master/Articles)
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
   * [eclipse IDE Plug-in Development] (http://www.vogella.com/tutorials/EclipsePlugin/article.html#firstplugin_migratione4_toolbar)
   * [SeleniumPlus Eclipse plugin](https://github.com/SAFSDEV/SeleniumPlus-Plugin/tree/master/samples)
@@ -433,7 +441,7 @@ elements:
 #### Existing Selenium Test Generation plugins
   * [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
   * [ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
-  * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome) - 
+  * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome) -
   * [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
   * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
 
