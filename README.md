@@ -469,6 +469,7 @@ It is possible to save the resul as Excel file.
   * [json2](https://github.com/douglascrockford/JSON-js)
   * [geckodriver](http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/)
   * [jProcesses](https://github.com/profesorfalken/jProcesses)
+  * [jedi-tester/Ext2POI](https://github.com/jedi-tester/Ext2POI)
 
 ### Note
 

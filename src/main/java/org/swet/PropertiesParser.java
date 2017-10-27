@@ -40,7 +40,7 @@ public class PropertiesParser {
 				String key = e.nextElement();
 				String val = p.get(key).toString();
 				System.out.println(String.format("Reading: '%s' = '%s'", key, val));
-				propertiesMap.put(key, val);
+				propertiesMap.put(key, Utils.resolveEnvVars(val));
 			}
 
 		} catch (FileNotFoundException e) {
