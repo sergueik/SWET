@@ -79,14 +79,10 @@ public class SwetTest {
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
 
+		//  browser selection is hard-coded
+		
 		if (osName.toLowerCase().startsWith("windows")) {
 			driver = BrowserDriver.initialize(browser);
-			/*
-			// Chrome works best
-			// Firefox having trouble with CTRL + context menu
-			// IE 10 works, IE 11 does not
-			*/
-			// https://github.com/SeleniumHQ/selenium/issues/3630
 		} else if (osName.startsWith("Mac")) {
 			driver = BrowserDriver.initialize("safari");
 		} else {

@@ -3,7 +3,9 @@ package org.swet;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 // import org.apache.logging.log4j.LogManager;
@@ -37,8 +39,30 @@ public class BrowserDriver {
 	public static WebDriver driver;
 	private static String osName = OSUtils.getOsName();
 	private static String location = "";
+	private static String propertiesFileName = "application.properties";
+	private static String configurationFileName = "test.configuration";
+
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+	private static String applicationChromeDriverPath;
+	private static String applicationGeckoDriverPath;
+	private static String applicationFirefoxBrowserPath;
+	private static String applicationIeDriverPath;
+	private static Map<String, String> propertiesMap;
 
 	public static WebDriver initialize(String browser) {
+
+		propertiesMap = PropertiesParser
+				.getProperties(String.format("%s/src/main/resources/%s",
+						System.getProperty("user.dir"), propertiesFileName));
+		applicationChromeDriverPath = propertiesMap.get("chromeDriverPath");
+		applicationGeckoDriverPath = propertiesMap.get("geckoDriverPath");
+		applicationFirefoxBrowserPath = propertiesMap.get("firefoxBrowserPath");
+		applicationIeDriverPath = propertiesMap.get("ieDriverPath");
+
+		TestConfigurationParser
+				.getConfiguration(String.format("%s/src/main/resources/%s",
+						System.getProperty("user.dir"), configurationFileName));
 
 		DesiredCapabilities capabilities = null;
 		browser = browser.toLowerCase();
@@ -100,6 +124,7 @@ public class BrowserDriver {
 
 	private static DesiredCapabilities capabilitiesPhantomJS() {
 
+		// TODO: provide configurable path
 		DesiredCapabilities capabilities = new DesiredCapabilities("phantomjs", "",
 				Platform.ANY);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
@@ -151,12 +176,16 @@ public class BrowserDriver {
 	@SuppressWarnings("deprecation")
 	private static DesiredCapabilities capabilitiesFirefox() {
 
-		final String geckoDriverPath = osName.toLowerCase().startsWith("windows")
-				? "c:/java/selenium/geckodriver.exe" : "/var/run/geckodriver";
-		//
-		final String firefoxBrowserPath = osName.toLowerCase().startsWith("windows")
-				? "c:/Program Files (x86)/Mozilla Firefox/firefox.exe"
-				: "/usr/bin/firefox/firefox";
+		final String geckoDriverPath = (applicationGeckoDriverPath == null)
+				? osName.toLowerCase().startsWith("windows")
+						? "c:/java/selenium/geckodriver.exe" : "/var/run/geckodriver"
+				: applicationGeckoDriverPath;
+		// firefox.browser.path
+		final String firefoxBrowserPath = (applicationFirefoxBrowserPath == null)
+				? osName.toLowerCase().startsWith("windows")
+						? "c:/Program Files (x86)/Mozilla Firefox/firefox.exe"
+						: "/usr/bin/firefox/firefox"
+				: applicationFirefoxBrowserPath;
 		System.setProperty("webdriver.gecko.driver",
 				new File(geckoDriverPath).getAbsolutePath());
 		System.setProperty("webdriver.firefox.bin",
@@ -164,7 +193,7 @@ public class BrowserDriver {
 		System.setProperty("webdriver.reap_profile", "false");
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 
-		// require Selenium 3.3.1 + ?
+		// TODO: switch to Selenium 3.X+
 		/*
 		FirefoxOptions firefoxOptions = new FirefoxOptions();
 		firefoxOptions.setBinary(new File(firefoxBrowserPath).getAbsolutePath());
@@ -196,14 +225,16 @@ public class BrowserDriver {
 	// http://www.programcreek.com/java-api-examples/index.php?api=org.openqa.selenium.chrome.ChromeOptions
 	private static DesiredCapabilities capabilitiesChrome() {
 
-		final String chromeDriverPath = osName.toLowerCase().startsWith("windows")
-				? "c:/java/selenium/chromedriver.exe" : "/var/run/chromedriver";
+		final String chromeDriverPath = (applicationChromeDriverPath == null)
+				? osName.toLowerCase().startsWith("windows")
+						? "c:/java/selenium/chromedriver.exe" : "/var/run/chromedriver"
+				: applicationChromeDriverPath;
 		System.setProperty("webdriver.chrome.driver",
-				(new File(chromeDriverPath)).getAbsolutePath());
+				new File(chromeDriverPath).getAbsolutePath());
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 		ChromeOptions options = new ChromeOptions();
 
-		HashMap<String, Object> chromePrefs = new HashMap<>();
+		Map<String, Object> chromePrefs = new HashMap<>();
 		chromePrefs.put("profile.default_content_settings.popups", 0);
 		String downloadFilepath = System.getProperty("user.dir")
 				+ System.getProperty("file.separator") + "target"
@@ -231,9 +262,10 @@ public class BrowserDriver {
 	private static DesiredCapabilities capabilitiesInternetExplorer() {
 
 		DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
-		final String iEDriverPath = "c:/java/selenium/IEDriverServer.exe";
-		System.setProperty("webdriver.ie.driver",
-				(new File(iEDriverPath)).getAbsolutePath());
+		final String ieDriverPath = (applicationIeDriverPath == null)
+				? "c:/java/selenium/IEDriverServer.exe" : applicationIeDriverPath;
+		System.setProperty("webdriver.ie.driver", ieDriverPath
+		/* (new File(ieDriverPath)).getAbsolutePath() */);
 		capabilities.setCapability(
 				InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
 				true);
