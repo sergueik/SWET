@@ -822,7 +822,7 @@ public class SimpleToolBarEx {
 	}
 
 	private void injectElementSearch(Optional<String> script) {
-		ArrayList<String> scripts = new ArrayList<>(
+		List<String> scripts = new ArrayList<>(
 				Arrays.asList(new Utils().getScriptContent("ElementSearch.js")));
 		if (script.isPresent()) {
 			scripts.add(script.get());

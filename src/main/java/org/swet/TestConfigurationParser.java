@@ -13,6 +13,12 @@ import java.util.regex.Pattern;
  */
 
 public class TestConfigurationParser {
+	/*
+		String configurationFileName = "test.configuration";
+		TestConfigurationParser
+				.getConfiguration(String.format("%s/src/main/resources/%s",
+						System.getProperty("user.dir"), configurationFileName));
+			*/
 
 	public static Scanner loadTestData(final String fileName) {
 		Scanner scanner = null;

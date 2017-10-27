@@ -15,6 +15,18 @@ import java.util.Properties;
 
 public class PropertiesParser {
 
+	/*
+	
+		private static String propertiesFileName = "test.properties";
+		Map<String, String> propertiesMap = PropertiesParser
+						.getProperties(String.format("%s/src/main/resources/%s",
+								System.getProperty("user.dir"), propertiesFileName));
+		String username = propertiesMap.get("username");
+		String password =  propertiesMap.get("password");
+		StringBuilder loggingSb = new StringBuilder();
+		Formatter formatter = new Formatter(loggingSb, Locale.US)
+	*/
+
 	public static Map<String, String> getProperties(final String fileName) {
 		Properties p = new Properties();
 		Map<String, String> propertiesMap = new HashMap<>();
