@@ -32,6 +32,8 @@ import org.openqa.selenium.By;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -396,49 +398,73 @@ public class TableEditorEx {
 			// Append row into the TableEditor
 			TableItem item = items[cnt];
 			elementData = testData.get(stepId);
-			/*
-			System.out.println(String.format("Loading step %d(%s) %s %s %s",
-					Integer.parseInt(elementData.get("ElementStepNumber")),
-					elementData.get("CommandId"), elementData.get("ElementCodeName"),
-					elementData.get("ElementSelectedBy"),
-					elementData.get(elementData.get("ElementSelectedBy"))));
-			*/
+			String selectorChoice = elementSelectedByToselectorChoiceTable
+					.get(elementData.get("ElementSelectedBy"));
+			String selectorValue = elementData
+					.get(elementData.get("ElementSelectedBy"));
 			item.setText(new String[] { elementData.get("ElementCodeName"),
-					String.format("Action %d", cnt), elementData.get("ElementSelectedBy"),
-					elementData.get(elementData.get("ElementSelectedBy")) });
-			// some columns require combo selects
-
+					String.format("Action %d", cnt), selectorChoice, selectorValue });
+			// some columns converted to combo selects
 			TableEditor keywordChoiceEditor = new TableEditor(table);
 			CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
-			for (String keyword : methodTable.values()) {
+			keywordChoiceCombo.add("Choose...");
+			for (String keyword : methodTable.keySet()) {
 				keywordChoiceCombo.add(keyword);
-				// System.err.println(keyword);
 			}
-			int keywordChoiceCombo_select = new ArrayList<String>(
-					methodTable.values()).indexOf("clickLink");
-			// System.err.println("Selecting: " + keywordChoiceCombo_select);
-			keywordChoiceCombo.select(keywordChoiceCombo_select);
+			keywordChoiceCombo.select(0);
 			keywordChoiceEditor.grabHorizontal = true;
-			keywordChoiceEditor.setEditor(keywordChoiceCombo, item, 1);
+			int keywordChoiceColumn = 1;
+			keywordChoiceCombo.setData("column", keywordChoiceColumn);
+			keywordChoiceCombo.setData("item", (TableItem) item);
+			keywordChoiceEditor.setEditor(keywordChoiceCombo, item,
+					keywordChoiceColumn);
+			// TODO: refactor
+			keywordChoiceCombo.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent event) {
+					CCombo combo = (CCombo) event.widget;
+					int column = (int) combo.getData("column");
+					String oldValue = ((TableItem) combo.getData("item")).getText(column);
+					String newValue = combo.getText();
+					System.err
+							.println(String.format("Updating %s = %s", oldValue, newValue));
+					if (methodTable.containsKey(newValue)) {
+						((TableItem) combo.getData("item")).setText(column, newValue);
+					}
+				}
+			});
 
 			TableEditor selectorChoiceEditor = new TableEditor(table);
 			CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
 			for (String locator : selectorChoiceTable.keySet()) {
 				selectorChoiceCombo.add(locator);
-				// System.err.println(locator);
 			}
-			int selectorChoiceCombo_select = new ArrayList<String>(
-					selectorChoiceTable.keySet())
-							.indexOf(elementSelectedByToselectorChoiceTable
-									.get(elementData.get("ElementSelectedBy")));
-			/*
-			System.err.println(String.format("Selecting: %d for %s",
-					selectorChoiceCombo_select, elementSelectedByToselectorChoiceTable
-							.get(elementData.get("ElementSelectedBy"))));
-							*/
-			selectorChoiceCombo.select(selectorChoiceCombo_select);
+			int currentSelector = new ArrayList<String>(selectorChoiceTable.keySet())
+					.indexOf(elementSelectedByToselectorChoiceTable
+							.get(elementData.get("ElementSelectedBy")));
+
+			selectorChoiceCombo.select(currentSelector);
 			selectorChoiceEditor.grabHorizontal = true;
-			selectorChoiceEditor.setEditor(selectorChoiceCombo, item, 2);
+			int selectorChoiceColumn = 2;
+			selectorChoiceCombo.setData("item", (TableItem) item);
+			selectorChoiceCombo.setData("column", selectorChoiceColumn);
+			selectorChoiceEditor.setEditor(selectorChoiceCombo, item,
+					selectorChoiceColumn);
+
+			selectorChoiceCombo.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent event) {
+					CCombo combo = (CCombo) event.widget;
+					int column = (int) combo.getData("column");
+					String oldValue = ((TableItem) combo.getData("item")).getText(column);
+					String newValue = combo.getText();
+					System.err
+							.println(String.format("Updating %s = %s", oldValue, newValue));
+					if (selectorChoiceTable.containsKey(newValue)) {
+						((TableItem) combo.getData("item")).setText(column, newValue);
+					}
+				}
+			});
 			cnt = cnt + 1;
 		}
 		return;

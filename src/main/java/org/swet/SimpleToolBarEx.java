@@ -90,8 +90,8 @@ public class SimpleToolBarEx {
 		configData.put("Template", "Core Selenium Java (embedded)");
 	}
 	private static final String defaultConfig = String.format(
-			"{ \"Browser\": \"%s\", \"Template\": \"Core Selenium Java (embedded)\", }",
-			configData.get("Browser"));
+			"{ \"Browser\": \"%s\", \"Template\": \"%s\", }",
+			configData.get("Browser"), configData.get("Template"));
 
 	private static final int shellWidth = 768;
 	private static final int shellHeight = 324;
