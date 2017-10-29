@@ -306,6 +306,7 @@ public class ComplexFormEx {
 		elementData.put(key, value);
 	}
 
+	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
 		ComplexFormEx o = new ComplexFormEx(null, null);
 		o.render();

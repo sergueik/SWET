@@ -6,8 +6,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -26,6 +26,7 @@ public class ExceptionDialogEx {
 	private Display display;
 	private static boolean debug = false;
 
+	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
 		debug = true;
 		try {

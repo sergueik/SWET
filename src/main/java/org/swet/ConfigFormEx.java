@@ -42,6 +42,7 @@ public class ConfigFormEx {
 	private final static int labelWidth = 150;
 	private static String osName = OSUtils.getOsName();
 	private static Map<String, String> configData = new HashMap<>();
+
 	// NOTE: use the same DOM for Browser config options to simplify code
 	// the values for "Browser" hash are not used
 	private static Map<String, Map<String, String>> configOptions = new HashMap<>();
@@ -352,6 +353,7 @@ public class ConfigFormEx {
 		configData.put(key, value);
 	}
 
+	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
 		ConfigFormEx o = new ConfigFormEx(null, null);
 		o.render();

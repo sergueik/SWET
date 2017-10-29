@@ -1,33 +1,34 @@
 package org.swet;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.lang.reflect.Method;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import org.openqa.selenium.By;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -38,7 +39,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import org.swet.YamlHelper;
+import org.openqa.selenium.By;
 
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
@@ -67,9 +67,6 @@ public class TableEditorEx {
 	static Shell shell;
 	private static Shell parentShell = null;
 
-	private Menu menuBar, fileMenu, helpMenu;
-	private MenuItem fileMenuHeader, helpMenuHeader;
-	private MenuItem fileExitItem, fileSaveItem, helpGetHelpItem;
 	private static Label label;
 
 	private static Map<String, String> configData = new HashMap<>();
@@ -119,8 +116,9 @@ public class TableEditorEx {
 	private static Map<String, Method> selectorChoiceTable = new HashMap<>();
 	private static Map<String, String> elementData = new HashMap<>();
 	private static Configuration testCase = null;
-	private static String testSutePath; // TODO: rename
+	private static String testSuitePath; // TODO: rename
 	private static String yamlFilePath = null;
+	private static String path = null;
 
 	TableEditorEx(Display parentDisplay, Shell parent) {
 		display = (parentDisplay != null) ? parentDisplay : new Display();
@@ -140,7 +138,7 @@ public class TableEditorEx {
 			selectorChoiceTable.put("linkText",
 					By.class.getMethod("linkText", String.class));
 			selectorChoiceTable.put("name", By.class.getMethod("name", String.class));
-			// "text" is achieved indirectly.
+			// NOTE: "text" is achieved indirectly by underlying library.
 			selectorChoiceTable.put("text",
 					By.class.getMethod("xpath", String.class));
 		} catch (NoSuchMethodException e) {
@@ -187,6 +185,7 @@ public class TableEditorEx {
 		labelData.right = new FormAttachment(100);
 		labelData.bottom = new FormAttachment(100);
 		label.setLayoutData(labelData);
+
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
 		fileMenuHeader.setText("&File");
@@ -196,26 +195,37 @@ public class TableEditorEx {
 
 		MenuItem fileSaveItem = new MenuItem(fileMenu, SWT.PUSH);
 		fileSaveItem.setText("&Save");
+		fileSaveItem.addSelectionListener(new fileSaveItemListener());
 
 		MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
 		fileExitItem.setText("E&xit");
 
-		MenuItem helpMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+		fileExitItem.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				shell.close();
+				shell.dispose();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent event) {
+				shell.close();
+				shell.dispose();
+			}
+		});
+
+		MenuItem helpMenuHeader = new MenuItem(menuBar, SWT.PUSH);
 		helpMenuHeader.setText("&Help");
 
-		Menu helpMenu = new Menu(shell, SWT.DROP_DOWN);
-		helpMenuHeader.setMenu(helpMenu);
-
-		MenuItem helpGetHelpItem = new MenuItem(helpMenu, SWT.PUSH);
-		helpGetHelpItem.setText("&Get Help");
-
-		fileExitItem.addSelectionListener(new fileExitItemListener());
-		fileSaveItem.addSelectionListener(new fileSaveItemListener());
-		// helpGetHelpItem.addSelectionListener(new helpGetHelpItemListener());
+		helpMenuHeader.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				label.setText("No help available yet");
+			}
+		});
 
 		shell.setMenuBar(menuBar);
 
-		//
 		table = new Table(shell, SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		table.setLinesVisible(true);
 
@@ -316,40 +326,26 @@ public class TableEditorEx {
 		shell.dispose();
 	}
 
-	static class fileExitItemListener implements SelectionListener {
-		public void widgetSelected(SelectionEvent event) {
-			shell.close();
-			shell.dispose();
-		}
-
-		public void widgetDefaultSelected(SelectionEvent event) {
-			shell.close();
-			shell.dispose();
-		}
-	}
-
-	private static List<Map<Integer, String>> tableData = new ArrayList<>();
-	private static Map<Integer, String> rowData = new HashMap<>();
-
 	static class fileSaveItemListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent event) {
 
 			FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-			dialog.setFilterNames(new String[] { "Excel Files", "All Files (*.*)" });
-			dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
-			String homeDir = System.getProperty("user.home");
-			dialog.setFilterPath(homeDir); // Windows path
-			String path = null;
-			if (testSutePath != null) {
-				dialog.setFileName(testSutePath);
-				path = new String(testSutePath);
+			dialog.setFilterNames(new String[] { "Excel 2003 Files (*.xls)",
+					"Excel 2007-2013 Files (*.xlsx)" });
+			dialog.setFilterExtensions(new String[] { "*.xls", "*.xlsx" });
+			dialog.setFilterPath(
+					(path == null) ? System.getProperty("user.home") : path);
+			if (testSuitePath != null) {
+				dialog.setFileName(testSuitePath);
+				path = new String(testSuitePath);
 			} //
-			testSutePath = dialog.open();
-			if (testSutePath != null) {
-				System.out
-						.println(String.format("Test Sute saved to \"%s\"", testSutePath));
+			testSuitePath = dialog.open();
+			if (testSuitePath != null) {
+
+				List<Map<Integer, String>> tableData = new ArrayList<>();
+				Map<Integer, String> rowData = new HashMap<>();
+
 				TableItem[] tableItems = table.getItems();
-				// TODO: compute
 				int numColumns = table.getColumnCount();
 				// to get the the value of the first row at the 2nd column
 				for (int row = 0; row != tableItems.length; row++) {
@@ -357,30 +353,36 @@ public class TableEditorEx {
 					rowData = new HashMap<>();
 					for (int col = 0; col != numColumns; col++) {
 						rowData.put(col, tableItem.getText(col));
-						// TODO: special handling for columns 1,2 combo box selection change
 					}
 					tableData.add(rowData);
 				}
 
-				ReadWriteExcelFileEx.setExcelFileName(testSutePath);
+				ReadWriteExcelFileEx.setExcelFileName(testSuitePath);
 				ReadWriteExcelFileEx.setSheetName("test123");
 				ReadWriteExcelFileEx.setTableData(tableData);
-				try {
-					// ReadWriteExcelFileEx.writeXLSFile();
-					// ReadWriteExcelFileEx.readXLSFile();
-					ReadWriteExcelFileEx.writeXLSXFile();
-					ReadWriteExcelFileEx.readXLSXFile();
-				} catch (IOException e) {
-
+				if (testSuitePath.matches(".*\\.xlsx$")) {
+					try {
+						ReadWriteExcelFileEx.writeXLSXFile();
+						ReadWriteExcelFileEx.readXLSXFile();
+					} catch (Exception e) {
+						(new ExceptionDialogEx(display, shell, e)).execute();
+					}
+				} else {
+					try {
+						ReadWriteExcelFileEx.writeXLSFile();
+						ReadWriteExcelFileEx.readXLSFile();
+					} catch (Exception e) {
+						(new ExceptionDialogEx(display, shell, e)).execute();
+					}
 				}
-
 			} else {
 				if (path != null) {
-					testSutePath = new String(path);
+					testSuitePath = new String(path);
 				}
 			}
-			label.setText(String.format("Saved to \"%s\"", testSutePath));
+			label.setText(String.format("Saved to \"%s\"", testSuitePath));
 			label.update();
+			System.out.println(String.format("Saved to \"%s\"", testSuitePath));
 		}
 
 		public void widgetDefaultSelected(SelectionEvent event) {
@@ -392,17 +394,17 @@ public class TableEditorEx {
 	private static void appendRowToTable(Table table,
 			LinkedHashMap<String, Integer> steps) {
 
-		TableItem[] items = table.getItems();
+		TableItem[] tableItems = table.getItems();
 		int cnt = 0;
 		for (String stepId : sortedElementSteps.keySet()) {
 			// Append row into the TableEditor
-			TableItem item = items[cnt];
+			TableItem tableItem = tableItems[cnt];
 			elementData = testData.get(stepId);
 			String selectorChoice = elementSelectedByToselectorChoiceTable
 					.get(elementData.get("ElementSelectedBy"));
 			String selectorValue = elementData
 					.get(elementData.get("ElementSelectedBy"));
-			item.setText(new String[] { elementData.get("ElementCodeName"),
+			tableItem.setText(new String[] { elementData.get("ElementCodeName"),
 					String.format("Action %d", cnt), selectorChoice, selectorValue });
 			// some columns need to be converted to selects
 
@@ -416,8 +418,8 @@ public class TableEditorEx {
 			keywordChoiceEditor.grabHorizontal = true;
 			int keywordChoiceColumn = 1;
 			keywordChoiceCombo.setData("column", keywordChoiceColumn);
-			keywordChoiceCombo.setData("item", (TableItem) item);
-			keywordChoiceEditor.setEditor(keywordChoiceCombo, item,
+			keywordChoiceCombo.setData("item", tableItem);
+			keywordChoiceEditor.setEditor(keywordChoiceCombo, tableItem,
 					keywordChoiceColumn);
 			keywordChoiceCombo.addModifyListener(new keywordChoiceListener());
 
@@ -433,49 +435,16 @@ public class TableEditorEx {
 			selectorChoiceCombo.select(currentSelector);
 			selectorChoiceEditor.grabHorizontal = true;
 			int selectorChoiceColumn = 2;
-			selectorChoiceCombo.setData("item", (TableItem) item);
+			selectorChoiceCombo.setData("item", tableItem);
 			selectorChoiceCombo.setData("column", selectorChoiceColumn);
-			selectorChoiceEditor.setEditor(selectorChoiceCombo, item,
+			selectorChoiceEditor.setEditor(selectorChoiceCombo, tableItem,
 					selectorChoiceColumn);
 			selectorChoiceCombo.addModifyListener(new selectorChoiceListener());
-			/*
-			selectorChoiceCombo.addListener(SWT.Modify, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					CCombo combo = (CCombo) event.widget;
-					int column = (int) combo.getData("column");
-					String oldValue = ((TableItem) combo.getData("item")).getText(column);
-					String newValue = combo.getText();
-					System.err
-							.println(String.format("Updating %s = %s", oldValue, newValue));
-					if (selectorChoiceTable.containsKey(newValue)) {
-						((TableItem) combo.getData("item")).setText(column, newValue);
-					}
-				}
-			});
-			*/
-			/*
-			selectorChoiceCombo.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent event) {
-					CCombo combo = (CCombo) event.widget;
-					int column = (int) combo.getData("column");
-					String oldValue = ((TableItem) combo.getData("item")).getText(column);
-					String newValue = combo.getText();
-					System.err
-							.println(String.format("Updating %s = %s", oldValue, newValue));
-					if (selectorChoiceTable.containsKey(newValue)) {
-						((TableItem) combo.getData("item")).setText(column, newValue);
-					}
-				}
-			});
-			*/
 			cnt = cnt + 1;
 		}
 		return;
 	}
 
-	
 	static class selectorChoiceListener implements ModifyListener {
 
 		@Override
@@ -488,24 +457,7 @@ public class TableEditorEx {
 			if (selectorChoiceTable.containsKey(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
-
 		}
-
-	}
-
-	static class keywordChoiceListener implements ModifyListener {
-		@Override
-		public void modifyText(ModifyEvent event) {
-			CCombo combo = (CCombo) event.widget;
-			int column = (int) combo.getData("column");
-			String oldValue = ((TableItem) combo.getData("item")).getText(column);
-			String newValue = combo.getText();
-			System.err.println(String.format("Updating %s = %s", oldValue, newValue));
-			if (methodTable.containsKey(newValue)) {
-				((TableItem) combo.getData("item")).setText(column, newValue);
-			}
-		}
-
 	}
 
 	private static void appendBlankRowToTable(Table table, TableItem item,
@@ -525,7 +477,7 @@ public class TableEditorEx {
 		keywordChoiceEditor.grabHorizontal = true;
 		int keywordChoiceColumn = 1;
 		keywordChoiceCombo.setData("column", keywordChoiceColumn);
-		keywordChoiceCombo.setData("item", (TableItem) item);
+		keywordChoiceCombo.setData("item", item);
 		keywordChoiceEditor.setEditor(keywordChoiceCombo, item,
 				keywordChoiceColumn);
 		keywordChoiceCombo.addModifyListener(new keywordChoiceListener());
@@ -539,13 +491,26 @@ public class TableEditorEx {
 		// NOTE: none of options is initially selected
 		selectorChoiceEditor.grabHorizontal = true;
 		int selectorChoiceColumn = 2;
-		selectorChoiceCombo.setData("item", (TableItem) item);
+		selectorChoiceCombo.setData("item", item);
 		selectorChoiceCombo.setData("column", selectorChoiceColumn);
 		selectorChoiceEditor.setEditor(selectorChoiceCombo, item,
 				selectorChoiceColumn);
 		selectorChoiceCombo.addModifyListener(new selectorChoiceListener());
 		return;
+	}
 
+	static class keywordChoiceListener implements ModifyListener {
+		@Override
+		public void modifyText(ModifyEvent event) {
+			CCombo combo = (CCombo) event.widget;
+			int column = (int) combo.getData("column");
+			String oldValue = ((TableItem) combo.getData("item")).getText(column);
+			String newValue = combo.getText();
+			System.err.println(String.format("Updating %s = %s", oldValue, newValue));
+			if (methodTable.containsKey(newValue)) {
+				((TableItem) combo.getData("item")).setText(column, newValue);
+			}
+		}
 	}
 
 	public void setData(String key, String value) {
@@ -585,7 +550,7 @@ public class TableEditorEx {
 		}
 
 		private static String excelFileName = null; // name of excel file
-		private static String sheetName = "Sheet1";// name of the sheet
+		private static String sheetName = "Sheet1"; // name of the sheet
 
 		public static void setSheetName(String data) {
 			ReadWriteExcelFileEx.sheetName = data;
@@ -695,6 +660,7 @@ public class TableEditorEx {
 			fileOut.close();
 		}
 
+		@SuppressWarnings("unused")
 		public static void main(String[] args) throws IOException {
 			excelFileName = yamlFilePath = (args.length == 0) ? String.format("%s/%s",
 					System.getProperty("user.dir"), "testsuite.xls") : args[0];
