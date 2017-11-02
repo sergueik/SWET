@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,8 +53,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import org.openqa.selenium.By;
-
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -71,18 +67,18 @@ public class TableEditorEx {
 
 	private static Map<String, String> configData = new HashMap<>();
 
-	// TODO: use TestConfigurationParser or YamlHelper
-	// Converting legacy SWD "Element selected By" keys to
-	// selectorTable keys
+	// Legacy SWD "Element selected By" keys to By, NgBy, AngularBy methods
 	private static Map<String, String> selectorFromSWD = new HashMap<>();
 
-	// Currently free-hand, may become discoverable methods of
-	// keyword-driven framework class
+	// Currently free-hand, may become public methods of the keyword-driven
+	// framework class
 	private static Map<String, String> keywordTable = new HashMap<>();
+	private static String[] columnHeaders = { "Element", "Action Keyword",
+			"Selector Choice", "Selector Value", "Param 1", "Param 2", "Param 3" };
+
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private static LinkedHashMap<String, Integer> sortedElementSteps = new LinkedHashMap<>();
 	private static Map<String, Integer> elementSteps = new HashMap<>();
-	// private static Map<String, Method> selectorChoiceTable = new HashMap<>();
 	private static Map<String, String> elementData = new HashMap<>();
 	private static Configuration testCase = null;
 	private static String testSuitePath; // TODO: rename
@@ -97,10 +93,10 @@ public class TableEditorEx {
 			parentShell = parent;
 			// parent sets the elementData explicitly
 		}
-
 		Map<String, Map<String, String>> internalConfiguration = YamlHelper
 				.loadData(String.format("%s/src/main/resources/%s",
 						System.getProperty("user.dir"), "internalConfiguration.yaml"));
+		// TODO: load mixed content
 		for (String key : internalConfiguration.keySet()) {
 			System.err.println(key);
 		}
@@ -109,6 +105,8 @@ public class TableEditorEx {
 			System.err.println(key + " " + selectorFromSWD.get(key));
 		}
 		keywordTable = internalConfiguration.get("Keywords");
+		// TODO: extract Map<String,List<String>>
+		// columnHeaders = internalConfiguration.get("Column Headers");
 	}
 
 	public void render() {
@@ -143,7 +141,7 @@ public class TableEditorEx {
 					*/
 		}
 
-		shell.setLayout(new FormLayout()); // new FillLayout());
+		shell.setLayout(new FormLayout());
 		label = new Label(shell, SWT.BORDER);
 		FormData labelData = new FormData();
 		labelData.left = new FormAttachment(0);
@@ -195,15 +193,13 @@ public class TableEditorEx {
 		table.setLinesVisible(true);
 
 		table.setHeaderVisible(true);
-		String[] titles = { "Element", "Action Keyword", "Selector Choice",
-				"Selector Value", "Param 1", "Param 2", "Param 3" };
 
-		for (int titleItem = 0; titleItem < titles.length; titleItem++) {
+		for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
 			TableColumn column = new TableColumn(table, SWT.NULL);
-			column.setText(titles[titleItem]);
+			column.setText(columnHeaders[titleItem]);
 		}
 
-		for (int i = 0; i < titles.length; i++) {
+		for (int i = 0; i < columnHeaders.length; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setWidth(100);
 		}
@@ -223,7 +219,7 @@ public class TableEditorEx {
 			appendBlankRowToTable(table, item, i);
 		}
 
-		for (int titleItem = 0; titleItem < titles.length; titleItem++) {
+		for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
 			table.getColumn(titleItem).pack();
 		}
 
