@@ -71,43 +71,43 @@ public class TableEditorEx {
 
 	private static Map<String, String> configData = new HashMap<>();
 
+	// TODO: use TestConfigurationParser or YamlHelper
 	// Converting legacy SWD "Element selected By" keys to
 	// selectorTable keys
-	private static Map<String, String> elementSelectedByToselectorChoiceTable = new HashMap<>();
+	private static Map<String, String> selectorFromSWD = new HashMap<>();
 	static {
-		elementSelectedByToselectorChoiceTable.put("ElementXPath", "xpath");
-		elementSelectedByToselectorChoiceTable.put("ElementCssSelector",
-				"cssSelector");
-		elementSelectedByToselectorChoiceTable.put("ElementText", "text");
-		elementSelectedByToselectorChoiceTable.put("ElementId", "id");
+		selectorFromSWD.put("ElementXPath", "xpath");
+		selectorFromSWD.put("ElementCssSelector", "cssSelector");
+		selectorFromSWD.put("ElementText", "text");
+		selectorFromSWD.put("ElementId", "id");
 		// TODO:
-		elementSelectedByToselectorChoiceTable.put("ElementLinkText", "linkText");
-		elementSelectedByToselectorChoiceTable.put("ElementTagName", "tagName");
+		selectorFromSWD.put("ElementLinkText", "linkText");
+		selectorFromSWD.put("ElementTagName", "tagName");
 	}
 
 	// Currently free-hand, may become discoverable methods of
 	// keyword-driven framework class
-	private static Map<String, String> methodTable = new HashMap<>();
+	private static Map<String, String> keywordTable = new HashMap<>();
 	static {
-		methodTable.put("CLICK", "clickButton");
-		methodTable.put("CLICK_BUTTON", "clickButton");
-		methodTable.put("CLICK_CHECKBOX", "clickCheckBox");
-		methodTable.put("CLICK_LINK", "clickLink");
-		methodTable.put("CLICK_RADIO", "clickRadioButton");
-		methodTable.put("CLOSE_BROWSER", "closeBrowser");
-		methodTable.put("CREATE_BROWSER", "openBrowser");
-		methodTable.put("ELEMENT_PRESENT", "elementPresent");
-		methodTable.put("GET_ATTR", "getElementAttribute");
-		methodTable.put("GET_TEXT", "getElementText");
-		methodTable.put("GOTO_URL", "navigateTo");
-		methodTable.put("SELECT_OPTION", "selectDropDown");
-		methodTable.put("SET_TEXT", "enterText");
-		methodTable.put("SEND_KEYS", "enterText");
-		methodTable.put("SWITCH_FRAME", "switchFrame");
-		methodTable.put("VERIFY_ATTR", "verifyAttribute");
-		methodTable.put("VERIFY_TEXT", "verifyText");
-		methodTable.put("CLEAR_TEXT", "clearText");
-		methodTable.put("WAIT", "wait");
+		keywordTable.put("CLICK", "clickButton");
+		keywordTable.put("CLICK_BUTTON", "clickButton");
+		keywordTable.put("CLICK_CHECKBOX", "clickCheckBox");
+		keywordTable.put("CLICK_LINK", "clickLink");
+		keywordTable.put("CLICK_RADIO", "clickRadioButton");
+		keywordTable.put("CLOSE_BROWSER", "closeBrowser");
+		keywordTable.put("CREATE_BROWSER", "openBrowser");
+		keywordTable.put("ELEMENT_PRESENT", "elementPresent");
+		keywordTable.put("GET_ATTR", "getElementAttribute");
+		keywordTable.put("GET_TEXT", "getElementText");
+		keywordTable.put("GOTO_URL", "navigateTo");
+		keywordTable.put("SELECT_OPTION", "selectDropDown");
+		keywordTable.put("SET_TEXT", "enterText");
+		keywordTable.put("SEND_KEYS", "enterText");
+		keywordTable.put("SWITCH_FRAME", "switchFrame");
+		keywordTable.put("VERIFY_ATTR", "verifyAttribute");
+		keywordTable.put("VERIFY_TEXT", "verifyText");
+		keywordTable.put("CLEAR_TEXT", "clearText");
+		keywordTable.put("WAIT", "wait");
 	}
 
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
@@ -128,6 +128,7 @@ public class TableEditorEx {
 			parentShell = parent;
 			// parent sets the elementData explicitly
 		}
+		/*
 		try {
 			// NOTE: values of selectorChoiceTable are never used
 			selectorChoiceTable.put("cssSelector",
@@ -143,7 +144,13 @@ public class TableEditorEx {
 					By.class.getMethod("xpath", String.class));
 		} catch (NoSuchMethodException e) {
 		}
+		*/
 
+		Map<String, Map<String, String>> internalConfiguration = YamlHelper
+				.loadData(String.format("%s/src/main/resources/%s",
+						System.getProperty("user.dir"), "internalConfiguration.yaml"));
+		selectorFromSWD = internalConfiguration.get("SWDSelector");
+		keywordTable = internalConfiguration.get("Keywords");
 	}
 
 	public void render() {
@@ -400,7 +407,7 @@ public class TableEditorEx {
 			// Append row into the TableEditor
 			TableItem tableItem = tableItems[cnt];
 			elementData = testData.get(stepId);
-			String selectorChoice = elementSelectedByToselectorChoiceTable
+			String selectorChoice = selectorFromSWD
 					.get(elementData.get("ElementSelectedBy"));
 			String selectorValue = elementData
 					.get(elementData.get("ElementSelectedBy"));
@@ -411,7 +418,7 @@ public class TableEditorEx {
 			TableEditor keywordChoiceEditor = new TableEditor(table);
 			CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
 			keywordChoiceCombo.setText("Choose..");
-			for (String keyword : methodTable.keySet()) {
+			for (String keyword : keywordTable.keySet()) {
 				keywordChoiceCombo.add(keyword);
 			}
 			// NOTE: none of options is initially selected
@@ -429,8 +436,7 @@ public class TableEditorEx {
 				selectorChoiceCombo.add(locator);
 			}
 			int currentSelector = new ArrayList<String>(selectorChoiceTable.keySet())
-					.indexOf(elementSelectedByToselectorChoiceTable
-							.get(elementData.get("ElementSelectedBy")));
+					.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy")));
 
 			selectorChoiceCombo.select(currentSelector);
 			selectorChoiceEditor.grabHorizontal = true;
@@ -470,7 +476,7 @@ public class TableEditorEx {
 		TableEditor keywordChoiceEditor = new TableEditor(table);
 		CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
 		keywordChoiceCombo.setText("Choose..");
-		for (String keyword : methodTable.keySet()) {
+		for (String keyword : keywordTable.keySet()) {
 			keywordChoiceCombo.add(keyword);
 		}
 		// NOTE: none of options is initially selected
@@ -507,7 +513,7 @@ public class TableEditorEx {
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
 			System.err.println(String.format("Updating %s = %s", oldValue, newValue));
-			if (methodTable.containsKey(newValue)) {
+			if (keywordTable.containsKey(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
 		}

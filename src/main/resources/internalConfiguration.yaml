@@ -1,0 +1,58 @@
+---
+Keywords:
+  CLEAR_TEXT: clearText
+  SWITCH_FRAME: switchFrame
+  SET_TEXT: enterText
+  CLICK_CHECKBOX: clickCheckBox
+  SEND_KEYS: enterText
+  VERIFY_TEXT: verifyText
+  CLICK_RADIO: clickRadioButton
+  GET_ATTR: getElementAttribute
+  CLICK_LINK: clickLink
+  GET_TEXT: getElementText
+  ELEMENT_PRESENT: elementPresent
+  GOTO_URL: navigateTo
+  CLICK_BUTTON: clickButton
+  CLOSE_BROWSER: closeBrowser
+  CREATE_BROWSER: openBrowser
+  VERIFY_ATTR: verifyAttribute
+  CLICK: clickButton
+  WAIT: wait
+  SELECT_OPTION: selectDropDown
+SWDSelectors:
+  ElementCssSelector: cssSelector
+  ElementTagName: tagName
+  ElementText: text
+  ElementId: id
+  ElementLinkText: linkText
+  ElementXPath: xpath
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
