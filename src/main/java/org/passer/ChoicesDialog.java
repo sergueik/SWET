@@ -1,5 +1,5 @@
 package org.passer;
-
+// origin: https://github.com/prasser/swtchoices
 /*******************************************************************************
  * Copyright (c) 2015 Fabian Prasser
  *******************************************************************************/
@@ -191,7 +191,7 @@ public class ChoicesDialog {
 
 		int x = bounds.x + bounds.width / 2 - size.x / 2;
 		int y = bounds.y + bounds.height / 2 - size.y / 2;
-		System.err.println("ChoiceDialog: center: x=" + x + " y=" + y);
+		// System.err.println("ChoiceDialog: center: x=" + x + " y=" + y);
 		shell.setLocation(x, (y < 0) ? 0 : y);
 	}
 

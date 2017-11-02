@@ -65,22 +65,19 @@ public class TableEditorEx {
 
 	private static Label label;
 
-	private static Map<String, String> configData = new HashMap<>();
-
 	// Legacy SWD "Element selected By" keys to By, NgBy, AngularBy methods
 	private static Map<String, String> selectorFromSWD = new HashMap<>();
 
-	// Currently free-hand, may become public methods of the keyword-driven
-	// framework class
+	// Currently free-hand, may eventually become
+	// public methods of the keyword-driven framework class
 	private static Map<String, String> keywordTable = new HashMap<>();
 	private static String[] columnHeaders = { "Element", "Action Keyword",
 			"Selector Choice", "Selector Value", "Param 1", "Param 2", "Param 3" };
 
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
-	private static LinkedHashMap<String, Integer> sortedElementSteps = new LinkedHashMap<>();
+	private static LinkedHashMap<String, Integer> sortedSteps = new LinkedHashMap<>();
 	private static Map<String, Integer> elementSteps = new HashMap<>();
 	private static Map<String, String> elementData = new HashMap<>();
-	private static Configuration testCase = null;
 	private static String testSuitePath; // TODO: rename
 	private static String yamlFilePath = null;
 	private static String path = null;
@@ -112,33 +109,32 @@ public class TableEditorEx {
 	public void render() {
 		if (yamlFilePath != null) {
 			System.err.println("Loading " + yamlFilePath);
-			testCase = YamlHelper.loadConfiguration(yamlFilePath);
-			testData = testCase.getElements();
-			YamlHelper.printConfiguration(testCase);
+			Configuration _testCase = YamlHelper.loadConfiguration(yamlFilePath);
+			testData = _testCase.getElements();
+			// YamlHelper.printConfiguration(_testCase);
 		}
+		/*
+		NOTE: need to keep the var elementSteps otherwise 
+		[ERROR] /C:/developer/sergueik/SWET/src/main/java/org/swet/TableEditorEx.java:[117,31] method sortByValue in class org.swet.TableEditorEx cannot be applied to given types;
+		  required: java.util.Map<K,V>
+		  found: java.util.Map<java.lang.Object,java.lang.Object>
+		  reason: inferred type does not conform to upper bound(s)
+		    inferred: java.lang.Object
+		    upper bound(s): java.lang.Comparable<? super java.lang.Object>,java.lang.Object
+		    */
 		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
 				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
-		sortedElementSteps = sortByValue(elementSteps);
+		sortedSteps = sortByValue(elementSteps);
 
-		// Is the data corrupt after sorting it ? seems to be
-		// for (String stepId : sortedElementSteps.keySet()) {
+		for (String stepId : sortedSteps.keySet()) {
 
-		// for (String stepId : testData.keySet()) {
-
-		for (String stepId : sortedElementSteps.keySet()) {
 			elementData = new HashMap<>();
 			elementData = testData.get(stepId);
 			// debugging the last key defect
-			System.out.println(String.format("Loading step %d (%s) (%s)",
+			System.out.println(String.format(
+					"Loading testData\nstep # %d\nstep Id: %s\nCommand Id: %s\nElement Code Name: %s",
 					Integer.parseInt(elementData.get("ElementStepNumber")), stepId,
-					elementData.get("CommandId")));
-			/*
-			System.out.println(String.format("Loading step %d(%s) %s %s %s",
-					Integer.parseInt(elementData.get("ElementStepNumber")),
-					elementData.get("CommandId"), elementData.get("ElementCodeName"),
-					elementData.get("ElementSelectedBy"),
-					elementData.get(elementData.get("ElementSelectedBy"))));
-					*/
+					elementData.get("CommandId"), elementData.get("ElementCodeName")));
 		}
 
 		shell.setLayout(new FormLayout());
@@ -205,14 +201,14 @@ public class TableEditorEx {
 		}
 
 		int blankRows = 1;
-		int tableSize = sortedElementSteps.keySet().size();
+		int tableSize = sortedSteps.keySet().size();
 		for (int i = 0; i < tableSize + blankRows; i++) {
 			new TableItem(table, SWT.NONE);
 		}
 
 		TableItem[] items = table.getItems();
 
-		appendRowToTable(table, sortedElementSteps);
+		appendRowToTable(table, sortedSteps);
 
 		for (int i = tableSize; i < tableSize + blankRows; i++) {
 			TableItem item = items[i];
@@ -357,7 +353,7 @@ public class TableEditorEx {
 
 		TableItem[] tableItems = table.getItems();
 		int cnt = 0;
-		for (String stepId : sortedElementSteps.keySet()) {
+		for (String stepId : steps.keySet()) {
 			// Append row into the TableEditor
 			TableItem tableItem = tableItems[cnt];
 			elementData = testData.get(stepId);
@@ -474,11 +470,13 @@ public class TableEditorEx {
 	}
 
 	public void setData(String key, String value) {
-		new Utils().readData(value, Optional.of(configData));
-		testData.put(key, configData);
+		Map<String, String> _configData = new HashMap<>();
+		new Utils().readData(value, Optional.of(_configData));
+		testData.put(key, _configData);
+		/*
 		System.err.println(String.format("setData %s -> \n %s", key,
 				(new Utils()).writeDataJSON(testData.get(key), "{}")));
-
+		*/
 	}
 
 	public static void main(String[] args) {
@@ -618,16 +616,6 @@ public class TableEditorEx {
 			wbObj.close();
 			fileOut.flush();
 			fileOut.close();
-		}
-
-		@SuppressWarnings("unused")
-		public static void main(String[] args) throws IOException {
-			excelFileName = yamlFilePath = (args.length == 0) ? String.format("%s/%s",
-					System.getProperty("user.dir"), "testsuite.xls") : args[0];
-			writeXLSFile();
-			readXLSFile();
-			writeXLSXFile();
-			readXLSXFile();
 		}
 	}
 }
