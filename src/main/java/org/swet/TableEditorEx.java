@@ -77,7 +77,6 @@ public class TableEditorEx {
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private static LinkedHashMap<String, Integer> sortedSteps = new LinkedHashMap<>();
 	private static Map<String, Integer> elementSteps = new HashMap<>();
-	private static Map<String, String> elementData = new HashMap<>();
 	private static String testSuitePath; // TODO: rename
 	private static String yamlFilePath = null;
 	private static String path = null;
@@ -88,22 +87,16 @@ public class TableEditorEx {
 
 		if (parent != null) {
 			parentShell = parent;
-			// parent sets the elementData explicitly
 		}
 		Map<String, Map<String, String>> internalConfiguration = YamlHelper
 				.loadData(String.format("%s/src/main/resources/%s",
 						System.getProperty("user.dir"), "internalConfiguration.yaml"));
-		// TODO: load mixed content
-		for (String key : internalConfiguration.keySet()) {
-			System.err.println(key);
-		}
+
 		selectorFromSWD = internalConfiguration.get("SWDSelectors");
-		for (String key : selectorFromSWD.keySet()) {
-			System.err.println(key + " " + selectorFromSWD.get(key));
-		}
 		keywordTable = internalConfiguration.get("Keywords");
-		// TODO: extract Map<String,List<String>>
-		// columnHeaders = internalConfiguration.get("Column Headers");
+		// TODO: load mixed content
+		// Map<String,List<String>> columnHeaders =
+		// internalConfiguration.get("Column Headers");
 	}
 
 	public void render() {
@@ -126,9 +119,9 @@ public class TableEditorEx {
 				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
 		sortedSteps = sortByValue(elementSteps);
 
+		/*
 		for (String stepId : sortedSteps.keySet()) {
-
-			elementData = new HashMap<>();
+			Map<String, String> elementData = new HashMap<>();
 			elementData = testData.get(stepId);
 			// debugging the last key defect
 			System.out.println(String.format(
@@ -136,7 +129,7 @@ public class TableEditorEx {
 					Integer.parseInt(elementData.get("ElementStepNumber")), stepId,
 					elementData.get("CommandId"), elementData.get("ElementCodeName")));
 		}
-
+		*/
 		shell.setLayout(new FormLayout());
 		label = new Label(shell, SWT.BORDER);
 		FormData labelData = new FormData();
@@ -356,7 +349,7 @@ public class TableEditorEx {
 		for (String stepId : steps.keySet()) {
 			// Append row into the TableEditor
 			TableItem tableItem = tableItems[cnt];
-			elementData = testData.get(stepId);
+			Map<String, String> elementData = testData.get(stepId);
 			String selectorChoice = selectorFromSWD
 					.get(elementData.get("ElementSelectedBy"));
 			String selectorValue = elementData
@@ -409,7 +402,7 @@ public class TableEditorEx {
 			int column = (int) combo.getData("column");
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
-			System.err.println(String.format("Updating %s = %s", oldValue, newValue));
+			// System.err.println(String.format("Updating %s = %s", oldValue, newValue));
 			if (selectorFromSWD.containsValue(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
@@ -462,7 +455,7 @@ public class TableEditorEx {
 			int column = (int) combo.getData("column");
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
-			System.err.println(String.format("Updating %s = %s", oldValue, newValue));
+			// System.err.println(String.format("Updating %s = %s", oldValue, newValue));
 			if (keywordTable.containsKey(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}

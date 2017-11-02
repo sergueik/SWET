@@ -36,52 +36,10 @@ public class YamlHelper {
 		yamlFile = (args.length == 0)
 				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
 				: args[0];
-
-		Configuration config = loadConfiguration(yamlFile);
-		printConfiguration(config);
-
-		Map<String, String> selectorFromSWD = new HashMap<>();
-		selectorFromSWD.put("ElementXPath", "xpath");
-		selectorFromSWD.put("ElementCssSelector", "cssSelector");
-		selectorFromSWD.put("ElementText", "text");
-		selectorFromSWD.put("ElementId", "id");
-		// TODO:
-		selectorFromSWD.put("ElementLinkText", "linkText");
-		selectorFromSWD.put("ElementTagName", "tagName");
-		Map<String, Map<String, String>> internalConfiguration = new HashMap<>();
-
-		Map<String, String> keywordTable = new HashMap<>();
-		keywordTable.put("CLICK", "clickButton");
-		keywordTable.put("CLICK_BUTTON", "clickButton");
-		keywordTable.put("CLICK_CHECKBOX", "clickCheckBox");
-		keywordTable.put("CLICK_LINK", "clickLink");
-		keywordTable.put("CLICK_RADIO", "clickRadioButton");
-		keywordTable.put("CLOSE_BROWSER", "closeBrowser");
-		keywordTable.put("CREATE_BROWSER", "openBrowser");
-		keywordTable.put("ELEMENT_PRESENT", "elementPresent");
-		keywordTable.put("GET_ATTR", "getElementAttribute");
-		keywordTable.put("GET_TEXT", "getElementText");
-		keywordTable.put("GOTO_URL", "navigateTo");
-		keywordTable.put("SELECT_OPTION", "selectDropDown");
-		keywordTable.put("SET_TEXT", "enterText");
-		keywordTable.put("SEND_KEYS", "enterText");
-		keywordTable.put("SWITCH_FRAME", "switchFrame");
-		keywordTable.put("VERIFY_ATTR", "verifyAttribute");
-		keywordTable.put("VERIFY_TEXT", "verifyText");
-		keywordTable.put("CLEAR_TEXT", "clearText");
-		keywordTable.put("WAIT", "wait");
-
-		internalConfiguration.put("SWDSelectors", selectorFromSWD);
-		internalConfiguration.put("Keywords", keywordTable);
-
-		printConfiguration(internalConfiguration);
-		internalConfiguration = loadData(String.format("%s/src/main/resources/%s",
-				System.getProperty("user.dir"), "internalConfiguration.yaml"));
-		selectorFromSWD = internalConfiguration.get("SWDSelectors");
-		keywordTable = internalConfiguration.get("Keywords");
 	}
 
 	// TODO: generic method
+	@SuppressWarnings("unchecked")
 	public static Map<String, Map<String, String>> loadData(String fileName) {
 		if (yaml == null) {
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -144,7 +102,8 @@ public class YamlHelper {
 				((SimpleDateFormat) DateFormat.getDateInstance(DateFormat.SHORT,
 						Locale.US)).toPattern().replaceAll("\\byy\\b", "yyyy")
 								.replaceAll("\\bM\\b", "MM").replaceAll("\\bd\\b", "dd"));
-		System.err.println("Testing date format: " + dateFormat.toPattern());
+
+		// System.err.println("Testing date format: " + dateFormat.toPattern());
 
 		if (config instanceof Configuration) {
 			try {
@@ -165,7 +124,7 @@ public class YamlHelper {
 				e.printStackTrace();
 			}
 		} else {
-			System.err.println(yaml.dump(config));
+			// System.err.println(yaml.dump(config));
 		}
 	}
 }
