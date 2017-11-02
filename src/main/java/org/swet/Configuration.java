@@ -89,11 +89,11 @@ final class Configuration {
 	@Override
 	public String toString() {
 		return new StringBuilder().append(format("Version: %s\n", version))
-				.append(format("created: %s\n", created))
+				.append(format("Created: %s\n", created))
 				.append(format("Selenium version: %s\n", seleniumVersion))
 				.append(format("Supported browsers: %s\n", browsers))
 				.append(format("Using: %s\n", browserConfiguration))
 				.append(format("Plugins: %s\n", plugins))
-				.append(format("elements: %s\n", elements)).toString();
+				.append(format("Elements: %s\n", elements)).toString();
 	}
 }

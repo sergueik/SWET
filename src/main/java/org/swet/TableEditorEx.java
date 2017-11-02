@@ -75,45 +75,14 @@ public class TableEditorEx {
 	// Converting legacy SWD "Element selected By" keys to
 	// selectorTable keys
 	private static Map<String, String> selectorFromSWD = new HashMap<>();
-	static {
-		selectorFromSWD.put("ElementXPath", "xpath");
-		selectorFromSWD.put("ElementCssSelector", "cssSelector");
-		selectorFromSWD.put("ElementText", "text");
-		selectorFromSWD.put("ElementId", "id");
-		// TODO:
-		selectorFromSWD.put("ElementLinkText", "linkText");
-		selectorFromSWD.put("ElementTagName", "tagName");
-	}
 
 	// Currently free-hand, may become discoverable methods of
 	// keyword-driven framework class
 	private static Map<String, String> keywordTable = new HashMap<>();
-	static {
-		keywordTable.put("CLICK", "clickButton");
-		keywordTable.put("CLICK_BUTTON", "clickButton");
-		keywordTable.put("CLICK_CHECKBOX", "clickCheckBox");
-		keywordTable.put("CLICK_LINK", "clickLink");
-		keywordTable.put("CLICK_RADIO", "clickRadioButton");
-		keywordTable.put("CLOSE_BROWSER", "closeBrowser");
-		keywordTable.put("CREATE_BROWSER", "openBrowser");
-		keywordTable.put("ELEMENT_PRESENT", "elementPresent");
-		keywordTable.put("GET_ATTR", "getElementAttribute");
-		keywordTable.put("GET_TEXT", "getElementText");
-		keywordTable.put("GOTO_URL", "navigateTo");
-		keywordTable.put("SELECT_OPTION", "selectDropDown");
-		keywordTable.put("SET_TEXT", "enterText");
-		keywordTable.put("SEND_KEYS", "enterText");
-		keywordTable.put("SWITCH_FRAME", "switchFrame");
-		keywordTable.put("VERIFY_ATTR", "verifyAttribute");
-		keywordTable.put("VERIFY_TEXT", "verifyText");
-		keywordTable.put("CLEAR_TEXT", "clearText");
-		keywordTable.put("WAIT", "wait");
-	}
-
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private static LinkedHashMap<String, Integer> sortedElementSteps = new LinkedHashMap<>();
 	private static Map<String, Integer> elementSteps = new HashMap<>();
-	private static Map<String, Method> selectorChoiceTable = new HashMap<>();
+	// private static Map<String, Method> selectorChoiceTable = new HashMap<>();
 	private static Map<String, String> elementData = new HashMap<>();
 	private static Configuration testCase = null;
 	private static String testSuitePath; // TODO: rename
@@ -128,28 +97,17 @@ public class TableEditorEx {
 			parentShell = parent;
 			// parent sets the elementData explicitly
 		}
-		/*
-		try {
-			// NOTE: values of selectorChoiceTable are never used
-			selectorChoiceTable.put("cssSelector",
-					By.class.getMethod("cssSelector", String.class));
-			selectorChoiceTable.put("xpath",
-					By.class.getMethod("xpath", String.class));
-			selectorChoiceTable.put("id", By.class.getMethod("id", String.class));
-			selectorChoiceTable.put("linkText",
-					By.class.getMethod("linkText", String.class));
-			selectorChoiceTable.put("name", By.class.getMethod("name", String.class));
-			// NOTE: "text" is achieved indirectly by underlying library.
-			selectorChoiceTable.put("text",
-					By.class.getMethod("xpath", String.class));
-		} catch (NoSuchMethodException e) {
-		}
-		*/
 
 		Map<String, Map<String, String>> internalConfiguration = YamlHelper
 				.loadData(String.format("%s/src/main/resources/%s",
 						System.getProperty("user.dir"), "internalConfiguration.yaml"));
-		selectorFromSWD = internalConfiguration.get("SWDSelector");
+		for (String key : internalConfiguration.keySet()) {
+			System.err.println(key);
+		}
+		selectorFromSWD = internalConfiguration.get("SWDSelectors");
+		for (String key : selectorFromSWD.keySet()) {
+			System.err.println(key + " " + selectorFromSWD.get(key));
+		}
 		keywordTable = internalConfiguration.get("Keywords");
 	}
 
@@ -432,10 +390,10 @@ public class TableEditorEx {
 
 			TableEditor selectorChoiceEditor = new TableEditor(table);
 			CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
-			for (String locator : selectorChoiceTable.keySet()) {
+			for (String locator : selectorFromSWD.values()) {
 				selectorChoiceCombo.add(locator);
 			}
-			int currentSelector = new ArrayList<String>(selectorChoiceTable.keySet())
+			int currentSelector = new ArrayList<String>(selectorFromSWD.values())
 					.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy")));
 
 			selectorChoiceCombo.select(currentSelector);
@@ -460,7 +418,7 @@ public class TableEditorEx {
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
 			System.err.println(String.format("Updating %s = %s", oldValue, newValue));
-			if (selectorChoiceTable.containsKey(newValue)) {
+			if (selectorFromSWD.containsValue(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
 		}
@@ -491,7 +449,7 @@ public class TableEditorEx {
 		TableEditor selectorChoiceEditor = new TableEditor(table);
 		CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
 		selectorChoiceCombo.setText("Choose");
-		for (String locator : selectorChoiceTable.keySet()) {
+		for (String locator : selectorFromSWD.values()) {
 			selectorChoiceCombo.add(locator);
 		}
 		// NOTE: none of options is initially selected

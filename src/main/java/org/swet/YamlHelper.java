@@ -71,13 +71,13 @@ public class YamlHelper {
 		keywordTable.put("CLEAR_TEXT", "clearText");
 		keywordTable.put("WAIT", "wait");
 
-		internalConfiguration.put("SWDSelector", selectorFromSWD);
+		internalConfiguration.put("SWDSelectors", selectorFromSWD);
 		internalConfiguration.put("Keywords", keywordTable);
 
 		printConfiguration(internalConfiguration);
 		internalConfiguration = loadData(String.format("%s/src/main/resources/%s",
 				System.getProperty("user.dir"), "internalConfiguration.yaml"));
-		selectorFromSWD = internalConfiguration.get("SWDSelector");
+		selectorFromSWD = internalConfiguration.get("SWDSelectors");
 		keywordTable = internalConfiguration.get("Keywords");
 	}
 
