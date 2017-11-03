@@ -21,8 +21,6 @@ import org.jtwig.JtwigTemplate;
 
 public class RenderTemplate {
 
-	private static final Map<String, String> elementData = createSampleElementData();
-	private static Map<String, Map<String, String>> testData = new HashMap<>();
 	private String templateName = "templates/example2.twig";
 	private String templateAbsolutePath = "";
 
@@ -57,11 +55,13 @@ public class RenderTemplate {
 
 	private static Map<String, Map<String, String>> createSampleTestData() {
 		final Map<String, Map<String, String>> testData = new HashMap<>();
+		Map<String, String> elementData = createSampleElementData();
 		testData.put("1", elementData);
 		return testData;
 	}
 
 	public String renderTest() {
+		Map<String, Map<String, String>> testData = new HashMap<>();
 		testData = createSampleTestData();
 		return renderTest(testData);
 	}
@@ -89,6 +89,7 @@ public class RenderTemplate {
 		if (this.templateAbsolutePath != "") {
 			template = JtwigTemplate.fileTemplate(this.templateAbsolutePath);
 		} else {
+			System.err.println("Look up tempate by name: " + this.templateName);
 			template = JtwigTemplate.classpathTemplate(this.templateName);
 		}
 		JtwigModel model = JtwigModel.newModel();

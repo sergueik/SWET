@@ -93,7 +93,8 @@ public class SimpleToolBarEx {
 	private static Map<String, String> configData = new HashMap<>();
 	static {
 		configData.put("Browser", browserDefault);
-		configData.put("Template", "Core Selenium Java" /* "Core Selenium Java (embedded)" */ );
+		configData.put("Template",
+				"Core Selenium Java" /* "Core Selenium Java (embedded)" */ );
 	}
 	private static final String defaultConfig = String.format(
 			"{ \"Browser\": \"%s\", \"Template\": \"%s\", }",
@@ -377,8 +378,6 @@ public class SimpleToolBarEx {
 				// System.err.println("Using default template");
 				// TODO: feed the data to
 				// https://github.com/jtwig/jtwig-core/blob/master/src/main/java/org/jtwig/resource/reference/ResourceReference.java
-				renderTemplate.setTemplateName(
-						"templates/core_selenium_java.twig" /* configData.get("Template") */);
 
 				// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
 				CodeSource src = SimpleToolBarEx.class.getProtectionDomain()
@@ -392,22 +391,23 @@ public class SimpleToolBarEx {
 						ZipEntry ze = null;
 
 						while ((ze = zip.getNextEntry()) != null) {
-							String entryName = ze.getName();
-							if ( /* entryName.startsWith("images") &&  */ entryName
-									.endsWith(".twig")) {
-								list.add(entryName);
-								// System.err.println("Discovered path of template: " + entryName);
+							String templateResourcePath = ze.getName();
+							if (templateResourcePath.startsWith("templates")
+									&& templateResourcePath.endsWith(".twig")) {
 								InputStream inputStream = (new Utils())
-										.getResourceStream(entryName);
-								String text = IOUtils.toString(inputStream, "UTF8");
-								// System.err.println("Discovered contents of template: " + text);
+										.getResourceStream(templateResourcePath);
+								String templateSource = IOUtils.toString(inputStream, "UTF8");
 								Pattern pattern = Pattern.compile(
+										// TODO: chop "(embedded)"
 										Pattern.quote(configData.get("Template")),
 										Pattern.CASE_INSENSITIVE);
-								Matcher matcher = pattern.matcher(text);
+								Matcher matcher = pattern.matcher(templateSource);
 								if (matcher.find()) {
-									System.err.println("Discovered title of template : " + entryName);
-									System.err.println("Discovered contents of template: " + text);
+									System.err
+											.println("Discovered title of template : " + templateResourcePath);
+									// System.err.println("Discovered contents of template: " +
+									// templateSource);
+									list.add(templateResourcePath);
 								}
 								IOUtils.closeQuietly(inputStream);
 							}
@@ -418,6 +418,9 @@ public class SimpleToolBarEx {
 
 				}
 				String[] templates = list.toArray(new String[list.size()]);
+
+				renderTemplate.setTemplateName((templates.length > 0) ? templates[0]
+						: "templates/core_selenium_java.twig");
 			}
 			generatedScript = "";
 			try {

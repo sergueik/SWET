@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.swet</groupId>
   <artifactId>swet</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.8-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a SWT port of SWD - browser based Page Element recorder</description>
@@ -310,9 +310,8 @@
       </properties>
     </profile>
     <!-- 'profiles.profile.id' must be unique -->
-    <!--
     <profile>
-      <id>windows64</id>
+      <id>windows64_2</id>
       <activation>
         <os>
           <family>windows</family>
@@ -321,9 +320,9 @@
       </activation>
       <properties>
         <build_os>win64</build_os>
+        <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
       </properties>
     </profile>
-    -->
     <profile>
       <id>mac64</id>
       <activation>
