@@ -119,17 +119,6 @@ public class TableEditorEx {
 				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
 		sortedSteps = sortByValue(elementSteps);
 
-		/*
-		for (String stepId : sortedSteps.keySet()) {
-			Map<String, String> elementData = new HashMap<>();
-			elementData = testData.get(stepId);
-			// debugging the last key defect
-			System.out.println(String.format(
-					"Loading testData\nstep # %d\nstep Id: %s\nCommand Id: %s\nElement Code Name: %s",
-					Integer.parseInt(elementData.get("ElementStepNumber")), stepId,
-					elementData.get("CommandId"), elementData.get("ElementCodeName")));
-		}
-		*/
 		shell.setLayout(new FormLayout());
 		label = new Label(shell, SWT.BORDER);
 		FormData labelData = new FormData();

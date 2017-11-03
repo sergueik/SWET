@@ -45,22 +45,12 @@ public class Utils {
 		}
 	}
 
-	public String getPageContent(String resourceFileName) {
-		try {
-			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
-					.toURI();
-			System.err.println("Page contents: " + uri.toString());
-			return uri.toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	// NOTE: getResourceURI does not work well with standalone app.
 	public String getResourceURI(String resourceFileName) {
 		try {
 			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
 					.toURI();
+			System.err.println("Resource URI: " + uri.toString());
 			return uri.toString();
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);

@@ -5,6 +5,9 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +20,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -87,7 +93,7 @@ public class SimpleToolBarEx {
 	private static Map<String, String> configData = new HashMap<>();
 	static {
 		configData.put("Browser", browserDefault);
-		configData.put("Template", "Core Selenium Java (embedded)");
+		configData.put("Template", "Core Selenium Java" /* "Core Selenium Java (embedded)" */ );
 	}
 	private static final String defaultConfig = String.format(
 			"{ \"Browser\": \"%s\", \"Template\": \"%s\", }",
@@ -356,7 +362,7 @@ public class SimpleToolBarEx {
 			RenderTemplate renderTemplate = new RenderTemplate();
 			updateStatus(String.format("Reading template %s \u2026",
 					configData.get("Template")));
-			// renderTemplate.setTemplateName( "templates/example2.twig" );
+			// renderTemplate.setTemplateName( "templates/core_selenium_java.twig" );
 			// TODO:
 			// relative path => setTemplateName
 			// absolute path => setTemplateAbsolutePath
@@ -369,7 +375,49 @@ public class SimpleToolBarEx {
 						.replace("\\\\", "\\").replace("\\", "/"));
 			} else {
 				// System.err.println("Using default template");
-				renderTemplate.setTemplateName("templates/example2.twig");
+				// TODO: feed the data to
+				// https://github.com/jtwig/jtwig-core/blob/master/src/main/java/org/jtwig/resource/reference/ResourceReference.java
+				renderTemplate.setTemplateName(
+						"templates/core_selenium_java.twig" /* configData.get("Template") */);
+
+				// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
+				CodeSource src = SimpleToolBarEx.class.getProtectionDomain()
+						.getCodeSource();
+				List<String> list = new ArrayList<String>();
+
+				if (src != null) {
+					try {
+						URL jar = src.getLocation();
+						ZipInputStream zip = new ZipInputStream(jar.openStream());
+						ZipEntry ze = null;
+
+						while ((ze = zip.getNextEntry()) != null) {
+							String entryName = ze.getName();
+							if ( /* entryName.startsWith("images") &&  */ entryName
+									.endsWith(".twig")) {
+								list.add(entryName);
+								// System.err.println("Discovered path of template: " + entryName);
+								InputStream inputStream = (new Utils())
+										.getResourceStream(entryName);
+								String text = IOUtils.toString(inputStream, "UTF8");
+								// System.err.println("Discovered contents of template: " + text);
+								Pattern pattern = Pattern.compile(
+										Pattern.quote(configData.get("Template")),
+										Pattern.CASE_INSENSITIVE);
+								Matcher matcher = pattern.matcher(text);
+								if (matcher.find()) {
+									System.err.println("Discovered title of template : " + entryName);
+									System.err.println("Discovered contents of template: " + text);
+								}
+								IOUtils.closeQuietly(inputStream);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+				String[] templates = list.toArray(new String[list.size()]);
 			}
 			generatedScript = "";
 			try {

@@ -117,7 +117,7 @@ public class SwetTest {
 		driver.get("about:blank");
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void testWebPageElementSearch() {
 		driver.get("https://www.codeproject.com/");
@@ -255,10 +255,10 @@ public class SwetTest {
 		}
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
 	public void testStatic() {
-		driver.get(new Utils().getPageContent("ElementSearch.html"));
+		driver.get(new Utils().getResourceURI("ElementSearch.html"));
 		injectScripts(Optional.<String> empty());
 		// Unsupported URL protocol:
 		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
