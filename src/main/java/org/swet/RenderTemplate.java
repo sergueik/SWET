@@ -23,6 +23,7 @@ public class RenderTemplate {
 
 	private String templateName = "templates/example2.twig";
 	private String templateAbsolutePath = "";
+	private JtwigTemplate template = null;
 
 	public void setTemplateName(String data) {
 		this.templateName = data;
@@ -85,20 +86,26 @@ public class RenderTemplate {
 	}
 
 	private String renderElement(Map<String, String> data) {
-		JtwigTemplate template = null;
-		if (this.templateAbsolutePath != "") {
-			template = JtwigTemplate.fileTemplate(this.templateAbsolutePath);
-		} else {
-			System.err.println("Look up tempate by name: " + this.templateName);
-			template = JtwigTemplate.classpathTemplate(this.templateName);
+		// load and cache template contents
+		if (template == null) {
+			if (this.templateAbsolutePath != "") {
+				System.err.println(
+						"Load tempate by absolute path: " + this.templateAbsolutePath);
+				template = JtwigTemplate.fileTemplate(this.templateAbsolutePath);
+			} else {
+				System.err
+						.println("Load tempate by  resource path: " + this.templateName);
+				template = JtwigTemplate.classpathTemplate(this.templateName);
+			}
 		}
 		JtwigModel model = JtwigModel.newModel();
 		for (String key : data.keySet()) {
-			System.err.println(String.format("\"%s\" = \"%s\"", key, data.get(key)));
+			// System.err.println(String.format("\"%s\" = \"%s\"", key,
+			// data.get(key)));
 			model.with(key, data.get(key).replace("\"", "\\\""));
 		}
 		String output = template.render(model);
-		System.err.println("renderElement : " + output);
+		// System.err.println("renderElement : " + output);
 		return output;
 	}
 
