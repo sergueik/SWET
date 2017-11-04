@@ -360,67 +360,15 @@ public class SimpleToolBarEx {
 			codeGenTool.setEnabled(false);
 			testsuiteTool.setEnabled(false);
 			RenderTemplate renderTemplate = new RenderTemplate();
-			updateStatus(String.format("Reading template %s \u2026",
-					configData.get("Template")));
-			// renderTemplate.setTemplateName( "templates/core_selenium_java.twig" );
-			// TODO:
-			// relative path => setTemplateName
-			// absolute path => setTemplateAbsolutePath
 			if (configData.containsKey("Template Path")) {
-				/*
-				System.err.println(
-						"Using specific template path: " + configData.get("Template Path"));
-				*/
+				updateStatus(String.format("Reading template path \"%s\" \u2026",
+						configData.get("Template Path")));
 				renderTemplate.setTemplateAbsolutePath(configData.get("Template Path")
 						.replace("\\\\", "\\").replace("\\", "/"));
 			} else {
 
-				/*
-				// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
-				CodeSource src = SimpleToolBarEx.class.getProtectionDomain()
-						.getCodeSource();
-				List<String> list = new ArrayList<String>();
-				
-				if (src != null) {
-					try {
-						URL jar = src.getLocation();
-						ZipInputStream zip = new ZipInputStream(jar.openStream());
-						ZipEntry ze = null;
-				
-						while ((ze = zip.getNextEntry()) != null) {
-							String templateResourcePath = ze.getName();
-							if (templateResourcePath.startsWith("templates")
-									&& templateResourcePath.endsWith(".twig")) {
-								InputStream inputStream = (new Utils())
-										.getResourceStream(templateResourcePath);
-								String templateSource = IOUtils.toString(inputStream, "UTF8");
-								Pattern pattern = Pattern.compile(
-										Pattern.quote(configData.get("Template")
-												.replaceAll(" *\\(embedded\\)", "")),
-										Pattern.CASE_INSENSITIVE);
-								Matcher matcher = pattern.matcher(templateSource);
-								if (matcher.find()) {
-									System.err.println(
-											"Discovered title of template : " + templateResourcePath);
-									// System.err.println("Discovered contents of template: " +
-									// templateSource);
-									list.add(templateResourcePath);
-								}
-								IOUtils.closeQuietly(inputStream);
-							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				
-				}
-				String[] templates = list.toArray(new String[list.size()]);
-				
-				renderTemplate.setTemplateName((templates.length > 0) ? templates[0]
-						: "templates/core_selenium_java.twig");
-				// System.err.println("Using default template");
-				 
-				 */
+				updateStatus(String.format("Reading template %s \u2026",
+						configData.get("Template")));
 				String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 				String templateResourcePath = lookupTemplateByTag(
 						configData.get("Template").replaceAll(" *\\(embedded\\)", ""));
@@ -441,6 +389,7 @@ public class SimpleToolBarEx {
 			}
 			shell.setData("payload", generatedScript);
 			ScrolledTextEx test = new ScrolledTextEx(Display.getCurrent(), shell);
+			updateStatus("Ready");
 			codeGenTool.setEnabled(true);
 			testsuiteTool.setEnabled(true);
 		});
