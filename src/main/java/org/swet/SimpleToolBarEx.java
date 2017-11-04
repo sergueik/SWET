@@ -107,6 +107,7 @@ public class SimpleToolBarEx {
 	private String generatedScript = null;
 	private Label statusMessage;
 	private TemplateCache templateCache = TemplateCache.getInstance();
+	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
 	private Breadcrumb bc;
 
@@ -368,18 +369,15 @@ public class SimpleToolBarEx {
 						.replace("\\\\", "\\").replace("\\", "/"));
 			} else {
 
-				updateStatus(String.format("Reading template %s \u2026",
+				updateStatus(String.format("Finding template: %s \u2026",
 						configData.get("Template")));
-				String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
-				templateCache.fillCache();
+				templateCache.fillEmbeddedTemplateCache();
 				String templateResourcePath = templateCache
 						.getItem(templateCache.approxLookup(
-								configData.get("Template").replaceAll(" *\\(embedded\\)", "")));
-				// String templateResourcePath = lookupTemplateByTag(
-				// configData.get("Template").replaceAll(" *\\(embedded\\)", ""));
+								configData.get("Template")));
 				if (templateResourcePath == null) {
 					System.err.println(
-							"Using default template: " + defaultTemplateResourcePath);
+							"Using the default template: " + defaultTemplateResourcePath);
 					renderTemplate.setTemplateName(defaultTemplateResourcePath);
 				} else {
 					renderTemplate.setTemplateName(templateResourcePath);

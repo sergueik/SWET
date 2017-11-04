@@ -35,7 +35,7 @@ public class ConfigFormEx {
 	private static Shell shell;
 	private static Shell parentShell = null;
 	private static Display display;
-	
+
 	private final static int formWidth = 656;
 	private final static int formHeight = 248;
 	private final static int buttonWidth = 120;
@@ -65,8 +65,16 @@ public class ConfigFormEx {
 		String dirPath = String.format("%s/src/main/resources/templates",
 				System.getProperty("user.dir"));
 		templates = configOptions.get("Template");
+		// Scan the template directory and build the hash of template name / path
+		// options.
+		TemplateCache templateCache = TemplateCache.getInstance();
+		// TODO: use different API for embedded templates
+		templateCache.fillTemplateDirectoryCache(new File(dirPath), "embedded",
+				templates);
+		/*
 		(new RenderTemplate()).listFilesForFolder(new File(dirPath), "embedded",
 				templates);
+				*/
 		configOptions.replace("Template", templates);
 		display = (parentDisplay != null) ? parentDisplay : new Display();
 		// shell = new Shell(display);
@@ -96,8 +104,12 @@ public class ConfigFormEx {
 			dirPath = configData.get("Template Directory");
 			if (dirPath != "") {
 				templates = configOptions.get("Template");
-				(new RenderTemplate()).listFilesForFolder(new File(dirPath),
+				/* (new RenderTemplate()).listFilesForFolder(new File(dirPath),
 						"user defined", templates);
+						*/
+				templateCache.fillTemplateDirectoryCache(new File(dirPath),
+						"user defined", templates);
+
 				configOptions.replace("Template", templates);
 			}
 		}

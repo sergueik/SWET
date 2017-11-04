@@ -1,5 +1,8 @@
 package org.swet;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
@@ -56,10 +59,62 @@ public class TemplateCache {
 		return templateTag;
 	}
 
-	public void fillCache() {
+	public void fillTemplateDirectoryCache(final File dir, String note,
+			Map<String, String> templates) {
+		FileReader fileReader = null;
+		String contents = null;
+		if (dir.listFiles().length == 0) {
+			return;
+		}
+		for (final File fileEntry : dir.listFiles()) {
+			contents = null;
+			if (fileEntry.getName().endsWith(".twig")) {
+				if (fileEntry.isFile()) {
+					try {
+						fileReader = new FileReader(fileEntry);
+						char[] template = new char[(int) fileEntry.length()];
+						fileReader.read(template);
+						contents = new String(template);
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						if (fileReader != null) {
+							try {
+								fileReader.close();
+							} catch (IOException e) {
+							}
+						}
+					}
+				}
+				if (contents != null) {
+
+					String templateName = extractTag(contents);
+					if (templateName != null) {
+						String templateLabel = String.format("%s (%s)", templateName,
+								(note == null) ? "unknown" : note);
+						String templateAbsolutePath = fileEntry.getAbsolutePath();
+						System.out.println(String.format("Make option for \"%s\": \"%s\"",
+								templateAbsolutePath, templateLabel));
+						if (templates.containsKey(templateLabel)) {
+							templates.replace(templateLabel, templateAbsolutePath);
+						} else {
+							templates.put(templateLabel, templateAbsolutePath);
+						}
+						System.out.println(String.format("Data for option \"%s\": \"%s\"",
+								templateLabel, templates.get(templateLabel)));
+					} else {
+						System.out
+								.println(String.format("no tag: %s", fileEntry.getName()));
+					}
+				}
+			}
+		}
+	}
+
+	public void fillEmbeddedTemplateCache() {
 		// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
 		CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
-		String note = "TODO";
+		String note = "embedded";
 		String templateTag = null;
 		try {
 			URL jar = src.getLocation();
@@ -78,12 +133,16 @@ public class TemplateCache {
 
 						templateTag = extractTag(templateContents);
 						if (templateTag != null) {
-							String templateLabel = String.format("%s (%s)", templateTag,
-									(note == null) ? "unknown" : note);
+							String templateLabel = String.format("%s (embedded)",
+									templateTag);
 							System.err
 									.println(String.format("Discovered template \"%s\": \"%s\": ",
 											templateLabel, templateResourcePath));
-							cache.put(templateTag, templateResourcePath);
+							if (cache.containsKey(templateLabel)) {
+								cache.replace(templateLabel, templateResourcePath);
+							} else {
+								cache.put(templateLabel, templateResourcePath);
+							}
 
 						}
 					}
