@@ -86,7 +86,7 @@ public class RenderTemplate {
 	}
 
 	private String renderElement(Map<String, String> data) {
-		// load and cache template contents
+		// Cache template contents
 		if (template == null) {
 			if (this.templateAbsolutePath != "") {
 				System.err.println(
@@ -107,73 +107,5 @@ public class RenderTemplate {
 		String output = template.render(model);
 		// System.err.println("renderElement : " + output);
 		return output;
-	}
-
-	// Scan the template directory and build the hash of template name / path
-	// options.
-	public void listFilesForFolder(final File dir, String note,
-			Map<String, String> templates) {
-		FileReader fileReader = null;
-		String contents = null;
-		if (dir.listFiles().length == 0) {
-			return;
-		}
-		for (final File fileEntry : dir.listFiles()) {
-			contents = null;
-			if (fileEntry.getName().endsWith(".twig")) {
-				if (fileEntry.isFile()) {
-					try {
-						fileReader = new FileReader(fileEntry);
-						char[] template = new char[(int) fileEntry.length()];
-						fileReader.read(template);
-						contents = new String(template);
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						if (fileReader != null) {
-							try {
-								fileReader.close();
-							} catch (IOException e) {
-							}
-						}
-					}
-				}
-				if (contents != null) {
-					// find comment in the template
-					Matcher matcherTwigComment = Pattern
-							.compile("\\{#(?:\\r?\\n)?(.*)(?:\\r?\\n)?#\\}",
-									Pattern.MULTILINE)
-							.matcher(contents);
-					if (matcherTwigComment.find()) {
-						String comment = matcherTwigComment.group(1);
-						String templateName = null;
-						// find template name in the comment
-						Matcher matcherTemplate = Pattern
-								.compile("template: (.*)$", Pattern.MULTILINE).matcher(comment);
-						if (matcherTemplate.find()) {
-							String templateAbsolutePath = fileEntry.getAbsolutePath();
-							templateName = matcherTemplate.group(1);
-							String templateLabel = String.format("%s (%s)", templateName,
-									(note == null) ? "unknown" : note);
-							System.out.println(String.format("Make option for \"%s\": \"%s\"",
-									templateAbsolutePath, templateLabel));
-							if (templates.containsKey(templateLabel)) {
-								templates.replace(templateLabel, templateAbsolutePath);
-							} else {
-								templates.put(templateLabel, templateAbsolutePath);
-							}
-							System.out.println(String.format("Data for option \"%s\": \"%s\"",
-									templateLabel, templates.get(templateLabel)));
-						} else {
-							System.out
-									.println(String.format("no tag: %s", fileEntry.getName()));
-						}
-					} else {
-						System.out
-								.println(String.format("no tag: %s", fileEntry.getName()));
-					}
-				}
-			}
-		}
 	}
 }

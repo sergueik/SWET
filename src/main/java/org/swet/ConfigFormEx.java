@@ -57,25 +57,19 @@ public class ConfigFormEx {
 			browserOptions.put(browser, "unused");
 		}
 		configOptions.put("Browser", browserOptions);
+		// offer templates embedded in the application jar and
+		// make rest up to customer
 		configData.put("Template", "Core Selenium Java (embedded)");
 
-		// TODO: Keep few twig templates embedded in the application jar and
-		// make rest up to customer
 		configOptions.put("Template", new HashMap<String, String>());
-		String dirPath = String.format("%s/src/main/resources/templates",
-				System.getProperty("user.dir"));
 		templates = configOptions.get("Template");
 		// Scan the template directory and build the hash of template name / path
 		// options.
 		TemplateCache templateCache = TemplateCache.getInstance();
-		// TODO: use different API for embedded templates
-		templateCache.fillTemplateDirectoryCache(new File(dirPath), "embedded",
-				templates);
-		/*
-		(new RenderTemplate()).listFilesForFolder(new File(dirPath), "embedded",
-				templates);
-				*/
+		templateCache.fillEmbeddedTemplateCache();
+		templates.putAll(TemplateCache.getCache());
 		configOptions.replace("Template", templates);
+
 		display = (parentDisplay != null) ? parentDisplay : new Display();
 		// shell = new Shell(display);
 		shell = new Shell(display, SWT.CENTER | SWT.SHELL_TRIM/* | ~SWT.RESIZE */);
@@ -83,6 +77,7 @@ public class ConfigFormEx {
 			parentShell = parent;
 		}
 		// http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java
+		String dirPath = null;
 		if (osName.toLowerCase().startsWith("windows")) {
 			try {
 				dirPath = OSUtils.getDesktopPath();
@@ -104,9 +99,8 @@ public class ConfigFormEx {
 			dirPath = configData.get("Template Directory");
 			if (dirPath != "") {
 				templates = configOptions.get("Template");
-				/* (new RenderTemplate()).listFilesForFolder(new File(dirPath),
-						"user defined", templates);
-						*/
+				// Scan the template directory and build the options hash with template
+				// name / absolute path
 				templateCache.fillTemplateDirectoryCache(new File(dirPath),
 						"user defined", templates);
 
@@ -239,19 +233,27 @@ public class ConfigFormEx {
 				@Override
 				public void handleEvent(Event event) {
 					String templateLabel = configData.get("Template");
-					if (templateLabel != "") {
-						String templateAbsolutePath = configOptions.get("Template")
-								.get(templateLabel);
-						String configKey = "Template Path";
-						if (configData.containsKey(configKey)) {
-							configData.replace(configKey, templateAbsolutePath);
-						} else {
-							configData.put(configKey, templateAbsolutePath);
-						}
+					String configKey = null;
+					String data = null;
+					if (templateLabel != ""
+							&& !(templateLabel.matches(".*\\(embedded\\)"))) {
+						data = configOptions.get("Template").get(templateLabel);
+						configKey = "Template Path";
 						System.err.println(String.format(
-								"Saving the path to the selected template \"%s\": \"%s\" \"%s\"",
-								templateLabel, templateAbsolutePath,
-								configData.get(configKey)));
+								"Saving the path to the user template \"%s\": \"%s\"",
+								templateLabel, data));
+					} else {
+						configKey = "Template";
+						data = templateLabel;
+						System.err.println(String.format(
+								"Saving the name of the selected template: \"%s\"",
+								templateLabel));
+
+					}
+					if (configData.containsKey(configKey)) {
+						configData.replace(configKey, data);
+					} else {
+						configData.put(configKey, data);
 					}
 					String result = new Utils().writeDataJSON(configData, "{}");
 					if (parentShell != null) {
@@ -284,8 +286,6 @@ public class ConfigFormEx {
 					// http://www.codejava.net/java-se/swing/jcombobox-basic-tutorial-and-examples
 					// http://stackoverflow.com/questions/19800033/java-swt-list-make-it-unselectable
 					final Combo configValue = new Combo(this, SWT.READ_ONLY);
-					// Set<String> itemsSet = configOptions.get(configKey).keySet();
-					// String[] items = (String[])itemsSet.toArray();
 					String[] items = configOptions.get(configKey).keySet()
 							.toArray(new String[0]);
 					configValue.setItems(items);

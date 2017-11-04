@@ -14,7 +14,7 @@ elements:
     ElementTagName: IMG
     CommandId: 2a561c71-2e7f-47fb-89f4-d82ceadba5cf
     ElementStepNumber: '1'
-    ElementText: ''
+    ElementText: xxxxxx
     ElementId: ''
     ElementXPath: /html/body/header[1]/div[2]/div[1]/span[1]/img[@src="https://www.coderanch.com/mooseImages/betaview/moosefly.gif"]
   6e68d135-148e-4f60-8f22-07a0fa7db831:
@@ -43,7 +43,37 @@ elements:
     ElementText: Java
     ElementId: ''
     ElementXPath: id("categorySidebar")/div[1]/a[@href="/c/java"]
+  f465b95c-1bd6-43f8-a487-875902f777f3:
+    ElementCodeName: first_name
+    ElementPageURL: https://www.facebook.com/
+    ElementStepNumber: '3'
+    Url: http://www.google.com
+    ElementXPath: //input[@name="firstname"]
+    ElementCssSelector: div#u_0_8 > div.uiStickyPlaceholderInput.uiStickyPlaceholderEmptyInput
+      > input.inputtext._58mg._5dba._2ph-
+    ElementSelectedBy: ElementId
+    Command: AddElement
+    Caller: addElement
+    ElementTagName: INPUT
+    CommandId: f465b95c-1bd6-43f8-a487-875902f777f3
+    ElementText: ''
+    ElementId: u_0_9
+  aad98494-b8cb-47d3-b282-05df24529e25:
+    ElementCodeName: last_name
+    ElementPageURL: https://www.facebook.com/
+    ElementStepNumber: '4'
+    Url: http://www.google.com
+    ElementXPath: //input[@name="lastname"]
+    ElementCssSelector: div#u_0_a > div.uiStickyPlaceholderInput.uiStickyPlaceholderEmptyInput
+      > input.inputtext._58mg._5dba._2ph-
+    ElementSelectedBy: ElementXPath
+    Command: AddElement
+    Caller: addElement
+    ElementTagName: INPUT
+    CommandId: aad98494-b8cb-47d3-b282-05df24529e25
+    ElementText: ''
+    ElementId: u_0_b
 plugins: null
 seleniumVersion: null
-updated: 2017-04-16T04:00:00Z
+updated: 2017-11-03T04:00:00Z
 version: null

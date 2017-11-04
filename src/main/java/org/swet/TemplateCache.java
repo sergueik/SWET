@@ -29,6 +29,10 @@ public class TemplateCache {
 		return instance;
 	}
 
+	public static Map<String, String> getCache() {
+		return cache;
+	}
+
 	public void addItem(String tag, String path) {
 		cache.put(tag, path);
 	}
@@ -138,10 +142,12 @@ public class TemplateCache {
 							System.err
 									.println(String.format("Discovered template \"%s\": \"%s\": ",
 											templateLabel, templateResourcePath));
-							if (cache.containsKey(templateLabel)) {
-								cache.replace(templateLabel, templateResourcePath);
-							} else {
-								cache.put(templateLabel, templateResourcePath);
+							synchronized (cache) {
+								if (cache.containsKey(templateLabel)) {
+									cache.replace(templateLabel, templateResourcePath);
+								} else {
+									cache.put(templateLabel, templateResourcePath);
+								}
 							}
 
 						}
