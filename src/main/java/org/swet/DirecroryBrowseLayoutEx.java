@@ -1,6 +1,7 @@
 package org.swet;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,71 +17,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class DirecroryBrowseLayoutEx {
-	private static Shell shell;
-	private final static int formWidth = 750;
-	private final static int formHeight = 280;
-	private final static int buttonWidth = 120;
-	private final static int buttonHeight = 28;
-	private final static int labelWidth = 150;
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		shell = new Shell(display);
+		Shell shell = new Shell(display);
+		int formWidth = 750;
+		int formHeight = 280;
 		shell.setSize(formWidth, formHeight);
 		GridLayout gridLayout = new GridLayout(1, true);
 		gridLayout.makeColumnsEqualWidth = false;
 		shell.setLayout(gridLayout);
-		/*
-		Composite dirBrowseComposite = new Composite(shell, SWT.NONE);
-		dirBrowseComposite.setBounds(0, 0, shell.getBounds().width, 32);
-		dirBrowseComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout(3, true);
-		gridLayout.makeColumnsEqualWidth = false;
-		dirBrowseComposite.setLayout(gridLayout);
-		Label labelDirPath = new Label(dirBrowseComposite, SWT.NONE);
-		labelDirPath.setLayoutData(new GridData(labelDirPathWidth, SWT.DEFAULT));
-		labelDirPath.setText("Directory");
-		
-		final Text dirPathValue = new Text(dirBrowseComposite,
-				SWT.SINGLE | SWT.BORDER);
-		
-		GridData gridDateDirPathValue = new GridData(GridData.FILL, GridData.CENTER,
-				true, false);
-		gridDateDirPathValue.widthHint = dirBrowseComposite.getBounds().width - 120;
-		gridDateDirPathValue.heightHint = buttonHeight;
-		dirPathValue.setLayoutData(gridDateDirPathValue);
-		
-		final Button buttonDirBrowse = new Button(dirBrowseComposite, SWT.PUSH);
-		GridData gridDataButtonDirBrowse = new GridData(GridData.FILL,
-				GridData.CENTER, true, false);
-		gridDataButtonDirBrowse.widthHint = 90;
-		gridDataButtonDirBrowse.heightHint = buttonHeight;
-		buttonDirBrowse.setLayoutData(gridDataButtonDirBrowse);
-		buttonDirBrowse.setText("Browse");
-		
-		buttonDirBrowse.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(shell);
-		
-				dlg.setFilterPath(dirPathValue.getText());
-				dlg.setText("Template Directory Dialog");
-				dlg.setMessage("Select a directory");
-		
-				String dir = dlg.open();
-				if (dir != null) {
-					dirPathValue.setText(dir);
-				}
-			}
-		});
-		
-		dirBrowseComposite.pack();
-		*/
 
-		Composite dirBrowseComposite = new Composite(shell, SWT.NONE);
-		dirBrowseComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		DirBrowseComposite dirBrowseComposite2 = new DirBrowseComposite(
-				dirBrowseComposite);
+		DirBrowseComposite dirBrowseComposite2 = new DirBrowseComposite(composite);
 		dirBrowseComposite2.pack();
 		DirBrowseComposite dirBrowseComposite3 = new DirBrowseComposite(shell);
 		dirBrowseComposite3.pack();
@@ -94,6 +45,10 @@ public class DirecroryBrowseLayoutEx {
 	}
 
 	private static class DirBrowseComposite extends Composite {
+
+		int buttonWidth = 120;
+		int buttonHeight = 28;
+		int labelWidth = 150;
 
 		public DirBrowseComposite(Composite composite) {
 			super(composite, SWT.NONE);
@@ -127,7 +82,7 @@ public class DirecroryBrowseLayoutEx {
 
 			buttonDirBrowse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
-					DirectoryDialog dlg = new DirectoryDialog(shell);
+					DirectoryDialog dlg = new DirectoryDialog(composite.getShell());
 
 					dlg.setFilterPath(dirPathValue.getText());
 					dlg.setText("Template Directory Dialog");
@@ -141,8 +96,9 @@ public class DirecroryBrowseLayoutEx {
 			});
 		}
 
-		public void renderData(HashMap<String, String> data) {
+		public void renderData(Map<String, String> data) {
 			// Create the children of the composite.
 		}
 	}
+
 }

@@ -35,11 +35,13 @@ public class ConfigFormEx {
 	private static Shell shell;
 	private static Shell parentShell = null;
 	private static Display display;
+	
 	private final static int formWidth = 656;
 	private final static int formHeight = 248;
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
 	private final static int labelWidth = 150;
+
 	private static String osName = OSUtils.getOsName();
 	private static Map<String, String> configData = new HashMap<>();
 
@@ -50,7 +52,7 @@ public class ConfigFormEx {
 
 	ConfigFormEx(Display parentDisplay, Shell parent) {
 		Map<String, String> browserOptions = new HashMap<>();
-		for (String browser : new ArrayList<String>( Arrays.asList(new String[] {
+		for (String browser : new ArrayList<String>(Arrays.asList(new String[] {
 				"Chrome", "Firefox", "Internet Explorer", "Edge", "Safari" }))) {
 			browserOptions.put(browser, "unused");
 		}
@@ -127,8 +129,11 @@ public class ConfigFormEx {
 
 	private static class DirBrowseComposite extends Composite {
 
+		private Shell shell;
+
 		public DirBrowseComposite(Composite composite) {
 			super(composite, SWT.NONE);
+			shell = composite.getShell();
 			this.setSize(this.getParent().getBounds().width,
 					this.getParent().getBounds().height /* buttonHeight*/ );
 			this.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

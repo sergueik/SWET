@@ -106,6 +106,7 @@ public class SimpleToolBarEx {
 	private static Display display;
 	private String generatedScript = null;
 	private Label statusMessage;
+	private TemplateCache templateCache = TemplateCache.getInstance();
 
 	private Breadcrumb bc;
 
@@ -370,8 +371,12 @@ public class SimpleToolBarEx {
 				updateStatus(String.format("Reading template %s \u2026",
 						configData.get("Template")));
 				String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
-				String templateResourcePath = lookupTemplateByTag(
-						configData.get("Template").replaceAll(" *\\(embedded\\)", ""));
+				templateCache.fillCache();
+				String templateResourcePath = templateCache
+						.getItem(templateCache.approxLookup(
+								configData.get("Template").replaceAll(" *\\(embedded\\)", "")));
+				// String templateResourcePath = lookupTemplateByTag(
+				// configData.get("Template").replaceAll(" *\\(embedded\\)", ""));
 				if (templateResourcePath == null) {
 					System.err.println(
 							"Using default template: " + defaultTemplateResourcePath);
@@ -379,7 +384,6 @@ public class SimpleToolBarEx {
 				} else {
 					renderTemplate.setTemplateName(templateResourcePath);
 				}
-
 			}
 			generatedScript = "";
 			try {
@@ -844,46 +848,6 @@ public class SimpleToolBarEx {
 						String.format("Adding the script: %s\u2026", s.substring(0, 100)));
 			executeScript(s);
 		}
-	}
-
-	public String lookupTemplateByTag(String templateTag) {
-		// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
-		CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
-		List<String> list = new ArrayList<String>();
-		if (src != null) {
-			try {
-				URL jar = src.getLocation();
-				ZipInputStream zip = new ZipInputStream(jar.openStream());
-				ZipEntry ze = null;
-
-				while ((ze = zip.getNextEntry()) != null) {
-					String templateResourcePath = ze.getName();
-					if (templateResourcePath.startsWith("templates")
-							&& templateResourcePath.endsWith(".twig")) {
-						InputStream inputStream = (new Utils())
-								.getResourceStream(templateResourcePath);
-						String templateSource = IOUtils.toString(inputStream, "UTF8");
-						Pattern pattern = Pattern.compile(templateTag,
-								Pattern.CASE_INSENSITIVE);
-						Matcher matcher = pattern.matcher(Pattern.quote(templateSource));
-						if (matcher.find()) {
-							System.err
-									.println("Discovered template : " + templateResourcePath);
-							// System.err.println("Discovered contents of template: " +
-							// templateSource);
-							list.add(templateResourcePath);
-						}
-						IOUtils.closeQuietly(inputStream);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-		String[] templates = list.toArray(new String[list.size()]);
-		return (templates.length > 0) ? templates[0] : null;
-
 	}
 
 	// Paginates the BreadCrump
