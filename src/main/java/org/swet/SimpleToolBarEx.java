@@ -94,7 +94,7 @@ public class SimpleToolBarEx {
 	static {
 		configData.put("Browser", browserDefault);
 		configData.put("Template",
-				"Core Selenium Java" /* "Core Selenium Java (embedded)" */ );
+				"Core Selenium Java (embedded)" );
 	}
 	private static final String defaultConfig = String.format(
 			"{ \"Browser\": \"%s\", \"Template\": \"%s\", }",
@@ -375,9 +375,6 @@ public class SimpleToolBarEx {
 				renderTemplate.setTemplateAbsolutePath(configData.get("Template Path")
 						.replace("\\\\", "\\").replace("\\", "/"));
 			} else {
-				// System.err.println("Using default template");
-				// TODO: feed the data to
-				// https://github.com/jtwig/jtwig-core/blob/master/src/main/java/org/jtwig/resource/reference/ResourceReference.java
 
 				// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
 				CodeSource src = SimpleToolBarEx.class.getProtectionDomain()
@@ -398,13 +395,13 @@ public class SimpleToolBarEx {
 										.getResourceStream(templateResourcePath);
 								String templateSource = IOUtils.toString(inputStream, "UTF8");
 								Pattern pattern = Pattern.compile(
-										// TODO: chop "(embedded)"
-										Pattern.quote(configData.get("Template")),
+										Pattern.quote(configData.get("Template")
+												.replaceAll(" *\\(embedded\\)", "")),
 										Pattern.CASE_INSENSITIVE);
 								Matcher matcher = pattern.matcher(templateSource);
 								if (matcher.find()) {
-									System.err
-											.println("Discovered title of template : " + templateResourcePath);
+									System.err.println(
+											"Discovered title of template : " + templateResourcePath);
 									// System.err.println("Discovered contents of template: " +
 									// templateSource);
 									list.add(templateResourcePath);
@@ -421,6 +418,7 @@ public class SimpleToolBarEx {
 
 				renderTemplate.setTemplateName((templates.length > 0) ? templates[0]
 						: "templates/core_selenium_java.twig");
+				// System.err.println("Using default template");
 			}
 			generatedScript = "";
 			try {

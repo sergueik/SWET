@@ -62,8 +62,13 @@ public class Utils {
 				.getResourceAsStream(resourceFilePath);
 	}
 
-	public String writeDataJSON(Map<String, String> data, String defaultData) {
-		String result = defaultData;
+	public String getResourcePath(String resourceFileName) {
+		return String.format("%s/src/main/resources/%s",
+				System.getProperty("user.dir"), resourceFileName);
+	}
+
+	public String writeDataJSON(Map<String, String> data, String defaultPayload) {
+		String payload = defaultPayload;
 		JSONObject json = new JSONObject();
 		try {
 			for (String key : data.keySet()) {
@@ -71,16 +76,11 @@ public class Utils {
 			}
 			StringWriter wr = new StringWriter();
 			json.write(wr);
-			result = wr.toString();
+			payload = wr.toString();
 		} catch (JSONException e) {
-			System.err.println("Excpetion (ignored): " + e);
+			System.err.println("Exception (ignored): " + e);
 		}
-		return result;
-	}
-
-	public String getResourcePath(String resourceFileName) {
-		return String.format("%s/src/main/resources/%s",
-				System.getProperty("user.dir"), resourceFileName);
+		return payload;
 	}
 
 	public String readData(Optional<Map<String, String>> parameters) {
@@ -90,8 +90,7 @@ public class Utils {
 	public String readData(String payload,
 			Optional<Map<String, String>> parameters) {
 
-		Boolean collectResults = parameters.isPresent();
-		Map<String, String> collector = (collectResults) ? parameters.get()
+		Map<String, String> collector = (parameters.isPresent()) ? parameters.get()
 				: new HashMap<>();
 
 		String data = (payload == null)
@@ -215,5 +214,4 @@ public class Utils {
 		m.appendTail(sb);
 		return sb.toString();
 	}
-
 }
