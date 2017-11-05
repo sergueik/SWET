@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
 
 public class TemplateCache {
+	private Utils utils = Utils.getInstance();
 	private static Map<String, String> cache = Collections
 			.synchronizedMap(new HashMap<String, String>());
 
@@ -129,7 +130,7 @@ public class TemplateCache {
 				String templateResourcePath = ze.getName();
 				if (templateResourcePath.startsWith("templates")
 						&& templateResourcePath.endsWith(".twig")) {
-					InputStream inputStream = (new Utils())
+					InputStream inputStream = utils
 							.getResourceStream(templateResourcePath);
 					String templateContents = IOUtils.toString(inputStream, "UTF8");
 

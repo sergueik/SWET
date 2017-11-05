@@ -34,6 +34,7 @@ public class WriteScriptFile {
 	private List<String> testPart = new ArrayList<String>();
 	private List<String> testStepsPart = new ArrayList<String>();
 	private List<String> tearDownPart = new ArrayList<String>();
+	private static Utils utils = Utils.getInstance();
 	private AI_Parser parser;
 
 	public WriteScriptFile(String jsonData) throws FileNotFoundException {
@@ -100,7 +101,7 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialImportList() {
-		this.importList.add(new Utils()
+		this.importList.add(utils
 				.getScriptContent(String.format("templates/%s", "importList.twig")));
 		this.importList.add("");
 		return getImportList();
@@ -112,14 +113,14 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialObjectDeclarations() {
-		this.objectDeclarations.add(new Utils()
+		this.objectDeclarations.add(utils
 				.getScriptContent(String.format("templates/%s", "initObjects.twig")));
 		this.objectDeclarations.add("");
 		return getObjectDeclarations();
 	}
 
 	private List<String> initialSetUpPart() {
-		this.setUpPart.add(new Utils()
+		this.setUpPart.add(utils
 				.getScriptContent(String.format("templates/%s", "beforeTest.twig")));
 		this.setUpPart.add("");
 		return getSetUpPart();
@@ -173,7 +174,7 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialTearDownPart() {
-		this.tearDownPart.add(new Utils()
+		this.tearDownPart.add(utils
 				.getScriptContent(String.format("templates/%s", "aftertest.twig")));
 		return getTearDownPart();
 	}
@@ -550,8 +551,8 @@ public class WriteScriptFile {
 		}
 
 		public static void initialMapping() throws IOException {
-			List<String> content = Utils.readFileLineByLine(
-					(new org.swet.Utils()).getResourcePath("config.properties"));
+			List<String> content = Utils
+					.readFileLineByLine(utils.getResourcePath("config.properties"));
 			for (String line : content) {
 				if (line.contains("selenium.")) {
 					String keyword = line.split("=")[0].split("\\.")[1];

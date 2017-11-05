@@ -61,6 +61,7 @@ public class TableEditorEx {
 	static Table table;
 	static Display display;
 	static Shell shell;
+	private Utils utils = Utils.getInstance();
 	private static Shell parentShell = null;
 
 	private static Label label;
@@ -391,7 +392,8 @@ public class TableEditorEx {
 			int column = (int) combo.getData("column");
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
-			// System.err.println(String.format("Updating %s = %s", oldValue, newValue));
+			// System.err.println(String.format("Updating %s = %s", oldValue,
+			// newValue));
 			if (selectorFromSWD.containsValue(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
@@ -444,7 +446,8 @@ public class TableEditorEx {
 			int column = (int) combo.getData("column");
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
-			// System.err.println(String.format("Updating %s = %s", oldValue, newValue));
+			// System.err.println(String.format("Updating %s = %s", oldValue,
+			// newValue));
 			if (keywordTable.containsKey(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
@@ -453,11 +456,11 @@ public class TableEditorEx {
 
 	public void setData(String key, String value) {
 		Map<String, String> _configData = new HashMap<>();
-		new Utils().readData(value, Optional.of(_configData));
+		utils.readData(value, Optional.of(_configData));
 		testData.put(key, _configData);
 		/*
 		System.err.println(String.format("setData %s -> \n %s", key,
-				(new Utils()).writeDataJSON(testData.get(key), "{}")));
+				utils.writeDataJSON(testData.get(key), "{}")));
 		*/
 	}
 

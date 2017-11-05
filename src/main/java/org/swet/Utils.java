@@ -31,7 +31,17 @@ import org.json.JSONObject;
  */
 
 public class Utils {
+	
+	private static Utils instance = new Utils();
 
+	private Utils() {
+	}
+
+	public static Utils getInstance() {
+		return instance;
+	}
+
+	
 	public String getScriptContent(String resourceFileName) {
 		try {
 			/* System.err.println("Script contents: " + getResourceURI(resourceFileName));		*/

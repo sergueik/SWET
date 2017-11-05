@@ -43,6 +43,7 @@ public class ComplexFormEx {
 	private static Boolean updated = false;
 	private static String result = null;
 	private static Map<String, String> elementData = new HashMap<>();
+	private static Utils utils = Utils.getInstance();
 
 	ComplexFormEx(Display parentDisplay, Shell parent) {
 		display = (parentDisplay != null) ? parentDisplay : new Display();
@@ -52,7 +53,7 @@ public class ComplexFormEx {
 			commandId = parent.getData(dataKey).toString();
 			// parent sets the elementData explicitly
 		}
-		new Utils().readData(Optional.of(elementData));
+		utils.readData(Optional.of(elementData));
 		if (!elementData.containsKey("ElementSelectedBy")) {
 			elementData.put("ElementSelectedBy", "none");
 		}
@@ -152,7 +153,7 @@ public class ComplexFormEx {
 			buttonSave.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
-					result = new Utils().writeDataJSON(elementData, "{}");
+					result = utils.writeDataJSON(elementData, "{}");
 					updated = true;
 					if (parentShell != null) {
 						if (result != "{}") {

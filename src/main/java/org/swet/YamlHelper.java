@@ -38,7 +38,6 @@ public class YamlHelper {
 				: args[0];
 	}
 
-	// TODO: generic method
 	@SuppressWarnings("unchecked")
 	public static Map<String, Map<String, String>> loadData(String fileName) {
 		if (yaml == null) {
@@ -47,8 +46,10 @@ public class YamlHelper {
 		}
 		Map<String, Map<String, String>> data = new HashMap<>();
 		try (InputStream in = Files.newInputStream(Paths.get(fileName))) {
+			// NOTE: unchecked conversion
+			// required: Map<String,Map<String,String>>
+			// found: capture#1 of ? extends java.util.Map
 			data = yaml.loadAs(in, data.getClass());
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

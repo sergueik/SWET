@@ -61,6 +61,7 @@ public class SwetTest {
 	private static long timeout_after_script_injection = 1000000;
 	private static boolean pause_after_test = false;
 	private static long timeout_after_test = 1000000;
+	private Utils utils = Utils.getInstance();
 
 	// Converting legacy SWD "Element selected By" keys to
 	// selectorTable keys
@@ -79,8 +80,8 @@ public class SwetTest {
 	@BeforeClass
 	public static void beforeSuiteMethod() throws Exception {
 
-		//  browser selection is hard-coded
-		
+		// browser selection is hard-coded
+
 		if (osName.toLowerCase().startsWith("windows")) {
 			driver = BrowserDriver.initialize(browser);
 		} else if (osName.startsWith("Mac")) {
@@ -143,7 +144,7 @@ public class SwetTest {
 		assertFalse(payload.isEmpty());
 		// System.err.println("Result:\n" + readVisualSearchResult(payload));
 		Map<String, String> resultDetails = new HashMap<>();
-		(new Utils()).readData(payload, Optional.of(resultDetails));
+		utils.readData(payload, Optional.of(resultDetails));
 		verifySelectors(resultDetails);
 		if (pause_after_test) {
 			try {
@@ -158,7 +159,8 @@ public class SwetTest {
 		List<String> methodKeys = new ArrayList<>(
 				Arrays.asList("ElementCssSelector", "ElementXPath", "ElementId"));
 		for (String methodKey : methodKeys) {
-			if (result.get(methodKey) == null || result.get(methodKey).length() == 0 ) {
+			if (result.get(methodKey) == null
+					|| result.get(methodKey).length() == 0) {
 				continue;
 			}
 			System.err.println(String.format("Testing %s with \"%s\"", methodKey,
@@ -228,7 +230,7 @@ public class SwetTest {
 		String result = readVisualSearchResult(payload);
 		System.err.println("Result:\n" + result);
 		Map<String, String> details = new HashMap<>();
-		(new Utils()).readData(payload, Optional.of(details));
+		utils.readData(payload, Optional.of(details));
 		Map<String, String> expected = new HashMap<>();
 		expected.put("ElementId", "uh-logo");
 		expected.put("ElementXPath",
@@ -258,7 +260,7 @@ public class SwetTest {
 	// @Ignore
 	@Test
 	public void testStatic() {
-		driver.get(new Utils().getResourceURI("ElementSearch.html"));
+		driver.get(utils.getResourceURI("ElementSearch.html"));
 		injectScripts(Optional.<String> empty());
 		// Unsupported URL protocol:
 		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
@@ -321,7 +323,7 @@ public class SwetTest {
 		Boolean collectResults = parameters.isPresent();
 		Map<String, String> collector = (collectResults) ? parameters.get()
 				: new HashMap<>();
-		String result = new Utils().readData(payload, Optional.of(collector));
+		String result = utils.readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
 		// NOTE: elementCodeName will not be set if
 		// user clicked the SWD Table Close Button
@@ -470,8 +472,7 @@ public class SwetTest {
 	// TODO: array
 	private void injectScripts(Optional<String> script) {
 		ArrayList<String> scripts = (defaultScript == null) ? new ArrayList<>()
-				: new ArrayList<>(
-						Arrays.asList(new Utils().getScriptContent(defaultScript)));
+				: new ArrayList<>(Arrays.asList(utils	.getScriptContent(defaultScript)));
 		if (script.isPresent()) {
 			scripts.add(script.get());
 		}

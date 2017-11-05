@@ -25,24 +25,7 @@ public class ExceptionDialogEx {
 	private Shell shell = null;
 	private Display display;
 	private static boolean debug = false;
-
-	@SuppressWarnings("unused")
-	public static void main(String[] arg) {
-		debug = true;
-		try {
-			testFunction();
-		} catch (Exception e) {
-			if (debug) {
-				System.err.println("Processing exception:");
-				e.printStackTrace();
-			}
-
-			if (debug) {
-				System.err.println("Create the Exception dialog");
-			}
-			(new ExceptionDialogEx(null, null, e)).execute();
-		}
-	}
+	// private Utils utils = Utils.getInstance();
 
 	private static void testFunction() throws Exception {
 		throw new Exception("This is a test exception");
@@ -59,7 +42,7 @@ public class ExceptionDialogEx {
 		// TODO: next does not show the dialog
 		/*
 		  import org.eclipse.jdt.internal.ui.dialogs.ProblemDialog;
-		  ProblemDialog dialog = new ProblemDialog(shell, "Error", "Exception thrown", new Image(dev, new Utils().getResourcePath("launch.png"));
+		  ProblemDialog dialog = new ProblemDialog(shell, "Error", "Exception thrown", new Image(dev, utils.getResourcePath("launch.png"));
 		      status, 0);
 		  // dialog.setDefaultImages();
 		  dialog.create();
@@ -122,4 +105,23 @@ public class ExceptionDialogEx {
 				(summary.length() > 120) ? summary.substring(0, 120) : summary, t);
 		return status;
 	}
+
+	@SuppressWarnings("unused")
+	public static void main(String[] arg) {
+		debug = true;
+		try {
+			testFunction();
+		} catch (Exception e) {
+			if (debug) {
+				System.err.println("Processing exception:");
+				e.printStackTrace();
+			}
+
+			if (debug) {
+				System.err.println("Create the Exception dialog");
+			}
+			(new ExceptionDialogEx(null, null, e)).execute();
+		}
+	}
+
 }

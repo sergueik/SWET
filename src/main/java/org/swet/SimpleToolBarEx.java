@@ -107,6 +107,7 @@ public class SimpleToolBarEx {
 	private String generatedScript = null;
 	private Label statusMessage;
 	private TemplateCache templateCache = TemplateCache.getInstance();
+	private Utils utils = Utils.getInstance();
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
 	private Breadcrumb bc;
@@ -196,36 +197,35 @@ public class SimpleToolBarEx {
 		Rectangle boundRect = new Rectangle(0, 0, shellWidth, shellHeight);
 		shell.setBounds(boundRect);
 		shell.setImage(new Image(display,
-				new Utils().getResourceStream("images/document_wrench_color.ico")));
+				utils.getResourceStream("images/document_wrench_color.ico")));
 		try {
 
-			iconData.put("launch icon", resize(
-					new Image(display,
-							new Utils()
+			iconData.put("launch icon",
+					resize(
+							new Image(display, utils
 									.getResourceStream(String.format("images/%s", launchImage))),
-					32, 32));
-			iconData.put("find icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", findImage))));
-			iconData.put("prefs icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", gearImage))));
-			iconData.put("shutdown icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", quitImage))));
-			iconData.put("step icon",
-					new Image(display, new Utils().getResourceStream(
-							String.format("images/%s", "document_wrench_bw.png"))));
+							32, 32));
+			iconData.put("find icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", findImage))));
+			iconData.put("prefs icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", gearImage))));
+			iconData.put("shutdown icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", quitImage))));
+			iconData.put("step icon", new Image(display, utils.getResourceStream(
+					String.format("images/%s", "document_wrench_bw.png"))));
 			iconData.put("codeGen icon", resize(
 					new Image(display,
-							new Utils()
+							utils
 									.getResourceStream(String.format("images/%s", codeGenImage))),
 					32, 32));
-			iconData.put("open icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", openImage))));
-			iconData.put("save icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", saveImage))));
-			iconData.put("help icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", helpImage))));
-			iconData.put("testsuite icon", new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", testsuiteImage))));
+			iconData.put("open icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", openImage))));
+			iconData.put("save icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", saveImage))));
+			iconData.put("help icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", helpImage))));
+			iconData.put("testsuite icon", new Image(display,
+					utils.getResourceStream(String.format("images/%s", testsuiteImage))));
 		} catch (Exception e) {
 
 			System.err.println("Cannot load images: " + e.getMessage());
@@ -317,7 +317,7 @@ public class SimpleToolBarEx {
 				TableEditorEx tableEditor = new TableEditorEx(Display.getCurrent(),
 						shell);
 				for (String key : testData.keySet()) {
-					String jsonData = new Utils().writeDataJSON(testData.get(key), "{}");
+					String jsonData = utils.writeDataJSON(testData.get(key), "{}");
 					System.err.println(
 							String.format("Sending the key %s", key /*, jsonData */ ));
 					tableEditor.setData(key, jsonData);
@@ -373,8 +373,7 @@ public class SimpleToolBarEx {
 						configData.get("Template")));
 				templateCache.fillEmbeddedTemplateCache();
 				String templateResourcePath = templateCache
-						.getItem(templateCache.approxLookup(
-								configData.get("Template")));
+						.getItem(templateCache.approxLookup(configData.get("Template")));
 				if (templateResourcePath == null) {
 					System.err.println(
 							"Using the default template: " + defaultTemplateResourcePath);
@@ -451,11 +450,11 @@ public class SimpleToolBarEx {
 			shell.setData("updated", false);
 
 			shell.setData("CurrentConfig",
-					new Utils().writeDataJSON(configData, defaultConfig));
+					utils.writeDataJSON(configData, defaultConfig));
 			ConfigFormEx o = new ConfigFormEx(Display.getCurrent(), shell);
 			o.render();
 			if ((Boolean) shell.getData("updated")) {
-				new Utils().readData((String) shell.getData("CurrentConfig"),
+				utils.readData((String) shell.getData("CurrentConfig"),
 						Optional.of(configData));
 			}
 			preferencesTool.setEnabled(true);
@@ -673,7 +672,7 @@ public class SimpleToolBarEx {
 		Boolean collectResults = parameters.isPresent();
 		Map<String, String> collector = (collectResults) ? parameters.get()
 				: new HashMap<>();
-		String result = new Utils().readData(payload, Optional.of(collector));
+		String result = utils.readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
 		// NOTE: elementCodeName will not be set if
 		// user clicked the SWD Table Close Button
@@ -836,7 +835,7 @@ public class SimpleToolBarEx {
 
 	private void injectElementSearch(Optional<String> script) {
 		List<String> scripts = new ArrayList<>(
-				Arrays.asList(new Utils().getScriptContent("ElementSearch.js")));
+				Arrays.asList(utils.getScriptContent("ElementSearch.js")));
 		if (script.isPresent()) {
 			scripts.add(script.get());
 		}
@@ -904,7 +903,7 @@ public class SimpleToolBarEx {
 				if ((Boolean) shell.getData("updated")) {
 					Map<String, String> data = new HashMap<>();
 					// form sets result to the modified element attributes JSON
-					String name = new Utils().readData((String) shell.getData("result"),
+					String name = utils.readData((String) shell.getData("result"),
 							Optional.of(data));
 					if (name != null) {
 						testData.replace(commandId, data);

@@ -1,4 +1,5 @@
 package org.passer;
+
 // origin: https://github.com/prasser/swtchoices
 /*******************************************************************************
  * Copyright (c) 2015 Fabian Prasser
@@ -32,6 +33,7 @@ public class ChoicesDialog {
 	private final int style;
 	private boolean showArrows = true;
 	private ChoiceItem defaultChoice = null;
+	private Utils utils = Utils.getInstance();
 
 	public ChoicesDialog(Shell parent, int style) {
 		this.checkStyle(style);
@@ -86,8 +88,8 @@ public class ChoicesDialog {
 
 		final Image imageArrow;
 		if (showArrows) {
-			imageArrow = new Image(display, new Utils()
-					.getResourceStream(String.format("images/%s", "arrow.png")));
+			imageArrow = new Image(display,
+					utils.getResourceStream(String.format("images/%s", "arrow.png")));
 
 			shell.addDisposeListener(new DisposeListener() {
 				@Override

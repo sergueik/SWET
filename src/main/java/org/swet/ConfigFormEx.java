@@ -44,6 +44,7 @@ public class ConfigFormEx {
 
 	private static String osName = OSUtils.getOsName();
 	private static Map<String, String> configData = new HashMap<>();
+	private static Utils utils = Utils.getInstance();
 
 	// NOTE: use the same DOM for Browser config options to simplify code
 	// the values for "Browser" hash are not used
@@ -87,7 +88,7 @@ public class ConfigFormEx {
 		} else {
 			dirPath = System.getProperty("user.home");
 		}
-		new Utils().readData(
+		utils.readData(
 				parent != null ? parentShell.getData("CurrentConfig").toString()
 						: "{ \"Browser\": \"Chrome\", "
 								+ "\"Template\": \"Core Selenium Java (embedded)\", "
@@ -255,7 +256,7 @@ public class ConfigFormEx {
 					} else {
 						configData.put(configKey, data);
 					}
-					String result = new Utils().writeDataJSON(configData, "{}");
+					String result = utils.writeDataJSON(configData, "{}");
 					if (parentShell != null) {
 						parentShell.setData("CurrentConfig", result);
 						parentShell.setData("updated", true);
