@@ -54,10 +54,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import org.passer.ChoiceItem;
 import org.passer.ChoicesDialog;
 
-import java.util.regex.Pattern;
+import org.swet.ExceptionDialogEx;
+import org.swet.Utils;
 
 /**
  * Main form for Selenium WebDriver Elementor Tool (SWET)
@@ -324,7 +326,8 @@ public class SimpleToolBarEx {
 				}
 				tableEditor.render();
 			} catch (Exception e) {
-				(new ExceptionDialogEx(display, shell, e)).execute();
+				// show the error dialog with exception trace
+				ExceptionDialogEx.getInstance().render(e);
 			}
 			updateStatus("Ready");
 		});
@@ -350,7 +353,8 @@ public class SimpleToolBarEx {
 				testsuiteTool.setEnabled(true);
 				// driver.get(getResourceURI("blankpage.html"));
 			} catch (Exception e) {
-				(new ExceptionDialogEx(display, shell, e)).execute();
+				// show the error dialog with exception trace
+				ExceptionDialogEx.getInstance().render(e);
 				// try again
 				launchTool.setEnabled(true);
 			}
@@ -386,7 +390,8 @@ public class SimpleToolBarEx {
 			try {
 				generatedScript = renderTemplate.renderTest(testData);
 			} catch (Exception e) {
-				new ExceptionDialogEx(display, shell, e).execute();
+				// show the error dialog with exception trace
+				ExceptionDialogEx.getInstance().render(e);
 			}
 			shell.setData("payload", generatedScript);
 			ScrolledTextEx test = new ScrolledTextEx(Display.getCurrent(), shell);
@@ -486,7 +491,8 @@ public class SimpleToolBarEx {
 					try {
 						injectElementSearch(Optional.<String> empty());
 					} catch (Exception e) {
-						(new ExceptionDialogEx(display, shell, e)).execute();
+						// show the error dialog with exception trace
+						ExceptionDialogEx.getInstance().render(e);
 					}
 
 					updateStatus("Waiting for data");
@@ -790,8 +796,8 @@ public class SimpleToolBarEx {
 				}
 			});
 		} catch (Exception e) {
-			(new ExceptionDialogEx(Display.getCurrent(), shell, e)).execute();
-			System.err.println("Exception: " + e.toString());
+			// show the error dialog with exception trace
+			ExceptionDialogEx.getInstance().render(e);
 			if (driver != null) {
 				try {
 					BrowserDriver.close();

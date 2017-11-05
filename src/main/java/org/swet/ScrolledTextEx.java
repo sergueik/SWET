@@ -20,6 +20,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import org.swet.ExceptionDialogEx;
+import org.swet.Utils;
+
 /**
  * Generated source display form for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -32,11 +35,12 @@ class ScrolledTextEx {
 	private String payload = "Nothing here\nyet...";
 	private final static int width = 700;
 	private final static int height = 400;
-	private StyledText styledText;
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
 
+	private StyledText styledText;
 	public JavaLineStyler lineStyler = new JavaLineStyler();
+	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
 	ScrolledTextEx(Display parentDisplay, Shell parent) {
 
@@ -51,13 +55,12 @@ class ScrolledTextEx {
 			payload = (String) parent.getData("payload");
 		} else {
 			RenderTemplate template = new RenderTemplate();
-			template.setTemplateName("templates/example3.twig");
+			template.setTemplateName(defaultTemplateResourcePath);
 			try {
 				payload = template.renderTest();
 			} catch (Exception e) {
-				ExceptionDialogEx o = new ExceptionDialogEx(display, shell, e);
 				// show the error dialog with exception trace
-				o.execute();
+				ExceptionDialogEx.getInstance().render(e);
 			}
 		}
 		shell.setText("Generated QA source");
@@ -103,7 +106,7 @@ class ScrolledTextEx {
 						Files.write(Paths.get(filePath), Arrays.asList(payload.split("\n")),
 								Charset.forName("UTF-8"));
 					} catch (IOException e) {
-						new ExceptionDialogEx(display, shell, e).execute();
+						ExceptionDialogEx.getInstance().render(e);
 					}
 					styledText.dispose();
 					shell.dispose();

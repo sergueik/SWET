@@ -53,17 +53,23 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import org.swet.ExceptionDialogEx;
+import org.swet.Utils;
+
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class TableEditorEx {
-	static Table table;
-	static Display display;
-	static Shell shell;
+
+	private static Table table;
+	private static Display display;
+	private static Shell shell;
 	private Utils utils = Utils.getInstance();
 	private static Shell parentShell = null;
-
+	// need to defer initialization to avoid org.eclipse.swt.SWTException: Invalid
+	// thread access
+	// private static ExceptionDialogEx exceptionDialogEx = null;
 	private static Label label;
 
 	// Legacy SWD "Element selected By" keys to By, NgBy, AngularBy methods
@@ -95,7 +101,7 @@ public class TableEditorEx {
 
 		selectorFromSWD = internalConfiguration.get("SWDSelectors");
 		keywordTable = internalConfiguration.get("Keywords");
-		// TODO: load mixed content
+		// TODO: enable loading mixed content
 		// Map<String,List<String>> columnHeaders =
 		// internalConfiguration.get("Column Headers");
 	}
@@ -300,29 +306,26 @@ public class TableEditorEx {
 				ReadWriteExcelFileEx.setExcelFileName(testSuitePath);
 				ReadWriteExcelFileEx.setSheetName("test123");
 				ReadWriteExcelFileEx.setTableData(tableData);
-				if (testSuitePath.matches(".*\\.xlsx$")) {
-					try {
+
+				try {
+					if (testSuitePath.matches(".*\\.xlsx$")) {
 						ReadWriteExcelFileEx.writeXLSXFile();
 						ReadWriteExcelFileEx.readXLSXFile();
-					} catch (Exception e) {
-						(new ExceptionDialogEx(display, shell, e)).execute();
-					}
-				} else {
-					try {
+					} else {
 						ReadWriteExcelFileEx.writeXLSFile();
 						ReadWriteExcelFileEx.readXLSFile();
-					} catch (Exception e) {
-						(new ExceptionDialogEx(display, shell, e)).execute();
 					}
+					label.setText(String.format("Saved to \"%s\"", testSuitePath));
+					label.update();
+					System.out.println(String.format("Saved to \"%s\"", testSuitePath));
+				} catch (Exception e) {
+					ExceptionDialogEx.getInstance().render(e);
 				}
 			} else {
 				if (path != null) {
 					testSuitePath = new String(path);
 				}
 			}
-			label.setText(String.format("Saved to \"%s\"", testSuitePath));
-			label.update();
-			System.out.println(String.format("Saved to \"%s\"", testSuitePath));
 		}
 
 		public void widgetDefaultSelected(SelectionEvent event) {

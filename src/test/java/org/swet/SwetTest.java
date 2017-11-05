@@ -40,6 +40,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import org.swet.Utils;
+import org.swet.ExceptionDialogEx;
+
 @SuppressWarnings("deprecation")
 public class SwetTest {
 
@@ -401,7 +404,7 @@ public class SwetTest {
 			});
 		} catch (Exception e) {
 			// TODO: dialog
-			// (new ExceptionDialogEx(Display.getCurrent(), shell, e)).execute();
+			// ExceptionDialogEx.getInstance().render(e);
 			System.err.println("Exception: " + e.toString());
 		}
 

@@ -44,7 +44,7 @@ public class YamlHelper {
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 			yaml = new Yaml(options);
 		}
-		Map<String, Map<String, String>> data = new HashMap<>();
+		Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
 		try (InputStream in = Files.newInputStream(Paths.get(fileName))) {
 			// NOTE: unchecked conversion
 			// required: Map<String,Map<String,String>>

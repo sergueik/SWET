@@ -11,6 +11,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.SWTException;
 
 import org.swet.Utils;
 
@@ -23,47 +24,21 @@ public class ExceptionDialogEx {
 
 	private MultiStatus status;
 	private Shell shell = null;
-	private Display display;
+	private Display display = null;
 	private static boolean debug = false;
-	// private Utils utils = Utils.getInstance();
+	private Utils utils = Utils.getInstance();
+	private static ExceptionDialogEx instance = new ExceptionDialogEx();
+
+	public static ExceptionDialogEx getInstance() {
+		return instance;
+	}
 
 	private static void testFunction() throws Exception {
 		throw new Exception("This is a test exception");
 	}
 
-	public void execute() {
-		if (debug) {
-			System.err.println("Show the dialog");
-		}
-		ErrorDialog.openError(shell, "Error", "Exception thrown", status);
-		if (debug) {
-			System.err.println("Shown the dialog");
-		}
-		// TODO: next does not show the dialog
-		/*
-		  import org.eclipse.jdt.internal.ui.dialogs.ProblemDialog;
-		  ProblemDialog dialog = new ProblemDialog(shell, "Error", "Exception thrown", new Image(dev, utils.getResourcePath("launch.png"));
-		      status, 0);
-		  // dialog.setDefaultImages();
-		  dialog.create();
-		  dialog.open();
-		*/
-	}
-
-	public ExceptionDialogEx(Display parentDisplay, Shell parentShell,
-			Throwable e) {
-		display = (parentDisplay != null) ? parentDisplay : new Display();
-		shell = new Shell(display);
-		if (parentShell != null) {
-			shell = parentShell;
-			// commandId = parent.getData(dataKey).toString();
-		} else {
-			shell = Display.getCurrent().getActiveShell();
-		}
+	public void render(Throwable e) {
 		// Collect the exception stack trace
-		if (debug) {
-			System.err.println("Begin Collecting the exception stack trace");
-		}
 		Exception eCause = (Exception) e.getCause();
 		if (eCause != null) {
 			if (debug) {
@@ -72,6 +47,21 @@ public class ExceptionDialogEx {
 			status = createMultiStatus(e.getLocalizedMessage(), eCause);
 		} else {
 			status = createMultiStatus(e.getLocalizedMessage(), e);
+		}
+		ErrorDialog.openError(shell, "Error", "Exception thrown", status);
+	}
+
+	private ExceptionDialogEx() {
+		try {
+			display = Display.getCurrent();
+		} catch (SWTException e) {
+			System.err.println(e.toString());
+			throw new RuntimeException(e);
+		}
+		try {
+			shell = Display.getCurrent().getActiveShell();
+		} catch (NullPointerException e) {
+			shell = new Shell(display);
 		}
 	}
 
@@ -112,15 +102,11 @@ public class ExceptionDialogEx {
 		try {
 			testFunction();
 		} catch (Exception e) {
-			if (debug) {
-				System.err.println("Processing exception:");
-				e.printStackTrace();
-			}
-
-			if (debug) {
-				System.err.println("Create the Exception dialog");
-			}
-			(new ExceptionDialogEx(null, null, e)).execute();
+      // when using in SWT application,
+      // need to defer initialization  to after the application is started
+      // to avoid org.eclipse.swt.SWTException: Invalid thread access
+			// ExceptionDialogEx x = ExceptionDialogEx.getInstance();
+			ExceptionDialogEx.getInstance().render(e);
 		}
 	}
 
