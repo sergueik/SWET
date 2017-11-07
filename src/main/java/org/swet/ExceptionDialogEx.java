@@ -26,7 +26,7 @@ public class ExceptionDialogEx {
 	private Shell shell = null;
 	private Display display = null;
 	private static boolean debug = false;
-	private Utils utils = Utils.getInstance();
+	private static Utils utils = Utils.getInstance();
 	private static ExceptionDialogEx instance = new ExceptionDialogEx();
 
 	public static ExceptionDialogEx getInstance() {
@@ -34,7 +34,8 @@ public class ExceptionDialogEx {
 	}
 
 	private static void testFunction() throws Exception {
-		throw new Exception("This is a test exception");
+		throw new Exception(
+				"This is a test exception from " + utils.readManifestVersion());
 	}
 
 	public void render(Throwable e) {
@@ -102,9 +103,9 @@ public class ExceptionDialogEx {
 		try {
 			testFunction();
 		} catch (Exception e) {
-      // when using in SWT application,
-      // need to defer initialization  to after the application is started
-      // to avoid org.eclipse.swt.SWTException: Invalid thread access
+			// when using in SWT application,
+			// need to defer initialization to after the application is started
+			// to avoid org.eclipse.swt.SWTException: Invalid thread access
 			// ExceptionDialogEx x = ExceptionDialogEx.getInstance();
 			ExceptionDialogEx.getInstance().render(e);
 		}

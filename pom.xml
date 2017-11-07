@@ -32,6 +32,7 @@
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+    <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- <opal.version>1.0.4</opal.version> -->
     <phantomjsdriver.version>1.4.2</phantomjsdriver.version>
@@ -246,6 +247,19 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -12,7 +12,8 @@ import java.io.StringWriter;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,7 +22,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,7 +35,7 @@ import org.json.JSONObject;
  */
 
 public class Utils {
-	
+
 	private static Utils instance = new Utils();
 
 	private Utils() {
@@ -41,7 +45,6 @@ public class Utils {
 		return instance;
 	}
 
-	
 	public String getScriptContent(String resourceFileName) {
 		try {
 			/* System.err.println("Script contents: " + getResourceURI(resourceFileName));		*/
@@ -224,4 +227,37 @@ public class Utils {
 		m.appendTail(sb);
 		return sb.toString();
 	}
+
+	public String readManifestVersion() {
+		// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
+		CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
+		String result = null;
+		String manifestTag = "Implementation-Version: (0.0.8(?:\\-SNAPSHOT)*)";
+		try {
+			URL jar = src.getLocation();
+			ZipInputStream zip = new ZipInputStream(jar.openStream());
+			ZipEntry ze = null;
+			while ((ze = zip.getNextEntry()) != null) {
+				String manifestResourcePath = ze.getName();
+				if (manifestResourcePath.endsWith("MANIFEST.MF")) {
+					InputStream inputStream = getResourceStream(manifestResourcePath);
+					String manifestSource = IOUtils.toString(inputStream, "UTF8");
+
+					Pattern pattern = Pattern.compile(manifestTag,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = pattern.matcher(Pattern.quote(manifestSource));
+					if (matcher.find()) {
+						result = matcher.group(1);
+						System.err.println("Discovered version: " + result
+								+ " in manifest : " + manifestResourcePath);
+					}
+					IOUtils.closeQuietly(inputStream);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 }
