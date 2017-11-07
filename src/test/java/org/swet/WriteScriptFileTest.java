@@ -19,10 +19,11 @@ public class WriteScriptFileTest {
 	private static String scriptsPath;
 	private static Gson gson;
 	private static String resourcePath;
+	private static Utils utils = Utils.getInstance();
 
 	@BeforeClass
 	public static void Setup() {
-		resourcePath = (new org.swet.Utils()).getResourcePath("sampleTest.json");
+		resourcePath = utils.getResourcePath("sampleTest.json");
 		gson = new Gson();
 		scriptsPath = System.getProperty("user.dir") + File.separator + "scripts";
 		File scriptsDirectory = new File(scriptsPath);
