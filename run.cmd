@@ -1,5 +1,6 @@
 @echo OFF
-if "%TOOLS_DIR%"=="" set TOOLS_DIR='c:\java'
+:setlocal
+if "%TOOLS_DIR%"=="" set TOOLS_DIR=c:\java
 if "%JAVA_VERSION%"=="" set JAVA_VERSION=1.8.0_101
 if "%JAVA_HOME%"=="" set JAVA_HOME=%TOOLS_DIR%\jdk%JAVA_VERSION%
 set JAVA_OPTS=-Xms256m -Xmx512m
@@ -17,6 +18,11 @@ if NOT "%MAIN_APP_CLASS%" == "" shift
 if "%MAIN_APP_CLASS%"=="" set MAIN_APP_CLASS=SimpleToolBarEx
 call mvn -Dmaven.test.skip=true package install
 REM SHIFT will not affect the value of %* 
+
+REM compile
 java -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
+
+REM run
 %MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% %1 %2 %3 %4 %5 %6 %7 %8 %9
+:endlocal
 goto :EOF

@@ -376,9 +376,23 @@ elements:
     ElementVariable: userSelectedVariableName
     ElementXPath: id("page-body")/div[1]/section[1]/div[2]/div[2]/section[1]/section[2]/header[1]/h3[1]/a[@href="/projects/outlookcaldavsynchronizer/?source=frontpage&position=1"]
 ```
-### Exporing to Keywod Driven Framework engines
+### Custom Configuration
+The __SWET__  configirarion file is in `src/main.resources/application.properties`:
+```java
+username: username
+password: password
+# no quotes around paths. Trailing whitespace is ok
+# use the following syntax for environment variables: ${USERPROFILE}\\desktop\\chromedriver.exe
+chromeDriverPath: ${USERPROFILE}\\desktop\\chromedriver.exe
+geckoDriverPath: c:/java/selenium/geckodriver.exe
+firefoxBrowserPath: c:/Program Files (x86)/Mozilla Firefox/firefox.exe
+ieDriverPath: c:/java/selenium/IEDriverServer.exe
+```
+The `username` and `password` entris are not currently used - these are reserved for Sauce Labs or browserStack.
 
-There exist a big number of Keyword Driven Frameworks with Selenium, e.g. [sergueik/skdf](https://github.com/sergueik/skdf). These allow storing the test flow in e.g. Excel file in a format:
+### Exporing to Keyword-Driven Framework engines
+
+There exist a big number of Keyword-Driven Frameworks with Selenium, e.g. [sergueik/skdf](https://github.com/sergueik/skdf). These allow storing the test flow in e.g. Excel file in a format:
 ![icon](https://github.com/sergueik/SWET/blob/master/screenshots/table_editor_view.png)
 The toolbar buton ![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/excel_gen_32.png) does that from SWET.
 The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form. The rest of the columns come from the saved recording.
@@ -398,7 +412,7 @@ It is possible to save the resul as Excel file.
   * [Opal Project (SWT new widgets library) by Laurent Caron](https://github.com/lcaron/opal)
   * [Nebula - Supplemental Widgets for SWT](https://github.com/eclipse/nebula)
   * [danlucraft/jruby-swt-cookbook](https://github.com/danlucraft/jruby-swt-cookbook)
-  * [danlucraft/swt](https://github.com/danlucraft/swt)
+  * [swt Ruby gem](https://github.com/danlucraft/swt)
   * [fab1an/appkit toolkit for swt app design](https://github.com/fab1an/appkit)
   * [SWT dependency repositories](http://stackoverflow.com/questions/5096299/maven-project-swt-3-5-dependency-any-official-public-repo)
   * [SWT jar ANT helper](http://mchr3k.github.io/swtjar/)
@@ -410,18 +424,15 @@ It is possible to save the resul as Excel file.
   * [SWT custom preference dialog](https://github.com/prasser/swtpreferences)
   * [SWT multiple choice dialogs](https://github.com/prasser/swtchoices)
   * [Misc JFace/SWT UI elements and utils](https://github.com/Albertus82/JFaceUtils)
-  * [SWT/JFace Utilities](https://github.com/Albertus82/JFaceUtils)
   * [SWT System Tray](https://github.com/dorkbox/SystemTray)
   * [SWT/WMI](https://github.com/ctron/wmisample)
   * [SWT Tools](https://github.com/bp-FLN/SWT-Tools)
-  * [SWT choice dialog customization](https://github.com/prasser/swtchoices)
   * [SWT Browser component based recorder](https://github.com/itspanzi/swt-browser-recorder-spike)
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
   * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
   * [SWING to SWT transformation tool](https://github.com/xgdsmileboy/SWING-SWT-Transformation)
-  * [SWT custom components](https://github.com/SWTCustomComponents)
+  * [SWT custom components](https://github.com/SWTCustomComponents/SWTCustomComponents)
   * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
-  * [SWT TreeViewer example](https://github.com/Adarsh-g-s/TreeViewer)
   * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
 
 #### Eclipse Plugins
@@ -444,6 +455,7 @@ It is possible to save the resul as Excel file.
   * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome) -
   * [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
   * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
+  * [SnapTest](https://www.snaptest.io/) (no source on github -  have to download the `.crx` and find it in `%USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\Extensions\aeofjocnhdlleichkjbaibdbicpcddhp\0.6.9_0\manifest.json` )
 
 #### Selenium Locator Strategies
 
