@@ -263,7 +263,9 @@ public class TableEditorEx {
 				}
 			}
 		});
+		packTable(table);
 		shell.pack();
+
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
@@ -465,6 +467,14 @@ public class TableEditorEx {
 		System.err.println(String.format("setData %s -> \n %s", key,
 				utils.writeDataJSON(testData.get(key), "{}")));
 		*/
+	}
+
+	// origin:
+	// https://github.com/bp-FLN/SWT-Tools/blob/master/src/swt/TableTools.java
+	public static void packTable(Table table) {
+		for (TableColumn tc : table.getColumns()) {
+			tc.pack();
+		}
 	}
 
 	public static void main(String[] args) {
