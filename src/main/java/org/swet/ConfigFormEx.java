@@ -1,5 +1,7 @@
 package org.swet;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +14,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,6 +28,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import custom.swt.widgets.InfoPopup;
 
 /**
  * Session configuration editor form for Selenium WebDriver Elementor Tool (SWET)
@@ -41,6 +47,8 @@ public class ConfigFormEx {
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
 	private final static int labelWidth = 150;
+
+	private static Boolean debug = false;
 
 	private static String osName = OSUtils.getOsName();
 	private static Map<String, String> configData = new HashMap<>();
@@ -127,6 +135,14 @@ public class ConfigFormEx {
 		rowComposite.pack();
 		shell.pack();
 		shell.setSize(formWidth, formHeight);
+		if (debug) {
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			Rectangle shellBounds = shell.getBounds();
+			InfoPopup infoPopup = new InfoPopup(shell, "test of the info popup");
+			infoPopup.setPosition(new Point(shellBounds.x + shellBounds.width - 200,
+					shellBounds.y + shellBounds.height - 30));
+			infoPopup.open();
+		}
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
@@ -188,7 +204,7 @@ public class ConfigFormEx {
 			browse.setLayoutData(gridDataBrowse);
 			browse.setText("Browse");
 			// ?? browse.setValue("Browse");
-
+			// TODO: preview
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					DirectoryDialog dialog = new DirectoryDialog(shell);
@@ -373,7 +389,8 @@ public class ConfigFormEx {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
-		ConfigFormEx o = new ConfigFormEx(null, null);
-		o.render();
+		ConfigFormEx configFormEx = new ConfigFormEx(null, null);
+		configFormEx.debug = true;
+		configFormEx.render();
 	}
 }

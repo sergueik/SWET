@@ -85,7 +85,7 @@ public class SwetTest {
 
 		// browser selection is hard-coded
 
-		if (osName.toLowerCase().startsWith("windows")) {
+		if (osName.startsWith("windows")) {
 			driver = BrowserDriver.initialize(browser);
 		} else if (osName.startsWith("Mac")) {
 			driver = BrowserDriver.initialize("safari");

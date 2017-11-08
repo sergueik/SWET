@@ -232,7 +232,7 @@ public class Utils {
 		// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
 		CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
 		String result = null;
-		String manifestTag = "Implementation-Version: (0.0.8(?:\\-SNAPSHOT)*)";
+		String manifestTag = "Implementation-Version: (\\d+\\.\\d+(?:\\.\\d+)(?:\\-SNAPSHOT)*)";
 		try {
 			URL jar = src.getLocation();
 			ZipInputStream zip = new ZipInputStream(jar.openStream());
