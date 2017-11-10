@@ -5,6 +5,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
@@ -28,8 +30,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -79,7 +83,8 @@ public class SimpleToolBarEx {
 	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private List<String> stepKeys = new ArrayList<>();
 	private Map<String, Map<String, String>> testData = new HashMap<>();
-	private Map<String, Image> iconData = new HashMap<>();
+	private Map<String, Image> iconCache = new HashMap<>();
+	private static final int IMAGE_SIZE = 32;
 	private Configuration config = null;
 	private static Map<String, Boolean> browserStatus = new HashMap<>();
 	private static String configFilePath; // TODO: rename
@@ -188,6 +193,52 @@ public class SimpleToolBarEx {
 		return scaled;
 	}
 
+	// https://github.com/vogellacompany/codeexamples-java/blob/master/de.vogella.databinding.windowbuilder.example/src/com/swtdesigner/SWTResourceManager.java
+
+	private static Image getMissingImage() {
+		Image image = new Image(Display.getCurrent(), IMAGE_SIZE, IMAGE_SIZE);
+		GC gc = new GC(image);
+		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+		gc.fillRectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE);
+		gc.dispose();
+		return image;
+	}
+
+	protected static Image getImage(InputStream stream) throws IOException {
+		try {
+			Display display = Display.getCurrent();
+			ImageData data = new ImageData(stream);
+			if (data.transparentPixel > 0) {
+				return new Image(display, data, data.getTransparencyMask());
+			}
+			return new Image(display, data);
+		} finally {
+			stream.close();
+		}
+	}
+
+	public Image getImage(String imageResourcePath) {
+		Image image = null; 
+    // image =  imageCache.get(imageResourcePath);
+		if (image == null) {
+			try {
+				image = getImage(utils.getResourceStream(imageResourcePath));
+			} catch (Exception e) {
+				image = getMissingImage();
+			}
+			// imageCache.put(imageResourcePath, image);
+		}
+		return image;
+	}
+
+	// dispose loaded images
+	public void disposeIconCache() {
+		for (Image image : iconCache.values()) {
+			image.dispose();
+		}
+		iconCache.clear();
+	}
+
 	@SuppressWarnings("unused")
 	public SimpleToolBarEx() {
 
@@ -202,32 +253,27 @@ public class SimpleToolBarEx {
 				utils.getResourceStream("images/document_wrench_color.ico")));
 		try {
 
-			iconData.put("launch icon",
-					resize(
-							new Image(display, utils
-									.getResourceStream(String.format("images/%s", launchImage))),
-							32, 32));
-			iconData.put("find icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", findImage))));
-			iconData.put("prefs icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", gearImage))));
-			iconData.put("shutdown icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", quitImage))));
-			iconData.put("step icon", new Image(display, utils.getResourceStream(
-					String.format("images/%s", "document_wrench_bw.png"))));
-			iconData.put("codeGen icon", resize(
-					new Image(display,
-							utils
-									.getResourceStream(String.format("images/%s", codeGenImage))),
-					32, 32));
-			iconData.put("open icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", openImage))));
-			iconData.put("save icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", saveImage))));
-			iconData.put("help icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", helpImage))));
-			iconData.put("testsuite icon", new Image(display,
-					utils.getResourceStream(String.format("images/%s", testsuiteImage))));
+			iconCache.put("launch icon",
+					resize(getImage(String.format("images/%s", launchImage)), IMAGE_SIZE,
+							IMAGE_SIZE));
+			iconCache.put("find icon",
+					getImage(String.format("images/%s", findImage)));
+			iconCache.put("prefs icon",
+					getImage(String.format("images/%s", gearImage)));
+			iconCache.put("shutdown icon",
+					getImage(String.format("images/%s", quitImage)));
+			iconCache.put("step icon",
+					getImage(String.format("images/%s", "document_wrench_bw.png")));
+			iconCache.put("codeGen icon",
+					resize(getImage(String.format("images/%s", codeGenImage)), 32, 32));
+			iconCache.put("open icon",
+					getImage(String.format("images/%s", openImage)));
+			iconCache.put("save icon",
+					getImage(String.format("images/%s", saveImage)));
+			iconCache.put("help icon",
+					getImage(String.format("images/%s", helpImage)));
+			iconCache.put("testsuite icon",
+					getImage(String.format("images/%s", testsuiteImage)));
 		} catch (Exception e) {
 
 			System.err.println("Cannot load images: " + e.getMessage());
@@ -242,42 +288,42 @@ public class SimpleToolBarEx {
 		ToolBar toolBar = new ToolBar(shell, SWT.BORDER | SWT.HORIZONTAL);
 
 		ToolItem launchTool = new ToolItem(toolBar, SWT.PUSH);
-		launchTool.setImage(iconData.get("launch icon"));
+		launchTool.setImage(iconCache.get("launch icon"));
 		launchTool.setToolTipText("Launch browser");
 
 		ToolItem pageExploreTool = new ToolItem(toolBar, SWT.PUSH);
-		pageExploreTool.setImage(iconData.get("find icon"));
+		pageExploreTool.setImage(iconCache.get("find icon"));
 		// TODO: setDisabledImage
 		pageExploreTool.setToolTipText("Explore page");
 
 		ToolItem codeGenTool = new ToolItem(toolBar, SWT.PUSH);
-		codeGenTool.setImage(iconData.get("codeGen icon"));
+		codeGenTool.setImage(iconCache.get("codeGen icon"));
 		codeGenTool.setToolTipText("Generate program");
 
 		ToolItem testsuiteTool = new ToolItem(toolBar, SWT.PUSH);
-		testsuiteTool.setImage(iconData.get("testsuite icon"));
+		testsuiteTool.setImage(iconCache.get("testsuite icon"));
 		testsuiteTool.setToolTipText("Generate Excel TestSuite");
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		ToolItem openTool = new ToolItem(toolBar, SWT.PUSH);
-		openTool.setImage(iconData.get("open icon"));
+		openTool.setImage(iconCache.get("open icon"));
 		openTool.setToolTipText("Load session");
 
 		ToolItem saveTool = new ToolItem(toolBar, SWT.PUSH);
-		saveTool.setImage(iconData.get("save icon"));
+		saveTool.setImage(iconCache.get("save icon"));
 		saveTool.setToolTipText("Save session");
 
 		ToolItem preferencesTool = new ToolItem(toolBar, SWT.PUSH);
-		preferencesTool.setImage(iconData.get("prefs icon"));
+		preferencesTool.setImage(iconCache.get("prefs icon"));
 		preferencesTool.setToolTipText("Configure");
 
 		ToolItem helpTool = new ToolItem(toolBar, SWT.PUSH);
-		helpTool.setImage(iconData.get("help icon"));
+		helpTool.setImage(iconCache.get("help icon"));
 		helpTool.setToolTipText("help using the tool");
 
 		ToolItem shutdownTool = new ToolItem(toolBar, SWT.PUSH);
-		shutdownTool.setImage(iconData.get("shutdown icon"));
+		shutdownTool.setImage(iconCache.get("shutdown icon"));
 		shutdownTool.setToolTipText("Quit");
 
 		pageExploreTool.setEnabled(false);
@@ -875,8 +921,8 @@ public class SimpleToolBarEx {
 		int step_number = (data.containsKey("ElementStepNumber"))
 				? Integer.parseInt(data.get("ElementStepNumber")) : step_index;
 		item.setText(String.format("Step %d: %s", step_number + 1, name));
-		item.setImage(iconData.get("step icon"));
-		item.setSelectionImage(iconData.get("step icon"));
+		item.setImage(iconCache.get("step icon"));
+		item.setSelectionImage(iconCache.get("step icon"));
 
 		// NOTE: MouseDown event is not received
 		item.addListener(SWT.MouseDown, new Listener() {
@@ -930,12 +976,7 @@ public class SimpleToolBarEx {
 
 	@Override
 	public void finalize() {
-
-		Iterator<Image> iconIterator = iconData.values().iterator();
-		while (iconIterator.hasNext()) {
-			Image icon = iconIterator.next();
-			icon.dispose();
-		}
+		disposeIconCache();
 	}
 
 	private void updateStatus(String newStatus) {
