@@ -421,12 +421,15 @@ It is possible to save the resul as Excel file.
   * [swt-bling](https://github.com/ReadyTalk/swt-bling)
   * [Multiplatform SWT](https://github.com/jendap/multiplatform-swt)
   * [SWT Single Jar Packager](https://github.com/mchr3k/swtjar)
-  * [SWT custom preference dialog](https://github.com/prasser/swtpreferences)
+  * [SWT custom preference dialog](https://github.com/prasser/swtpreferences) - needs too recent versions of SWT and JFace
   * [SWT multiple choice dialogs](https://github.com/prasser/swtchoices)
   * [Misc JFace/SWT UI elements and utils](https://github.com/Albertus82/JFaceUtils)
   * [SWT System Tray](https://github.com/dorkbox/SystemTray)
+  * [System Tray](https://github.com/Vladimir-Novick/System-Tray)
   * [SWT/WMI](https://github.com/ctron/wmisample)
-  * [SWT Tools](https://github.com/bp-FLN/SWT-Tools)
+  * [SWT Tools](https://github.com/bp-FLN/SWT-Tools) 
+  * [SWTools](https://github.com/Sanglinard26/SWTools)
+  * [vogellacompany/swt-custom-widgets](https://github.com/vogellacompany/swt-custom-widgets) eclipse plugin
   * [SWT Browser component based recorder](https://github.com/itspanzi/swt-browser-recorder-spike)
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
   * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
