@@ -34,8 +34,16 @@ public class ListJavaFonts {
 			int fontStyle = Font.PLAIN;
 			int fontSize = 12;
 			Font font = new Font(fontFamilyName, fontStyle, fontSize);
-			List<Integer> codePoints = new ArrayList<>(Arrays.asList(108 /* l */,
-					109 /* m */, 119 /* w */, 49 /* 1 */ , 52 /* 4 */));
+			@SuppressWarnings("serial")
+			List<Integer> codePoints = new ArrayList<Integer>() {
+				{
+					add(108); /* l */
+					add(109); /* m */
+					add(119); /* w */
+					add(49); /* 1 */
+					add(52); /* 4 */
+				}
+			};
 			FontMetrics fontMetrics = graphics.getFontMetrics(font);
 
 			int firstCharacterWidth = 0;
