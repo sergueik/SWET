@@ -27,13 +27,13 @@ import org.swet.Utils;
  */
 public class WriteScriptFile {
 	private String packageName;
-	private List<String> importList = new ArrayList<String>();
+	private List<String> importList = new ArrayList<>();
 	private String classPart;
-	private List<String> objectDeclarations = new ArrayList<String>();
-	private List<String> setUpPart = new ArrayList<String>();
-	private List<String> testPart = new ArrayList<String>();
-	private List<String> testStepsPart = new ArrayList<String>();
-	private List<String> tearDownPart = new ArrayList<String>();
+	private List<String> objectDeclarations = new ArrayList<>();
+	private List<String> setUpPart = new ArrayList<>();
+	private List<String> testPart = new ArrayList<>();
+	private List<String> testStepsPart = new ArrayList<>();
+	private List<String> tearDownPart = new ArrayList<>();
 	private static Utils utils = Utils.getInstance();
 	private AI_Parser parser;
 
@@ -71,7 +71,7 @@ public class WriteScriptFile {
 	}
 
 	private List<String> createTestScriptContext(TestCaseDTO testCaseDTO) {
-		List<String> context = new ArrayList<String>();
+		List<String> context = new ArrayList<>();
 		context.add(initialPackageName());
 		context.addAll(initialImportList());
 		context.add(initialClassPart(testCaseDTO.getName()));
@@ -140,7 +140,7 @@ public class WriteScriptFile {
 		// add later after have a mapping between displayed action names
 		// and implement action names
 		// this.testStepsPart.add("\n");
-		List<String> steps = new ArrayList<String>();
+		List<String> steps = new ArrayList<>();
 
 		for (TestStepDTO stepDTO : testCaseDTO.getStep()) {
 			steps.addAll(initialTestStep(stepDTO));
@@ -151,7 +151,7 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialTestStep(TestStepDTO testStepDTO) {
-		List<String> testStep = new ArrayList<String>();
+		List<String> testStep = new ArrayList<S>();
 		testStep.add("\t\t// Step name: " + testStepDTO.getName());
 		testStep.add(buildActionStep(testStepDTO));
 		return testStep;

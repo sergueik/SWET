@@ -390,7 +390,7 @@ public class ConfigFormEx {
 	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
 		ConfigFormEx configFormEx = new ConfigFormEx(null, null);
-		configFormEx.debug = true;
+		ConfigFormEx.debug = true;
 		configFormEx.render();
 	}
 }
