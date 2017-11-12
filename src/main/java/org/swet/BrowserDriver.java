@@ -184,7 +184,9 @@ public class BrowserDriver {
 		final String firefoxBrowserPath = (applicationFirefoxBrowserPath == null)
 				? osName.toLowerCase().startsWith("windows")
 						? "c:/Program Files (x86)/Mozilla Firefox/firefox.exe"
-						: "/usr/bin/firefox/firefox"
+						: osName.toLowerCase().startsWith("mac")
+								? "/Applications/Firefox.app/Contents/MacOS/firefox.bin"
+								: "/usr/bin/firefox/firefox"
 				: applicationFirefoxBrowserPath;
 		System.setProperty("webdriver.gecko.driver",
 				new File(geckoDriverPath).getAbsolutePath());
@@ -231,7 +233,10 @@ public class BrowserDriver {
 				: applicationChromeDriverPath;
 		System.setProperty("webdriver.chrome.driver",
 				new File(chromeDriverPath).getAbsolutePath());
+		// "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+		
 		ChromeOptions options = new ChromeOptions();
 
 		Map<String, Object> chromePrefs = new HashMap<>();
