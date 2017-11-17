@@ -151,7 +151,7 @@ public class WriteScriptFile {
 	}
 
 	private List<String> initialTestStep(TestStepDTO testStepDTO) {
-		List<String> testStep = new ArrayList<S>();
+		List<String> testStep = new ArrayList<>();
 		testStep.add("\t\t// Step name: " + testStepDTO.getName());
 		testStep.add(buildActionStep(testStepDTO));
 		return testStep;

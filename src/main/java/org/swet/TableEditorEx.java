@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -534,12 +535,14 @@ public class TableEditorEx {
 				while (cells.hasNext()) {
 
 					cell = (HSSFCell) cells.next();
+					CellType type = cell.getCellTypeEnum();
 
-					if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-						System.out.print(cell.getStringCellValue() + " ");
-					} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-						System.out.print(cell.getNumericCellValue() + " ");
+					if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
+						System.err.print(cell.getStringCellValue() + " ");
+					} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
+						System.err.print(cell.getNumericCellValue() + " ");
 					} else {
+						System.err.print("? ");
 						// TODO: Boolean, Formula, Errors
 					}
 				}
@@ -553,20 +556,22 @@ public class TableEditorEx {
 			XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
 			XSSFWorkbook test = new XSSFWorkbook();
 			XSSFSheet sheet = wb.getSheetAt(0);
-			XSSFRow rowObj;
-			XSSFCell cellObj;
-			Iterator<Row> rowsObj = sheet.rowIterator();
-			while (rowsObj.hasNext()) {
-				rowObj = (XSSFRow) rowsObj.next();
-				Iterator<Cell> cellsObj = rowObj.cellIterator();
-				while (cellsObj.hasNext()) {
-					cellObj = (XSSFCell) cellsObj.next();
-					if (cellObj.getCellType() == XSSFCell.CELL_TYPE_STRING) {
-						System.out.print(cellObj.getStringCellValue() + " ");
-					} else if (cellObj.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-						System.out.print(cellObj.getNumericCellValue() + " ");
+			XSSFRow row;
+			XSSFCell cell;
+			Iterator<Row> rows = sheet.rowIterator();
+			while (rows.hasNext()) {
+				row = (XSSFRow) rows.next();
+				Iterator<Cell> cells = row.cellIterator();
+				while (cells.hasNext()) {
+					cell = (XSSFCell) cells.next();
+					CellType type = cell.getCellTypeEnum();
+					if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
+						System.err.print(cell.getStringCellValue() + " ");
+					} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
+						System.err.print(cell.getNumericCellValue() + " ");
 					} else {
 						// TODO: Boolean, Formula, Errors
+						System.err.print("? ");
 					}
 				}
 				System.out.println();
