@@ -26,6 +26,7 @@ import org.swet.Utils;
  * origin:  https://github.com/watarus-nt/SeleniumGenerator
  */
 public class WriteScriptFile {
+
 	private String packageName;
 	private List<String> importList = new ArrayList<>();
 	private String classPart;

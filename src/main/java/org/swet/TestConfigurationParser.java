@@ -3,9 +3,11 @@ package org.swet;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Configuration table helper for Selenium WebDriver Elementor Tool (SWET)
@@ -13,42 +15,70 @@ import java.util.regex.Pattern;
  */
 
 public class TestConfigurationParser {
-	/*
-		String configurationFileName = "test.configuration";
-		TestConfigurationParser
-				.getConfiguration(String.format("%s/src/main/resources/%s",
-						System.getProperty("user.dir"), configurationFileName));
-			*/
 
-	public static Scanner loadTestData(final String fileName) {
+	private static boolean skipHeaders = true;
+	private static String defaultConfig = "test.configuration";
+	private static Scanner scanner;
+
+	public static void main(String[] args) {
+		String configuPath = (args.length == 0)
+				? String.format("%s/src/main/resources/%s",
+						System.getProperty("user.dir"), defaultConfig)
+				: String.format("%s/%s", System.getProperty("user.dir"), args[0]);
+		TestConfigurationParser.getConfiguration(configuPath);
+
+	}
+
+	@SuppressWarnings("resource")
+	public static Scanner loadTestData(final String filename) {
 		Scanner scanner = null;
 		System.err
-				.println(String.format("Reading configuration file: '%s'", fileName));
+				.println(String.format("Reading configuration file: '%s'", filename));
 		try {
-			scanner = new Scanner(new File(fileName));
+			scanner = new Scanner(new File(filename)).useDelimiter("(?:\\r?\\n)+");
 		} catch (FileNotFoundException e) {
-			// fail(String.format("File '%s' was not found.", fileName));
 			System.err.println(
-					String.format("Configuration file was not found: '%s'", fileName));
+					String.format("Configuration file was not found: '%s'", filename));
 			e.printStackTrace();
 		}
 		return scanner;
 	}
 
-	public static List<String[]> getConfiguration(final String fileName) {
-		List<String[]> listOfData = new ArrayList<>();
-		Scanner scanner = loadTestData(fileName);
-		String separator = "|";
+	public static List<String[]> getConfiguration(final String filename) {
+		List<String[]> result = new ArrayList<>();
+		scanner = loadTestData(filename);
+		List<String> separators = new ArrayList<String>(
+				Arrays.asList(new String[] { "|", "\\t", ";", "," }));
+		String separator = String
+				.format("(?:%s)",
+						String.join("|",
+								separators.stream().map(o -> Pattern.compile("(\\||/)")
+										.matcher(o).replaceAll("\\\\$1"))
+										.collect(Collectors.toList())));
+		int lineNum = 0;
+		// System.err.println("separator:" + separator);
 		while (scanner.hasNext()) {
 			String line = scanner.next();
-			String[] data = line.split(Pattern.compile("(\\||\\|/)")
-					.matcher(separator).replaceAll("\\\\$1"));
-			for (String entry : data) {
-				System.err.println("data entry: " + entry);
+			// System.err.println("line: " + line);
+			// skip comments
+			if (line.matches("^#.*$")) {
+				continue;
 			}
-			listOfData.add(data);
+			lineNum++;
+			// skip headers
+			if (skipHeaders) {
+				if (lineNum == 1) {
+					continue;
+				}
+			}
+
+			String[] comumns = line.split(separator);
+			for (String column : comumns) {
+				System.err.println("data column: " + column);
+			}
+			result.add(column);
 		}
 		scanner.close();
-		return listOfData;
+		return result;
 	}
 }

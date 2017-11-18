@@ -382,8 +382,7 @@ public class SimpleToolBarEx {
 			launchTool.setEnabled(false);
 			String browser = configData.get("Browser");
 			updateStatus(String.format("Launching the %s browser", browser));
-			if (initializeBrowser(browser)) {
-
+			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
 				// launchTool.setEnabled(true);
 				pageExploreTool.setEnabled(true);
@@ -788,7 +787,7 @@ public class SimpleToolBarEx {
 		highlight(element, 100);
 	}
 
-	private boolean initializeBrowser(String browser) {
+	private boolean initializeBrowser(String browser, String baseURL) {
 		try {
 			driver = BrowserDriver.initialize(browser);
 			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)

@@ -87,6 +87,7 @@ public class TableEditorEx {
 	private static Map<String, Integer> elementSteps = new HashMap<>();
 	private static String testSuitePath; // TODO: rename
 	private static String yamlFilePath = null;
+	private static String defaultYamlFile = "sample.yaml";
 	private static String path = null;
 
 	TableEditorEx(Display parentDisplay, Shell parent) {
@@ -479,10 +480,13 @@ public class TableEditorEx {
 	}
 
 	public static void main(String[] args) {
+		
 		yamlFilePath = (args.length == 0)
-				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
-				: args[0];
-		TableEditorEx o = new TableEditorEx(null, null);
+				? String.format("%s/src/main/resources/%s",
+						System.getProperty("user.dir"), defaultYamlFile)
+				: String.format("%s/%s", System.getProperty("user.dir"), args[0]);
+
+				TableEditorEx o = new TableEditorEx(null, null);
 		o.render();
 		display.dispose();
 	}
