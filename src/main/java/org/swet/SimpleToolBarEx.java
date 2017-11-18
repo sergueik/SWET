@@ -218,8 +218,8 @@ public class SimpleToolBarEx {
 	}
 
 	public Image getImage(String imageResourcePath) {
-		Image image = null; 
-    // image =  imageCache.get(imageResourcePath);
+		Image image = null;
+		// image = imageCache.get(imageResourcePath);
 		if (image == null) {
 			try {
 				image = getImage(utils.getResourceStream(imageResourcePath));
@@ -382,26 +382,16 @@ public class SimpleToolBarEx {
 			launchTool.setEnabled(false);
 			String browser = configData.get("Browser");
 			updateStatus(String.format("Launching the %s browser", browser));
-			try {
-				driver = BrowserDriver.initialize(browser);
-				driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
-						.implicitlyWait(implicitWait, TimeUnit.SECONDS)
-						.setScriptTimeout(30, TimeUnit.SECONDS);
-				driver.get(baseURL);
+			if (initializeBrowser(browser)) {
+
 				// prevent the customer from launching multiple instances
 				// launchTool.setEnabled(true);
 				pageExploreTool.setEnabled(true);
-				if (!osName.startsWith("Mac")) {
-					// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
-					// combinations
-				}
 				codeGenTool.setEnabled(true);
 				testsuiteTool.setEnabled(true);
 				// driver.get(getResourceURI("blankpage.html"));
-			} catch (Exception e) {
-				// show the error dialog with exception trace
-				ExceptionDialogEx.getInstance().render(e);
-				// try again
+			} else {
+				// allow the user to try again
 				launchTool.setEnabled(true);
 			}
 			// TODO: detect if closed ?
@@ -796,6 +786,26 @@ public class SimpleToolBarEx {
 
 	private void highlight(WebElement element) {
 		highlight(element, 100);
+	}
+
+	private boolean initializeBrowser(String browser) {
+		try {
+			driver = BrowserDriver.initialize(browser);
+			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
+					.implicitlyWait(implicitWait, TimeUnit.SECONDS)
+					.setScriptTimeout(30, TimeUnit.SECONDS);
+			driver.get(baseURL);
+			// prevent the customer from launching multiple instances
+			// launchTool.setEnabled(true);
+			if (!osName.startsWith("Mac")) {
+				// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
+				// combinations
+			}
+			return true;
+		} catch (Exception e) {
+			ExceptionDialogEx.getInstance().render(e);
+			return false;
+		}
 	}
 
 	private void highlight(WebElement element, long highlight_interval) {
