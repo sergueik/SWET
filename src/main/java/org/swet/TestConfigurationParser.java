@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -45,10 +46,10 @@ public class TestConfigurationParser {
 	}
 
 	public static List<String[]> getConfiguration(final String filename) {
-		List<String[]> result = new ArrayList<>();
+		List<String[]> result = new LinkedList<>();
 		scanner = loadTestData(filename);
 		List<String> separators = new ArrayList<String>(
-				Arrays.asList(new String[] { "|", "\\t", ";", "," }));
+				Arrays.asList(new String[] { "|", "\t", ";", "," }));
 		String separator = String
 				.format("(?:%s)",
 						String.join("|",
@@ -72,11 +73,11 @@ public class TestConfigurationParser {
 				}
 			}
 
-			String[] comumns = line.split(separator);
-			for (String column : comumns) {
+			String[] columns = line.split(separator);
+			for (String column : columns) {
 				System.err.println("data column: " + column);
 			}
-			result.add(column);
+			result.add(columns);
 		}
 		scanner.close();
 		return result;
