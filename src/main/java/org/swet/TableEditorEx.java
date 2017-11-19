@@ -6,13 +6,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -57,6 +61,8 @@ import org.eclipse.swt.widgets.Text;
 import org.swet.ExceptionDialogEx;
 import org.swet.Utils;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -83,8 +89,7 @@ public class TableEditorEx {
 			"Selector Choice", "Selector Value", "Param 1", "Param 2", "Param 3" };
 
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
-	private static LinkedHashMap<String, Integer> sortedSteps = new LinkedHashMap<>();
-	private static Map<String, Integer> elementSteps = new HashMap<>();
+
 	private static String testSuitePath; // TODO: rename
 	private static String yamlFilePath = null;
 	private static String defaultYamlFile = "sample.yaml";
@@ -115,18 +120,8 @@ public class TableEditorEx {
 			testData = _testCase.getElements();
 			// YamlHelper.printConfiguration(_testCase);
 		}
-		/*
-		NOTE: need to keep the var elementSteps otherwise 
-		[ERROR] /C:/developer/sergueik/SWET/src/main/java/org/swet/TableEditorEx.java:[117,31] method sortByValue in class org.swet.TableEditorEx cannot be applied to given types;
-		  required: java.util.Map<K,V>
-		  found: java.util.Map<java.lang.Object,java.lang.Object>
-		  reason: inferred type does not conform to upper bound(s)
-		    inferred: java.lang.Object
-		    upper bound(s): java.lang.Comparable<? super java.lang.Object>,java.lang.Object
-		    */
-		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
-				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
-		sortedSteps = sortByValue(elementSteps);
+
+		List<String> sortedSteps = sortSteps(testData);
 
 		shell.setLayout(new FormLayout());
 		label = new Label(shell, SWT.BORDER);
@@ -192,7 +187,7 @@ public class TableEditorEx {
 		}
 
 		int blankRows = 1;
-		int tableSize = sortedSteps.keySet().size();
+		int tableSize = sortedSteps.size();
 		for (int i = 0; i < tableSize + blankRows; i++) {
 			new TableItem(table, SWT.NONE);
 		}
@@ -338,6 +333,64 @@ public class TableEditorEx {
 		}
 	}
 
+	private static void appendRowToTable(Table table, List<String> stepIds) {
+
+		TableItem[] tableItems = table.getItems();
+		int cnt = 0;
+		for (String stepId : stepIds) {
+			// Append row into the TableEditor
+			TableItem tableItem = tableItems[cnt];
+			Map<String, String> elementData = testData.get(stepId);
+			String selectorChoice = selectorFromSWD
+					.get(elementData.get("ElementSelectedBy"));
+			String selectorValue = elementData
+					.get(elementData.get("ElementSelectedBy"));
+			tableItem
+					.setText(
+							new String[] {
+									String.format("%s (step %d)",
+											elementData.get("ElementCodeName"),
+											Integer.parseInt(elementData.get("ElementStepNumber"))),
+									String.format("Action %d", cnt), selectorChoice,
+									selectorValue });
+			// some columns need to be converted to selects
+
+			TableEditor keywordChoiceEditor = new TableEditor(table);
+			CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
+			keywordChoiceCombo.setText("Choose..");
+			for (String keyword : keywordTable.keySet()) {
+				keywordChoiceCombo.add(keyword);
+			}
+			// NOTE: none of options is initially selected
+			keywordChoiceEditor.grabHorizontal = true;
+			int keywordChoiceColumn = 1;
+			keywordChoiceCombo.setData("column", keywordChoiceColumn);
+			keywordChoiceCombo.setData("item", tableItem);
+			keywordChoiceEditor.setEditor(keywordChoiceCombo, tableItem,
+					keywordChoiceColumn);
+			keywordChoiceCombo.addModifyListener(new keywordChoiceListener());
+
+			TableEditor selectorChoiceEditor = new TableEditor(table);
+			CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
+			for (String locator : selectorFromSWD.values()) {
+				selectorChoiceCombo.add(locator);
+			}
+			int currentSelector = new ArrayList<String>(selectorFromSWD.values())
+					.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy")));
+
+			selectorChoiceCombo.select(currentSelector);
+			selectorChoiceEditor.grabHorizontal = true;
+			int selectorChoiceColumn = 2;
+			selectorChoiceCombo.setData("item", tableItem);
+			selectorChoiceCombo.setData("column", selectorChoiceColumn);
+			selectorChoiceEditor.setEditor(selectorChoiceCombo, tableItem,
+					selectorChoiceColumn);
+			selectorChoiceCombo.addModifyListener(new selectorChoiceListener());
+			cnt = cnt + 1;
+		}
+		return;
+	}
+
 	private static void appendRowToTable(Table table,
 			LinkedHashMap<String, Integer> steps) {
 
@@ -351,8 +404,14 @@ public class TableEditorEx {
 					.get(elementData.get("ElementSelectedBy"));
 			String selectorValue = elementData
 					.get(elementData.get("ElementSelectedBy"));
-			tableItem.setText(new String[] { elementData.get("ElementCodeName"),
-					String.format("Action %d", cnt), selectorChoice, selectorValue });
+			tableItem
+					.setText(
+							new String[] {
+									String.format("%s (step %d)",
+											elementData.get("ElementCodeName"),
+											Integer.parseInt(elementData.get("ElementStepNumber"))),
+									String.format("Action %d", cnt), selectorChoice,
+									selectorValue });
 			// some columns need to be converted to selects
 
 			TableEditor keywordChoiceEditor = new TableEditor(table);
@@ -480,25 +539,15 @@ public class TableEditorEx {
 	}
 
 	public static void main(String[] args) {
-		
+
 		yamlFilePath = (args.length == 0)
 				? String.format("%s/src/main/resources/%s",
 						System.getProperty("user.dir"), defaultYamlFile)
 				: String.format("%s/%s", System.getProperty("user.dir"), args[0]);
 
-				TableEditorEx o = new TableEditorEx(null, null);
+		TableEditorEx o = new TableEditorEx(null, null);
 		o.render();
 		display.dispose();
-	}
-
-	// TODO: move to Utils.java
-	// sorting example from
-	// http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
-	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(
-			Map<K, V> map) {
-		return map.entrySet().stream().sorted(Map.Entry.comparingByValue())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 	private static class ReadWriteExcelFileEx {
@@ -623,6 +672,47 @@ public class TableEditorEx {
 			wbObj.close();
 			fileOut.flush();
 			fileOut.close();
+		}
+	}
+
+	// for (Object o : sortedSteps.entrySet() )
+
+	private List<String> sortSteps(Map<String, Map<String, String>> testData) {
+
+		List<String> sortedSteps = new ArrayList<>();
+		Map<String, Integer> elementSteps = testData.values().stream()
+				.collect(Collectors.toMap(o -> o.get("CommandId"),
+						o -> Integer.parseInt(o.get("ElementStepNumber"))));
+
+		// alternative
+		/*
+		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
+				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
+		*/
+		List<Entry<String, Integer>> stepNumbers = new ArrayList<>();
+		stepNumbers.addAll(elementSteps.entrySet());
+		/*
+		for (Entry<String, Integer> e : elementSteps.entrySet()) {
+			o.add(e);
+		}
+		*/
+		Collections.sort(stepNumbers, new StepNumberComparator());
+		return stepNumbers.stream().map(e -> e.getKey()).collect(Collectors.toList());
+		/*
+				for (Entry<String, Integer> e : o) {
+					sortedSteps.add(e.getKey());
+					System.err.println(String.format("%d %s", e.getValue(), e.getKey()));
+				}
+				return sortedSteps;
+				*/
+	}
+
+	private static class StepNumberComparator
+			implements Comparator<Entry<String, Integer>> {
+		public int compare(Entry<String, Integer> obj_left,
+				Entry<String, Integer> obj_right) {
+			return obj_left.getValue().compareTo(obj_right.getValue());
+
 		}
 	}
 }

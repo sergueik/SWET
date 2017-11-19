@@ -46,7 +46,7 @@ elements:
   f465b95c-1bd6-43f8-a487-875902f777f3:
     ElementCodeName: first_name
     ElementPageURL: https://www.facebook.com/
-    ElementStepNumber: '3'
+    ElementStepNumber: '5'
     Url: http://www.google.com
     ElementXPath: //input[@name="firstname"]
     ElementCssSelector: div#u_0_8 > div.uiStickyPlaceholderInput.uiStickyPlaceholderEmptyInput
