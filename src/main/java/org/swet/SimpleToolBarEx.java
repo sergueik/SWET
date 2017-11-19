@@ -449,14 +449,11 @@ public class SimpleToolBarEx {
 				config = YamlHelper.loadConfiguration(configFilePath);
 				testData = config.getElements();
 
-				Map<String, Integer> elementSteps = testData.keySet().stream()
-						.collect(Collectors.toMap(o -> o, o -> Integer
-								.parseInt(testData.get(o).get("ElementStepNumber"))));
-				LinkedHashMap<String, Integer> sortedElementSteps = sortByValue(
-						elementSteps);
-				for (String stepId : sortedElementSteps.keySet()) {
-					// System.out.println(String.format("Drawing step %d (%s)",
-					// sortedElementSteps.get(stepId), stepId));
+				List<String> sortedSteps = utils.sortSteps(testData, "CommandId",
+						"ElementStepNumber");
+
+				for (String stepId : sortedSteps) {
+
 					Map<String, String> elementData = testData.get(stepId);
 
 					// Append Breadcrump Button
@@ -727,15 +724,6 @@ public class SimpleToolBarEx {
 
 	private String getCurrentUrl() {
 		return driver.getCurrentUrl();
-	}
-
-	// sorting example from
-	// http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
-	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(
-			Map<K, V> map) {
-		return map.entrySet().stream().sorted(Map.Entry.comparingByValue())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 	private Map<String, String> addElement() {

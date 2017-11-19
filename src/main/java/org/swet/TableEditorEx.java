@@ -121,7 +121,8 @@ public class TableEditorEx {
 			// YamlHelper.printConfiguration(_testCase);
 		}
 
-		List<String> sortedSteps = sortSteps(testData);
+		List<String> sortedSteps = utils.sortSteps(testData, "CommandId",
+				"ElementStepNumber");
 
 		shell.setLayout(new FormLayout());
 		label = new Label(shell, SWT.BORDER);
@@ -672,47 +673,6 @@ public class TableEditorEx {
 			wbObj.close();
 			fileOut.flush();
 			fileOut.close();
-		}
-	}
-
-	// for (Object o : sortedSteps.entrySet() )
-
-	private List<String> sortSteps(Map<String, Map<String, String>> testData) {
-
-		List<String> sortedSteps = new ArrayList<>();
-		Map<String, Integer> elementSteps = testData.values().stream()
-				.collect(Collectors.toMap(o -> o.get("CommandId"),
-						o -> Integer.parseInt(o.get("ElementStepNumber"))));
-
-		// alternative
-		/*
-		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
-				o -> Integer.parseInt(testData.get(o).get("ElementStepNumber"))));
-		*/
-		List<Entry<String, Integer>> stepNumbers = new ArrayList<>();
-		stepNumbers.addAll(elementSteps.entrySet());
-		/*
-		for (Entry<String, Integer> e : elementSteps.entrySet()) {
-			o.add(e);
-		}
-		*/
-		Collections.sort(stepNumbers, new StepNumberComparator());
-		return stepNumbers.stream().map(e -> e.getKey()).collect(Collectors.toList());
-		/*
-				for (Entry<String, Integer> e : o) {
-					sortedSteps.add(e.getKey());
-					System.err.println(String.format("%d %s", e.getValue(), e.getKey()));
-				}
-				return sortedSteps;
-				*/
-	}
-
-	private static class StepNumberComparator
-			implements Comparator<Entry<String, Integer>> {
-		public int compare(Entry<String, Integer> obj_left,
-				Entry<String, Integer> obj_right) {
-			return obj_left.getValue().compareTo(obj_right.getValue());
-
 		}
 	}
 }

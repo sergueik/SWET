@@ -15,19 +15,25 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Common utilities class for Selenium WebDriver Elementor Tool (SWET)
@@ -258,6 +264,42 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	// sorting elements by valueColumn, returns Array List of indexColumn
+	public List<String> sortSteps(Map<String, Map<String, String>> testData,
+			String indexColumn, String valueColumn) {
+
+		List<String> sortedSteps = new ArrayList<>();
+		Map<String, Integer> elementSteps = testData.values().stream()
+				.collect(Collectors.toMap(o -> o.get(indexColumn),
+						o -> Integer.parseInt(o.get(valueColumn))));
+		/*
+		elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o,
+				o -> Integer.parseInt(testData.get(o).get(valueColumn))));
+		*/
+		List<Entry<String, Integer>> stepNumbers = new ArrayList<>();
+		stepNumbers.addAll(elementSteps.entrySet());
+		Collections.sort(stepNumbers, new Comparator<Entry<String, Integer>>() {
+
+			public int compare(Entry<String, Integer> obj_left,
+					Entry<String, Integer> obj_right) {
+				return obj_left.getValue().compareTo(obj_right.getValue());
+
+			}
+		});
+		return stepNumbers.stream().map(e -> e.getKey())
+				.collect(Collectors.toList());
+	}
+
+	// sorting example from
+	// http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
+	// currently not used
+	public <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(
+			Map<K, V> map) {
+		return map.entrySet().stream().sorted(Map.Entry.comparingByValue())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 }
