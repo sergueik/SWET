@@ -55,6 +55,9 @@ import org.swet.Utils;
  */
 public class TableEditorEx {
 
+	private static Button buttonSave;
+	private final static int buttonWidth = 120;
+	private final static int buttonHeight = 28;
 	private static Table table;
 	private static Display display;
 	private static Shell shell;
@@ -71,7 +74,7 @@ public class TableEditorEx {
 	// Currently free-hand, may eventually become
 	// public methods of the keyword-driven framework class
 	private static Map<String, String> keywordTable = new HashMap<>();
-	private static String[] columnHeaders = { "Element", "Action Keyword",
+	private static String[] columnHeaders = { "%", "Element", "Action Keyword",
 			"Selector Choice", "Selector Value", "Param 1", "Param 2", "Param 3" };
 
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
@@ -111,18 +114,190 @@ public class TableEditorEx {
 		gridLayout.numColumns = 1;
 		shell.setLayout(gridLayout);
 
-		GridComposite gridComposite = new GridComposite(shell);
-		gridComposite.renderData(testData);
-		gridComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		gridComposite.pack();
+		Composite tableComposite = new Composite(shell,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
+		tableComposite.setLayout(gridLayout);
 
-		RowComposite rowComposite = new RowComposite(shell);
-		// rowComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		rowComposite.pack();
+		List<String> sortedSteps = utils.sortSteps(testData, "CommandId",
+				"ElementStepNumber");
+
+		table = new Table(tableComposite, /* SWT.CHECK | */ SWT.BORDER | SWT.MULTI);
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+
+		for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
+			TableColumn column = new TableColumn(table, SWT.NULL);
+			column.setText(columnHeaders[titleItem]);
+		}
+
+		for (int i = 0; i < columnHeaders.length; i++) {
+			TableColumn column = new TableColumn(table, SWT.NONE);
+			column.setWidth(100);
+		}
+
+		int blankRows = 1;
+		int tableSize = sortedSteps.size();
+		for (int i = 0; i < tableSize + blankRows; i++) {
+			new TableItem(table, SWT.NONE);
+		}
+
+		TableItem[] items = table.getItems();
+
+		// can call methods in embedding class
+		appendRowToTable(table, sortedSteps);
+
+		for (int i = tableSize; i < tableSize + blankRows; i++) {
+			TableItem item = items[i];
+			appendBlankRowToTable(table, item, i);
+		}
+
+		for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
+			table.getColumn(titleItem).pack();
+		}
+
+		// http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fswt%2Fcustom%2FTableEditor.html
+		final TableEditor editor = new TableEditor(table);
+		editor.horizontalAlignment = SWT.LEFT;
+		editor.grabHorizontal = true;
+		table.addListener(SWT.MouseDown, new Listener() {
+			public void handleEvent(Event event) {
+				Rectangle clientArea = table.getClientArea();
+				Point pt = new Point(event.x, event.y);
+				int index = table.getTopIndex();
+				while (index < table.getItemCount()) {
+					boolean visible = false;
+					final TableItem item = table.getItem(index);
+					for (int i = 0; i < table.getColumnCount(); i++) {
+						Rectangle rect = item.getBounds(i);
+						if (rect.contains(pt)) {
+							final int column = i;
+							final Text text = new Text(table, SWT.NONE);
+							Listener textListener = new Listener() {
+								public void handleEvent(final Event e) {
+									switch (e.type) {
+									case SWT.FocusOut:
+										item.setText(column, text.getText());
+										text.dispose();
+										break;
+									case SWT.Traverse:
+										switch (e.detail) {
+										case SWT.TRAVERSE_RETURN:
+											item.setText(column, text.getText());
+											// FALL THROUGH
+										case SWT.TRAVERSE_ESCAPE:
+											text.dispose();
+											e.doit = false;
+										}
+										break;
+									}
+								}
+							};
+							text.addListener(SWT.FocusOut, textListener);
+							text.addListener(SWT.Traverse, textListener);
+							editor.setEditor(text, item, i);
+							text.setText(item.getText(i));
+							text.selectAll();
+							text.setFocus();
+							return;
+						}
+						if (!visible && rect.intersects(clientArea)) {
+							visible = true;
+						}
+					}
+					if (!visible)
+						return;
+					index++;
+				}
+			}
+		});
+		packTable(table);
+
+		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tableComposite
+				.setSize(tableComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		tableComposite.pack();
+
+		Composite buttonComposite = new Composite(shell, SWT.NO_FOCUS);
+
+		buttonComposite.setLayoutData(
+				new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
+		gridLayout = new GridLayout();
+		gridLayout.marginWidth = 2;
+		buttonComposite.setLayout(new GridLayout(1, false));
+		buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
+		buttonSave.setText("Save");
+
+		GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER, false,
+				false);
+		gridDataSave.widthHint = buttonWidth;
+		gridDataSave.heightHint = buttonHeight;
+
+		buttonSave.setLayoutData(gridDataSave);
+		// label = new Label(shell, SWT.BORDER);
+
+		buttonSave.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+				dialog.setFilterNames(new String[] { "Excel 2003 Files (*.xls)",
+						"Excel 2007-2013 Files (*.xlsx)" });
+				dialog.setFilterExtensions(new String[] { "*.xls", "*.xlsx" });
+				dialog.setFilterPath(
+						(path == null) ? System.getProperty("user.home") : path);
+				if (testSuitePath != null) {
+					dialog.setFileName(testSuitePath);
+					path = new String(testSuitePath);
+				} //
+				testSuitePath = dialog.open();
+				if (testSuitePath != null) {
+
+					List<Map<Integer, String>> tableData = new ArrayList<>();
+					Map<Integer, String> rowData = new HashMap<>();
+
+					TableItem[] tableItems = table.getItems();
+					int numColumns = table.getColumnCount();
+					// to get the the value of the first row at the 2nd column
+					for (int row = 0; row != tableItems.length; row++) {
+						TableItem tableItem = tableItems[row];
+						rowData = new HashMap<>();
+						for (int col = 0; col != numColumns; col++) {
+							rowData.put(col, tableItem.getText(col));
+						}
+						tableData.add(rowData);
+					}
+
+					ReadWriteExcelFileEx.setExcelFileName(testSuitePath);
+					ReadWriteExcelFileEx.setSheetName("test123");
+					ReadWriteExcelFileEx.setTableData(tableData);
+
+					try {
+						if (testSuitePath.matches(".*\\.xlsx$")) {
+							ReadWriteExcelFileEx.writeXLSXFile();
+							ReadWriteExcelFileEx.readXLSXFile();
+						} else {
+							ReadWriteExcelFileEx.writeXLSFile();
+							ReadWriteExcelFileEx.readXLSFile();
+						}
+						// label.setText(String.format("Saved to \"%s\"", testSuitePath));
+						// label.update();
+						System.out.println(String.format("Saved to \"%s\"", testSuitePath));
+					} catch (Exception e) {
+						ExceptionDialogEx.getInstance().render(e);
+					}
+				} else {
+					if (path != null) {
+						testSuitePath = new String(path);
+					}
+				}
+			}
+		});
+
+		// buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonComposite.pack();
+
 		shell.pack();
-
-		shell.pack();
-
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
@@ -153,194 +328,26 @@ public class TableEditorEx {
 		display.dispose();
 	}
 
-	private static class GridComposite extends Composite {
+	private static void appendRowToTable(Table table, List<String> stepIds) {
 
-		private Utils utils = Utils.getInstance();
+		TableItem[] tableItems = table.getItems();
+		int cnt = 0;
+		for (String stepId : stepIds) {
 
-		public GridComposite(Composite composite) {
-			super(composite, SWT.NONE);
-			GridLayout gridLayout = new GridLayout();
-			gridLayout.numColumns = 1;
-			this.setLayout(gridLayout);
-		}
+			// get element data
+			TableItem tableItem = tableItems[cnt];
+			Map<String, String> elementData = testData.get(stepId);
+			String selectorChoice = selectorFromSWD
+					.get(elementData.get("ElementSelectedBy"));
 
-		public void renderData(Map<String, Map<String, String>> testData) {
+			String selectorValue = elementData
+					.get(elementData.get("ElementSelectedBy"));
 
-			List<String> sortedSteps = utils.sortSteps(testData, "CommandId",
-					"ElementStepNumber");
-
-			table = new Table(this, SWT.CHECK | SWT.BORDER | SWT.MULTI);
-			table.setLinesVisible(true);
-			table.setHeaderVisible(true);
-
-			for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
-				TableColumn column = new TableColumn(table, SWT.NULL);
-				column.setText(columnHeaders[titleItem]);
-			}
-
-			for (int i = 0; i < columnHeaders.length; i++) {
-				TableColumn column = new TableColumn(table, SWT.NONE);
-				column.setWidth(100);
-			}
-
-			int blankRows = 1;
-			int tableSize = sortedSteps.size();
-			for (int i = 0; i < tableSize + blankRows; i++) {
-				new TableItem(table, SWT.NONE);
-			}
-
-			TableItem[] items = table.getItems();
-
-			// can call methods in embedding class
-			appendRowToTable(table, sortedSteps);
-
-			for (int i = tableSize; i < tableSize + blankRows; i++) {
-				TableItem item = items[i];
-				appendBlankRowToTable(table, item, i);
-			}
-
-			for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
-				table.getColumn(titleItem).pack();
-			}
-
-			// http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fswt%2Fcustom%2FTableEditor.html
-			final TableEditor editor = new TableEditor(table);
-			editor.horizontalAlignment = SWT.LEFT;
-			editor.grabHorizontal = true;
-			table.addListener(SWT.MouseDown, new Listener() {
-				public void handleEvent(Event event) {
-					Rectangle clientArea = table.getClientArea();
-					Point pt = new Point(event.x, event.y);
-					int index = table.getTopIndex();
-					while (index < table.getItemCount()) {
-						boolean visible = false;
-						final TableItem item = table.getItem(index);
-						for (int i = 0; i < table.getColumnCount(); i++) {
-							Rectangle rect = item.getBounds(i);
-							if (rect.contains(pt)) {
-								final int column = i;
-								final Text text = new Text(table, SWT.NONE);
-								Listener textListener = new Listener() {
-									public void handleEvent(final Event e) {
-										switch (e.type) {
-										case SWT.FocusOut:
-											item.setText(column, text.getText());
-											text.dispose();
-											break;
-										case SWT.Traverse:
-											switch (e.detail) {
-											case SWT.TRAVERSE_RETURN:
-												item.setText(column, text.getText());
-												// FALL THROUGH
-											case SWT.TRAVERSE_ESCAPE:
-												text.dispose();
-												e.doit = false;
-											}
-											break;
-										}
-									}
-								};
-								text.addListener(SWT.FocusOut, textListener);
-								text.addListener(SWT.Traverse, textListener);
-								editor.setEditor(text, item, i);
-								text.setText(item.getText(i));
-								text.selectAll();
-								text.setFocus();
-								return;
-							}
-							if (!visible && rect.intersects(clientArea)) {
-								visible = true;
-							}
-						}
-						if (!visible)
-							return;
-						index++;
-					}
-				}
-			});
-			packTable(table);
-		}
-
-		private static void appendRowToTable(Table table, List<String> stepIds) {
-
-			TableItem[] tableItems = table.getItems();
-			int cnt = 0;
-			for (String stepId : stepIds) {
-				// Append row into the TableEditor
-				TableItem tableItem = tableItems[cnt];
-				Map<String, String> elementData = testData.get(stepId);
-				String selectorChoice = selectorFromSWD
-						.get(elementData.get("ElementSelectedBy"));
-				String selectorValue = elementData
-						.get(elementData.get("ElementSelectedBy"));
-				tableItem
-						.setText(
-								new String[] {
-										String.format("%s (step %d)",
-												elementData.get("ElementCodeName"),
-												Integer.parseInt(elementData.get("ElementStepNumber"))),
-										String.format("Action %d", cnt), selectorChoice,
-										selectorValue });
-				// some columns need to be converted to selects
-
-				TableEditor keywordChoiceEditor = new TableEditor(table);
-				CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
-				keywordChoiceCombo.setText("Choose..");
-				for (String keyword : keywordTable.keySet()) {
-					keywordChoiceCombo.add(keyword);
-				}
-				// NOTE: none of options is initially selected
-				keywordChoiceEditor.grabHorizontal = true;
-				int keywordChoiceColumn = 1;
-				keywordChoiceCombo.setData("column", keywordChoiceColumn);
-				keywordChoiceCombo.setData("item", tableItem);
-				keywordChoiceEditor.setEditor(keywordChoiceCombo, tableItem,
-						keywordChoiceColumn);
-				keywordChoiceCombo.addModifyListener(new keywordChoiceListener());
-
-				TableEditor selectorChoiceEditor = new TableEditor(table);
-				CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
-				for (String locator : selectorFromSWD.values()) {
-					selectorChoiceCombo.add(locator);
-				}
-				int currentSelector = new ArrayList<String>(selectorFromSWD.values())
-						.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy")));
-
-				selectorChoiceCombo.select(currentSelector);
-				selectorChoiceEditor.grabHorizontal = true;
-				int selectorChoiceColumn = 2;
-				selectorChoiceCombo.setData("item", tableItem);
-				selectorChoiceCombo.setData("column", selectorChoiceColumn);
-				selectorChoiceEditor.setEditor(selectorChoiceCombo, tableItem,
-						selectorChoiceColumn);
-				selectorChoiceCombo.addModifyListener(new selectorChoiceListener());
-				cnt = cnt + 1;
-			}
-			return;
-		}
-
-		static class selectorChoiceListener implements ModifyListener {
-
-			@Override
-			public void modifyText(ModifyEvent event) {
-				CCombo combo = (CCombo) event.widget;
-				int column = (int) combo.getData("column");
-				String oldValue = ((TableItem) combo.getData("item")).getText(column);
-				String newValue = combo.getText();
-				// System.err.println(String.format("Updating %s = %s", oldValue,
-				// newValue));
-				if (selectorFromSWD.containsValue(newValue)) {
-					((TableItem) combo.getData("item")).setText(column, newValue);
-				}
-			}
-		}
-
-		private static void appendBlankRowToTable(Table table, TableItem item,
-				int index) {
-
-			item.setText(new String[] { String.format("Element %d name", index),
-					String.format("Action keyword %d", index), "",
-					String.format("Selector value", index) });
+			// Append row into the TableEditor
+			tableItem.setText(new String[] { elementData.get("ElementStepNumber"),
+					elementData.get("ElementCodeName"), String.format("Action %d", cnt),
+					selectorChoice, selectorValue });
+			// some columns need to be converted to selects
 
 			TableEditor keywordChoiceEditor = new TableEditor(table);
 			CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
@@ -350,53 +357,109 @@ public class TableEditorEx {
 			}
 			// NOTE: none of options is initially selected
 			keywordChoiceEditor.grabHorizontal = true;
-			int keywordChoiceColumn = 1;
+			int keywordChoiceColumn = 2;
 			keywordChoiceCombo.setData("column", keywordChoiceColumn);
-			keywordChoiceCombo.setData("item", item);
-			keywordChoiceEditor.setEditor(keywordChoiceCombo, item,
+			keywordChoiceCombo.setData("item", tableItem);
+			keywordChoiceEditor.setEditor(keywordChoiceCombo, tableItem,
 					keywordChoiceColumn);
 			keywordChoiceCombo.addModifyListener(new keywordChoiceListener());
 
 			TableEditor selectorChoiceEditor = new TableEditor(table);
 			CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
-			selectorChoiceCombo.setText("Choose");
 			for (String locator : selectorFromSWD.values()) {
 				selectorChoiceCombo.add(locator);
 			}
-			// NOTE: none of options is initially selected
+			int currentSelector = new ArrayList<String>(selectorFromSWD.values())
+					.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy")));
+
+			selectorChoiceCombo.select(currentSelector);
 			selectorChoiceEditor.grabHorizontal = true;
-			int selectorChoiceColumn = 2;
-			selectorChoiceCombo.setData("item", item);
+			int selectorChoiceColumn = 3;
+			selectorChoiceCombo.setData("item", tableItem);
 			selectorChoiceCombo.setData("column", selectorChoiceColumn);
-			selectorChoiceEditor.setEditor(selectorChoiceCombo, item,
+			selectorChoiceEditor.setEditor(selectorChoiceCombo, tableItem,
 					selectorChoiceColumn);
 			selectorChoiceCombo.addModifyListener(new selectorChoiceListener());
-			return;
+			cnt = cnt + 1;
 		}
+		return;
+	}
 
-		static class keywordChoiceListener implements ModifyListener {
-			@Override
-			public void modifyText(ModifyEvent event) {
-				CCombo combo = (CCombo) event.widget;
-				int column = (int) combo.getData("column");
-				String oldValue = ((TableItem) combo.getData("item")).getText(column);
-				String newValue = combo.getText();
-				// System.err.println(String.format("Updating %s = %s", oldValue,
-				// newValue));
-				if (keywordTable.containsKey(newValue)) {
-					((TableItem) combo.getData("item")).setText(column, newValue);
-				}
+	static class selectorChoiceListener implements ModifyListener {
+
+		@Override
+		public void modifyText(ModifyEvent event) {
+			CCombo combo = (CCombo) event.widget;
+			int column = (int) combo.getData("column");
+			String oldValue = ((TableItem) combo.getData("item")).getText(column);
+			String newValue = combo.getText();
+			// System.err.println(String.format("Updating %s = %s", oldValue,
+			// newValue));
+			if (selectorFromSWD.containsValue(newValue)) {
+				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
 		}
+	}
 
-		// origin:
-		// https://github.com/bp-FLN/SWT-Tools/blob/master/src/swt/TableTools.java
-		public static void packTable(Table table) {
-			for (TableColumn tc : table.getColumns()) {
-				tc.pack();
+	private static void appendBlankRowToTable(Table table, TableItem item,
+			int index) {
+
+		item.setText(new String[] { String.format("%d", index), "Element name",
+				"Action keyword", "", "Selector value" });
+
+		TableEditor keywordChoiceEditor = new TableEditor(table);
+		CCombo keywordChoiceCombo = new CCombo(table, SWT.NONE);
+		keywordChoiceCombo.setText("Choose..");
+		for (String keyword : keywordTable.keySet()) {
+			keywordChoiceCombo.add(keyword);
+		}
+		// NOTE: none of options is initially selected
+		keywordChoiceEditor.grabHorizontal = true;
+		int keywordChoiceColumn = 2;
+		keywordChoiceCombo.setData("column", keywordChoiceColumn);
+		keywordChoiceCombo.setData("item", item);
+		keywordChoiceEditor.setEditor(keywordChoiceCombo, item,
+				keywordChoiceColumn);
+		keywordChoiceCombo.addModifyListener(new keywordChoiceListener());
+
+		TableEditor selectorChoiceEditor = new TableEditor(table);
+		CCombo selectorChoiceCombo = new CCombo(table, SWT.NONE);
+		selectorChoiceCombo.setText("Choose");
+		for (String locator : selectorFromSWD.values()) {
+			selectorChoiceCombo.add(locator);
+		}
+		// NOTE: none of options is initially selected
+		selectorChoiceEditor.grabHorizontal = true;
+		int selectorChoiceColumn = 3;
+		selectorChoiceCombo.setData("item", item);
+		selectorChoiceCombo.setData("column", selectorChoiceColumn);
+		selectorChoiceEditor.setEditor(selectorChoiceCombo, item,
+				selectorChoiceColumn);
+		selectorChoiceCombo.addModifyListener(new selectorChoiceListener());
+		return;
+	}
+
+	static class keywordChoiceListener implements ModifyListener {
+		@Override
+		public void modifyText(ModifyEvent event) {
+			CCombo combo = (CCombo) event.widget;
+			int column = (int) combo.getData("column");
+			String oldValue = ((TableItem) combo.getData("item")).getText(column);
+			String newValue = combo.getText();
+			// System.err.println(String.format("Updating %s = %s", oldValue,
+			// newValue));
+			if (keywordTable.containsKey(newValue)) {
+				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
 		}
+	}
 
+	// origin:
+	// https://github.com/bp-FLN/SWT-Tools/blob/master/src/swt/TableTools.java
+	public static void packTable(Table table) {
+		for (TableColumn tc : table.getColumns()) {
+			tc.pack();
+		}
 	}
 
 	private static class RowComposite extends Composite {
