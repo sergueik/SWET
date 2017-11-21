@@ -375,6 +375,7 @@ public class SimpleToolBarEx {
 				// show the error dialog with exception trace
 				ExceptionDialogEx.getInstance().render(e);
 			}
+			testsuiteTool.setEnabled(true);
 			updateStatus("Ready");
 		});
 

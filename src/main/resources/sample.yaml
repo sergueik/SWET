@@ -73,7 +73,68 @@ elements:
     CommandId: aad98494-b8cb-47d3-b282-05df24529e25
     ElementText: ''
     ElementId: u_0_b
+  cf4d49a0-e860-4654-8c41-233bb92c77f4:
+    ElementCodeName: link 1
+    ElementPageURL: https://www.linux.org.ru/
+    ElementStepNumber: '5'
+    Url: http://www.google.com
+    ElementXPath: id("topic-13829714")/h2[1]/a[ @href = "/news/games/13829714" ]
+    ElementCssSelector: article[id = "topic-13829714"] > h2 > a[ href = "/news/games/13829714"
+      ]
+    ElementSelectedBy: ElementText
+    Command: AddElement
+    Caller: addElement
+    ElementTagName: A
+    CommandId: cf4d49a0-e860-4654-8c41-233bb92c77f4
+    ElementText: Вышла третья alpha-версия эмулятора Sony PlayStation 3 — RPCS3 0.0.4
+    ElementId: ''
+  7fb91144-0fbb-43e1-abfc-2b3c2398a9f4:
+    ElementCodeName: logo
+    ElementPageURL: https://www.linux.org.ru/
+    ElementStepNumber: '6'
+    Url: http://www.google.com
+    ElementXPath: id("boxlets")/div[1]/a[ @href = "http://qrator.net/" ]/img[ @src
+      = "/adv/qrator-box.png" and @alt = "Protected by Qrator" ]
+    ElementCssSelector: aside#boxlets > div > a[ href = "http://qrator.net/" ] > img[
+      src = "/adv/qrator-box.png" ][ alt = "Protected by Qrator" ]
+    ElementSelectedBy: ElementXPath
+    Command: AddElement
+    Caller: addElement
+    ElementTagName: IMG
+    CommandId: 7fb91144-0fbb-43e1-abfc-2b3c2398a9f4
+    ElementText: ''
+    ElementId: ''
+  d5c298b6-ec97-4afd-bdb4-08855a6fca58:
+    ElementCssSelector: 'aside#boxlets > div.boxlet > div.boxlet_content.boxlet-gallery
+      > div:nth-of-type(3) > div > a[ href = "/gallery/screenshots/13829200" ] > img[
+      src = "images/17809/500px.jpg" ][ alt = "Скриншот: CDE? Fvwm!" ]'
+    ElementSelectedBy: ElementCssSelector
+    ElementCodeName: image link
+    Command: AddElement
+    Caller: addElement
+    ElementPageURL: https://www.linux.org.ru/
+    ElementTagName: IMG
+    CommandId: d5c298b6-ec97-4afd-bdb4-08855a6fca58
+    ElementStepNumber: '7'
+    ElementText: ''
+    ElementId: ''
+    ElementXPath: 'id("boxlets")/div[4]/div[1]/div[3]/div[1]/a[ @href = "/gallery/screenshots/13829200"
+      ]/img[ @src = "images/17809/500px.jpg" and @alt = "Скриншот: CDE? Fvwm!" ]'
+  b9aeb1be-aada-4806-91f2-ae69710cfe91:
+    ElementCssSelector: aside#boxlets > div.boxlet > div.boxlet_content > form > div.checkbox
+      > label
+    ElementSelectedBy: ElementCssSelector
+    ElementCodeName: list
+    Command: AddElement
+    Caller: addElement
+    ElementPageURL: https://www.linux.org.ru/
+    ElementTagName: LABEL
+    CommandId: b9aeb1be-aada-4806-91f2-ae69710cfe91
+    ElementStepNumber: '8'
+    ElementText: 64 гб
+    ElementId: ''
+    ElementXPath: id("boxlets")/div[2]/div[1]/form[1]/div[2]/label[1]
 plugins: null
 seleniumVersion: null
-updated: 2017-11-03T04:00:00Z
+updated: 2017-11-20T05:00:00Z
 version: null
