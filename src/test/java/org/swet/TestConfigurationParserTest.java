@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class TestConfigurationParserTest {
 	/**
-	 * Configuration table helper for Selenium WebDriver Elementor Tool (SWET)
+	 * Testing of the Selenium WebDriver Elementor Tool (SWET) Configuration table helper
 	 *  @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
 	 */
 

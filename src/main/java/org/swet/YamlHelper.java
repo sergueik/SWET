@@ -31,13 +31,6 @@ public class YamlHelper {
 	private static Calendar calendar;
 	private static String yamlFile = null;
 
-	public static void main(String[] args) throws IOException {
-
-		yamlFile = (args.length == 0)
-				? String.format("%s/%s", System.getProperty("user.dir"), "sample.yaml")
-				: args[0];
-	}
-
 	@SuppressWarnings("unchecked")
 	public static Map<String, Map<String, String>> loadData(String fileName) {
 		if (yaml == null) {
@@ -45,6 +38,25 @@ public class YamlHelper {
 			yaml = new Yaml(options);
 		}
 		Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
+		try (InputStream in = Files.newInputStream(Paths.get(fileName))) {
+			// NOTE: unchecked conversion
+			// required: Map<String,Map<String,String>>
+			// found: capture#1 of ? extends java.util.Map
+			data = yaml.loadAs(in, data.getClass());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return data;
+	}
+
+	// NOTE: redundant, can one do generics here
+	@SuppressWarnings("unchecked")
+	public static Map<String, String> loadHelp(String fileName) {
+		if (yaml == null) {
+			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			yaml = new Yaml(options);
+		}
+		Map<String, String> data = new HashMap<>();
 		try (InputStream in = Files.newInputStream(Paths.get(fileName))) {
 			// NOTE: unchecked conversion
 			// required: Map<String,Map<String,String>>
