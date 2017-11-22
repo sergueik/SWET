@@ -186,7 +186,7 @@ launches the browser
 
 ![launch](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/find_32.png)
 injects the [SWD Element Searcher script](https://github.com/sergueik/SWET/blob/master/src/main/resources/ElementSearch.js)
-into the page, then starts polling the page waiting for user to select some element via right click and to fill and submit the form:
+into the page, then starts polling the page waiting for user to select some element via ![SWD Mouse Action](https://github.com/sergueik/SWET/blob/master/screenshots/ctrl_right_button_bw_32.png) CTRL + right click and to fill and submit the form:
 ![SWD Table](https://github.com/sergueik/SWET/blob/master/screenshots/swd_table.png)
 
 The Java reads back the result once it available and adds a breadcrump button:
