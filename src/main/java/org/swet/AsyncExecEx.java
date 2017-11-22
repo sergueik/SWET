@@ -16,9 +16,12 @@ import org.eclipse.swt.widgets.Shell;
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTandThread.htm
 public class AsyncExecEx {
 
+	final static int MIN_PERCENTAGE = 0;
 	final static int MAX_PERCENTAGE = 30;
 	final static int DELAY = 100;
 	private static ProgressBar progressBar;
+	private static Button button;
+	private static Thread longRunningOperation;
 
 	public static void main(String[] a) {
 		Display display = new Display();
@@ -26,10 +29,10 @@ public class AsyncExecEx {
 		shell.setLayout(new GridLayout());
 		progressBar = new ProgressBar(shell, SWT.HORIZONTAL | SWT.SMOOTH);
 		progressBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		progressBar.setMinimum(0);
+		progressBar.setMinimum(MIN_PERCENTAGE);
 		progressBar.setMaximum(MAX_PERCENTAGE);
 
-		Button button = new Button(shell, SWT.CENTER);
+		button = new Button(shell, SWT.CENTER);
 		button.setText("Click to start");
 		button.setBounds(shell.getClientArea());
 		button.addSelectionListener(new SelectionListener() {
@@ -38,42 +41,37 @@ public class AsyncExecEx {
 
 			public void widgetSelected(SelectionEvent event) {
 				button.setEnabled(false);
-				progressBar.setSelection(0);
-				Thread longRunningOperation = new LongRunningOperation(display,
-						progressBar);
+				progressBar.setSelection(MIN_PERCENTAGE);
+				longRunningOperation = new LongRunningOperation(display, progressBar,
+						button);
 				longRunningOperation.start();
-				int percentage = (int) shell.getData("percentage");
-
-				System.err.println(
-						String.format("button %.2f", 100.0 * percentage / MAX_PERCENTAGE));
-				if (percentage == MAX_PERCENTAGE) {
-					try {
-						longRunningOperation.wait();
-					} catch (InterruptedException e) {
-
-					}
-					button.setEnabled(true);
-				}
-				// this sets button enabled immediately
+				// NOTE: this sets button enabled immediately - only valid for sync
+				// executions
 				// button.setEnabled(true);
 			}
 		});
 
-		shell.setData("percentage", 0);
+		shell.setData("percentage", MIN_PERCENTAGE);
 		shell.setSize(300, 200);
 		shell.open();
-
+		int percentage = MIN_PERCENTAGE;
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 			try {
-				int percentage = (int) shell.getData("percentage");
-				if (percentage == MAX_PERCENTAGE) {
-					// shell.close();
-				}
+				percentage = (int) shell.getData("percentage");
 			} catch (SWTException e) {
 				// ignore
+			}
+			if (percentage == MAX_PERCENTAGE) {
+				// shell.close();
+				/*
+				try {
+					longRunningOperation.wait();
+				} catch (InterruptedException | IllegalMonitorStateException
+						| NullPointerException e) {
+				} */
 			}
 		}
 	}
@@ -82,38 +80,49 @@ public class AsyncExecEx {
 		private Display display;
 		private Shell parentShell = null;
 		private ProgressBar progressBar;
+		private Button button;
 		private int percentage;
 
-		public LongRunningOperation(Display display, ProgressBar progressBar) {
+		public LongRunningOperation(Display display, ProgressBar progressBar,
+				Button button) {
 			this.display = display;
 			this.progressBar = progressBar;
 			this.parentShell = progressBar.getShell();
+			this.button = button;
 		}
 
 		public void run() {
-			System.out
-					.println("Hello from thread: \t" + Thread.currentThread().getName());
-			for (percentage = 0; percentage <= MAX_PERCENTAGE; percentage++) {
+			/*	System.out
+						.println("Hello from thread: \t" + Thread.currentThread().getName());
+			*/
+			for (percentage = MIN_PERCENTAGE; percentage <= MAX_PERCENTAGE; percentage++) {
 				try {
 					Thread.sleep(DELAY);
-					System.err.println(
-							String.format("%.2f", 100.0 * percentage / MAX_PERCENTAGE));
+					/*	System.err.println(
+								String.format("%.2f", 100.0 * percentage / MAX_PERCENTAGE));
+					*/
 				} catch (InterruptedException e) {
 				}
 				display.asyncExec(new Runnable() {
 					public void run() {
+						if (percentage == MIN_PERCENTAGE) {
+							// NOTE: not reliable
+							button.setEnabled(false);
+						}
 						if (progressBar.isDisposed())
 							return;
 						progressBar.setSelection(progressBar.getSelection() + 1);
+						// progressBar.setSelection(percentage);
 						parentShell.setData("percentage", percentage);
+						if (percentage == MAX_PERCENTAGE) {
+							button.setEnabled(true);
+						}
 					}
-
 				});
-
 			}
-			System.out
-					.println("Bye from thread: \t" + Thread.currentThread().getName());
-			return;
+			/*	System.out
+						.println("Bye from thread: \t" + Thread.currentThread().getName());
+			*/ return;
 		}
 	}
 
