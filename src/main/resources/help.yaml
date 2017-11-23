@@ -1,9 +1,23 @@
-'Template-based Testsuite creation': "You can generate a program in Java , C#, Ruby or other language. Few templates are embedded. 
-You can provide your own."
+'Testsuite Program creation': "You can <b>generate</b> a program in <i>Java</i> , <i>C#</i>, <i>Ruby</i> or other language. Few templates are embedded. 
+You can provide <u>your own</u> using <u>http://jtwig.org/</u> syntax: <br/>
+<pre>{% if (ElementText != '') -%}<br/>
+// Text: {{ ElementText }}<br/>
+{% endif -%}</pre>"
 
-'Keyword-driven Framework suite creation': 'You can generate a Keyword-driven Framework http://toolsqa.com/selenium-webdriver/keyword-driven-framework/introduction/ 
-tests and export it as an Excel file.'
+'Keyword-driven Framework flow creation': 'You can generate and <b>export</b> it as an <i>Excel<i> file 
+a Keyword-driven Framework <u>http://toolsqa.com/selenium-webdriver/keyword-driven-framework</u> 
+test flow'
 
-'Saving and restoring': 'You can save the recording as an YAML file to continue later.'
-
- 
+'Saving and restoring sessions': "You can <b>save</b> the recording session to continue later.. 
+Recording will be written in YAML format and will contain all element attributes
+(including the deselected ones) of all recorder elements: <pre>
+    ElementCssSelector: img.site-header-logo<br/>
+    ElementSelectedBy: ElementCssSelector<br/>
+    ElementCodeName: logo<br/>
+    ElementPageURL: https://coderanch.com/c/java<br/>
+    ElementTagName: IMG<br/>
+    ElementStepNumber: 1<br/>
+    ElementText: ''<br/>
+    ElementId: ''<br/>
+    ElementXPath: /html/body/header[1]/div[2]/div[1]/span[1]/img
+</pre>"

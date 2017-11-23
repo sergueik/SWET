@@ -6,10 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -65,4 +67,14 @@ public class YamlHelperTest {
 		matcher = pattern.matcher(result);
 		assertFalse(matcher.find());
 	}
+
+	@Test
+	public void containsTest() throws IOException {
+
+		List<Object> helpTopicArray = new ArrayList<>();
+		helpTopicArray.addAll(help.keySet());
+		assertTrue(CollectionUtils.containsAny(helpTopicArray,
+				new ArrayList<Object>(Arrays.asList(helpTopics))));
+	}
+
 }

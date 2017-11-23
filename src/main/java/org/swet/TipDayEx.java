@@ -3,6 +3,8 @@ package org.swet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
@@ -42,6 +44,7 @@ public class TipDayEx {
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
 	private final List<String> tips = new ArrayList<>();
+	private static Map<String, String> help;
 	private boolean showOnStartup = true;
 	private Image image;
 
@@ -55,7 +58,6 @@ public class TipDayEx {
 		return TipDayEx.index;
 	}
 
-
 	public List<String> getTips() {
 		return this.tips;
 	}
@@ -65,11 +67,9 @@ public class TipDayEx {
 		return this;
 	}
 
-
 	public boolean isShowOnStartup() {
 		return this.showOnStartup;
 	}
-
 
 	public void setImage(final Image image) {
 		this.image = image;
@@ -141,7 +141,7 @@ public class TipDayEx {
 		final Label label = new Label(composite, SWT.NONE);
 		if (this.image == null) {
 			this.image = new Image(display, this.getClass().getClassLoader()
-					.getResourceAsStream("images/light1.png"));
+					.getResourceAsStream("images/document_wrench_color.png"));
 			shell.addListener(SWT.Close, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
@@ -288,15 +288,26 @@ public class TipDayEx {
 		final Shell shell = new Shell(display);
 		Locale.setDefault(Locale.ENGLISH);
 		final TipDayEx tipDayEx = new TipDayEx();
-		for (String tipMessage : new String[] { "This is the first tip",
-				"This is the second tip", "This is the third tip",
-				"This is the forth tip", "This is the fifth tip" }) {
-			tipDayEx.addTip(String.format(
-					"<h4>%s</h4>" + "<b>%s</b> " + "<u>%s</u> " + "<i>%s</i> " + "%s "
-							+ "%s<br/>" + "<p color=\"#A00000\">%s</p>",
-					tipMessage, tipMessage, tipMessage, tipMessage, tipMessage,
-					tipMessage, tipMessage));
 
+		String yamlFile = String.format("%s/src/main/resources/%s",
+				System.getProperty("user.dir"), "help.yaml");
+		help = YamlHelper.loadHelp(yamlFile);
+		for (Entry<String, String> helpdata : help.entrySet()) {
+			String title = helpdata.getKey();
+			String description = helpdata.getValue();
+			tipDayEx.addTip(String.format("<h4>%s</h4>%s", title, description));
+		}
+		if (tipDayEx.getTips().size() == 0) {
+			for (String tipMessage : new String[] { "This is the first tip",
+					"This is the second tip", "This is the third tip",
+					"This is the forth tip", "This is the fifth tip" }) {
+				tipDayEx.addTip(String.format(
+						"<h4>%s</h4>" + "<b>%s</b> " + "<u>%s</u> " + "<i>%s</i> " + "%s "
+								+ "%s<br/>" + "<p color=\"#A00000\">%s</p>",
+						tipMessage, tipMessage, tipMessage, tipMessage, tipMessage,
+						tipMessage, tipMessage));
+
+			}
 		}
 
 		tipDayEx.open(shell, display);
