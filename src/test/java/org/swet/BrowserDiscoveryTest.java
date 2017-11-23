@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import org.swet.OSUtils;
+
 public class BrowserDiscoveryTest {
 
 	private static String osName = OSUtils.getOsName();
@@ -25,13 +27,13 @@ public class BrowserDiscoveryTest {
 	public void testInstalledBrowserInformaation() {
 		List<String> browsers = OSUtils.getInstalledBrowsers();
 		assertTrue(browsers.size() > 0);
-		// System.out.println("Installed browsers: " + browsers);
+		// System.err.println("Installed browsers: " + browsers);
 
 		for (String browserName : browserNames.keySet()) {
 			if (browsers.contains(browserName)) {
 				assertTrue(OSUtils.isInstalled(browserName));
 				assertTrue(OSUtils.getMajorVersion(browserName) > 0);
-				System.out.println(String.format("%s version: %s",
+				System.err.println(String.format("%s version: %s",
 						browserNames.get(browserName), OSUtils.getVersion(browserName)));
 			} else {
 				assertFalse(OSUtils.isInstalled(browserName));
@@ -39,16 +41,4 @@ public class BrowserDiscoveryTest {
 			}
 		}
 	}
-
-	public static String getOsName() {
-
-		if (osName == null) {
-			osName = System.getProperty("os.name");
-			if (osName.startsWith("Windows")) {
-				osName = "windows";
-			}
-		}
-		return osName;
-	}
-
 }

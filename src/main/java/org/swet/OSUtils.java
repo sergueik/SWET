@@ -41,38 +41,7 @@ public class OSUtils {
 		return osName;
 	}
 
-	public static void main(String[] args) {
-		try {
-			System.err.println("Desktop: " + OSUtils.getDesktopPath());
-		} catch (Exception e) {
-			System.err.println(e.toString());
-		}
-
-		Map<String, String> browserNames = new HashMap<>();
-		browserNames.put("chrome.exe", "Google Chrome");
-		browserNames.put("iexplore.exe", "Internet Explorer");
-		browserNames.put("firefox.exe", "Mozilla Firefox");
-
-		List<String> browsers = OSUtils.getInstalledBrowsers();
-		assertTrue(browsers.size() > 0);
-		System.out.println("Your browsers: " + browsers);
-
-		for (String browserName : browserNames.keySet()) {
-			System.out.println("Probing browser: " + browserName);
-			if (browsers.contains(browserName)) {
-				System.out.println(String.format("%s version: %s",
-						browserNames.get(browserName), getVersion(browserName)));
-				assertTrue(isInstalled(browserName));
-				assertTrue(getMajorVersion(browserName) > 0);
-			} else {
-				assertFalse(isInstalled(browserName));
-				assertTrue(getMajorVersion(browserName) == 0);
-			}
-		}
-
-	}
-
-	public static String getDesktopPath() throws Exception {
+	public static String getDesktopPath() {
 		HWND hwndOwner = null;
 		int nFolder = Shell32.CSIDL_DESKTOPDIRECTORY;
 		HANDLE hToken = null;
@@ -84,7 +53,7 @@ public class OSUtils {
 			String path = new String(pszPath);
 			return (path.substring(0, path.indexOf('\0')));
 		} else {
-			throw new Exception("Windows Error: " + hResult);
+			return String.format("%s\\Desktop", System.getProperty("user.home"));
 		}
 	}
 

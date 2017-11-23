@@ -42,7 +42,7 @@ public class ConfigFormEx {
 	private static Shell parentShell = null;
 	private static Display display;
 
-	private final static int formWidth = 656;
+	private final static int formWidth = 476;
 	private final static int formHeight = 248;
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
@@ -87,15 +87,9 @@ public class ConfigFormEx {
 		}
 		// http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java
 		String dirPath = null;
-		if (osName.toLowerCase().startsWith("windows")) {
-			try {
-				dirPath = OSUtils.getDesktopPath();
-			} catch (Exception e) {
-				dirPath = System.getProperty("user.home");
-			}
-		} else {
-			dirPath = System.getProperty("user.home");
-		}
+		dirPath = (osName.toLowerCase().startsWith("windows"))
+				? OSUtils.getDesktopPath() : System.getProperty("user.home");
+
 		utils.readData(
 				parent != null ? parentShell.getData("CurrentConfig").toString()
 						: "{ \"Browser\": \"Chrome\", "
@@ -130,20 +124,70 @@ public class ConfigFormEx {
 		gridComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		gridComposite.pack();
 
-		RowComposite rowComposite = new RowComposite(shell);
-		// rowComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite rowComposite = new Composite(shell, SWT.NO_FOCUS);
+
+		rowComposite.setLayoutData(
+				new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
+		gridLayout = new GridLayout();
+		gridLayout.marginWidth = 2;
+		rowComposite.setLayout(new GridLayout(1, false));
+
+		Button buttonSave = new Button(rowComposite, SWT.BORDER | SWT.PUSH);
+		buttonSave.setText("Save");
+		GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER, false,
+				false);
+		gridDataSave.widthHint = buttonWidth;
+		gridDataSave.heightHint = buttonHeight;
+
+		buttonSave.setLayoutData(gridDataSave);
+
+		buttonSave.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				String templateLabel = configData.get("Template");
+				String configKey = null;
+				String data = null;
+				if (templateLabel != ""
+						&& !(templateLabel.matches(".*\\(embedded\\)"))) {
+					data = configOptions.get("Template").get(templateLabel);
+					configKey = "Template Path";
+					System.err.println(String.format(
+							"Saving the selected user template path \"%s\": \"%s\"",
+							templateLabel, data));
+				} else {
+					configKey = "Template";
+					data = templateLabel;
+					System.err.println(String.format(
+							"Saving the selected embedded template name: \"%s\"",
+							templateLabel));
+
+				}
+				if (configData.containsKey(configKey)) {
+					configData.replace(configKey, data);
+				} else {
+					configData.put(configKey, data);
+				}
+				String result = utils.writeDataJSON(configData, "{}");
+				if (parentShell != null) {
+					parentShell.setData("CurrentConfig", result);
+					parentShell.setData("updated", true);
+				}
+				// System.err.println("Updated parent shell: " + result);
+			}
+		});
 		rowComposite.pack();
 		shell.pack();
 		shell.setSize(formWidth, formHeight);
-		if (debug) {
+
+		// infopopup example
+		/*
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			Rectangle shellBounds = shell.getBounds();
 			InfoPopup infoPopup = new InfoPopup(shell, "test of the info popup");
 			infoPopup.setPosition(new Point(shellBounds.x + shellBounds.width - 200,
 					shellBounds.y + shellBounds.height - 30));
 			infoPopup.open();
-		}
-
+		*/
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
@@ -167,119 +211,59 @@ public class ConfigFormEx {
 
 		public void renderData(Map<String, String> data, String configKey) {
 
-			Label valueLabel = new Label(this, SWT.NONE);
-			valueLabel.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
-			valueLabel.setText(configKey);
+			Label label = new Label(this, SWT.NONE);
+			label.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
+			label.setText(configKey);
 
-			final Text valueText = new Text(this, SWT.SINGLE | SWT.BORDER);
+			final Text directory = new Text(this, SWT.SINGLE | SWT.BORDER);
 
-			GridData gridDatevalueText = new GridData(GridData.FILL, GridData.CENTER,
+			GridData gridData = new GridData(GridData.FILL, GridData.CENTER,
 					true, false);
-			gridDatevalueText.widthHint = this.getBounds().width - 70;
-			gridDatevalueText.heightHint = buttonHeight;
-			valueText.setLayoutData(gridDatevalueText);
-			valueText.setData("key", configKey);
+			gridData.widthHint = this.getBounds().width - 70;
+			gridData.heightHint = buttonHeight;
+			directory.setLayoutData(gridData);
+			directory.setData("key", configKey);
 			if (data.containsKey(configKey)) {
-				valueText.setText(data.get(configKey));
+				directory.setText(data.get(configKey));
 			}
-			valueText.addModifyListener(new ModifyListener() {
+			directory.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent event) {
-					Text text = (Text) event.widget;
-					System.err.println(String.format("Updating %s = %s",
-							(String) text.getData("key"), text.getText()));
-					if (data.containsKey((String) text.getData("key"))) {
-						data.replace((String) text.getData("key"), text.getText());
+					Text sender = (Text) event.widget;
+					String value = sender.getText();
+					String key = (String) sender.getData("key");
+					// System.err.println(String.format("Updating %s = %s",
+					// (String) key, value));
+					if (data.containsKey(key)) {
+						data.replace(key, value);
 					} else {
-						data.put((String) text.getData("key"), text.getText());
+						data.put(key, value);
 					}
 				}
 			});
 
 			final Button browse = new Button(this, SWT.PUSH);
-			GridData gridDataBrowse = new GridData(GridData.FILL, GridData.CENTER,
+			gridData = new GridData(GridData.FILL, GridData.CENTER,
 					false, false);
-			gridDataBrowse.widthHint = 70;
-			gridDataBrowse.heightHint = buttonHeight;
-			browse.setLayoutData(gridDataBrowse);
+			gridData.widthHint = 70;
+			gridData.heightHint = buttonHeight;
+			browse.setLayoutData(gridData);
 			browse.setText("Browse");
-			// ?? browse.setValue("Browse");
-			// TODO: preview
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					DirectoryDialog dialog = new DirectoryDialog(shell);
 
-					dialog.setFilterPath(valueText.getText());
+					dialog.setFilterPath(directory.getText());
 					dialog.setText(String.format("%s Dialog", configKey));
 					dialog.setMessage("Select a directory");
 
 					String dir = dialog.open();
-					Text text = valueText;
+					Text text = directory;
 					if (dir != null) {
 						text.setText(dir);
 						System.err.println(String.format("Browser: %s = %s",
 								(String) text.getData("key"), text.getText()));
 					}
-				}
-			});
-		}
-	}
-
-	private static class RowComposite extends Composite {
-
-		final Button buttonSave;
-
-		public RowComposite(Composite composite) {
-			super(composite, SWT.NO_FOCUS);
-
-			this.setLayoutData(
-					new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-			final GridLayout gridLayout = new GridLayout();
-			gridLayout.marginWidth = 2;
-			this.setLayout(new GridLayout(1, false));
-			buttonSave = new Button(this, SWT.BORDER | SWT.PUSH);
-			buttonSave.setText("Save");
-			GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER,
-					false, false);
-			gridDataSave.widthHint = buttonWidth;
-			gridDataSave.heightHint = buttonHeight;
-
-			buttonSave.setLayoutData(gridDataSave);
-
-			buttonSave.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					String templateLabel = configData.get("Template");
-					String configKey = null;
-					String data = null;
-					if (templateLabel != ""
-							&& !(templateLabel.matches(".*\\(embedded\\)"))) {
-						data = configOptions.get("Template").get(templateLabel);
-						configKey = "Template Path";
-						System.err.println(String.format(
-								"Saving the path to the user template \"%s\": \"%s\"",
-								templateLabel, data));
-					} else {
-						configKey = "Template";
-						data = templateLabel;
-						System.err.println(String.format(
-								"Saving the name of the selected template: \"%s\"",
-								templateLabel));
-
-					}
-					if (configData.containsKey(configKey)) {
-						configData.replace(configKey, data);
-					} else {
-						configData.put(configKey, data);
-					}
-					String result = utils.writeDataJSON(configData, "{}");
-					if (parentShell != null) {
-						parentShell.setData("CurrentConfig", result);
-						parentShell.setData("updated", true);
-					} else {
-						System.err.println("Updating the parent shell: " + result);
-					}
-					composite.dispose();
 				}
 			});
 		}
