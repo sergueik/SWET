@@ -207,6 +207,17 @@ The code generation button
 starts code generation using [Jtwig](http://jtwig.org/) tempate and `elementData` hash and opens result in a separate dialog:
 ![codegen](https://github.com/sergueik/SWET/blob/master/screenshots/codegen.png)
 
+The flow export toolbar buton ![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/excel_gen_32.png)
+converts SWET recording into a Keyword Driven Framework flow that can be later saved in the Excel file.
+There exist a big number of Keyword-Driven Frameworks with Selenium, e.g. [sergueik/skdf](https://github.com/sergueik/skdf). These allow storing the test flow in e.g. Excel file in a format:
+![icon](https://github.com/sergueik/SWET/blob/master/screenshots/table_editor_view.png)
+The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form. 
+The rest of the columns gets read from the saved recording.
+It is possible to save the resul as Excel file:
+![icon](https://github.com/sergueik/SWET/blob/master/screenshots/exported_flow.png)
+
+
+
 The preferences button
 ![preferences](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/gear_36.png)
 opens the configuration dialog
@@ -389,14 +400,6 @@ firefoxBrowserPath: c:/Program Files (x86)/Mozilla Firefox/firefox.exe
 ieDriverPath: c:/java/selenium/IEDriverServer.exe
 ```
 The `username` and `password` entris are not currently used - these are reserved for Sauce Labs or browserStack.
-
-### Exporing to Keyword-Driven Framework engines
-
-There exist a big number of Keyword-Driven Frameworks with Selenium, e.g. [sergueik/skdf](https://github.com/sergueik/skdf). These allow storing the test flow in e.g. Excel file in a format:
-![icon](https://github.com/sergueik/SWET/blob/master/screenshots/table_editor_view.png)
-The toolbar buton ![flowchart](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/excel_gen_32.png) does that from SWET.
-The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form. The rest of the columns come from the saved recording.
-It is possible to save the resul as Excel file.
 
 ### Work in Progress
 * UI improvements adding more form elements
