@@ -31,8 +31,9 @@ import org.swet.YamlHelper;
 public class YamlHelperTest {
 
 	private static String yamlFile = null;
-	private static String[] helpTopics = { "Template-based Testsuite creation",
-			"Keyword-driven Framework suite creation", "Saving and restoring" };
+	private static String[] helpTopics = { "Testsuite Program creation",
+			"Keyword-driven Framework flow creation",
+			"Saving and restoring sessions" };
 	private static Map<String, String> help;
 
 	@BeforeClass

@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -16,13 +17,13 @@ import org.json.JSONObject;
 // origin: https://www.codeproject.com/Tips/709552/Google-App-Engine-JAVA
 
 public class UtilExtensions {
-	public static JSONObject getJsonObject(String post) throws JSONException {
-		JSONObject jsonObject = new JSONObject(post);
+	public static JSONObject getJsonObject(String payload) throws JSONException {
+		JSONObject jsonObject = new JSONObject(payload);
 		return jsonObject;
 	}
 
-	public static JSONArray getJsonArray(String post) throws JSONException {
-		JSONArray jsonArray = new JSONArray(post);
+	public static JSONArray getJsonArray(String payload) throws JSONException {
+		JSONArray jsonArray = new JSONArray(payload);
 		return jsonArray;
 	}
 
@@ -97,7 +98,7 @@ public class UtilExtensions {
 
 	private static abstract class Mapper {
 
-		protected HashMap<String, String> mapper = new HashMap<>();
+		protected Map<String, String> mapper = new HashMap<>();
 
 		abstract public void init();
 

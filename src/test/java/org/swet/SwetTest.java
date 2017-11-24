@@ -57,7 +57,6 @@ public class SwetTest {
 	private static String browser = "chrome";
 	private static String baseURL = "about:blank";
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
-	private static String defaultScript = "ElementSearch.js";
 	private static Map<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
 	private static boolean pause_after_script_injection = false;
@@ -68,16 +67,15 @@ public class SwetTest {
 
 	// Converting legacy SWD "Element selected By" keys to
 	// selectorTable keys
-	private static Map<String, String> elementSelectedByToselectorChoiceTable = new HashMap<>();
+	private static Map<String, String> mapSWD2CoreSelenium = new HashMap<>();
 	static {
-		elementSelectedByToselectorChoiceTable.put("ElementXPath", "xpath");
-		elementSelectedByToselectorChoiceTable.put("ElementCssSelector",
-				"cssSelector");
-		elementSelectedByToselectorChoiceTable.put("ElementText", "text");
-		elementSelectedByToselectorChoiceTable.put("ElementId", "id");
+		mapSWD2CoreSelenium.put("ElementXPath", "xpath");
+		mapSWD2CoreSelenium.put("ElementCssSelector", "cssSelector");
+		mapSWD2CoreSelenium.put("ElementText", "text");
+		mapSWD2CoreSelenium.put("ElementId", "id");
 		// TODO:
-		elementSelectedByToselectorChoiceTable.put("ElementLinkText", "linkText");
-		elementSelectedByToselectorChoiceTable.put("ElementTagName", "tagName");
+		mapSWD2CoreSelenium.put("ElementLinkText", "linkText");
+		mapSWD2CoreSelenium.put("ElementTagName", "tagName");
 	}
 
 	@BeforeClass
@@ -85,7 +83,9 @@ public class SwetTest {
 
 		// browser selection is hard-coded
 
+		System.err.println("os: " + osName);
 		if (osName.startsWith("windows")) {
+
 			driver = BrowserDriver.initialize(browser);
 		} else if (osName.startsWith("Mac")) {
 			driver = BrowserDriver.initialize("safari");
@@ -114,6 +114,7 @@ public class SwetTest {
 	@Before
 	public void loadBaseURL() {
 		driver.get(baseURL);
+		utils.setDriver(driver);
 	}
 
 	@After
@@ -121,14 +122,14 @@ public class SwetTest {
 		driver.get("about:blank");
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
 	public void testWebPageElementSearch() {
 		driver.get("https://www.codeproject.com/");
 		WebElement element = wait.until(ExpectedConditions.visibilityOf(driver
 				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
 		assertThat(element, notNullValue());
-		injectScripts(Optional.<String> empty());
+		utils.injectScripts(Optional.<String> empty());
 		// pause_after_script_injection
 		if (pause_after_script_injection) {
 			try {
@@ -143,7 +144,7 @@ public class SwetTest {
 		completeVisualSearch("element name");
 
 		// Assert
-		String payload = (String) executeScript(getSWDCommand);
+		String payload = (String) utils.executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		// System.err.println("Result:\n" + readVisualSearchResult(payload));
 		Map<String, String> resultDetails = new HashMap<>();
@@ -168,7 +169,7 @@ public class SwetTest {
 			}
 			System.err.println(String.format("Testing %s with \"%s\"", methodKey,
 					result.get(methodKey)));
-			String methodName = elementSelectedByToselectorChoiceTable.get(methodKey);
+			String methodName = mapSWD2CoreSelenium.get(methodKey);
 			try {
 				Method method = By.class.getMethod(methodName, String.class);
 				WebElement element = driver
@@ -192,7 +193,7 @@ public class SwetTest {
 		highlight(element);
 	}
 
-	@Ignore
+	// @Ignore
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testNoIds() {
@@ -213,7 +214,7 @@ public class SwetTest {
 		highlight(element);
 		// System.err.println("Parent (1):\n" +
 		// element.findElement(By.xpath("..")).getAttribute("outerHTML")) ;
-		injectScripts(Optional.<String> empty());
+		utils.injectScripts(Optional.<String> empty());
 		// pause_after_script_injection
 		if (pause_after_script_injection) {
 			try {
@@ -228,7 +229,7 @@ public class SwetTest {
 		completeVisualSearch("Yahoo Logo");
 
 		// Assert
-		String payload = (String) executeScript(getSWDCommand);
+		String payload = (String) utils.executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		String result = readVisualSearchResult(payload);
 		System.err.println("Result:\n" + result);
@@ -264,7 +265,7 @@ public class SwetTest {
 	@Test
 	public void testStatic() {
 		driver.get(utils.getResourceURI("ElementSearch.html"));
-		injectScripts(Optional.<String> empty());
+		utils.injectScripts(Optional.<String> empty());
 		// Unsupported URL protocol:
 		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
 		WebElement element = wait.until(
@@ -276,7 +277,7 @@ public class SwetTest {
 		completeVisualSearch("this element name");
 
 		// Assert
-		String payload = (String) executeScript(getSWDCommand);
+		String payload = (String) utils.executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
 		Map<String, String> elementData = new HashMap<>();
 		String elementName = readVisualSearchResult(payload,
@@ -392,7 +393,7 @@ public class SwetTest {
 					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
 							Pattern.CASE_INSENSITIVE);
 					while (_elements.hasNext()) {
-						WebElement _element = (WebElement) _elements.next();
+						WebElement _element = _elements.next();
 						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
 						if (matcher.find()) {
 							result = _element;
@@ -462,29 +463,6 @@ public class SwetTest {
 		swdCloseButton.click();
 	}
 
-	private Object executeScript(String script, Object... arguments) {
-		if (driver instanceof JavascriptExecutor) {
-			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
-					.cast(driver);
-			return javascriptExecutor.executeScript(script, arguments);
-		} else {
-			throw new RuntimeException("Script execution failed.");
-		}
-	}
-
-	// TODO: array
-	private void injectScripts(Optional<String> script) {
-		ArrayList<String> scripts = (defaultScript == null) ? new ArrayList<>()
-				: new ArrayList<>(Arrays.asList(utils	.getScriptContent(defaultScript)));
-		if (script.isPresent()) {
-			scripts.add(script.get());
-		}
-		for (String s : scripts) {
-			if (s != null)
-				executeScript(s);
-		}
-	}
-
 	private void highlight(WebElement element) {
 		highlight(element, 100);
 	}
@@ -497,9 +475,10 @@ public class SwetTest {
 		wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
 		try {
 			wait.until(ExpectedConditions.visibilityOf(element));
-			executeScript("arguments[0].style.border='3nnpx solid yellow'", element);
+			utils.executeScript("arguments[0].style.border='3nnpx solid yellow'",
+					element);
 			Thread.sleep(highlight_interval);
-			executeScript("arguments[0].style.border=''", element);
+			utils.executeScript("arguments[0].style.border=''", element);
 		} catch (InterruptedException e) {
 			System.err.println("Ignored: " + e.toString());
 		}
@@ -508,7 +487,7 @@ public class SwetTest {
 	private String getElementText(WebElement element) {
 		// http://stackoverflow.com/questions/6743912/get-the-pure-text-without-html-element-by-javascript
 		String script = "var element = arguments[0];var text = element.innerText || element.textContent || ''; return text;";
-		return (String) executeScript(script, element);
+		return (String) utils.executeScript(script, element);
 	}
 
 	private void inspectElement(WebElement element) {

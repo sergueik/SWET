@@ -522,7 +522,7 @@ public class SimpleToolBarEx {
 					*/
 					actions = new Actions(driver);
 					try {
-						injectElementSearch(Optional.<String> empty());
+						utils.injectElementSearch(Optional.<String> empty());
 					} catch (Exception e) {
 						// show the error dialog with exception trace
 						ExceptionDialogEx.getInstance().render(e);
@@ -720,7 +720,7 @@ public class SimpleToolBarEx {
 	}
 
 	private void flushVisualSearchResult() {
-		executeScript("document.swdpr_command = undefined;");
+		utils.executeScript("document.swdpr_command = undefined;");
 	}
 
 	private String getCurrentUrl() {
@@ -734,7 +734,7 @@ public class SimpleToolBarEx {
 		Boolean browserRunaway = false;
 		String name = null;
 		while (waitingForData) {
-			String payload = executeScript(getCommand).toString();
+			String payload = utils.executeScript(getCommand).toString();
 			if (!payload.isEmpty()) {
 				// objects cannot suicide
 				elementData = new HashMap<>();
@@ -779,6 +779,7 @@ public class SimpleToolBarEx {
 	private boolean initializeBrowser(String browser, String baseURL) {
 		try {
 			driver = BrowserDriver.initialize(browser);
+			utils.setDriver(driver);
 			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
 					.implicitlyWait(implicitWait, TimeUnit.SECONDS)
 					.setScriptTimeout(30, TimeUnit.SECONDS);
@@ -799,14 +800,15 @@ public class SimpleToolBarEx {
 	private void highlight(WebElement element, long highlight_interval) {
 		try {
 			wait.until(ExpectedConditions.visibilityOf(element));
-			executeScript("arguments[0].style.border='3px solid yellow'", element);
+			utils.executeScript("arguments[0].style.border='3px solid yellow'", element);
 			Thread.sleep(highlight_interval);
-			executeScript("arguments[0].style.border=''", element);
+			utils.executeScript("arguments[0].style.border=''", element);
 		} catch (InterruptedException e) {
 			System.err.println("Ignored: " + e.toString());
 		}
 	}
 
+	// NOTE: unused
 	private void completeVisualSearch(String elementCodeName) {
 		WebElement swdAddElementButton = null;
 		try {
@@ -867,34 +869,6 @@ public class SimpleToolBarEx {
 		assertThat(swdCloseButton, notNullValue());
 		highlight(swdCloseButton);
 		swdCloseButton.click();
-	}
-
-	private Object executeScript(String script, Object... arguments) {
-		if (driver instanceof JavascriptExecutor) {
-			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
-					.cast(driver);
-			// IE: org.openqa.selenium.NoSuchWindowException
-			// Chrome: Exception in thread "main"
-			// org.openqa.selenium.WebDriverException: disconnected: not connected to
-			// DevTools
-			return javascriptExecutor.executeScript(script, arguments);
-		} else {
-			throw new RuntimeException("Script execution failed.");
-		}
-	}
-
-	private void injectElementSearch(Optional<String> script) {
-		List<String> scripts = new ArrayList<>(
-				Arrays.asList(utils.getScriptContent("ElementSearch.js")));
-		if (script.isPresent()) {
-			scripts.add(script.get());
-		}
-		for (String s : scripts) {
-			if (s != null)
-				System.err.println(
-						String.format("Adding the script: %s\u2026", s.substring(0, 100)));
-			executeScript(s);
-		}
 	}
 
 	// Paginates the BreadCrump

@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +34,8 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
@@ -43,6 +47,11 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class Utils {
 
 	private static Utils instance = new Utils();
+	private WebDriver driver;
+
+	public void setDriver(WebDriver driver) {
+		this.driver = driver;
+	}
 
 	private Utils() {
 	}
@@ -50,6 +59,8 @@ public class Utils {
 	public static Utils getInstance() {
 		return instance;
 	}
+
+	private static String defaultScript = "ElementSearch.js";
 
 	public String getScriptContent(String resourceFileName) {
 		try {
@@ -232,6 +243,61 @@ public class Utils {
 		}
 		m.appendTail(sb);
 		return sb.toString();
+	}
+
+	// TODO: array
+	public void injectScripts(Optional<String> script) {
+		ArrayList<String> scripts = (defaultScript == null) ? new ArrayList<>()
+				: new ArrayList<>(Arrays.asList(getScriptContent(defaultScript)));
+		if (script.isPresent()) {
+			scripts.add(script.get());
+		}
+		for (String s : scripts) {
+			System.err
+					.println(String.format("Executing: %s\u2026", s.substring(0, 30)));
+			if (s != null)
+				executeScript(s);
+		}
+	}
+
+	public void injectElementSearch(Optional<String> script) {
+		List<String> scripts = new ArrayList<>(
+				Arrays.asList(getScriptContent(defaultScript)));
+		if (script.isPresent()) {
+			scripts.add(script.get());
+		}
+		for (String s : scripts) {
+			if (s != null)
+				System.err.println(
+						String.format("Adding the script: %s\u2026", s.substring(0, 100)));
+			executeScript(s);
+		}
+	}
+
+	/*
+	 	private Object executeScript(String script, Object... arguments) {
+		if (driver instanceof JavascriptExecutor) {
+			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
+					.cast(driver);
+			return javascriptExecutor.executeScript(script, arguments);
+		} else {
+			throw new RuntimeException("Script execution failed.");
+		}
+	}
+	
+	*/
+	public Object executeScript(String script, Object... arguments) {
+		if (driver instanceof JavascriptExecutor) {
+			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
+					.cast(driver);
+			// IE: org.openqa.selenium.NoSuchWindowException
+			// Chrome: Exception in thread "main"
+			// org.openqa.selenium.WebDriverException: disconnected: not connected to
+			// DevTools
+			return javascriptExecutor.executeScript(script, arguments);
+		} else {
+			throw new RuntimeException("Script execution failed.");
+		}
 	}
 
 	public String readManifestVersion() {
