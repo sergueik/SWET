@@ -14,6 +14,10 @@ import org.eclipse.swt.widgets.Shell;
 // origin: 
 // http://www.java2s.com/Code/JavaAPI/org.eclipse.swt.widgets/DisplayasyncExecRunnablerun.htm
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTandThread.htm
+// TODO:
+// https://github.com/Holzschneider/Swinger/blob/master/src/de/dualuse/commons/swing/AnimatedImageIcon.java
+// https://github.com/Holzschneider/Sweater/blob/develop/src/de/dualuse/swt/graphics/BufferedImageData.java
+// https://github.com/Holzschneider/Sweater/blob/develop/src/de/dualuse/swt/widgets/InputDialog.java
 public class AsyncExecEx {
 
 	final static int MIN_PERCENTAGE = 0;

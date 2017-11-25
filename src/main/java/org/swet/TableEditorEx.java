@@ -25,12 +25,14 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -56,6 +58,7 @@ import org.swet.Utils;
 public class TableEditorEx {
 
 	private static Button buttonSave;
+	private static Button buttonCancel;
 	private final static int buttonWidth = 120;
 	private final static int buttonHeight = 28;
 	private static Table table;
@@ -74,7 +77,7 @@ public class TableEditorEx {
 	// Currently free-hand, may eventually become
 	// public methods of the keyword-driven framework class
 	private static Map<String, String> keywordTable = new HashMap<>();
-	private static String[] columnHeaders = { "%", "Element", "Action Keyword",
+	private static String[] columnHeaders = { "#", "Element", "Action Keyword",
 			"Selector Choice", "Selector Value", "Param 1", "Param 2", "Param 3" };
 
 	private static Map<String, Map<String, String>> testData = new HashMap<>();
@@ -225,16 +228,14 @@ public class TableEditorEx {
 				new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
 		gridLayout = new GridLayout();
 		gridLayout.marginWidth = 2;
-		buttonComposite.setLayout(new GridLayout(1, false));
+		buttonComposite.setLayout(new GridLayout(2, false));
 		buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
 		buttonSave.setText("Save");
 
-		GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER, false,
-				false);
-		gridDataSave.widthHint = buttonWidth;
-		gridDataSave.heightHint = buttonHeight;
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false)
+				.applyTo(buttonSave);
 
-		buttonSave.setLayoutData(gridDataSave);
 		// label = new Label(shell, SWT.BORDER);
 
 		buttonSave.addListener(SWT.Selection, new Listener() {
@@ -295,6 +296,21 @@ public class TableEditorEx {
 		});
 
 		// buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		buttonCancel = new Button(buttonComposite, SWT.PUSH);
+		buttonCancel.setText("Cancel");
+
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false)
+				.applyTo(buttonCancel);
+
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				buttonComposite.dispose();
+				shell.dispose();
+			}
+		});
+
 		buttonComposite.pack();
 
 		shell.pack();
@@ -459,91 +475,6 @@ public class TableEditorEx {
 	public static void packTable(Table table) {
 		for (TableColumn tc : table.getColumns()) {
 			tc.pack();
-		}
-	}
-
-	private static class RowComposite extends Composite {
-
-		final Button buttonSave;
-		private final static int buttonWidth = 120;
-		private final static int buttonHeight = 28;
-
-		public RowComposite(Composite composite) {
-			super(composite, SWT.NO_FOCUS);
-
-			this.setLayoutData(
-					new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-			final GridLayout gridLayout = new GridLayout();
-			gridLayout.marginWidth = 2;
-			this.setLayout(new GridLayout(1, false));
-			buttonSave = new Button(this, SWT.BORDER | SWT.PUSH);
-			buttonSave.setText("Save");
-
-			GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER,
-					false, false);
-			gridDataSave.widthHint = buttonWidth;
-			gridDataSave.heightHint = buttonHeight;
-
-			buttonSave.setLayoutData(gridDataSave);
-			// label = new Label(shell, SWT.BORDER);
-
-			buttonSave.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-					dialog.setFilterNames(new String[] { "Excel 2003 Files (*.xls)",
-							"Excel 2007-2013 Files (*.xlsx)" });
-					dialog.setFilterExtensions(new String[] { "*.xls", "*.xlsx" });
-					dialog.setFilterPath(
-							(path == null) ? System.getProperty("user.home") : path);
-					if (testSuitePath != null) {
-						dialog.setFileName(testSuitePath);
-						path = new String(testSuitePath);
-					} //
-					testSuitePath = dialog.open();
-					if (testSuitePath != null) {
-
-						List<Map<Integer, String>> tableData = new ArrayList<>();
-						Map<Integer, String> rowData = new HashMap<>();
-
-						TableItem[] tableItems = table.getItems();
-						int numColumns = table.getColumnCount();
-						// to get the the value of the first row at the 2nd column
-						for (int row = 0; row != tableItems.length; row++) {
-							TableItem tableItem = tableItems[row];
-							rowData = new HashMap<>();
-							for (int col = 0; col != numColumns; col++) {
-								rowData.put(col, tableItem.getText(col));
-							}
-							tableData.add(rowData);
-						}
-
-						ReadWriteExcelFileEx.setExcelFileName(testSuitePath);
-						ReadWriteExcelFileEx.setSheetName("test123");
-						ReadWriteExcelFileEx.setTableData(tableData);
-
-						try {
-							if (testSuitePath.matches(".*\\.xlsx$")) {
-								ReadWriteExcelFileEx.writeXLSXFile();
-								ReadWriteExcelFileEx.readXLSXFile();
-							} else {
-								ReadWriteExcelFileEx.writeXLSFile();
-								ReadWriteExcelFileEx.readXLSFile();
-							}
-							// label.setText(String.format("Saved to \"%s\"", testSuitePath));
-							// label.update();
-							System.out
-									.println(String.format("Saved to \"%s\"", testSuitePath));
-						} catch (Exception e) {
-							ExceptionDialogEx.getInstance().render(e);
-						}
-					} else {
-						if (path != null) {
-							testSuitePath = new String(path);
-						}
-					}
-				}
-			});
 		}
 	}
 

@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -115,9 +117,8 @@ public class ConfigFormEx {
 	public void render() {
 		shell.open();
 		shell.setText("Session Configuration");
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		shell.setLayout(gridLayout);
+
+		GridLayoutFactory.swtDefaults().numColumns(1).applyTo(shell);
 
 		GridComposite gridComposite = new GridComposite(shell);
 		gridComposite.renderData(configData);
@@ -126,20 +127,17 @@ public class ConfigFormEx {
 
 		Composite rowComposite = new Composite(shell, SWT.NO_FOCUS);
 
-		rowComposite.setLayoutData(
-				new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-		gridLayout = new GridLayout();
-		gridLayout.marginWidth = 2;
-		rowComposite.setLayout(new GridLayout(1, false));
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.TOP)
+				.applyTo(rowComposite);
+
+		GridLayoutFactory.swtDefaults().margins(2, 2).equalWidth(false)
+				.numColumns(2).applyTo(rowComposite);
 
 		Button buttonSave = new Button(rowComposite, SWT.BORDER | SWT.PUSH);
 		buttonSave.setText("Save");
-		GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER, false,
-				false);
-		gridDataSave.widthHint = buttonWidth;
-		gridDataSave.heightHint = buttonHeight;
 
-		buttonSave.setLayoutData(gridDataSave);
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
 
 		buttonSave.addListener(SWT.Selection, new Listener() {
 			@Override
@@ -175,6 +173,21 @@ public class ConfigFormEx {
 				// System.err.println("Updated parent shell: " + result);
 			}
 		});
+
+		Button buttonCancel = new Button(rowComposite, SWT.PUSH);
+		buttonCancel.setText("Cancel");
+
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false)
+				.applyTo(buttonCancel);
+
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				rowComposite.dispose();
+				shell.dispose();
+			}
+		});
+
 		rowComposite.pack();
 		shell.pack();
 		shell.setSize(formWidth, formHeight);
@@ -197,16 +210,18 @@ public class ConfigFormEx {
 	private static class DirBrowseComposite extends Composite {
 
 		private Shell shell;
+		private int browseButtonWidth = 60;
 
 		public DirBrowseComposite(Composite composite) {
 			super(composite, SWT.NONE);
 			shell = composite.getShell();
 			this.setSize(this.getParent().getBounds().width,
 					this.getParent().getBounds().height /* buttonHeight*/ );
-			this.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			GridLayout gridLayout = new GridLayout(3, true);
-			gridLayout.makeColumnsEqualWidth = false;
-			this.setLayout(gridLayout);
+
+			GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.TOP)
+					.grab(true, false).applyTo(this);
+			GridLayoutFactory.swtDefaults().equalWidth(false).numColumns(3)
+					.applyTo(this);
 		}
 
 		public void renderData(Map<String, String> data, String configKey) {
@@ -217,11 +232,12 @@ public class ConfigFormEx {
 
 			final Text directory = new Text(this, SWT.SINGLE | SWT.BORDER);
 
-			GridData gridData = new GridData(GridData.FILL, GridData.CENTER,
-					true, false);
-			gridData.widthHint = this.getBounds().width - 70;
+			GridData gridData = new GridData(GridData.FILL, GridData.CENTER, true,
+					false);
+			gridData.widthHint = this.getBounds().width - browseButtonWidth;
 			gridData.heightHint = buttonHeight;
 			directory.setLayoutData(gridData);
+
 			directory.setData("key", configKey);
 			if (data.containsKey(configKey)) {
 				directory.setText(data.get(configKey));
@@ -243,9 +259,8 @@ public class ConfigFormEx {
 			});
 
 			final Button browse = new Button(this, SWT.PUSH);
-			gridData = new GridData(GridData.FILL, GridData.CENTER,
-					false, false);
-			gridData.widthHint = 70;
+			gridData = new GridData(GridData.FILL, GridData.CENTER, false, false);
+			gridData.widthHint = browseButtonWidth;
 			gridData.heightHint = buttonHeight;
 			browse.setLayoutData(gridData);
 			browse.setText("Browse");

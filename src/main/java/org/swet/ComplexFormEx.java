@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -46,6 +48,18 @@ public class ComplexFormEx {
 	private static String result = null;
 	private static Map<String, String> elementData = new HashMap<>();
 	private static Utils utils = Utils.getInstance();
+
+	// selectorTable keys
+	private static Map<String, String> mapSWD2CoreSelenium = new HashMap<>();
+	static {
+		mapSWD2CoreSelenium.put("ElementXPath", "xpath");
+		mapSWD2CoreSelenium.put("ElementCssSelector", "cssSelector");
+		mapSWD2CoreSelenium.put("ElementText", "text");
+		mapSWD2CoreSelenium.put("ElementId", "id");
+		// TODO:
+		mapSWD2CoreSelenium.put("ElementLinkText", "linkText");
+		mapSWD2CoreSelenium.put("ElementTagName", "tagName");
+	}
 
 	ComplexFormEx(Display parentDisplay, Shell parent) {
 		display = (parentDisplay != null) ? parentDisplay : new Display();
@@ -117,9 +131,13 @@ public class ComplexFormEx {
 			super(composite, SWT.NO_FOCUS);
 			this.setLayoutData(
 					new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-			final GridLayout gridLayout = new GridLayout();
-			gridLayout.marginWidth = 2;
-			this.setLayout(new GridLayout(3, false));
+
+			// final GridLayout gridLayout = new GridLayout();
+			// gridLayout.marginWidth = 2;
+			// this.setLayout(new GridLayout(3, false));
+
+			GridLayoutFactory.swtDefaults().numColumns(3).margins(2, 2).applyTo(this);
+
 			/*
 			RowLayout rowLayout = new RowLayout();
 			rowLayout.wrap = false;
@@ -128,19 +146,18 @@ public class ComplexFormEx {
 			*/
 			buttonSave = new Button(this, SWT.BORDER | SWT.PUSH);
 			buttonSave.setText("Save");
-			GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER,
-					false, false);
-			gridDataSave.widthHint = buttonWidth;
-			gridDataSave.heightHint = buttonHeight;
-			buttonSave.setLayoutData(gridDataSave);
+
+			GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+					.hint(buttonWidth, buttonHeight).grab(false, false)
+					.applyTo(buttonSave);
 
 			buttonDelete = new Button(this, SWT.PUSH);
 			buttonDelete.setText("Delete");
-			GridData gridDataDelete = new GridData(GridData.FILL, GridData.CENTER,
-					false, false);
-			gridDataDelete.widthHint = buttonWidth;
-			gridDataDelete.heightHint = buttonHeight;
-			buttonDelete.setLayoutData(gridDataDelete);
+
+			GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+					.hint(buttonWidth, buttonHeight).grab(false, false)
+					.applyTo(buttonDelete);
+
 			buttonDelete.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					if (parentShell != null) {
@@ -171,11 +188,10 @@ public class ComplexFormEx {
 
 			buttonCancel = new Button(this, SWT.PUSH);
 			buttonCancel.setText("Cancel");
-			GridData gridDataCancel = new GridData(GridData.FILL, GridData.CENTER,
-					false, false);
-			gridDataCancel.widthHint = buttonWidth;
-			gridDataCancel.heightHint = buttonHeight;
-			buttonCancel.setLayoutData(gridDataCancel);
+
+			GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+					.hint(buttonWidth, buttonHeight).grab(false, false)
+					.applyTo(buttonCancel);
 
 			buttonCancel.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
@@ -195,7 +211,7 @@ public class ComplexFormEx {
 
 	private static class GridComposite extends Composite {
 
-		private final static int labelWidth = 70;
+		private final static int labelWidth = 96;
 
 		public GridComposite(Composite composite) {
 			super(composite, SWT.BORDER);
@@ -247,7 +263,8 @@ public class ComplexFormEx {
 			for (String locatorKey : locators) {
 				if (data.containsKey(locatorKey)) {
 					// label the radio
-					String locatorKeyLabel = locatorKey.replace("Element", "");
+					// TODO: font size
+					String locatorKeyLabel = mapSWD2CoreSelenium.get(locatorKey);
 					final Button locatorRadio = new Button(this, SWT.RADIO);
 					locatorRadio.setSelection(true);
 					locatorRadio.setText(locatorKeyLabel);
@@ -255,7 +272,8 @@ public class ComplexFormEx {
 					locatorRadio
 							.setSelection(locatorKey.contains(data.get("ElementSelectedBy")));
 
-					locatorRadio.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
+					GridDataFactory.swtDefaults().hint(labelWidth, buttonHeight)
+							.applyTo(locatorRadio);
 					locatorRadio.addListener(SWT.Selection, listener);
 
 					final Text locatorValue = new Text(this, SWT.SINGLE | SWT.BORDER);
@@ -279,9 +297,12 @@ public class ComplexFormEx {
 				} else {
 
 					final Button locatorRadio = new Button(this, SWT.RADIO);
-					String locatorKeyLabel = locatorKey.replace("Element", "");
+					String locatorKeyLabel = mapSWD2CoreSelenium.get(locatorKey);
 					locatorRadio.setSelection(false);
-					locatorRadio.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
+					GridDataFactory.swtDefaults().hint(labelWidth, buttonHeight)
+							.applyTo(locatorRadio);
+
+					// locatorRadio.setLayoutData(new GridData(labelWidth, SWT.DEFAULT));
 					locatorRadio.setText(locatorKeyLabel);
 					locatorRadio.setData("key", locatorKey);
 					locatorRadio

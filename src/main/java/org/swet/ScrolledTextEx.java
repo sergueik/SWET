@@ -10,12 +10,15 @@ import org.eclipse.jface.layout.GridDataFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -72,17 +75,38 @@ class ScrolledTextEx {
 		styledText.setLayoutData(
 				GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
 		styledText.setText(payload);
-		Button buttonSave = new Button(shell, SWT.BORDER | SWT.PUSH);
+		
+		Composite buttonComposite = new Composite(shell, SWT.NO_FOCUS);
 
-		GridData gridDataSave = new GridData(GridData.FILL, GridData.CENTER, false,
-				false);
-		gridDataSave.widthHint = buttonWidth;
-		gridDataSave.heightHint = buttonHeight;
+		buttonComposite.setLayoutData(
+				new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 2;
+		buttonComposite.setLayout(new GridLayout(2, false));
+		
+		Button buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
 
-		buttonSave.setLayoutData(gridDataSave);
-
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
 		buttonSave.setText("Save");
 
+    Button buttonCancel = new Button(buttonComposite, SWT.PUSH);
+		buttonCancel.setText("Cancel");
+
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false)
+				.applyTo(buttonCancel);
+
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				styledText.dispose();
+				buttonComposite.dispose();
+				shell.dispose();
+			}
+		});
+
+
+    
 		shell.setSize(width, height);
 		shell.setText("Generated Source");
 		shell.addListener(SWT.Close, new Listener() {
@@ -112,10 +136,12 @@ class ScrolledTextEx {
 						ExceptionDialogEx.getInstance().render(e);
 					}
 					styledText.dispose();
+					buttonComposite.dispose();
 					shell.dispose();
 				}
 			}
 		});
+
 		try {
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
