@@ -15,6 +15,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -48,6 +49,7 @@ public class BrowserDriver {
 	private static String applicationGeckoDriverPath;
 	private static String applicationFirefoxBrowserPath;
 	private static String applicationIeDriverPath;
+	private static String applicationEdgeDriverPath;
 	private static Map<String, String> propertiesMap;
 
 	public static WebDriver initialize(String browser) {
@@ -59,6 +61,7 @@ public class BrowserDriver {
 		applicationGeckoDriverPath = propertiesMap.get("geckoDriverPath");
 		applicationFirefoxBrowserPath = propertiesMap.get("firefoxBrowserPath");
 		applicationIeDriverPath = propertiesMap.get("ieDriverPath");
+		applicationEdgeDriverPath = propertiesMap.get("edgeDriverPath");
 
 		TestConfigurationParser
 				.getConfiguration(String.format("%s/src/main/resources/%s",
@@ -74,6 +77,8 @@ public class BrowserDriver {
 			capabilities = capabilitiesChrome();
 		} else if (browser.equals("internet explorer")) {
 			capabilities = capabilitiesInternetExplorer();
+		} else if (browser.equals("egde")) {
+			capabilities = capabilitiesEdge();
 		} else if (browser.equals("android")) {
 			capabilities = capabilitiesAndroid();
 		} else if (browser.equals("safari")) {
@@ -99,6 +104,8 @@ public class BrowserDriver {
 		} else if (browser.equals("safari")) {
 			SafariOptions options = new SafariOptions();
 			driver = new SafariDriver(options);
+		} else if (browser.equals("edge")) {
+			driver = new EdgeDriver(capabilities);
 		} else if (browser.equals("chrome")) {
 			driver = new ChromeDriver(capabilities);
 		} else if (browser.equals("internet explorer")) {
@@ -174,6 +181,20 @@ public class BrowserDriver {
 	}
 
 	@SuppressWarnings("deprecation")
+	private static DesiredCapabilities capabilitiesEdge() {
+		// NOTE: the version of edge webdriver varies with the Windows 10 build version
+		// https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+		// https://www.cloudenablers.com/blog/selenium-script-for-microsoft-edge-in-windows-10/
+		final String edgeDriverPath = (applicationEdgeDriverPath == null)
+				? "C:\\Program Files (x86)\\Microsoft Web Driver\\MicrosoftWebDriver.exe"
+				: applicationGeckoDriverPath;
+		System.setProperty("webdriver.edge.driver",
+				new File(edgeDriverPath).getAbsolutePath());
+		DesiredCapabilities capabilities = DesiredCapabilities.edge();
+		return capabilities;
+	}
+
+	@SuppressWarnings("deprecation")
 	private static DesiredCapabilities capabilitiesFirefox() {
 
 		final String geckoDriverPath = (applicationGeckoDriverPath == null)
@@ -236,7 +257,7 @@ public class BrowserDriver {
 		// "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-		
+
 		ChromeOptions options = new ChromeOptions();
 
 		Map<String, Object> chromePrefs = new HashMap<>();
