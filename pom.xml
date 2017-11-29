@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a SWT port of SWD - browser based Page Element recorder</description>
-  <url>https://github.com/sergueik/swet</url>
+  <url>https://github.com/sergueik/SWET</url>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>

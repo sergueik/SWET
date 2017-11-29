@@ -1,23 +1,31 @@
-﻿
-### Info
+﻿### Info
 
 ![icon](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color.png)
 
-__Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__)of
-Dmytro Zharii and author. __SWET__ is using the
-[Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library'
-instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation (that is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/) syntax). __SWET__ also supports generating the __keyword driven framework__ in e.g. Excel spreadsheet. This is a work in progress, since each keyword driven framework has its own
- list of *keywords* it recognizes.
+__Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the
+[Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__) by Dmytro Zharii and author.
+__SWET__ is using [Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library'
+instead of Microsoft .Net Windows Forms for user interface and [Jtwig](http://jtwig.org/documentation/reference/tags/control-flow) template engine
+instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation.
+That is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/)
+syntax as well.
+
+__SWET__ also allows generating the __keyword driven framework__ flow and saving it into an Excel spreadsheet.
+This is a work in progress, since each keyword driven framework has its own list of *keywords* , currenlty __SWET__ supports the
+[SKDF](https://github.com/sergueik/SKDF) framework developed by the author.
 
 
-Therefore __SWET__ runs on Windows, Mac or Linux, 32 or 64 bit platforms.
-__SWET__ is currently beta quality: one can create a session and ealuate and save Page Element information and convert it to a
-fragment of the code in the Java or C# language; eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
+__SWET__ was tested to work on 32 or 64 bit Windows, Mac or Linux platforms.
+__SWET__ is currently beta quality: one can record, load and save sessions, update individual Page Element information,
+convert session to a code fragment in Java or C# language, or an Excel file with a Keyword Driven Framework workflow.
+Eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
 
-The application is being developed in Ecipse with [SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html),
+The __SWET__ application is being developed in Ecipse with
+[SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html) plugin,
 on Ubuntu 16.04 and Windows.
+
 For Mac / Safari testing, the [Sierra Final 10.12](https://techsviewer.com/install-macos-sierra-virtualbox-windows/) Virtual Box by TechReviews is being used.
-Currently, working with Safari browser is somewhat flaky.
+Currently, working with Safari browser is somewhat flaky but possible.
 
 The Virtualbox images are setup for Selenium 3.x testing (work in progress).
 
@@ -34,18 +42,17 @@ Continue reading for info on how to get the dev environment setup.
 
 ### Prerequisites
 The project can be compiled and run from Eclipse or standalone.
-To build the project outside of Eclipse, JDK 1.8 or later and Maven need to be installed and in the `PATH`. There launcher  scripts is  explained below.
-In the checked-in runner scripts, the Java and Maven were conveniently installed to `c:\java\` for Windows.
+To build the project outside of Eclipse, JDK 1.8 or later and Maven need to be installed and added to the `PATH`.
+There launcher  scripts is  explained below.
+In the checked-in sample runner scripts, the JDK and Maven is expected to be installed under `c:\java\` for Windows.
+and under
+`/Library/Java/JavaVirtualMachines/jdk$JAVA_VERSION.jdk/Contents/Home` on Mac, which is the default location.
 
-On the Mac, the
-JDK is expected to be installed to
-`/Library/Java/JavaVirtualMachines/jdk$JAVA_VERSION.jdk/Contents/Home` which is the default location.
-
-With the exception of one jar, the project dependencies are pulled by Maven (NOTE: this is being changed towards having no non-maven dependencies).
+All project dependencies are pulled by Maven.
 
 #### Updating the platform-specific information in the `pom.xml`
 
-The project `pom.xml` currently is uing Maven prifiles to make selection of the main `swt.jar` dependency in a platform-specific fashion:
+There are profiles in the project `pom.xml` which make selection of the platform-specific `swt.jar` dependency automatic:
 
 ```xml
     <profile>
@@ -102,7 +109,8 @@ The project `pom.xml` currently is uing Maven prifiles to make selection of the 
       </properties>
     </profile>
 ```
-The correct profile is selected automatically. If this fails to work for some reason, one will need to copy the relevant `artifactId` property definition into the
+The correct profile is likely be selected automatically. If this does not work for some reason, one will need to copy the relevant
+`artifactId` property definition into the
 ```xml
   <properties>
     <eclipse.swt.version>4.3</eclipse.swt.version>
@@ -117,12 +125,12 @@ The correct profile is selected automatically. If this fails to work for some re
     ...
 ```
 
-Due to some problem with JVM loader, these platform-dependent jars cannot be included simultaneously.
-The alternative is to package the spring-boot jar file as explained in
+Due to some problem with JVM loader, all these platform-dependent jars cannot be included simultaneously.
+The alternative is to package the spring-boot style uber-jar file as explained in
 [Multiplatform SWT](https://github.com/jendap/multiplatform-swt) project.
 Unfortulately the resulting bare-bones `multiplatform-swt-loader.jar` file is almost 10 Mb and with all dependencies the
 __SWET__ jar is over 30 Mb which is not very practical.
-Therefore,  we recommend to modify the `pom.xml` and use runner scripts to compile it as explained below.
+Therefore,  we recommend to rely on maven topick the required dependency and to modify the `pom.xml` and use runner scripts to compile it as explained below.
 
 #### Runner Scripts
 After the project is cloned or downloaded from from github, one will find the following `run.*` scripts helpful to compile and start the application:
@@ -139,11 +147,11 @@ On Umix /Mac, run Bash script
 ./run.sh
 ```
 
-The script will download the dependency jar(s), that is(are) not hosted on Maven Central repository,
+The script has ability to also download the dependency jar(s), which are not hosted on Maven Central repository ( *this is no longer necessary* ),
 compile and package the project using maven
 and run the application jar from the `target` directory.
 
-The script configuration has to be updated with the actual paths to Java and Maven:
+The script configuration needs to be updated with the actual paths to Java and Maven:
 ```powershell
 $MAVEN_VERSION = '3.3.9'
 $JAVA_VERSION = '1.8.0_101'
@@ -175,6 +183,25 @@ java.exe -cp target/swet-0.0.5-SNAPSHOT.jar:target/lib/* org.swet.SimpleToolBarE
 ```
 - without changing to the source, there is little reason to recompile it every time. Adding the `META-INF/MANIFEST.MF`
 is a work in progress.
+
+Paths to the browsers and browser drivers are read from the `src/main.resources/applciation.properties` file
+```java
+# username / password not currently used - reserved for Sauce Labs or browserStack
+username: username
+password: password
+# no quotes should be put around paths. Trailing whitespace is ok
+# use the following syntax for environment variables: ${USERPROFILE}\\desktop\\chromedriver.exe
+chromeDriverPath: ${USERPROFILE}\\desktop\\chromedriver.exe
+# chromeDriverPath: ${HOME}/Downloads/chromedriver
+geckoDriverPath: c:/java/selenium/geckodriver.exe
+firefoxBrowserPath: C:/Program Files (x86)/Mozilla Firefox/firefox.exe
+# firefoxBrowserPath: /Applications/Firefox.app/Contents/MacOS/firefox
+geckoDriverPath: c:/java/selenium/geckodriver.exe
+# geckoDriverPath: ${HOME}/Downloads/geckodriver
+ieDriverPath: c:/java/selenium/IEDriverServer.exe
+edgeDriverPath: C:/Program Files (x86)/Microsoft Web Driver/MicrosoftWebDriver.exe
+```
+Eventually other common formats: YAML, JSON, POI or Java properties file - will be supported.
 
 
 ### Recording the page elements with SWET.
@@ -211,12 +238,10 @@ The flow export toolbar buton ![flowchart](https://github.com/sergueik/SWET/blob
 converts SWET recording into a Keyword Driven Framework flow that can be later saved in the Excel file.
 There exist a big number of Keyword-Driven Frameworks with Selenium, e.g. [sergueik/skdf](https://github.com/sergueik/skdf). These allow storing the test flow in e.g. Excel file in a format:
 ![icon](https://github.com/sergueik/SWET/blob/master/screenshots/table_editor_view.png)
-The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form. 
+The actual keyword (like *clickButton*, *getText* , *verifyAttr*  or something else) of the step is not known during the recording, and has to be filled using this form.
 The rest of the columns gets read from the saved recording.
 It is possible to save the resul as Excel file:
 ![icon](https://github.com/sergueik/SWET/blob/master/screenshots/exported_flow.png)
-
-
 
 The preferences button
 ![preferences](https://github.com/sergueik/SWET/blob/master/src/main/resources/images/gear_36.png)
@@ -226,23 +251,23 @@ Currently the browser and template selection are configurable, one also can set 
 
 Currently project is hardcoded to start using Chrome browser on Windows, Safari on Mac and Firefox on the rest of platforms -  browser choice is configurable.
 Saving / loading the YAML configuration file is a work in progress.
-Eventually other common formats: YAML, JSON, POI or Java properties file - will be supported.
+
 
 #### Operation
-Both __SWD__ and __SWET__ inject certain Javascript code `ElementSearch.js` into the page, that the user can interct with with the mouse right-click.
+Both __SWD__ and __SWET__ inject certain Javascript code `ElementSearch.js` into the page, that the user may interact with with the ![SWD Mouse Action](https://github.com/sergueik/SWET/blob/master/screenshots/ctrl_right_button_bw_32.png) CTRL key + mouse right-click.
 After injecting the script the IDE waits polling for the speficic
-`document.swdpr_command` object to be present on that page. This object is created  by the `ElementSearch.js`
-when user selects the specific element on the page he is interested to access in the test script,
-and confirms the selection by entering the name of the element and clicking the 'Add Element' button.
-The `document.swdpr_command` object will contain certain properties of the selected element:
+`document.swdpr_command` object to be created on that page. This object is created  by the `ElementSearch.js`
+after user selects the specific element on the page, fills the form defining the *name* of that element
+and confirms the selection by clicking the 'Add Element' button.
+The `document.swdpr_command` object received by SWD application will contain the following properties of the selected element:
 
-* Legacy "indexed" XPath, that looks like `/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/a[1]/img[1]` - all node attributes are ignored, sibling counts are evaluated.
-* Attribute-extended XPath that looks like `//a[@href="/script/answers"]/img[@src="https://codeproject.net/images/question.png" and @alt = 'post an article' ]`
-* Firebug-style cssSelector, that look like `ul.nav-links li.nav-links__item div.central.featured.logo-wrapper > img.central.featured-logo` every classes node has all class attributes attached.
-* Element text (transalted under the hood into XPath `[contains()]` expression).
+* Legacy "indexed" xpath, that looks like `/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/a[1]/img[1]` - all node attributes are ignored, sibling counts are evaluated.
+* Attribute-extended xpath that looks like `//a[@href="/script/answers"]/img[@src="https://codeproject.net/images/question.png" and @alt = 'post an article' ]`
+* Firebug-style css selector, that look like `ul.nav-links li.nav-links__item div.central.featured.logo-wrapper > img.central.featured-logo` every classes node has all class attributes attached.
+* Element text (translated under the hood into XPath `[contains()]` expression).
 * Input for Angular Protractor-specific locators `repeater`, `binding`, `model`, `repeaterRow` etc. (WIP)
 * Element ID (when available)
-* Element tag name, to help constructing locators for Element text like
+* Element tag name, which is often helpful together with element's text content in constructing element  locators like
 ```c#
 IWebElement element = driver.FindElements(By.TagName("{{TAG_NAME}}")).First(o => String.Compare("{{TEXT}}", o.Text, StringComparison.InvariantCulture) == 0);
 ```
@@ -263,8 +288,8 @@ div#blueBarDOMInspector > div._53jh > div.loggedout_menubar_container >
 div.clearfix.loggedout_menubar > div.lfloat._ohe >
 h1 > a > i.fb_logo.img.sp_Mlxwn39jCAE.sx_896ebb
 ```
-Currently __SWET__ does not have an algorythm for shortening these locators.
-Adding smart locator generators is a work in progress.
+Currently __SWET__ has no algorythm for shortening such locators.
+Adding a smart locator trimmers is a work in progress.
 
 ### Dependencies Versions
 
@@ -309,15 +334,15 @@ http://www.slimjetbrowser.com/chrome/, for other browsers the download locations
 This is why it may be worthwhile setting up Virtual Box e.g. [selenium-fluxbox](https://github.com/sergueik/selenium-fluxbox) to run the appliation with fixed downlevel browser versions.
 
 ### Safari Testing
-If you have Mac OSX 10.12.X Sierra / Safari 10.X , then the Apple Safari driver would be installed automatically,
+If you have Mac 10.12.X Sierra / Safari 10.X , then the Apple Safari driver would be installed automatically,
 but it does not seems to work with Selenium __2.53__.
-For earlier releases, you have to downgrade the Selenium version in the `pom.xml` to __2.48__
+For earlier OS X releases, you have to downgrade the Selenium version in the `pom.xml` to __2.48__
 then follow the [Running Selenium Tests in Safari Browser](http://toolsqa.com/selenium-webdriver/running-tests-in-safari-browser).
 
 ### Code Templates
 
-The code is generated using SWIG templates which look like
-```
+The code is generated using [jtwig](http://jtwig.org/) templates which look like
+```java
 {#
 template: Basic Page Objects (Java)
 #}
@@ -337,12 +362,17 @@ class TestPage (Page) {
 {% endif -%}
 ```
 Any language/framework can be supported. The comment
-```
+```java
 {#
-template: Basic Page Objects (Java)
+template: Name of the Template
 #}
 ```
-is reserved for future use, when tester is allowed to provide the path to template during session configuration.
+is reserved for the name of the template, when tester is allowed to provide the path to template during session configuration -  every teplate file `template.twig` will be found and added to the formatter selection
+(one may need to reopen the configuration dialog to actually see the new templates). For the example above it will be shown as
+
+![Ubuntu Example](https://github.com/sergueik/SWET/blob/master/screenshots/config_browse.png)
+![Ubuntu Example](https://github.com/sergueik/SWET/blob/master/screenshots/config_browse_result.png)
+
 
 ### Configuration, saving and loading
 
@@ -422,15 +452,18 @@ The `username` and `password` entris are not currently used - these are reserved
   * [Examples](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/CatalogSWT-JFace-Eclipse.htm)
   * [Examples](https://github.com/ReadyTalk/avian-swt-examples)
   * [swt-bling](https://github.com/ReadyTalk/swt-bling)
+  * [int32at/sweaty](https://github.com/int32at/sweaty)
   * [Multiplatform SWT](https://github.com/jendap/multiplatform-swt)
   * [SWT Single Jar Packager](https://github.com/mchr3k/swtjar)
   * [SWT custom preference dialog](https://github.com/prasser/swtpreferences) - needs too recent versions of SWT and JFace
   * [SWT multiple choice dialogs](https://github.com/prasser/swtchoices)
   * [Misc JFace/SWT UI elements and utils](https://github.com/Albertus82/JFaceUtils)
   * [SWT System Tray](https://github.com/dorkbox/SystemTray)
+  * [Console](https://github.com/dorkbox/Console)
+  * [Notify](https://github.com/dorkbox/Notify)
   * [System Tray](https://github.com/Vladimir-Novick/System-Tray)
   * [SWT/WMI](https://github.com/ctron/wmisample)
-  * [SWT Tools](https://github.com/bp-FLN/SWT-Tools) 
+  * [SWT Tools](https://github.com/bp-FLN/SWT-Tools)
   * [SWTools](https://github.com/Sanglinard26/SWTools)
   * [vogellacompany/swt-custom-widgets](https://github.com/vogellacompany/swt-custom-widgets) eclipse plugin
   * [SWT Browser component based recorder](https://github.com/itspanzi/swt-browser-recorder-spike)

@@ -475,7 +475,7 @@ public class SwetTest {
 		wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
 		try {
 			wait.until(ExpectedConditions.visibilityOf(element));
-			utils.executeScript("arguments[0].style.border='3nnpx solid yellow'",
+			utils.executeScript("arguments[0].style.border='3px solid yellow'",
 					element);
 			Thread.sleep(highlight_interval);
 			utils.executeScript("arguments[0].style.border=''", element);
