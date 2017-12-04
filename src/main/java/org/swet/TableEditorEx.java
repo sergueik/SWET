@@ -188,10 +188,13 @@ public class TableEditorEx {
 										switch (e.detail) {
 										case SWT.TRAVERSE_RETURN:
 											item.setText(column, text.getText());
-											// FALL THROUGH
+											text.dispose();
+											e.doit = false;
+											break;
 										case SWT.TRAVERSE_ESCAPE:
 											text.dispose();
 											e.doit = false;
+											break;
 										}
 										break;
 									}
