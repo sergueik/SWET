@@ -187,7 +187,7 @@ public class BrowserDriver {
 		// https://www.cloudenablers.com/blog/selenium-script-for-microsoft-edge-in-windows-10/
 		final String edgeDriverPath = (applicationEdgeDriverPath == null)
 				? "C:\\Program Files (x86)\\Microsoft Web Driver\\MicrosoftWebDriver.exe"
-				: applicationGeckoDriverPath;
+				: applicationEdgeDriverPath;
 		System.setProperty("webdriver.edge.driver",
 				new File(edgeDriverPath).getAbsolutePath());
 		DesiredCapabilities capabilities = DesiredCapabilities.edge();

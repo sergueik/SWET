@@ -25,6 +25,7 @@
     <jface.version>3.3.0-I20070606-0010</jface.version>
     <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
     <guava.version>22.0</guava.version>
+    <hamcrest-all.version>1.3</hamcrest-all.version>
     <java.version>1.8</java.version>
     <jna-platform.version>4.5.0</jna-platform.version>
     <jtwig-core.version>5.86.0.RELEASE</jtwig-core.version>
@@ -47,6 +48,12 @@
     <!--   <build_os>win64</build_os> -->
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <version>${hamcrest-all.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jtwig</groupId>
       <artifactId>jtwig-core</artifactId>
