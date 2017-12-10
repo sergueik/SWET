@@ -2,9 +2,16 @@ package org.swet;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+// import static org.hamcrest.CoreMatchers.*;
+// NOTE: a need to switch to hamcrest-all.jar and Matchers 
+// just for resolving method 'containsInAnyOrder'
+import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -21,15 +28,45 @@ public class TestConfigurationParserTest {
 
 	private static boolean skipHeaders = true;
 	private static String defaultConfig = "test.configuration";
+	private static String configuPath = String.format("%s/src/main/resources/%s",
+			System.getProperty("user.dir"), defaultConfig);
+	private static List<Object> result = new ArrayList<>();
+	private static Object[] expected = new Object[] { "A1", "A2", "A3", "B1",
+			"B2", "B3", "C1", "C2", "C3", "D1", "D2", "D3" /* , "E1" */ };
 
+	@BeforeClass
+	public static void beforeSuiteMethod() throws Exception {
+		result = flatten(TestConfigurationParser.getConfiguration(configuPath));
+	}
+
+	// @Ignore
 	@Test
-	public void mainTest() {
-		String configuPath = String.format("%s/src/main/resources/%s",
-				System.getProperty("user.dir"), defaultConfig);
-		List<Object> result = flatten(
-				TestConfigurationParser.getConfiguration(configuPath));
-		assertThat(result.toArray(), is(new Object[] { "A1", "A2", "A3", "B1", "B2",
-				"B3", "C1", "C2", "C3", "D1", "D2", "D3" }));
+	public void orderInsensitiveTest() {
+		// NORE: would fail
+		// assertEquals(result.toArray(), Arrays.asList(data));
+		Set<Object> dataSet = new HashSet<Object>(Arrays.asList(expected));
+		assertTrue(new HashSet<Object>(result).containsAll(dataSet));
+	}
+
+	// @Ignore
+	@Test
+	public void orderSensitiveTest() {
+		// order-sensitive
+		assertThat(result.toArray(), is(expected));
+	}
+
+	// @Ignore
+	// https://www.javaworld.com/article/2074689/core-java/hamcrest-containing-matchers.html
+	@Test
+	public void hasItemsTest() {
+		assertThat(new HashSet<Object>(result), hasItems(expected));
+	}
+
+	// @Ignore
+	// https://www.javaworld.com/article/2074689/core-java/hamcrest-containing-matchers.html
+	@Test
+	public void containsInAnyOrderTest() {
+		assertThat(new HashSet<Object>(result), containsInAnyOrder(expected));
 	}
 
 	// https://stackoverflow.com/questions/40186270/java-flatten-an-array-using-recursion
