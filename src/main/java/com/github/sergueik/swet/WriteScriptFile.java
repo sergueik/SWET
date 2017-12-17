@@ -1,4 +1,7 @@
 package com.github.sergueik.swet;
+/**
+ * Copyright 2014 - 2017 Serguei Kouzmine
+ */
 
 import org.apache.commons.lang3.StringEscapeUtils;
 

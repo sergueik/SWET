@@ -1,4 +1,7 @@
 package com.github.sergueik.swet;
+/**
+ * Copyright 2014 - 2017 Serguei Kouzmine
+ */
 
 import java.util.Arrays;
 import java.util.HashMap;

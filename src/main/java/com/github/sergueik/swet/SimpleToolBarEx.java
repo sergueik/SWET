@@ -3,6 +3,7 @@ package com.github.sergueik.swet;
 /**
  * Copyright 2014 - 2017 Serguei Kouzmine
  */
+
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
