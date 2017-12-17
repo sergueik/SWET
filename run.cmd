@@ -12,7 +12,7 @@ PATH=%JAVA_HOME%\bin;%M2%;%PATH%
 set TARGET=%CD%\target
 set PACKAGE_NAME=swet
 set PACKAGE_VERSION=0.0.8-SNAPSHOT
-set MAIN_APP_PACKAGE=org.swet
+set MAIN_APP_PACKAGE=com.github.sergueik.swet
 set MAIN_APP_CLASS=%1
 if NOT "%MAIN_APP_CLASS%" == "" shift
 if "%MAIN_APP_CLASS%"=="" set MAIN_APP_CLASS=SimpleToolBarEx

@@ -1,4 +1,4 @@
-!!org.swet.Configuration
+!!package com.github.sergueik.swet.Configuration
 browserConfiguration: null
 browsers: null
 created: null

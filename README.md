@@ -174,12 +174,12 @@ MAVEN_VERSION='3.3.9'
 
 After the project compiled once, it can be run the jar through the command (assuming java is in the `PATH`):
 ```cmd
-java.exe -cp target\swet-0.0.5-SNAPSHOT.jar;target\lib\* org.swet.SimpleToolBarEx
+java.exe -cp target\swet-0.0.5-SNAPSHOT.jar;target\lib\* com.github.sergueik.swet.SimpleToolBarEx
 ```
 or
 
 ```bash
-java.exe -cp target/swet-0.0.5-SNAPSHOT.jar:target/lib/* org.swet.SimpleToolBarEx
+java.exe -cp target/swet-0.0.5-SNAPSHOT.jar:target/lib/* com.github.sergueik.swet.SimpleToolBarEx
 ```
 - without changing to the source, there is little reason to recompile it every time. Adding the `META-INF/MANIFEST.MF`
 is a work in progress.
@@ -435,6 +435,10 @@ The `username` and `password` entris are not currently used - these are reserved
 * UI improvements adding more form elements
 * Testing with Safari and variety of IE / Edge browsers
 
+License
+
+__SWET__is licensed under Apache License, Version 2.0
+
 ### Links
 
 #### SWT
@@ -489,12 +493,17 @@ The `username` and `password` entris are not currently used - these are reserved
   * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
 
 #### Existing Selenium Test Generation plugins
-  * [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
-  * [ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
-  * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome) -
-  * [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
-  * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
-  * [SnapTest](https://www.snaptest.io/) (no source on github -  have to download the `.crx` and find it in `%USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\Extensions\aeofjocnhdlleichkjbaibdbicpcddhp\0.6.9_0\manifest.json` )
+
+  *  [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)
+  *  [CITS IE Toolbar (c#)](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-IE-Toolbar)
+  *  [CITS-Chrome-Extension](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Chrome-Extension)
+  *   [CITS-Firefox-Addon](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Firefox-Addon)
+  *  [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
+  * [ ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
+   *  [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome)
+   *  [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
+   *  [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
+   *  [SnapTest](https://www.snaptest.io/) (no source on github -  have to download the `.crx` and find it in `%USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\Extensions\aeofjocnhdlleichkjbaibdbicpcddhp\0.6.9_0\manifest.json` )
 
 #### Selenium Locator Strategies
 

@@ -7,7 +7,7 @@ MAVEN_VERSION='3.3.9'
 PACKAGE_NAME='swet'
 PACKAGE_VERSION='0.0.8-SNAPSHOT'
 
-MAIN_APP_PACKAGE='org.swet'
+MAIN_APP_PACKAGE='com.github.sergueik.swet'
 MAIN_APP_CLASS=${1:-SimpleToolBarEx}
 
 DOWNLOAD_EXTERNAL_JAR=false

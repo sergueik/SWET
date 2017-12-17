@@ -49,7 +49,7 @@ $env:PATH = "${env:JAVA_HOME}\bin;${env:M2};${env:PATH}"
 $env:JAVA_OPTS = $env:MAVEN_OPTS = @( '-Xms256m', '-Xmx512m')
 $PACKAGE_NAME = 'swet'
 $PACKAGE_VERSION = '0.0.8-SNAPSHOT'
-$MAIN_APP_PACKAGE = 'org.swet'
+$MAIN_APP_PACKAGE = 'com.github.sergueik.swet'
 # external dependencies
 $DOWNLOAD_EXTERNAL_JAR = $false
 $DEPENDENCIES = @{ 'opal' = '1.0.4'; }

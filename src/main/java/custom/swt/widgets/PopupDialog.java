@@ -59,8 +59,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.swet.OSUtils;
-import org.swet.Utils;
+import com.github.sergueik.swet.OSUtils;
+import com.github.sergueik.swet.Utils;
 
 /**
  * A lightweight, transient dialog that is popped up to show contextual or
