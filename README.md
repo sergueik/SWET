@@ -253,7 +253,6 @@ Currently project is hardcoded to start using Chrome browser on Windows, Safari 
 Alternative  browser can be selected during the session, but this preference is not saved.
 Saving / loading the session configuration from the YAML configuration file is a work in progress.
 
-
 #### Operation
 Both __SWD__ and __SWET__ inject certain Javascript code `ElementSearch.js` into the page, that the user may interact with with the ![SWD Mouse Action](https://github.com/sergueik/SWET/blob/master/screenshots/ctrl_right_button_bw_32.png) CTRL key + mouse right-click.
 After injecting the script the IDE waits polling for the speficic
@@ -490,12 +489,13 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
 
 #### Existing Selenium Test Generation plugins
+  * [top 10 test automation instruments](http://automated-testing.info/t/top-10-instrumentov-avtomatizaczii-testirovaniya-2018/17404)(in russian)
   * [links in the Selenium IDE retirement memo](https://blog.testproject.io/2017/09/03/farewell-selenium-ide/)
-  *  [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)
-  *  [CITS IE Toolbar (c#)](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-IE-Toolbar)
-  *  [CITS-Chrome-Extension](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Chrome-Extension)
-  *   [CITS-Firefox-Addon](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Firefox-Addon)
-  *  [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
+  * [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)
+  * [CITS IE Toolbar (c#)](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-IE-Toolbar)
+  * [CITS-Chrome-Extension](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Chrome-Extension)
+  * [CITS-Firefox-Addon](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Firefox-Addon)
+  * [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
   * [ ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
    *  [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome)
    *  [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
