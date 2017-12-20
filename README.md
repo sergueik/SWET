@@ -249,8 +249,9 @@ opens the configuration dialog
 ![config](https://github.com/sergueik/SWET/blob/master/screenshots/config.png)
 Currently the browser and template selection are configurable, one also can set the base URL.
 
-Currently project is hardcoded to start using Chrome browser on Windows, Safari on Mac and Firefox on the rest of platforms -  browser choice is configurable.
-Saving / loading the YAML configuration file is a work in progress.
+Currently project is hardcoded to start using Chrome browser on Windows, Safari on Mac and Firefox on the rest of platforms. 
+Alternative  browser can be selected during the session, but this preference is not saved.
+Saving / loading the session configuration from the YAML configuration file is a work in progress.
 
 
 #### Operation
@@ -361,13 +362,13 @@ class TestPage (Page) {
   private WebElement element;
 {% endif -%}
 ```
-Any language/framework can be supported. The comment
+Any language syntax can be supported. The comment
 ```java
 {#
 template: Name of the Template
 #}
 ```
-is reserved for the name of the template, when tester is allowed to provide the path to template during session configuration -  every teplate file `template.twig` will be found and added to the formatter selection
+is reserved for the name of the template, when creator is allowed to provide the path to template during session configuration -  every teplate file `template.twig` will be found and added to the formatter selection
 (one may need to reopen the configuration dialog to actually see the new templates). For the example above it will be shown as
 
 ![Ubuntu Example](https://github.com/sergueik/SWET/blob/master/screenshots/config_browse.png)
@@ -429,11 +430,7 @@ geckoDriverPath: c:/java/selenium/geckodriver.exe
 firefoxBrowserPath: c:/Program Files (x86)/Mozilla Firefox/firefox.exe
 ieDriverPath: c:/java/selenium/IEDriverServer.exe
 ```
-The `username` and `password` entris are not currently used - these are reserved for Sauce Labs or browserStack.
-
-### Work in Progress
-* UI improvements adding more form elements
-* Testing with Safari and variety of IE / Edge browsers
+The `username` and `password` entris are not currently used - these are reserved for possible users with accounts on Sauce Labs or browserStack.
 
 License
 
@@ -493,7 +490,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
 
 #### Existing Selenium Test Generation plugins
-
+  * [links in the Selenium IDE retirement memo](https://blog.testproject.io/2017/09/03/farewell-selenium-ide/)
   *  [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)
   *  [CITS IE Toolbar (c#)](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-IE-Toolbar)
   *  [CITS-Chrome-Extension](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Chrome-Extension)
@@ -530,6 +527,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [geckodriver](http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/)
   * [jProcesses](https://github.com/profesorfalken/jProcesses)
   * [jedi-tester/Ext2POI](https://github.com/jedi-tester/Ext2POI)
+  * [free java license-management projects](http://freshmeat.sourceforge.net/tags/license-management)
 
 ### Note
 

@@ -570,6 +570,7 @@ public class SimpleToolBarEx {
 			/*
 			 *  prompt the user confirmation dialog
 			 */
+
 			ChoiceItem[] items = new ChoiceItem[] {
 					new ChoiceItem("Exit and save my project",
 							"Save your work in progress and exit the program"),
@@ -590,34 +591,69 @@ public class SimpleToolBarEx {
 			dialog.setShowArrows(false);
 
 			int choice = dialog.open();
-
-			if (choice == -1
-					/* dialog closed */ || choice == 3 /* return to the program */) {
+			System.err.println("Selected: " + items[choice].getText());
+			switch (choice) {
+			case -1: /* dialog closed */
 				updateStatus("Ready");
 				shutdownTool.setEnabled(true);
-			} else {
-				if (choice != 3) {
-					if (driver != null) {
-						try {
-							BrowserDriver.close();
-						} catch (Exception e) {
-							System.err.println("Ignored exception: " + e.toString());
-						}
-					}
-					if (choice == 2) {
-						updateStatus("Ready");
-						shutdownTool.setEnabled(true);
-					}
-					if (choice == 0 || choice == 1) {
-						if (choice == 0) {
-							// Save the session
-							saveWorkspace(shell);
-						}
-						shell.getDisplay().dispose();
-						System.exit(0);
+				break;
+			case 0: /* Save the session and exit */
+				saveWorkspace(shell);
+				shell.getDisplay().dispose();
+				System.exit(0);
+				break;
+			case 1: /* exit without saving */
+				shell.getDisplay().dispose();
+				System.exit(0);
+				break;
+			case 2: /* close the browser */
+				if (driver != null) {
+					try {
+						BrowserDriver.close();
+					} catch (Exception e) {
+						System.err.println("Ignored exception: " + e.toString());
+					} finally {
+						launchTool.setEnabled(true);
 					}
 				}
+				updateStatus("Ready");
+				shutdownTool.setEnabled(true);
+				break;
+			case 3: /* return to the program */
+				updateStatus("Ready");
+				shutdownTool.setEnabled(true);
+				break;
 			}
+			/*
+						if (choice == -1 || choice == 3) {
+							updateStatus("Ready");
+							shutdownTool.setEnabled(true);
+						} else {
+							if (choice != 3) {
+								if (driver != null) {
+									try {
+										BrowserDriver.close();
+									} catch (Exception e) {
+										System.err.println("Ignored exception: " + e.toString());
+									} finally {
+										launchTool.setEnabled(true);
+									}
+								}
+								if (choice == 2) {
+									updateStatus("Ready");
+									shutdownTool.setEnabled(true);
+								}
+								if (choice == 0 || choice == 1) {
+									if (choice == 0) {
+										// Save the session
+										saveWorkspace(shell);
+									}
+									shell.getDisplay().dispose();
+									System.exit(0);
+								}
+							}
+							
+						}*/
 		});
 
 		updateStatus("Ready");
