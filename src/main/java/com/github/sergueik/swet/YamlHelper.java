@@ -80,7 +80,7 @@ public class YamlHelper {
 		}
 		Configuration config = null;
 		try (InputStream in = Files.newInputStream(Paths.get(fileName))) {
-			config = yaml.loadAs(in, Configuration.class);
+			config = yaml.loadAs(in, com.github.sergueik.swet.Configuration.class);
 			// TODO: better method naming
 			YamlHelper.saveConfiguration(config);
 
@@ -123,26 +123,31 @@ public class YamlHelper {
 
 		// System.err.println("Testing date format: " + dateFormat.toPattern());
 
-		if (config instanceof Configuration) {
+		if (config instanceof com.github.sergueik.swet.Configuration) {
 			try {
+				System.err.println("Adding save date: "
+						+ dateFormat.parse(dateFormat.format(calendar.getTime())));
 				((Configuration) config).setUpdated(
 						dateFormat.parse(dateFormat.format(calendar.getTime())));
 			} catch (java.text.ParseException e) {
 				System.err.println("Ignoring date parse exception: " + e.toString());
-				((Configuration) config).setUpdated(new Date());
+				((com.github.sergueik.swet.Configuration) config)
+						.setUpdated(new Date());
 			}
 		}
 		if (fileName != null) {
 			try {
 				Writer out = new OutputStreamWriter(new FileOutputStream(fileName),
 						"UTF8");
+				System.err.println("Dumping the config to: " + fileName);
+
 				yaml.dump(config, out);
 				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			// System.err.println(yaml.dump(config));
+			System.err.println("Dumping the config: \n" + yaml.dump(config));
 		}
 	}
 }

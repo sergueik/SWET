@@ -119,6 +119,7 @@ public class SimpleToolBarEx {
 	private Label statusMessage;
 	private TemplateCache templateCache = TemplateCache.getInstance();
 	private Utils utils = Utils.getInstance();
+	private ToolItem launchTool = null;
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
 	private Breadcrumb bc;
@@ -291,7 +292,7 @@ public class SimpleToolBarEx {
 
 		ToolBar toolBar = new ToolBar(shell, SWT.BORDER | SWT.HORIZONTAL);
 
-		ToolItem launchTool = new ToolItem(toolBar, SWT.PUSH);
+		launchTool = new ToolItem(toolBar, SWT.PUSH);
 		launchTool.setImage(iconCache.get("launch icon"));
 		launchTool.setToolTipText("Launch browser");
 
@@ -599,23 +600,17 @@ public class SimpleToolBarEx {
 				break;
 			case 0: /* Save the session and exit */
 				saveWorkspace(shell);
+				closeBrowser();
 				shell.getDisplay().dispose();
 				System.exit(0);
 				break;
 			case 1: /* exit without saving */
+				closeBrowser();
 				shell.getDisplay().dispose();
 				System.exit(0);
 				break;
 			case 2: /* close the browser */
-				if (driver != null) {
-					try {
-						BrowserDriver.close();
-					} catch (Exception e) {
-						System.err.println("Ignored exception: " + e.toString());
-					} finally {
-						launchTool.setEnabled(true);
-					}
-				}
+				closeBrowser();
 				updateStatus("Ready");
 				shutdownTool.setEnabled(true);
 				break;
@@ -624,36 +619,6 @@ public class SimpleToolBarEx {
 				shutdownTool.setEnabled(true);
 				break;
 			}
-			/*
-						if (choice == -1 || choice == 3) {
-							updateStatus("Ready");
-							shutdownTool.setEnabled(true);
-						} else {
-							if (choice != 3) {
-								if (driver != null) {
-									try {
-										BrowserDriver.close();
-									} catch (Exception e) {
-										System.err.println("Ignored exception: " + e.toString());
-									} finally {
-										launchTool.setEnabled(true);
-									}
-								}
-								if (choice == 2) {
-									updateStatus("Ready");
-									shutdownTool.setEnabled(true);
-								}
-								if (choice == 0 || choice == 1) {
-									if (choice == 0) {
-										// Save the session
-										saveWorkspace(shell);
-									}
-									shell.getDisplay().dispose();
-									System.exit(0);
-								}
-							}
-							
-						}*/
 		});
 
 		updateStatus("Ready");
@@ -662,6 +627,18 @@ public class SimpleToolBarEx {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
+		}
+	}
+
+	private void closeBrowser() {
+		if (driver != null) {
+			try {
+				BrowserDriver.close();
+			} catch (Exception e) {
+				System.err.println("Ignored exception: " + e.toString());
+			} finally {
+				launchTool.setEnabled(true);
 			}
 		}
 	}
@@ -683,11 +660,15 @@ public class SimpleToolBarEx {
 			if (config == null) {
 				config = new Configuration();
 			}
+			System.err.println("Save unordered test data");
 			config.setElements(testData);
 			// Save unordered, order by step index when generating script, drawing
 			// buttons etc.
-			YamlHelper.saveConfiguration(config, path);
+			System.err.println("YamlHelper  to save Configuration");
+
+			YamlHelper.saveConfiguration(config, configFilePath);
 		} else {
+			System.err.println("Save dialog does not return the path to save.");
 			if (path != null) {
 				configFilePath = new String(path);
 			}
