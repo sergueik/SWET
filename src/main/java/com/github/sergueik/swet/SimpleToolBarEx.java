@@ -635,6 +635,7 @@ public class SimpleToolBarEx {
 		if (driver != null) {
 			try {
 				BrowserDriver.close();
+				driver = null;
 			} catch (Exception e) {
 				System.err.println("Ignored exception: " + e.toString());
 			} finally {
@@ -865,7 +866,6 @@ public class SimpleToolBarEx {
 				}
 			});
 		} catch (Exception e) {
-			// show the error dialog with exception trace
 			ExceptionDialogEx.getInstance().render(e);
 			if (driver != null) {
 				try {
@@ -988,8 +988,8 @@ public class SimpleToolBarEx {
 
 		display = new Display();
 
-		System.err.println("Running on " + OSUtils.getOsName() + " "
-				+ Pattern.compile(" +").split(OSUtils.getOsName())[0]);
+		// System.err.println("Running on " + OSUtils.getOsName() + " "
+		// + Pattern.compile(" +").split(OSUtils.getOsName())[0]);
 		SimpleToolBarEx simpleToolBarEx = new SimpleToolBarEx();
 		simpleToolBarEx.setCodeGenImage("code_128.png");
 
