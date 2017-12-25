@@ -46,9 +46,14 @@ public class TestConfigurationParserTest {
 
 	// @Ignore
 	@Test
+	public void junitBuiltIArrayTest() {
+		assertArrayEquals(expected, result.toArray());
+	}
+
+	// @Ignore
+	@Test
 	public void orderInsensitiveTest() {
 		// NORE: would fail
-		// assertEquals(result.toArray(), Arrays.asList(data));
 		Set<Object> dataSet = new HashSet<Object>(Arrays.asList(expected));
 		assertTrue(new HashSet<Object>(result).containsAll(dataSet));
 	}
@@ -60,8 +65,8 @@ public class TestConfigurationParserTest {
 		assertThat(result.toArray(), is(expected));
 	}
 
-	// @Ignore
 	// https://www.javaworld.com/article/2074689/core-java/hamcrest-containing-matchers.html
+	// @Ignore
 	@Test
 	public void hasItemsTest() {
 		assertThat(new HashSet<Object>(result), hasItems(expected));

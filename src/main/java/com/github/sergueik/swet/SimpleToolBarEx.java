@@ -628,7 +628,7 @@ public class SimpleToolBarEx {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
-		}
+		}	
 	}
 
 	private void closeBrowser() {
