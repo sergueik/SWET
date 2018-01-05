@@ -13,15 +13,21 @@ import java.nio.file.Paths;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
+// for generating the Keywords handled by KeywordLibrary
+import com.github.sergueik.jprotractor.KeywordLibrary;
 
 /**
  * Common utilities for YAML configuration file  for Selenium WebDriver Elementor Tool (SWET)
@@ -34,6 +40,9 @@ public class YamlHelper {
 	private static Yaml yaml = null;
 	private static Calendar calendar;
 	private static String yamlFile = null;
+	private static boolean debug = true;
+
+	private static Map<String, String> keywordTable = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, Map<String, String>> loadData(String fileName) {
@@ -150,4 +159,5 @@ public class YamlHelper {
 			System.err.println("Dumping the config: \n" + yaml.dump(config));
 		}
 	}
+
 }

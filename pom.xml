@@ -48,6 +48,12 @@
     <!--   <build_os>win64</build_os> -->
   </properties>
   <dependencies>
+    <!-- experimental -->
+    <dependency>
+     <groupId>com.github.sergueik.jprotractor</groupId>
+      <artifactId>skdf_jprotractor</artifactId>
+      <version>0.9-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-all</artifactId>

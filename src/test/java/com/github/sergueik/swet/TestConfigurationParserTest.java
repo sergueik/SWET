@@ -53,7 +53,7 @@ public class TestConfigurationParserTest {
 	// @Ignore
 	@Test
 	public void orderInsensitiveTest() {
-		// NORE: would fail
+		// NOTE: would fail
 		Set<Object> dataSet = new HashSet<Object>(Arrays.asList(expected));
 		assertTrue(new HashSet<Object>(result).containsAll(dataSet));
 	}
