@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,65 +42,172 @@ import com.github.sergueik.swet.YamlHelper;
 public class YamlHelperTest {
 
 	private static Map<String, String> keywordTable = new HashMap<>();
+	private static Set<String> supportedKeywords = new HashSet<>();
 	private static String yamlFile = null;
+	private static String internalConfiguration = String.format(
+			"%s/src/main/resources/%s", System.getProperty("user.dir"),
+			"internalConfiguration.yaml");
+	private static List<String> keywordList = new ArrayList<>();
+	private static Object[] keywordArray = new Object[] {}; // empty
+	private static List<String> supportedKeywordList = new ArrayList<>();
+
+	private static List<Object> result = new ArrayList<>();
+
+	private static boolean debug = false;
+
 	private static String[] helpTopics = { "Testsuite Program creation",
 			"Keyword-driven Framework flow creation",
 			"Saving and restoring sessions" };
 	private static Map<String, String> help;
 
 	@BeforeClass
-	public static void setup() throws IOException {
+	public static void loadFromYaml() throws IOException {
 		yamlFile = String.format("%s/src/main/resources/%s",
 				System.getProperty("user.dir"), "help.yaml");
 		help = YamlHelper.loadHelp(yamlFile);
-	}
-
-	private static String internalConfiguration = String.format(
-			"%s/src/main/resources/%s", System.getProperty("user.dir"),
-			"internalConfiguration.yaml");
-	private static List<Object> result = new ArrayList<>();
-
-	@Test
-	public void loadKeywordTableTest() {
-
 		Map<String, Map<String, String>> data = YamlHelper
 				.loadData(internalConfiguration);
 
 		// selectorFromSWD = internalConfiguration.get("SWDSelectors");
 		keywordTable = data.get("Keywords");
-		System.err.format("Loaded from YAML: %d keys\n",
-				keywordTable.keySet().size());
-		for (String keyword : keywordTable.keySet()) {
-			System.err.println("[" + keyword + "]");
-		}
-		Set<String> supportedKeywords = new HashSet<>();
 		supportedKeywords = KeywordLibrary.getKeywords();
-		System.err.format("Loaded from JAR: %d keys\n", supportedKeywords.size());
-		for (String keyword : supportedKeywords) {
-			System.err.println("[" + keyword + "]");
-		}
+	}
 
-		// NOTE: `containsAll` does not show the outliers
+	@BeforeClass
+	public static void convertSetsToArrays() {
+
+		for (String k : keywordTable.keySet()) {
+			keywordList.add(k);
+		}
+		Collections.sort(keywordList);
+		System.err.format("Loaded %d keys from YAML:\n",
+				keywordTable.keySet().size());
+		if (debug) {
+			System.err.println(keywordList);
+		}
+		// e.g. CLOSE_BROSWER will not be in the keywordTable
+
+		for (String k : supportedKeywords) {
+			supportedKeywordList.add(k);
+		}
+		Collections.sort(supportedKeywordList);
+		System.err.format("Loaded %d keys from JAR:\n", supportedKeywords.size());
+		if (debug) {
+			System.err.println(supportedKeywordList);
+			/*
+			for (String k : supportedKeywordList) {
+				System.err.println("[" + k + "]");
+			}
+			*/
+		}
+		keywordArray = new Object[keywordList.size()];
+		keywordList.toArray(keywordArray);
+		if (debug) {
+			System.err.println("Keyword array:");
+			for (int cnt = 0; cnt != keywordArray.length; cnt++) {
+				System.err.println("[" + keywordArray[cnt] + "]");
+			}
+		}
+	}
+
+	// NOTE: `containsAll` takes sets and does not show the outliers
+	@Test
+	public void supportedKeywordsContainsKeywordTableTest() {
+
 		assertTrue(supportedKeywords.containsAll(keywordTable.keySet()));
 		assertFalse(keywordTable.keySet().containsAll(supportedKeywords));
-		// e.g. CLOSE_BROSWER
-		// `containsInAnyOrder` shows the mismatches - was: not matched:
-		// "CLEAR_TEXT", "SWITCH_FRAME"
-		Set<String> basic = new HashSet<String>();
-		basic.add("CLEAR_TEXT");
-		result = Arrays.asList(supportedKeywords /* keywordTable.keySet()*/);
+	}
 
-		// Actually the name is misleading - the set are expected to match
-		assertThat(result, hasItems(new Object[] { supportedKeywords }));
-		// assertThat(result, hasItems(new Object[] { keywordTable.keySet() }));
+	// get prepared to sets disappear from public visibility
+	@Test
+	public void supportedKeywordsContainsKeywordTableWithArraysTest() {
+		assertTrue(new HashSet<Object>(supportedKeywordList)
+				.containsAll(new HashSet<Object>(keywordList)));
+		assertFalse(new HashSet<Object>(keywordList)
+				.containsAll(new HashSet<Object>(supportedKeywordList)));
+	}
 
+	// NOTE: `hasItems` prints information about mismatches in a funny way
+	@Test
+	public void supportedKeywordsHasItemsKeywordTableTest() {
+		assertThat(new HashSet<Object>(supportedKeywordList),
+				hasItems(keywordArray));
+		// NOTE: Type sensitive:
+		// the following would fail:
+		// assertThat(new HashSet<Object>(supportedKeywordList),
+		// hasItems(keywordList));
 		/*
-		assertThat(supportedKeywords,
-				containsInAnyOrder(new Object[] { supportedKeywords }));
-		assertThat(keywordTable.keySet(), containsInAnyOrder(basic));
-		assertThat(supportedKeywords,
-				containsInAnyOrder(new Object[] { keywordTable.keySet() }));
-				*/
+				keywordArray[0] = "XXXX";
+				assertThat(new HashSet<Object>(supportedKeywordList),
+						hasItems(keywordArray));
+						*/
+	}
+
+	// `containsInAnyOrder` shows the mismatches, but appear to fail when
+	// first arg has elements absent from the second arg
+	@Test
+	public void loadKeywordTableTest() {
+
+		assertThat(new HashSet<Object>(keywordList),
+				containsInAnyOrder(keywordArray));
+		/*
+		keywordList.add("XXXX");
+		assertThat(new HashSet<Object>(keywordList),
+				containsInAnyOrder(keywordArray));
+		// Expected: iterable over [
+		// "CLEAR_TEXT", "CLICK", "CLICK_BUTTON", "CLICK_CHECKBOX",
+		// "CLICK_LINK", "CLICK_RADIO", "CLOSE_BROWSER", "CREATE_BROWSER",
+		// "ELEMENT_PRESENT", "GET_ATTR", "GET_TEXT", "GOTO_URL", "SELECT_OPTION",
+		// "SEND_KEYS", "SET_TEXT", "SWITCH_FRAME", "VERIFY_ATTR",
+		// "VERIFY_TEXT", "WAIT"] in any order
+		// but: Not matched: "XXXX"
+		assertThat(new HashSet<Object>(supportedKeywordList),
+				containsInAnyOrder(keywordArray));
+		*/
+	}
+
+	@Test
+	public void regexMatchKeywordTableTest() {
+		Pattern pattern = Pattern
+				.compile("(?:" + StringUtils.join(keywordList, "|") + ")");
+		System.err.println("Pattern:\n" + pattern.toString());
+		String input = StringUtils.join(supportedKeywordList.toArray(), "|");
+		System.err.println("Input:\n" + input);
+		Matcher matcher = pattern.matcher(input);
+		assertTrue(matcher.find());
+	}
+
+	@Test
+	public void regexNotMatchKeywordTableTest() {
+		Pattern pattern = Pattern
+				.compile("^(?!" + StringUtils.join(keywordList, "|") + ").*$");
+		System.err.println("Pattern:\n" + pattern.toString());
+		/*
+		 NOTE: expressions like below will not help
+		  		Pattern pattern = Pattern
+				.compile("^.*\\|(?!" + StringUtils.join(keywordList, "|") + ")\\|.*$");
+		
+		 */
+		/*
+		String input = StringUtils.join(supportedKeywordList.toArray(), "|");
+		System.err.println("Input:\n" + input);
+		Matcher matcher = pattern.matcher(input);
+		assertFalse(matcher.find());
+		*/
+		boolean result = false;
+		for (String item : supportedKeywordList) {
+			if (debug) {
+				System.err.println("Input:\n" + item);
+			}
+			Matcher matcher = pattern.matcher(item);
+			result |= matcher.find();
+			if (debug) {
+				if (result) {
+					System.err.println("Found outlier: " + item);
+				}
+			}
+		}
+		assertTrue(result);
 	}
 
 	@Test
