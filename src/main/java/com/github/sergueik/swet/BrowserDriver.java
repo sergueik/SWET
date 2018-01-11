@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
-
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -22,8 +19,6 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -74,8 +69,6 @@ public class BrowserDriver {
 		browser = browser.toLowerCase();
 		if (browser.equals("firefox")) {
 			capabilities = capabilitiesFirefox();
-		} else if (browser.equals("phantomjs")) {
-			capabilities = capabilitiesPhantomJS();
 		} else if (browser.equals("chrome")) {
 			capabilities = capabilitiesChrome();
 		} else if (browser.equals("internet explorer")) {
@@ -102,8 +95,6 @@ public class BrowserDriver {
 			}
 		} else if (browser.equals("firefox")) {
 			driver = new FirefoxDriver(capabilities);
-		} else if (browser.equals("phantomjs")) {
-			driver = new PhantomJSDriver(capabilities);
 		} else if (browser.equals("safari")) {
 			SafariOptions options = new SafariOptions();
 			driver = new SafariDriver(options);
@@ -129,18 +120,6 @@ public class BrowserDriver {
 		SafariOptions options = new SafariOptions();
 		options.setUseCleanSession(true);
 		capabilities.setCapability(SafariOptions.CAPABILITY, options);
-		return capabilities;
-	}
-
-	private static DesiredCapabilities capabilitiesPhantomJS() {
-
-		// TODO: provide configurable path
-		DesiredCapabilities capabilities = new DesiredCapabilities("phantomjs", "",
-				Platform.ANY);
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
-				new String[] { "--web-security=false", "--ssl-protocol=any",
-						"--ignore-ssl-errors=true", "--local-to-remote-url-access=true",
-						"--webdriver-loglevel=INFO" });
 		return capabilities;
 	}
 
@@ -185,7 +164,8 @@ public class BrowserDriver {
 
 	@SuppressWarnings("deprecation")
 	private static DesiredCapabilities capabilitiesEdge() {
-		// NOTE: the version of edge webdriver varies with the Windows 10 build version
+		// NOTE: the version of edge webdriver varies with the Windows 10 build
+		// version
 		// https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
 		// https://www.cloudenablers.com/blog/selenium-script-for-microsoft-edge-in-windows-10/
 		final String edgeDriverPath = (applicationEdgeDriverPath == null)
@@ -231,7 +211,8 @@ public class BrowserDriver {
 
 		capabilities.setCapability("marionette", false);
 		FirefoxProfile profile = new FirefoxProfile();
-		profile.setEnableNativeEvents(true);
+		// no longer exists in Selenium
+		// profile.setEnableNativeEvents(true);
 		profile.setAcceptUntrustedCertificates(true);
 		profile.setAssumeUntrustedCertificateIssuer(false);
 
@@ -270,17 +251,28 @@ public class BrowserDriver {
 				+ System.getProperty("file.separator");
 		chromePrefs.put("download.default_directory", downloadFilepath);
 		chromePrefs.put("enableNetwork", "true");
-		options.setExperimentalOption("prefs", chromePrefs);
-		options.addArguments("allow-running-insecure-content");
-		options.addArguments("allow-insecure-localhost");
-		options.addArguments("enable-local-file-accesses");
-		options.addArguments("disable-notifications");
-		// options.addArguments("start-maximized");
-		options.addArguments("browser.download.folderList=2");
-		options.addArguments(
-				"--browser.helperApps.neverAsk.saveToDisk=image/jpg,text/csv,text/xml,application/xml,application/vnd.ms-excel,application/x-excel,application/x-msexcel,application/excel,application/pdf");
-		options.addArguments("browser.download.dir=" + downloadFilepath);
-		// options.addArguments("user-data-dir=/path/to/your/custom/profile");
+		// ignore failures in unsupported methods with Selenium 3.8.1 
+		try {
+			options.addArguments("allow-running-insecure-content");
+			options.addArguments("allow-insecure-localhost");
+			options.addArguments("enable-local-file-accesses");
+			options.addArguments("disable-notifications");
+			// options.addArguments("start-maximized");
+			options.addArguments("browser.download.folderList=2");
+			options.addArguments(
+					"--browser.helperApps.neverAsk.saveToDisk=image/jpg,text/csv,text/xml,application/xml,application/vnd.ms-excel,application/x-excel,application/x-msexcel,application/excel,application/pdf");
+			options.addArguments("browser.download.dir=" + downloadFilepath);
+			// options.addArguments("user-data-dir=/path/to/your/custom/profile");
+
+		} catch (java.lang.NoSuchMethodError e) {
+			System.err.println("Exception (ignored) " + e.toString());
+		}
+
+		try {
+			options.setExperimentalOption("prefs", chromePrefs);
+		} catch (java.lang.NoSuchMethodError e) {
+			System.err.println("Exception (ignored) " + e.toString());
+		}
 		capabilities.setBrowserName(DesiredCapabilities.chrome().getBrowserName());
 		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 		capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
