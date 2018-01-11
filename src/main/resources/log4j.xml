@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
+  <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %m%n"/>
+    </layout>
+    <param name="Target" value="System.err"/>
+  </appender>
+  <appender name="file" class="org.apache.log4j.RollingFileAppender">
+    <param name="append" value="false"/>
+    <param name="maxFileSize" value="1MB"/>
+    <param name="maxBackupIndex" value="10 "/>
+    <!-- NOTE: ${user.dir} propertry does not work -->
+    <param name="file" value="SWET.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+    </layout>
+  </appender>
+  <!--
+  https://wiki.apache.org/logging-log4j/Log4jXmlFormat
+  <logger name="console">
+    <level value="info"/> 
+  </logger>
+  -->
+  <root>
+    <level value="DEBUG"/>
+    <appender-ref ref="file"/>
+    <level value="INFO"/>
+    <appender-ref ref="console"/>
+  </root>
+</log4j:configuration>

@@ -68,6 +68,8 @@ import org.passer.ChoicesDialog;
 
 import com.github.sergueik.swet.ExceptionDialogEx;
 import com.github.sergueik.swet.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Main form for Selenium WebDriver Elementor Tool (SWET)
@@ -90,6 +92,8 @@ public class SimpleToolBarEx {
 	private Map<String, Image> iconCache = new HashMap<>();
 	private static final int IMAGE_SIZE = 32;
 	private Configuration config = null;
+	private static final Logger logger = LogManager
+			.getLogger(SimpleToolBarEx.class);
 	private static Map<String, Boolean> browserStatus = new HashMap<>();
 	private static String configFilePath; // TODO: rename
 	static Map<String, String> browserDefaults = new HashMap<>();
@@ -281,7 +285,8 @@ public class SimpleToolBarEx {
 					getImage(String.format("images/%s", testsuiteImage)));
 		} catch (Exception e) {
 
-			System.err.println("Cannot load images: " + e.getMessage());
+			// System.err.println("Cannot load images: " + e.getMessage());
+			logger.error("Cannot load images: " + e.getMessage());
 			System.exit(1);
 		}
 
@@ -371,8 +376,10 @@ public class SimpleToolBarEx {
 						shell);
 				for (String key : testData.keySet()) {
 					String jsonData = utils.writeDataJSON(testData.get(key), "{}");
-					System.err.println(
-							String.format("Sending the key %s", key /*, jsonData */ ));
+					logger
+							.info(String.format("Sending the key %s", key /*, jsonData */ ));
+					// System.err.println(
+					// String.format("Sending the key %s", key /*, jsonData */ ));
 					tableEditor.setData(key, jsonData);
 				}
 				tableEditor.render();
@@ -387,7 +394,8 @@ public class SimpleToolBarEx {
 		launchTool.addListener(SWT.Selection, event -> {
 			launchTool.setEnabled(false);
 			String browser = configData.get("Browser");
-			System.err.println("Browser: " + browser);
+			// System.err.println("Browser: " + browser);
+			logger.info(String.format("Launching the %s browser", browser));
 			updateStatus(String.format("Launching the %s browser", browser));
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
@@ -421,7 +429,10 @@ public class SimpleToolBarEx {
 				String templateResourcePath = templateCache
 						.getItem(templateCache.approxLookup(configData.get("Template")));
 				if (templateResourcePath == null) {
-					System.err.println(
+					// System.err.println(
+					// "Using the default template: " + defaultTemplateResourcePath);
+
+					logger.info(
 							"Using the default template: " + defaultTemplateResourcePath);
 					renderTemplate.setTemplateName(defaultTemplateResourcePath);
 				} else {
@@ -451,8 +462,8 @@ public class SimpleToolBarEx {
 			dialog.setFilterExtensions(filterExtensions);
 			configFilePath = dialog.open();
 			if (configFilePath != null) {
-
-				System.err.println("Loading " + configFilePath);
+				logger.info("Loading " + configFilePath);
+				// System.err.println("Loading " + configFilePath);
 				config = YamlHelper.loadConfiguration(configFilePath);
 				testData = config.getElements();
 
@@ -592,7 +603,8 @@ public class SimpleToolBarEx {
 			dialog.setShowArrows(false);
 
 			int choice = dialog.open();
-			System.err.println("Selected: " + items[choice].getText());
+			logger.info("Selected: " + items[choice].getText());
+			// System.err.println("Selected: " + items[choice].getText());
 			switch (choice) {
 			case -1: /* dialog closed */
 				updateStatus("Ready");
@@ -628,7 +640,7 @@ public class SimpleToolBarEx {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
-		}	
+		}
 	}
 
 	private void closeBrowser() {
@@ -637,7 +649,8 @@ public class SimpleToolBarEx {
 				BrowserDriver.close();
 				driver = null;
 			} catch (Exception e) {
-				System.err.println("Ignored exception: " + e.toString());
+				logger.debug("Exception (ignored): " + e.toString());
+				// System.err.println("Exception (ignored): " + e.toString());
 			} finally {
 				launchTool.setEnabled(true);
 			}
@@ -661,15 +674,17 @@ public class SimpleToolBarEx {
 			if (config == null) {
 				config = new Configuration();
 			}
-			System.err.println("Save unordered test data");
+			// System.err.println("Save unordered test data");
+			logger.info("Saving unordered test data");
 			config.setElements(testData);
 			// Save unordered, order by step index when generating script, drawing
 			// buttons etc.
-			System.err.println("YamlHelper  to save Configuration");
-
+			// System.err.println("Save configuration YAML in " + configFilePath);
+			logger.info("Save configuration YAML in " + configFilePath);
 			YamlHelper.saveConfiguration(config, configFilePath);
 		} else {
-			System.err.println("Save dialog does not return the path to save.");
+			logger.warn("Save dialog returns no path info.");
+			// System.err.println("Save dialog returns no path info.");
 			if (path != null) {
 				configFilePath = new String(path);
 			}
@@ -714,7 +729,8 @@ public class SimpleToolBarEx {
 						e.printStackTrace();
 					}
 					if (driver.getCurrentUrl().indexOf(URL) != 0) {
-						System.err.println("Signaling URL change ");
+						logger.info("Signaling URL change.");
+						// System.err.println("Signaling URL change ");
 						browserStatus.replace("runaway", true);
 						break;
 					}
@@ -730,7 +746,8 @@ public class SimpleToolBarEx {
 
 	private String readVisualSearchResult(final String payload,
 			Optional<Map<String, String>> parameters) {
-		System.err.println("Processing payload: " + payload);
+		logger.debug("Processing payload: " + payload);
+		// System.err.println("Processing payload: " + payload);
 		Boolean collectResults = parameters.isPresent();
 		Map<String, String> collector = (collectResults) ? parameters.get()
 				: new HashMap<>();
@@ -763,17 +780,21 @@ public class SimpleToolBarEx {
 				elementData = new HashMap<>();
 				name = readVisualSearchResult(payload, Optional.of(elementData));
 				if (name == null || name.isEmpty()) {
-					System.err.println("Rejected unfinished visual search");
+					logger.info("Rejected unfinished visual search.");
+					// System.err.println("Rejected unfinished visual search");
 				} else {
-					System.err.println(String
+					logger.info(String
 							.format("Received element data of the element: '%s'", name));
+					// System.err.println(String
+					// .format("Received element data of the element: '%s'", name));
 					elementData.put("ElementPageURL", getCurrentUrl());
 					waitingForData = false;
 					break;
 				}
 			}
 			if (browserStatus.get("runaway")) {
-				System.err.println("Detected URL change");
+				logger.info("Detected URL change");
+				// System.err.println("Detected URL change");
 				browserRunaway = true;
 				waitingForData = false;
 			}
@@ -781,7 +802,8 @@ public class SimpleToolBarEx {
 				try {
 					// TODO: add the alternative code to
 					// bail if waited long enough already
-					System.err.println("Waiting: ");
+					// System.err.println("Waiting: ");
+					logger.info("Waiting: ");
 					Thread.sleep(1000);
 				} catch (InterruptedException exception) {
 				}
@@ -828,7 +850,8 @@ public class SimpleToolBarEx {
 			Thread.sleep(highlight_interval);
 			utils.executeScript("arguments[0].style.border=''", element);
 		} catch (InterruptedException e) {
-			System.err.println("Ignored: " + e.toString());
+			logger.warn("Exception (ignored): " + e.toString());
+			// System.err.println("Exception (ignored): " + e.toString());
 		}
 	}
 
@@ -871,6 +894,8 @@ public class SimpleToolBarEx {
 				try {
 					BrowserDriver.close();
 				} catch (Exception ex) {
+					logger.warn("Exception (ignored): " + ex.toString());
+					// System.err.println("Exception (ignored): " + ex.toString());
 					System.err.println("Ignored exception: " + ex.toString());
 				}
 			}
@@ -923,7 +948,8 @@ public class SimpleToolBarEx {
 		item.addListener(SWT.MouseDown, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				System.err.println("MouseDown Button: " + event.button);
+				logger.info("MouseDown Button: " + event.button);
+				// System.err.println("MouseDown Button: " + event.button);
 				if (event.button == 3) {
 				}
 			}
@@ -936,8 +962,10 @@ public class SimpleToolBarEx {
 				assertThat(stepKeys, hasItem(commandId));
 				assertTrue(testData.containsKey(commandId));
 				Map<String, String> elementData = testData.get(commandId);
-				System.err.println(
-						String.format("Clicked %s / %s", item.getText(), commandId));
+				logger
+						.info(String.format("Clicked %s / %s", item.getText(), commandId));
+				// System.err.println(
+				// String.format("Clicked %s / %s", item.getText(), commandId));
 				shell.setData("CurrentCommandId", commandId);
 				shell.setData("updated", false);
 				// spawn a separate shell for editing the element attributes
@@ -976,8 +1004,10 @@ public class SimpleToolBarEx {
 
 	private void updateStatus(String newStatus) {
 		// no HORIZONTAL ELLIPSIS in code page 437
-		System.err.println(String.format("%s%s", newStatus,
+		logger.info(String.format("%s%s", newStatus,
 				(osName.toLowerCase().startsWith("windows")) ? "..." : "\u2026"));
+		// System.err.println(String.format("%s%s", newStatus,
+		// (osName.toLowerCase().startsWith("windows")) ? "..." : "\u2026"));
 		this.statusMessage.setText(String.format("%s\u2026", newStatus));
 		this.statusMessage.pack();
 		this.shell.pack();
