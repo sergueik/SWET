@@ -22,8 +22,14 @@ REM compile
 call mvn -Dmaven.test.skip=true package install
 
 REM run
-REM NOTE: shift does not affect the value of %* 
-java -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.xml -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
+REM NOTE: shift does not affect the value of %*
+java -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
 %MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% %1 %2 %3 %4 %5 %6 %7 %8 %9
+REM ERROR StatusLogger No log4j2 configuration file found. Using default configuration: logging only errors to the console.
+echo on
+java -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
+-cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
+%MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% %1 %2 %3 %4 %5 %6 %7 %8 %9
+@echo off
 :endlocal
 goto :EOF
