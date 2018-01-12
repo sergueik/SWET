@@ -7,12 +7,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Category;
 
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
@@ -29,6 +33,8 @@ public class RenderTemplate {
 	private JtwigTemplate template = null;
 
 	public void setTemplateName(String data) {
+		utils.initializeLogger();
+		logger.info("Initialized logger.");
 		this.templateName = data;
 	}
 
@@ -64,8 +70,15 @@ public class RenderTemplate {
 		return testData;
 	}
 
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(RenderTemplate.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+
+	private static Utils utils = Utils.getInstance();
+
 	public String renderTest() {
-		Map<String, Map<String, String>> testData = new HashMap<>();
+			Map<String, Map<String, String>> testData = new HashMap<>();
 		testData = createSampleTestData();
 		return renderTest(testData);
 	}

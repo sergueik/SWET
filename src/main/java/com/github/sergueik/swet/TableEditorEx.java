@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,6 +58,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.github.sergueik.swet.ExceptionDialogEx;
 import com.github.sergueik.swet.Utils;
+import org.apache.log4j.Category;
 
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
@@ -93,7 +96,15 @@ public class TableEditorEx {
 	private static String defaultYamlFile = "sample.yaml";
 	private static String path = null;
 
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(SimpleToolBarEx.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+
 	TableEditorEx(Display parentDisplay, Shell parent) {
+		utils.initializeLogger();
+		logger.info("Initialized logger.");
+
 		display = (parentDisplay != null) ? parentDisplay : new Display();
 		shell = new Shell(display);
 
@@ -113,7 +124,7 @@ public class TableEditorEx {
 
 	public void render() {
 		if (yamlFilePath != null) {
-			System.err.println("Loading " + yamlFilePath);
+			logger.info("Loading " + yamlFilePath);
 			Configuration _testCase = YamlHelper.loadConfiguration(yamlFilePath);
 			testData = _testCase.getElements();
 			// YamlHelper.printConfiguration(_testCase);
@@ -242,8 +253,7 @@ public class TableEditorEx {
 		buttonSave.setText("Save");
 
 		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
-				.hint(buttonWidth, buttonHeight).grab(false, false)
-				.applyTo(buttonSave);
+				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
 
 		// label = new Label(shell, SWT.BORDER);
 
@@ -335,10 +345,9 @@ public class TableEditorEx {
 		Map<String, String> _configData = new HashMap<>();
 		utils.readData(value, Optional.of(_configData));
 		testData.put(key, _configData);
-		/*
-		System.err.println(String.format("setData %s -> \n %s", key,
+		logger.info(String.format("setData %s -> \n %s", key,
 				utils.writeDataJSON(testData.get(key), "{}")));
-		*/
+
 	}
 
 	public static void main(String[] args) {
@@ -418,8 +427,7 @@ public class TableEditorEx {
 			int column = (int) combo.getData("column");
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
-			// System.err.println(String.format("Updating %s = %s", oldValue,
-			// newValue));
+			logger.info(String.format("Updating %s = %s", oldValue, newValue));
 			if (selectorFromSWD.containsValue(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
@@ -471,8 +479,7 @@ public class TableEditorEx {
 			int column = (int) combo.getData("column");
 			String oldValue = ((TableItem) combo.getData("item")).getText(column);
 			String newValue = combo.getText();
-			// System.err.println(String.format("Updating %s = %s", oldValue,
-			// newValue));
+			logger.info(String.format("Updating %s = %s", oldValue, newValue));
 			if (keywordTable.containsKey(newValue)) {
 				((TableItem) combo.getData("item")).setText(column, newValue);
 			}
@@ -528,15 +535,15 @@ public class TableEditorEx {
 					CellType type = cell.getCellTypeEnum();
 
 					if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
-						System.err.print(cell.getStringCellValue() + " ");
+						logger.info(cell.getStringCellValue() + " ");
 					} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
-						System.err.print(cell.getNumericCellValue() + " ");
+						logger.info(cell.getNumericCellValue() + " ");
 					} else {
-						System.err.print("? ");
+						logger.info("? ");
 						// TODO: Boolean, Formula, Errors
 					}
 				}
-				System.out.println();
+				logger.info("");
 			}
 		}
 
@@ -556,15 +563,15 @@ public class TableEditorEx {
 					cell = (XSSFCell) cells.next();
 					CellType type = cell.getCellTypeEnum();
 					if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
-						System.err.print(cell.getStringCellValue() + " ");
+						logger.info(cell.getStringCellValue() + " ");
 					} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
-						System.err.print(cell.getNumericCellValue() + " ");
+						logger.info(cell.getNumericCellValue() + " ");
 					} else {
 						// TODO: Boolean, Formula, Errors
-						System.err.print("? ");
+						logger.info("? ");
 					}
 				}
-				System.out.println();
+				logger.info("");
 			}
 		}
 
@@ -600,8 +607,7 @@ public class TableEditorEx {
 				for (int col = 0; col < rowData.size(); col++) {
 					XSSFCell cell = rowObj.createCell(col);
 					cell.setCellValue(rowData.get(col));
-					System.err
-							.println("Writing " + row + " " + col + "  " + rowData.get(col));
+					logger.info("Writing " + row + " " + col + "  " + rowData.get(col));
 				}
 			}
 			FileOutputStream fileOut = new FileOutputStream(excelFileName);

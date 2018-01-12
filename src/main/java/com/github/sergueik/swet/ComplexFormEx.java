@@ -4,10 +4,14 @@ package com.github.sergueik.swet;
  */
 
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.log4j.Category;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -52,6 +56,11 @@ public class ComplexFormEx {
 	private static Map<String, String> elementData = new HashMap<>();
 	private static Utils utils = Utils.getInstance();
 
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(ComplexFormEx.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+
 	// selectorTable keys
 	private static Map<String, String> mapSWD2CoreSelenium = new HashMap<>();
 	static {
@@ -65,6 +74,8 @@ public class ComplexFormEx {
 	}
 
 	ComplexFormEx(Display parentDisplay, Shell parent) {
+		utils.initializeLogger();
+		logger.info("Initialized logger.");
 		display = (parentDisplay != null) ? parentDisplay : new Display();
 		shell = new Shell(display);
 		if (parent != null) {
@@ -109,8 +120,7 @@ public class ComplexFormEx {
 						parentShell.setData("result", result);
 						parentShell.setData("updated", true);
 					} else {
-						System.err
-								.println("Handle Close: updating the parent shell: " + result);
+						logger.info("Handle Close: updating the parent shell: " + result);
 					}
 				}
 				shell.dispose();
@@ -179,7 +189,7 @@ public class ComplexFormEx {
 					updated = true;
 					if (parentShell != null) {
 						if (result != "{}") {
-							// System.err.println("Handle OK: updating the parent shell: " +
+							// logger.info("Handle OK: updating the parent shell: " +
 							// result);
 							parentShell.setData("result", result);
 							parentShell.setData("updated", true);
@@ -206,7 +216,7 @@ public class ComplexFormEx {
 			buttonCancel.addMenuDetectListener(new MenuDetectListener() {
 				@Override
 				public void menuDetected(MenuDetectEvent event) {
-					// System.err.println("Context menu ");
+					// logger.debug("Context menu ");
 				}
 			});
 		}
@@ -321,7 +331,7 @@ public class ComplexFormEx {
 						@Override
 						public void modifyText(ModifyEvent event) {
 							Text text = (Text) event.widget;
-							// System.err.println(text.getText());
+							// logger.debug(text.getText());
 						}
 					});
 				}

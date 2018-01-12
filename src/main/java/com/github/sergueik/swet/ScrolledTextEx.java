@@ -8,7 +8,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Formatter;
+import java.util.Locale;
 
+import org.apache.log4j.Category;
 import org.eclipse.jface.layout.GridDataFactory;
 
 import org.eclipse.swt.SWT;
@@ -51,7 +54,17 @@ class ScrolledTextEx {
 	public JavaLineStyler lineStyler = new JavaLineStyler();
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(RenderTemplate.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+
+	private static Utils utils = Utils.getInstance();
+
 	ScrolledTextEx(Display parentDisplay, Shell parent) {
+
+		utils.initializeLogger();
+		logger.info("Initialized logger.");
 
 		// NOTE: org.eclipse.swt.SWTException: Invalid thread access
 		display = (parentDisplay != null) ? parentDisplay : new Display();
@@ -78,7 +91,7 @@ class ScrolledTextEx {
 		styledText.setLayoutData(
 				GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
 		styledText.setText(payload);
-		
+
 		Composite buttonComposite = new Composite(shell, SWT.NO_FOCUS);
 
 		buttonComposite.setLayoutData(
@@ -86,14 +99,14 @@ class ScrolledTextEx {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 2;
 		buttonComposite.setLayout(new GridLayout(2, false));
-		
+
 		Button buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
 
 		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
 				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
 		buttonSave.setText("Save");
 
-    Button buttonCancel = new Button(buttonComposite, SWT.PUSH);
+		Button buttonCancel = new Button(buttonComposite, SWT.PUSH);
 		buttonCancel.setText("Cancel");
 
 		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
@@ -108,8 +121,6 @@ class ScrolledTextEx {
 			}
 		});
 
-
-    
 		shell.setSize(width, height);
 		shell.setText("Generated Source");
 		shell.addListener(SWT.Close, new Listener() {

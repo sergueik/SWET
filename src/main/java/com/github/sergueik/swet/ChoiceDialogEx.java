@@ -10,13 +10,29 @@ import org.eclipse.swt.widgets.Shell;
 import org.passer.ChoiceItem;
 import org.passer.ChoicesDialog;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Formatter;
+import java.util.Locale;
+import java.util.Properties;
+
+import org.apache.log4j.Category;
+import org.apache.log4j.PropertyConfigurator;
+
 public class ChoiceDialogEx {
+
 	private static Display display;
 	private static Shell shell;
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(ChoiceDialogEx.class);
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		// Create choices
+		initializeLogger();
 		display = new Display();
 		shell = new Shell(display);
 		ChoiceItem[] items = new ChoiceItem[] {
@@ -36,11 +52,25 @@ public class ChoiceDialogEx {
 		dialog.setShowArrows(false);
 
 		int choice = dialog.open();
-
+		logger.info("Choice: " + choice);
 		if (choice == -1) {
 			// Choice selected, will be one of {0,1,2}
 		} else {
 
+		}
+	}
+
+	private static void initializeLogger() {
+		Properties logProperties = new Properties();
+		String log4J_properties = String.format("%s/%s",
+				System.getProperty("user.dir"), "src/main/resources/log4J.properties");
+
+		try {
+			logProperties.load(new FileInputStream(log4J_properties));
+			PropertyConfigurator.configure(logProperties);
+			logger.info("Initialize Logger.");
+		} catch (IOException e) {
+			throw new RuntimeException("Fail to load: " + log4J_properties);
 		}
 	}
 }

@@ -2,12 +2,18 @@ package com.github.sergueik.swet;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+
 import java.io.File;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.log4j.Category;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -61,7 +67,16 @@ public class ConfigFormEx {
 	private static Map<String, Map<String, String>> configOptions = new HashMap<>();
 	private static Map<String, String> templates = new HashMap<>();
 
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(ConfigFormEx.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
+
 	ConfigFormEx(Display parentDisplay, Shell parent) {
+
+		utils.initializeLogger();
+		logger.info("Initialized logger.");
+
 		Map<String, String> browserOptions = new HashMap<>();
 		for (String browser : new ArrayList<String>(Arrays.asList(new String[] {
 				"Chrome", "Firefox", "Internet Explorer", "Edge", "Safari" }))) {
@@ -149,13 +164,13 @@ public class ConfigFormEx {
 						&& !(templateLabel.matches(".*\\(embedded\\)"))) {
 					data = configOptions.get("Template").get(templateLabel);
 					configKey = "Template Path";
-					System.err.println(String.format(
+					logger.info(String.format(
 							"Saving the selected user template path \"%s\": \"%s\"",
 							templateLabel, data));
 				} else {
 					configKey = "Template";
 					data = templateLabel;
-					System.err.println(String.format(
+					logger.info(String.format(
 							"Saving the selected embedded template name: \"%s\"",
 							templateLabel));
 
@@ -170,7 +185,6 @@ public class ConfigFormEx {
 					parentShell.setData("CurrentConfig", result);
 					parentShell.setData("updated", true);
 				}
-				// System.err.println("Updated parent shell: " + result);
 			}
 		});
 
@@ -248,8 +262,7 @@ public class ConfigFormEx {
 					Text sender = (Text) event.widget;
 					String value = sender.getText();
 					String key = (String) sender.getData("key");
-					// System.err.println(String.format("Updating %s = %s",
-					// (String) key, value));
+					logger.info(String.format("Updating %s = %s", (String) key, value));
 					if (data.containsKey(key)) {
 						data.replace(key, value);
 					} else {
@@ -276,7 +289,7 @@ public class ConfigFormEx {
 					Text text = directory;
 					if (dir != null) {
 						text.setText(dir);
-						System.err.println(String.format("Browser: %s = %s",
+						logger.info(String.format("Browser: %s = %s",
 								(String) text.getData("key"), text.getText()));
 					}
 				}
@@ -305,9 +318,9 @@ public class ConfigFormEx {
 					String[] items = configOptions.get(configKey).keySet()
 							.toArray(new String[0]);
 					configValue.setItems(items);
-					// System.err.println(String.format("Setting index of %s to %d",
-					// configData.get(configKey),
-					// Arrays.asList(items).indexOf(configData.get(configKey))));
+					logger.info(String.format("Setting index of %s to %d",
+							configData.get(configKey),
+							Arrays.asList(items).indexOf(configData.get(configKey))));
 					configValue
 							.select(Arrays.asList(items).indexOf(configData.get(configKey)));
 					configValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -366,7 +379,7 @@ public class ConfigFormEx {
 							@Override
 							public void modifyText(ModifyEvent event) {
 								Text text = (Text) event.widget;
-								System.err.println(String.format("%s = %s",
+								logger.info(String.format("%s = %s",
 										(String) text.getData("key"), text.getText()));
 								if (data.containsKey((String) text.getData("key"))) {
 									data.replace((String) text.getData("key"), text.getText());
