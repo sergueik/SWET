@@ -3,6 +3,10 @@ package com.github.sergueik.swet;
  * Copyright 2014 - 2017 Serguei Kouzmine
  */
 
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,8 +43,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.log4j.Category;
@@ -55,6 +64,14 @@ public class Utils {
 
 	private static Utils instance = new Utils();
 	private WebDriver driver;
+	private WebDriverWait wait;
+	private int flexibleWait = 5;
+	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
+
+	public void setFlexibleWait(int flexibleWait) {
+		this.flexibleWait = flexibleWait;
+		this.wait = new WebDriverWait(this.driver, flexibleWait);
+	}
 
 	public void setDriver(WebDriver driver) {
 		this.driver = driver;
@@ -87,7 +104,7 @@ public class Utils {
 		try {
 			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
 					.toURI();
-			System.err.println("Resource URI: " + uri.toString());
+			// System.err.println("Resource URI: " + uri.toString());
 			return uri.toString();
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
@@ -139,16 +156,119 @@ public class Utils {
 			Iterator<String> propIterator = elementObj.keys();
 			while (propIterator.hasNext()) {
 				String propertyKey = propIterator.next();
-
 				String propertyVal = elementObj.getString(propertyKey);
-				System.err.println(propertyKey + ": " + propertyVal);
+				// System.err.println(propertyKey + ": " + propertyVal);
 				collector.put(propertyKey, propertyVal);
 			}
 		} catch (JSONException e) {
-			System.err.println("Ignored exception: " + e.toString());
+			System.err.println("Exception (ignored): " + e.toString());
 			return null;
 		}
 		return collector.get("ElementCodeName");
+	}
+
+	public void flushVisualSearchResult() {
+		executeScript("document.swdpr_command = undefined;");
+	}
+
+	public String getCurrentUrl() {
+		return driver.getCurrentUrl();
+	}
+
+	public String readVisualSearchResult(String payload) {
+		return readVisualSearchResult(payload,
+				Optional.<Map<String, String>> empty());
+	}
+
+	public String readVisualSearchResult(final String payload,
+			Optional<Map<String, String>> parameters) {
+		Boolean collectResults = parameters.isPresent();
+		Map<String, String> collector = (collectResults) ? parameters.get()
+				: new HashMap<>();
+		String result = readData(payload, Optional.of(collector));
+		assertTrue(collector.containsKey("ElementId"));
+		// NOTE: elementCodeName will not be set if
+		// user clicked the SWD Table Close Button
+		// ElementId is always set
+		return result;
+	}
+
+	public void highlight(WebElement element, long highlight_interval) {
+		try {
+			new WebDriverWait(driver, flexibleWait)
+					.until(ExpectedConditions.visibilityOf(element));
+			executeScript("arguments[0].style.border='3px solid yellow'", element);
+			Thread.sleep(highlight_interval);
+			executeScript("arguments[0].style.border=''", element);
+		} catch (InterruptedException e) {
+			System.err.println("Exception (ignored): " + e.toString());
+		}
+	}
+
+	// NOTE: unused
+	public void completeVisualSearch(String elementCodeName) {
+		WebElement swdAddElementButton = null;
+		try {
+			WebElement swdControl = wait.until(ExpectedConditions
+					.visibilityOf(driver.findElement(By.id("SWDTable"))));
+			assertThat(swdControl, notNullValue());
+			WebElement swdCodeID = wait.until(ExpectedConditions.visibilityOf(
+					swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
+			assertThat(swdCodeID, notNullValue());
+			// Act
+			swdCodeID.sendKeys(elementCodeName);
+			swdAddElementButton = wait.until(new ExpectedCondition<WebElement>() {
+				@Override
+				public WebElement apply(WebDriver _driver) {
+					Iterator<WebElement> _elements = _driver
+							.findElements(
+									By.cssSelector("div#SwdPR_PopUp > input[type='button']"))
+							.iterator();
+					WebElement result = null;
+					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
+							Pattern.CASE_INSENSITIVE);
+					while (_elements.hasNext()) {
+						WebElement _element = _elements.next();
+						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
+						if (matcher.find()) {
+							result = _element;
+							break;
+						}
+					}
+					return result;
+				}
+			});
+		} catch (Exception e) {
+			ExceptionDialogEx.getInstance().render(e);
+			if (driver != null) {
+				try {
+					BrowserDriver.close();
+				} catch (Exception ex) {
+					System.err.println("Exception (ignored): " + ex.toString());
+				}
+			}
+		}
+
+		assertThat(swdAddElementButton, notNullValue());
+		highlight(swdAddElementButton);
+		// Act
+		swdAddElementButton.click();
+	}
+
+	public void closeVisualSearch() {
+		WebElement swdControl = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		assertThat(swdControl, notNullValue());
+
+		WebElement swdCloseButton = wait.until(ExpectedConditions.visibilityOf(
+				swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
+		assertThat(swdCloseButton, notNullValue());
+		highlight(swdCloseButton);
+		swdCloseButton.click();
+	}
+
+	public void highlight(WebElement element) {
+		highlight(element, 100);
 	}
 
 	public static boolean createFolder(String path) throws Exception {
@@ -281,18 +401,10 @@ public class Utils {
 		}
 	}
 
-	/*
-	 	private Object executeScript(String script, Object... arguments) {
-		if (driver instanceof JavascriptExecutor) {
-			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
-					.cast(driver);
-			return javascriptExecutor.executeScript(script, arguments);
-		} else {
-			throw new RuntimeException("Script execution failed.");
-		}
+	public String getpayload() {
+		return executeScript(getCommand).toString();
 	}
-	
-	*/
+
 	public Object executeScript(String script, Object... arguments) {
 		if (driver != null && (driver instanceof JavascriptExecutor)) {
 			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class

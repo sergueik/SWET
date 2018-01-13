@@ -46,10 +46,9 @@ public class AsyncExecEx {
 
 	private static WebDriver driver;
 	private WebDriverWait wait;
-	private int flexibleWait = 5;
+	private static int flexibleWait = 5;
 	private static int implicitWait = 1;
-	private long pollingInterval = 500;
-	private static final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
+	private static long pollingInterval = 500;
 
 	private static ProgressBar progressBar;
 	private static Button launchButton;
@@ -150,6 +149,7 @@ public class AsyncExecEx {
 						.println("Hello from thread: \t" + Thread.currentThread().getName());
 			*/
 			utils.setDriver(driver);
+			utils.setFlexibleWait(flexibleWait);
 			utils.injectElementSearch(Optional.<String> empty());
 
 			for (percentage = MIN_PERCENTAGE; percentage <= MAX_PERCENTAGE; percentage++) {
@@ -160,7 +160,7 @@ public class AsyncExecEx {
 					*/
 				} catch (InterruptedException e) {
 				}
-				String payload = utils.executeScript(getCommand).toString();
+				String payload = utils.getpayload();
 				// simplified
 				if (!payload.isEmpty()) {
 					System.err.println(payload);

@@ -87,7 +87,8 @@ public class SimpleToolBarEx {
 	private int implicitWait = 1;
 	private long pollingInterval = 500;
 	private String baseURL = "about:blank";
-	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
+	// private final String getCommand = "return document.swdpr_command ===
+	// undefined ? '' : document.swdpr_command;";
 	private List<String> stepKeys = new ArrayList<>();
 	private Map<String, Map<String, String>> testData = new HashMap<>();
 	private Map<String, Image> iconCache = new HashMap<>();
@@ -610,33 +611,6 @@ public class SimpleToolBarEx {
 		};
 	}
 
-	String readVisualSearchResult(String payload) {
-		return readVisualSearchResult(payload,
-				Optional.<Map<String, String>> empty());
-	}
-
-	private String readVisualSearchResult(final String payload,
-			Optional<Map<String, String>> parameters) {
-		logger.debug("Processing payload: " + payload);
-		Boolean collectResults = parameters.isPresent();
-		Map<String, String> collector = (collectResults) ? parameters.get()
-				: new HashMap<>();
-		String result = utils.readData(payload, Optional.of(collector));
-		assertTrue(collector.containsKey("ElementId"));
-		// NOTE: elementCodeName will not be set if
-		// user clicked the SWD Table Close Button
-		// ElementId is always set
-		return result;
-	}
-
-	private void flushVisualSearchResult() {
-		utils.executeScript("document.swdpr_command = undefined;");
-	}
-
-	private String getCurrentUrl() {
-		return driver.getCurrentUrl();
-	}
-
 	private Map<String, String> addElement() {
 
 		Map<String, String> elementData = new HashMap<>();
@@ -644,19 +618,24 @@ public class SimpleToolBarEx {
 		Boolean browserRunaway = false;
 		String name = null;
 		while (waitingForData) {
-			String payload = utils.executeScript(getCommand).toString();
+			String payload = utils.getpayload();
 			if (!payload.isEmpty()) {
-				// objects cannot suicide
-				elementData = new HashMap<>();
-				name = readVisualSearchResult(payload, Optional.of(elementData));
-				if (name == null || name.isEmpty()) {
-					logger.info("Rejected unfinished visual search.");
-				} else {
-					logger.info(String
-							.format("Received element data of the element: '%s'", name));
-					elementData.put("ElementPageURL", getCurrentUrl());
-					waitingForData = false;
-					break;
+				if (payload.contains((CharSequence) "ElementCodeName")) {
+					// objects cannot suicide
+					elementData = new HashMap<>();
+					name = utils.readVisualSearchResult(payload,
+							Optional.of(elementData));
+					logger.debug("Processing payload..." /* + payload */ );
+					if (name == null || name.isEmpty()) {
+						logger.info("Rejected unfinished visual search.");
+					} else {
+						logger.info(
+								String.format("Received element data for the element: '%s'\n%s",
+										name, payload));
+						elementData.put("ElementPageURL", utils.getCurrentUrl());
+						waitingForData = false;
+						break;
+					}
 				}
 			}
 			if (browserStatus.get("runaway")) {
@@ -675,21 +654,18 @@ public class SimpleToolBarEx {
 			}
 		}
 		// clear results on the page
-		flushVisualSearchResult();
+		utils.flushVisualSearchResult();
 		if (!browserRunaway) {
-			closeVisualSearch();
+			utils.closeVisualSearch();
 		}
 		return elementData;
-	}
-
-	private void highlight(WebElement element) {
-		highlight(element, 100);
 	}
 
 	private boolean initializeBrowser(String browser, String baseURL) {
 		try {
 			driver = BrowserDriver.initialize(browser);
 			utils.setDriver(driver);
+			utils.setFlexibleWait(flexibleWait);
 			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
 					.implicitlyWait(implicitWait, TimeUnit.SECONDS)
 					.setScriptTimeout(30, TimeUnit.SECONDS);
@@ -705,80 +681,6 @@ public class SimpleToolBarEx {
 			ExceptionDialogEx.getInstance().render(e);
 			return false;
 		}
-	}
-
-	private void highlight(WebElement element, long highlight_interval) {
-		try {
-			wait.until(ExpectedConditions.visibilityOf(element));
-			utils.executeScript("arguments[0].style.border='3px solid yellow'",
-					element);
-			Thread.sleep(highlight_interval);
-			utils.executeScript("arguments[0].style.border=''", element);
-		} catch (InterruptedException e) {
-			logger.debug("Exception (ignored): " + e.toString());
-		}
-	}
-
-	// NOTE: unused
-	private void completeVisualSearch(String elementCodeName) {
-		WebElement swdAddElementButton = null;
-		try {
-			WebElement swdControl = wait.until(ExpectedConditions
-					.visibilityOf(driver.findElement(By.id("SWDTable"))));
-			assertThat(swdControl, notNullValue());
-			WebElement swdCodeID = wait.until(ExpectedConditions.visibilityOf(
-					swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
-			assertThat(swdCodeID, notNullValue());
-			// Act
-			swdCodeID.sendKeys(elementCodeName);
-			swdAddElementButton = wait.until(new ExpectedCondition<WebElement>() {
-				@Override
-				public WebElement apply(WebDriver _driver) {
-					Iterator<WebElement> _elements = _driver
-							.findElements(
-									By.cssSelector("div#SwdPR_PopUp > input[type='button']"))
-							.iterator();
-					WebElement result = null;
-					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
-							Pattern.CASE_INSENSITIVE);
-					while (_elements.hasNext()) {
-						WebElement _element = _elements.next();
-						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
-						if (matcher.find()) {
-							result = _element;
-							break;
-						}
-					}
-					return result;
-				}
-			});
-		} catch (Exception e) {
-			ExceptionDialogEx.getInstance().render(e);
-			if (driver != null) {
-				try {
-					BrowserDriver.close();
-				} catch (Exception ex) {
-					logger.warn("Exception (ignored): " + ex.toString());
-				}
-			}
-		}
-
-		assertThat(swdAddElementButton, notNullValue());
-		highlight(swdAddElementButton);
-		// Act
-		swdAddElementButton.click();
-	}
-
-	private void closeVisualSearch() {
-		WebElement swdControl = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
-		assertThat(swdControl, notNullValue());
-
-		WebElement swdCloseButton = wait.until(ExpectedConditions.visibilityOf(
-				swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
-		assertThat(swdCloseButton, notNullValue());
-		highlight(swdCloseButton);
-		swdCloseButton.click();
 	}
 
 	// Paginates the BreadCrump
