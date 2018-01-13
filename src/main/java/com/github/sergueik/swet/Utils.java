@@ -294,7 +294,7 @@ public class Utils {
 	
 	*/
 	public Object executeScript(String script, Object... arguments) {
-		if (driver instanceof JavascriptExecutor) {
+		if (driver != null && (driver instanceof JavascriptExecutor)) {
 			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
 					.cast(driver);
 			// IE: org.openqa.selenium.NoSuchWindowException
@@ -303,7 +303,8 @@ public class Utils {
 			// DevTools
 			return javascriptExecutor.executeScript(script, arguments);
 		} else {
-			throw new RuntimeException("Script execution failed.");
+			throw new RuntimeException(
+					"Script execution failed: driver it not defined properly");
 		}
 	}
 

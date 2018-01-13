@@ -35,6 +35,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -60,10 +61,8 @@ import org.mihalis.opal.breadcrumb.Breadcrumb;
 import org.mihalis.opal.breadcrumb.BreadcrumbItem;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -84,7 +83,6 @@ public class SimpleToolBarEx {
 	private Shell shell;
 	private WebDriver driver;
 	private WebDriverWait wait;
-	private Actions actions;
 	private int flexibleWait = 5;
 	private int implicitWait = 1;
 	private long pollingInterval = 500;
@@ -134,126 +132,6 @@ public class SimpleToolBarEx {
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
 	private Breadcrumb bc;
-
-	private String launchImage = "browsers_32.png";
-
-	public void setLaunchImage(final String data) {
-		this.launchImage = data;
-	}
-
-	private String helpImage = "help_32.png";
-
-	public void sethelpImage(final String data) {
-		this.helpImage = data;
-	}
-
-	private String findImage = "find_32.png";
-
-	public void setFindImage(final String data) {
-		this.findImage = data;
-	}
-
-	private String gearImage = "preferences_32.png";
-
-	public void setGearImage(final String data) {
-		this.gearImage = data;
-	}
-
-	// TODO: cleanup
-	private String pageImage = "page_36.png";
-
-	public void setPageImage(final String data) {
-		this.pageImage = data;
-	}
-
-	private String openImage = "open_32.png";
-
-	public void setOpenImage(final String data) {
-		this.openImage = data;
-	}
-
-	private String saveImage = "save_32.png";
-
-	public void setSaveImage(final String data) {
-		this.saveImage = data;
-	}
-
-	private String quitImage = "quit_32.png";
-
-	public void setQuitImage(final String data) {
-		this.quitImage = data;
-	}
-
-	private String testsuiteImage = "excel_gen_32.png";
-
-	public void settestsuiteImage(final String data) {
-		this.testsuiteImage = data;
-	}
-
-	private String codeGenImage = "codegen_32.png";
-
-	public void setCodeGenImage(final String data) {
-		this.codeGenImage = data;
-	}
-
-	// http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
-	private Image resize(Image image, int width, int height) {
-		Image scaled = new Image(display, width, height);
-		GC gc = new GC(scaled);
-		gc.setAntialias(SWT.ON);
-		gc.setInterpolation(SWT.HIGH);
-		gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height,
-				0, 0, width, height);
-		gc.dispose();
-		image.dispose();
-		return scaled;
-	}
-
-	// https://github.com/vogellacompany/codeexamples-java/blob/master/de.vogella.databinding.windowbuilder.example/src/com/swtdesigner/SWTResourceManager.java
-
-	private static Image getMissingImage() {
-		Image image = new Image(Display.getCurrent(), IMAGE_SIZE, IMAGE_SIZE);
-		GC gc = new GC(image);
-		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-		gc.fillRectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE);
-		gc.dispose();
-		return image;
-	}
-
-	protected static Image getImage(InputStream stream) throws IOException {
-		try {
-			Display display = Display.getCurrent();
-			ImageData data = new ImageData(stream);
-			if (data.transparentPixel > 0) {
-				return new Image(display, data, data.getTransparencyMask());
-			}
-			return new Image(display, data);
-		} finally {
-			stream.close();
-		}
-	}
-
-	public Image getImage(String imageResourcePath) {
-		Image image = null;
-		// image = imageCache.get(imageResourcePath);
-		if (image == null) {
-			try {
-				image = getImage(utils.getResourceStream(imageResourcePath));
-			} catch (Exception e) {
-				image = getMissingImage();
-			}
-			// imageCache.put(imageResourcePath, image);
-		}
-		return image;
-	}
-
-	// dispose loaded images
-	public void disposeIconCache() {
-		for (Image image : iconCache.values()) {
-			image.dispose();
-		}
-		iconCache.clear();
-	}
 
 	@SuppressWarnings("unused")
 	public SimpleToolBarEx() {
@@ -536,7 +414,7 @@ public class SimpleToolBarEx {
 						.pollingEvery(pollingInterval, TimeUnit.SECONDS)
 						.ignoring(NoSuchElementException.class);
 					*/
-					actions = new Actions(driver);
+					// actions = new Actions(driver);
 					try {
 						utils.injectElementSearch(Optional.<String> empty());
 					} catch (Exception e) {
@@ -1004,4 +882,125 @@ public class SimpleToolBarEx {
 		simpleToolBarEx.finalize();
 		display.dispose();
 	}
+
+	private String launchImage = "browsers_32.png";
+
+	public void setLaunchImage(final String data) {
+		this.launchImage = data;
+	}
+
+	private String helpImage = "help_32.png";
+
+	public void sethelpImage(final String data) {
+		this.helpImage = data;
+	}
+
+	private String findImage = "find_32.png";
+
+	public void setFindImage(final String data) {
+		this.findImage = data;
+	}
+
+	private String gearImage = "preferences_32.png";
+
+	public void setGearImage(final String data) {
+		this.gearImage = data;
+	}
+
+	// TODO: cleanup
+	private String pageImage = "page_36.png";
+
+	public void setPageImage(final String data) {
+		this.pageImage = data;
+	}
+
+	private String openImage = "open_32.png";
+
+	public void setOpenImage(final String data) {
+		this.openImage = data;
+	}
+
+	private String saveImage = "save_32.png";
+
+	public void setSaveImage(final String data) {
+		this.saveImage = data;
+	}
+
+	private String quitImage = "quit_32.png";
+
+	public void setQuitImage(final String data) {
+		this.quitImage = data;
+	}
+
+	private String testsuiteImage = "excel_gen_32.png";
+
+	public void settestsuiteImage(final String data) {
+		this.testsuiteImage = data;
+	}
+
+	private String codeGenImage = "codegen_32.png";
+
+	public void setCodeGenImage(final String data) {
+		this.codeGenImage = data;
+	}
+
+	// http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
+	private Image resize(Image image, int width, int height) {
+		Image scaled = new Image(display, width, height);
+		GC gc = new GC(scaled);
+		gc.setAntialias(SWT.ON);
+		gc.setInterpolation(SWT.HIGH);
+		gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height,
+				0, 0, width, height);
+		gc.dispose();
+		image.dispose();
+		return scaled;
+	}
+
+	// https://github.com/vogellacompany/codeexamples-java/blob/master/de.vogella.databinding.windowbuilder.example/src/com/swtdesigner/SWTResourceManager.java
+
+	private static Image getMissingImage() {
+		Image image = new Image(Display.getCurrent(), IMAGE_SIZE, IMAGE_SIZE);
+		GC gc = new GC(image);
+		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+		gc.fillRectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE);
+		gc.dispose();
+		return image;
+	}
+
+	protected static Image getImage(InputStream stream) throws IOException {
+		try {
+			Display display = Display.getCurrent();
+			ImageData data = new ImageData(stream);
+			if (data.transparentPixel > 0) {
+				return new Image(display, data, data.getTransparencyMask());
+			}
+			return new Image(display, data);
+		} finally {
+			stream.close();
+		}
+	}
+
+	public Image getImage(String imageResourcePath) {
+		Image image = null;
+		// image = imageCache.get(imageResourcePath);
+		if (image == null) {
+			try {
+				image = getImage(utils.getResourceStream(imageResourcePath));
+			} catch (Exception e) {
+				image = getMissingImage();
+			}
+			// imageCache.put(imageResourcePath, image);
+		}
+		return image;
+	}
+
+	// dispose loaded images
+	public void disposeIconCache() {
+		for (Image image : iconCache.values()) {
+			image.dispose();
+		}
+		iconCache.clear();
+	}
+
 }
