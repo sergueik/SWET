@@ -10,7 +10,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.log4j.Category;
-import org.apache.log4j.PropertyConfigurator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -97,11 +96,10 @@ public class SimpleToolBarEx {
 	private static final int IMAGE_SIZE = 32;
 	private Configuration config = null;
 
-	private static StringBuilder loggingSb = new StringBuilder();
-	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
-
 	@SuppressWarnings("deprecation")
 	static final Category logger = Category.getInstance(SimpleToolBarEx.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
 	private static Map<String, Boolean> browserStatus = new HashMap<>();
 	private static String configFilePath; // TODO: rename
@@ -259,7 +257,8 @@ public class SimpleToolBarEx {
 
 	@SuppressWarnings("unused")
 	public SimpleToolBarEx() {
-
+		utils.initializeLogger();
+		logger.info("Initialized logger.");
 	}
 
 	public void open(Display display) {
@@ -554,7 +553,8 @@ public class SimpleToolBarEx {
 						if (!elementData.containsKey("ElementSelectedBy")) {
 							elementData.put("ElementSelectedBy", "ElementCssSelector");
 						}
-						logger.info("ElementSelectedBy : " + elementData.get("ElementSelectedBy"));
+						logger.info(
+								"ElementSelectedBy : " + elementData.get("ElementSelectedBy"));
 						// Append a Breadcrumb Item Button
 						String commandId = elementData.get("CommandId");
 						elementData.put("ElementStepNumber",
@@ -995,7 +995,6 @@ public class SimpleToolBarEx {
 	}
 
 	public static void main(String[] args) {
-		initializeLogger();
 		display = new Display();
 
 		SimpleToolBarEx simpleToolBarEx = new SimpleToolBarEx();
@@ -1004,19 +1003,5 @@ public class SimpleToolBarEx {
 		simpleToolBarEx.open(display);
 		simpleToolBarEx.finalize();
 		display.dispose();
-	}
-
-	private static void initializeLogger() {
-		Properties logProperties = new Properties();
-		String log4J_properties = String.format("%s/%s",
-				System.getProperty("user.dir"), "src/main/resources/log4J.properties");
-
-		try {
-			logProperties.load(new FileInputStream(log4J_properties));
-			PropertyConfigurator.configure(logProperties);
-			logger.info("Initialize Logger.");
-		} catch (IOException e) {
-			throw new RuntimeException("Fail to load: " + log4J_properties);
-		}
 	}
 }

@@ -32,6 +32,7 @@ public class RenderTemplate {
 	private String templateAbsolutePath = "";
 	private JtwigTemplate template = null;
 
+
 	public void setTemplateName(String data) {
 		utils.initializeLogger();
 		logger.info("Initialized logger.");

@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import java.util.regex.Matcher;
@@ -35,12 +36,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.log4j.Category;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Common utilities class for Selenium WebDriver Elementor Tool (SWET)
@@ -371,4 +375,15 @@ public class Utils {
 						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
+	public void initializeLogger() {
+		Properties logProperties = new Properties();
+		String log4J_properties = String.format("%s/%s/%s",
+				System.getProperty("user.dir"), "src/main/resources", "log4j.xml");
+		try {
+			logProperties.load(new FileInputStream(log4J_properties));
+			PropertyConfigurator.configure(logProperties);
+		} catch (IOException e) {
+			throw new RuntimeException("Fail to load: " + log4J_properties);
+		}
+	}
 }

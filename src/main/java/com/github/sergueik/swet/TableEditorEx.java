@@ -17,6 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.log4j.Category;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -58,7 +60,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.github.sergueik.swet.ExceptionDialogEx;
 import com.github.sergueik.swet.Utils;
-import org.apache.log4j.Category;
+
 
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
@@ -97,7 +99,7 @@ public class TableEditorEx {
 	private static String path = null;
 
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(SimpleToolBarEx.class);
+	static final Category logger = Category.getInstance(TableEditorEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

@@ -24,8 +24,9 @@ call mvn -Dmaven.test.skip=true package install
 REM run
 REM NOTE: shift does not affect the value of %*
 REM passsing the log4j configuration seems to be have no effect
+REM  -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
+
 java ^
--Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
 -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
 %MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% %1 %2 %3 %4 %5 %6 %7 %8 %9
 :endlocal
