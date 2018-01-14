@@ -61,6 +61,7 @@ import org.mihalis.opal.breadcrumb.Breadcrumb;
 import org.mihalis.opal.breadcrumb.BreadcrumbItem;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -578,8 +579,9 @@ public class SimpleToolBarEx {
 					try {
 						driver.getCurrentUrl();
 					} catch (Exception e) {
-						logger.warn("Shoudl be signaling that browser is closed");
-						// browserStatus.replace("closed", true);
+						logger.warn("Should be signaling that browser is closed");
+						// TODO: debug
+						browserStatus.replace("closed", true);
 						break;
 					}
 				}
@@ -601,10 +603,14 @@ public class SimpleToolBarEx {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					if (driver.getCurrentUrl().indexOf(URL) != 0) {
-						logger.info("Signaling URL change.");
-						browserStatus.replace("runaway", true);
-						break;
+					try {
+						if (driver.getCurrentUrl().indexOf(URL) != 0) {
+							logger.info("Signaling URL change.");
+							browserStatus.replace("runaway", true);
+							break;
+						}
+					} catch (NoSuchSessionException e) {
+						// possibly closing the application
 					}
 				}
 			}
