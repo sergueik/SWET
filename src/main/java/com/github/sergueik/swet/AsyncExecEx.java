@@ -3,21 +3,26 @@ package com.github.sergueik.swet;
  * Copyright 2014 - 2017 Serguei Kouzmine
  */
 
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Category;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -27,6 +32,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -53,23 +59,31 @@ public class AsyncExecEx {
 	private static ProgressBar progressBar;
 	private static Button launchButton;
 	private static Button collectButton;
+	private static Button asyncButton;
 	private static Thread longRunningOperation;
 	private static Utils utils = Utils.getInstance();
+
+	@SuppressWarnings("deprecation")
+	static final Category logger = Category.getInstance(SimpleToolBarEx.class);
+	private static StringBuilder loggingSb = new StringBuilder();
+	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
 	public static void main(String[] a) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout());
+		/*
 		progressBar = new ProgressBar(shell, SWT.HORIZONTAL | SWT.SMOOTH);
 		progressBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		progressBar.setMinimum(MIN_PERCENTAGE);
 		progressBar.setMaximum(MAX_PERCENTAGE);
-
+		*/
 		launchButton = new Button(shell, SWT.CENTER);
 		launchButton.setText("Launch browser");
 		launchButton.setBounds(shell.getClientArea());
 		launchButton.addListener(SWT.Selection, event -> {
 			launchButton.setEnabled(false);
+			collectButton.setEnabled(false);
 			String browser = "chrome";
 			driver = BrowserDriver.initialize(browser);
 			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
@@ -78,17 +92,21 @@ public class AsyncExecEx {
 			String baseURL = "https://www.google.com";
 			driver.get(baseURL);
 			launchButton.setEnabled(true);
-
+			collectButton.setEnabled(true);
 		});
 
 		collectButton = new Button(shell, SWT.CENTER);
 		collectButton.setText("Inject script");
 		collectButton.setBounds(shell.getClientArea());
+		collectButton
+				.addSelectionListener(new AsyncDataCollectionListener(collectButton));
+
 		// TODO: https://stackoverflow.com/questions/13479833/java-swt-animated-gif
+		/*
 		collectButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
-
+		
 			public void widgetSelected(SelectionEvent event) {
 				launchButton.setEnabled(false);
 				collectButton.setEnabled(false);
@@ -97,12 +115,16 @@ public class AsyncExecEx {
 						collectButton);
 				longRunningOperation.start();
 				launchButton.setEnabled(true);
-				// NOTE: this sets collectButton enabled immediately - only valid for
-				// sync
-				// executions
-				// collectButton.setEnabled(true);
+				collectButton.setEnabled(true);
 			}
 		});
+		collectButton = new Button(shell, SWT.CENTER);
+		collectButton.setText("Inject script");
+		collectButton.setBounds(shell.getClientArea());
+		// TODO: https://stackoverflow.com/questions/13479833/java-swt-animated-gif
+		collectButton
+				.addSelectionListener(new AsyncDataCollectionListener(collectButton));
+		*/
 
 		shell.setData("percentage", MIN_PERCENTAGE);
 		shell.setSize(300, 200);
@@ -118,13 +140,6 @@ public class AsyncExecEx {
 				// ignore
 			}
 			if (percentage == MAX_PERCENTAGE) {
-				// shell.close();
-				/*
-				try {
-					longRunningOperation.wait();
-				} catch (InterruptedException | IllegalMonitorStateException
-						| NullPointerException e) {
-				} */
 			}
 		}
 	}
@@ -145,9 +160,6 @@ public class AsyncExecEx {
 		}
 
 		public void run() {
-			/*	System.out
-						.println("Hello from thread: \t" + Thread.currentThread().getName());
-			*/
 			utils.setDriver(driver);
 			utils.setFlexibleWait(flexibleWait);
 			utils.injectElementSearch(Optional.<String> empty());
@@ -155,9 +167,6 @@ public class AsyncExecEx {
 			for (percentage = MIN_PERCENTAGE; percentage <= MAX_PERCENTAGE; percentage++) {
 				try {
 					Thread.sleep(DELAY);
-					/*	System.err.println(
-								String.format("%.2f", 100.0 * percentage / MAX_PERCENTAGE));
-					*/
 				} catch (InterruptedException e) {
 				}
 				String payload = utils.getpayload();
@@ -166,7 +175,8 @@ public class AsyncExecEx {
 					System.err.println(payload);
 					if (payload.contains((CharSequence) "ElementCodeName")) {
 						System.err.println("Trying to close");
-						utils.executeScript("document.swdpr_command = undefined;");
+						utils.flushVisualSearchResult();
+						utils.closeVisualSearch();
 					}
 				}
 
@@ -191,4 +201,72 @@ public class AsyncExecEx {
 		}
 	}
 
+	// http://www.cyberforum.ru/java-gui/thread893423.html
+	// http://www.java2s.com/Tutorial/Java/0280__SWT/SWTTimeConsumingOperationUIPattern.htm
+	private static class AsyncDataCollectionListener
+			implements SelectionListener {
+		private Button parent;
+		private Boolean waitingForData = false;
+
+		AsyncDataCollectionListener(Button parent) {
+			this.parent = parent;
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					parent.getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							parent.setEnabled(false);
+						}
+					});
+					waitingForData = true;
+					logger.info("Started");
+					try {
+						utils.setDriver(driver);
+						utils.setFlexibleWait(flexibleWait);
+						utils.injectElementSearch(Optional.<String> empty());
+					} catch (Exception e) {
+						waitingForData = false;
+					}
+					while (waitingForData) {
+						String payload = utils.getpayload();
+						// simplified
+						if (!payload.isEmpty()) {
+							System.err.println(payload);
+							if (payload.contains((CharSequence) "ElementCodeName")) {
+								System.err.println("Trying to close");
+								utils.flushVisualSearchResult();
+								utils.closeVisualSearch();
+								waitingForData = false;
+							}
+						}
+						if (waitingForData) {
+							try {
+								// TODO: add the alternative code to
+								// bail if waited long enough already
+								logger.info("Waiting.");
+								Thread.sleep(1000);
+							} catch (InterruptedException exception) {
+							}
+						}
+					}
+					logger.info("Finished");
+					parent.getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							parent.setEnabled(true);
+						}
+					});
+
+				}
+			});
+			thread.start();
+		}
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+	}
 }
