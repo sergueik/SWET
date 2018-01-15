@@ -47,6 +47,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -63,6 +64,7 @@ import org.mihalis.opal.breadcrumb.BreadcrumbItem;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -95,7 +97,7 @@ public class SimpleToolBarEx {
 	private Map<String, Image> iconCache = new HashMap<>();
 	private static final int IMAGE_SIZE = 32;
 	private Configuration config = null;
-
+	private SimpleToolBarEx app;
 	@SuppressWarnings("deprecation")
 	static final Category logger = Category.getInstance(SimpleToolBarEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
@@ -131,12 +133,15 @@ public class SimpleToolBarEx {
 	private TemplateCache templateCache = TemplateCache.getInstance();
 	private Utils utils = Utils.getInstance();
 	private ToolItem launchTool = null;
+	private ToolItem saveTool = null;
+	private ToolItem pageExploreTool = null;
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
 	private Breadcrumb bc;
 
 	@SuppressWarnings("unused")
 	public SimpleToolBarEx() {
+		app = this;
 		utils.initializeLogger();
 		logger.info("Initialized logger.");
 	}
@@ -187,10 +192,10 @@ public class SimpleToolBarEx {
 		launchTool.setImage(iconCache.get("launch icon"));
 		launchTool.setToolTipText("Launch browser");
 
-		ToolItem pageExploreTool = new ToolItem(toolBar, SWT.PUSH);
+		pageExploreTool = new ToolItem(toolBar, SWT.PUSH);
 		pageExploreTool.setImage(iconCache.get("find icon"));
 		// TODO: setDisabledImage
-		pageExploreTool.setToolTipText("Explore page");
+		pageExploreTool.setToolTipText("Inject script");
 
 		ToolItem codeGenTool = new ToolItem(toolBar, SWT.PUSH);
 		codeGenTool.setImage(iconCache.get("codeGen icon"));
@@ -206,7 +211,7 @@ public class SimpleToolBarEx {
 		openTool.setImage(iconCache.get("open icon"));
 		openTool.setToolTipText("Load session");
 
-		ToolItem saveTool = new ToolItem(toolBar, SWT.PUSH);
+		saveTool = new ToolItem(toolBar, SWT.PUSH);
 		saveTool.setImage(iconCache.get("save icon"));
 		saveTool.setToolTipText("Save session");
 
@@ -394,66 +399,9 @@ public class SimpleToolBarEx {
 			preferencesTool.setEnabled(true);
 		});
 
-		pageExploreTool.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent event) {
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-
-				if (driver != null) {
-
-					browserStatus.put("runaway", false);
-					detectPageChange(driver, browserStatus).start();
-					pageExploreTool.setEnabled(false);
-					updateStatus("Inject script");
-					wait = new WebDriverWait(driver, flexibleWait);
-					wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
-					/*
-					wait = new FluentWait<>(driver)
-						.withTimeout(flexibleWait, TimeUnit.SECONDS)
-						.pollingEvery(pollingInterval, TimeUnit.SECONDS)
-						.ignoring(NoSuchElementException.class);
-					*/
-					// actions = new Actions(driver);
-					try {
-						utils.injectElementSearch(Optional.<String> empty());
-					} catch (Exception e) {
-						// show the error dialog with exception trace
-						ExceptionDialogEx.getInstance().render(e);
-					}
-
-					updateStatus("Waiting for data");
-					Map<String, String> elementData = addElement();
-					if (!elementData.containsKey("CommandId")) {
-						// TODO: better handle invalid elementData
-					} else {
-						// TODO: add radios to the ElementSearch Form
-						if (!elementData.containsKey("ElementSelectedBy")) {
-							elementData.put("ElementSelectedBy", "ElementCssSelector");
-						}
-						logger.info(
-								"ElementSelectedBy : " + elementData.get("ElementSelectedBy"));
-						// Append a Breadcrumb Item Button
-						String commandId = elementData.get("CommandId");
-						elementData.put("ElementStepNumber",
-								String.format("%d", step_index));
-
-						testData.put(commandId, elementData);
-						stepKeys.add(commandId);
-						addBreadCrumpItem(elementData.get("ElementCodeName"), commandId,
-								elementData, bc);
-						shell.layout(true, true);
-						shell.pack();
-					}
-					pageExploreTool.setEnabled(true);
-					updateStatus("Ready");
-					browserStatus.put("runaway", false);
-					saveTool.setEnabled(true);
-				}
-			}
-		});
+		pageExploreTool.setData("Application", app);
+		pageExploreTool
+				.addSelectionListener(new AsyncDataCollectionListener(pageExploreTool));
 
 		shutdownTool.addListener(SWT.Selection, event -> {
 			shutdownTool.setEnabled(false);
@@ -566,7 +514,7 @@ public class SimpleToolBarEx {
 	}
 
 	// TODO: detect closed browser ?
-	public static Thread detectBrowserClosed(WebDriver driver,
+	public Thread detectBrowserClosed(WebDriver driver,
 			Map<String, Boolean> browserStatus) {
 		return new Thread() {
 			public void run() {
@@ -580,8 +528,15 @@ public class SimpleToolBarEx {
 						driver.getCurrentUrl();
 					} catch (Exception e) {
 						logger.warn("Should be signaling that browser is closed");
-						// TODO: debug
 						browserStatus.replace("closed", true);
+						pageExploreTool.getDisplay().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								app.pageExploreTool.setEnabled(true);
+								app.saveTool.setEnabled(true);
+							}
+						});
+
 						break;
 					}
 				}
@@ -590,7 +545,7 @@ public class SimpleToolBarEx {
 	}
 
 	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
-	public static Thread detectPageChange(WebDriver driver,
+	public Thread detectPageChange(WebDriver driver,
 			Map<String, Boolean> browserStatus) {
 		final String URL = driver.getCurrentUrl();
 
@@ -607,9 +562,20 @@ public class SimpleToolBarEx {
 						if (driver.getCurrentUrl().indexOf(URL) != 0) {
 							logger.info("Signaling URL change.");
 							browserStatus.replace("runaway", true);
+
+							pageExploreTool.getDisplay().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									app.pageExploreTool.setEnabled(true);
+									app.saveTool.setEnabled(true);
+								}
+							});
+
 							break;
 						}
 					} catch (NoSuchSessionException e) {
+						// possibly closing the application
+					} catch (WebDriverException e) {
 						// possibly closing the application
 					}
 				}
@@ -617,7 +583,7 @@ public class SimpleToolBarEx {
 		};
 	}
 
-	private Map<String, String> addElement() {
+	private Map<String, String> addElementLocatorInformation() {
 
 		Map<String, String> elementData = new HashMap<>();
 		Boolean waitingForData = true;
@@ -631,7 +597,7 @@ public class SimpleToolBarEx {
 					elementData = new HashMap<>();
 					name = utils.readVisualSearchResult(payload,
 							Optional.of(elementData));
-					logger.debug("Processing payload..." /* + payload */ );
+					logger.debug("Processing payload...");
 					if (name == null || name.isEmpty()) {
 						logger.info("Rejected unfinished visual search.");
 					} else {
@@ -678,7 +644,7 @@ public class SimpleToolBarEx {
 			driver.get(baseURL);
 			// prevent the customer from launching multiple instances
 			// launchTool.setEnabled(true);
-			if (!osName.startsWith("Mac")) {
+			if (!osName.startsWith("mac")) {
 				// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
 				// combinations
 			}
@@ -773,7 +739,7 @@ public class SimpleToolBarEx {
 	private void updateStatus(String newStatus) {
 		// NOTE: there is no `HORIZONTAL ELLIPSIS` in code page 437
 		logger.info(String.format("%s%s", newStatus,
-				(osName.toLowerCase().startsWith("windows")) ? "..." : "\u2026"));
+				(osName.startsWith("windows")) ? "..." : "\u2026"));
 		this.statusMessage.setText(String.format("%s\u2026", newStatus));
 		this.statusMessage.pack();
 		this.shell.pack();
@@ -911,4 +877,86 @@ public class SimpleToolBarEx {
 		iconCache.clear();
 	}
 
+	private class AsyncDataCollectionListener implements SelectionListener {
+		private ToolItem parentToolItem;
+		private SimpleToolBarEx parentApp;
+
+		AsyncDataCollectionListener(ToolItem parentToolItem) {
+			this.parentToolItem = parentToolItem;
+			parentApp = (SimpleToolBarEx) parentToolItem.getData("Application");
+		}
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					SimpleToolBarEx.browserStatus.put("runaway", false);
+					parentApp.detectPageChange(driver, browserStatus).start();
+					parentToolItem.getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							parentToolItem.setEnabled(false);
+							parentApp.updateStatus("Inject script");
+						}
+					});
+					wait = new WebDriverWait(parentApp.driver, flexibleWait);
+					wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
+					try {
+						utils.injectElementSearch(Optional.<String> empty());
+					} catch (Exception e) {
+						// show the error dialog with exception trace
+						parentToolItem.getDisplay().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								ExceptionDialogEx.getInstance().render(e);
+							}
+						});
+					}
+
+					parentToolItem.getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							parentApp.updateStatus("Waiting for data");
+						}
+					});
+					Map<String, String> elementData = parentApp.addElementLocatorInformation();
+					if (!elementData.containsKey("CommandId")) {
+						// TODO: better handle invalid elementData
+					} else {
+						// TODO: add radios to the ElementSearch Form
+						if (!elementData.containsKey("ElementSelectedBy")) {
+							elementData.put("ElementSelectedBy", "ElementCssSelector");
+						}
+						logger.info(
+								"ElementSelectedBy : " + elementData.get("ElementSelectedBy"));
+						// Append a Breadcrumb Item Button
+						String commandId = elementData.get("CommandId");
+						elementData.put("ElementStepNumber",
+								String.format("%d", step_index));
+
+						parentApp.testData.put(commandId, elementData);
+						parentApp.stepKeys.add(commandId);
+						parentToolItem.getDisplay().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								parentApp.addBreadCrumpItem(elementData.get("ElementCodeName"),
+										commandId, elementData, bc);
+								parentApp.shell.layout(true, true);
+								parentApp.shell.pack();
+								parentToolItem.setEnabled(true);
+								parentApp.updateStatus("Ready");
+								browserStatus.put("runaway", false);
+								parentApp.saveTool.setEnabled(true);
+							}
+						});
+
+					}
+				}
+			});
+			thread.start();
+		}
+	}
 }

@@ -72,12 +72,7 @@ public class AsyncExecEx {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout());
-		/*
-		progressBar = new ProgressBar(shell, SWT.HORIZONTAL | SWT.SMOOTH);
-		progressBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		progressBar.setMinimum(MIN_PERCENTAGE);
-		progressBar.setMaximum(MAX_PERCENTAGE);
-		*/
+
 		launchButton = new Button(shell, SWT.CENTER);
 		launchButton.setText("Launch browser");
 		launchButton.setBounds(shell.getClientArea());
@@ -98,48 +93,16 @@ public class AsyncExecEx {
 		collectButton = new Button(shell, SWT.CENTER);
 		collectButton.setText("Inject script");
 		collectButton.setBounds(shell.getClientArea());
-		collectButton
-				.addSelectionListener(new AsyncDataCollectionListener(collectButton));
-
-		// TODO: https://stackoverflow.com/questions/13479833/java-swt-animated-gif
-		/*
-		collectButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		
-			public void widgetSelected(SelectionEvent event) {
-				launchButton.setEnabled(false);
-				collectButton.setEnabled(false);
-				progressBar.setSelection(MIN_PERCENTAGE);
-				longRunningOperation = new LongRunningOperation(display, progressBar,
-						collectButton);
-				longRunningOperation.start();
-				launchButton.setEnabled(true);
-				collectButton.setEnabled(true);
-			}
-		});
-		collectButton = new Button(shell, SWT.CENTER);
-		collectButton.setText("Inject script");
-		collectButton.setBounds(shell.getClientArea());
 		// TODO: https://stackoverflow.com/questions/13479833/java-swt-animated-gif
 		collectButton
 				.addSelectionListener(new AsyncDataCollectionListener(collectButton));
-		*/
 
-		shell.setData("percentage", MIN_PERCENTAGE);
 		shell.setSize(300, 200);
 		shell.open();
 		int percentage = MIN_PERCENTAGE;
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
-			}
-			try {
-				percentage = (int) shell.getData("percentage");
-			} catch (SWTException e) {
-				// ignore
-			}
-			if (percentage == MAX_PERCENTAGE) {
 			}
 		}
 	}
@@ -203,6 +166,7 @@ public class AsyncExecEx {
 
 	// http://www.cyberforum.ru/java-gui/thread893423.html
 	// http://www.java2s.com/Tutorial/Java/0280__SWT/SWTTimeConsumingOperationUIPattern.htm
+
 	private static class AsyncDataCollectionListener
 			implements SelectionListener {
 		private Button parent;
