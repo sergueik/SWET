@@ -285,6 +285,7 @@ public class SimpleToolBarEx {
 			String browser = configData.get("Browser");
 			logger.info(String.format("Launching the %s browser", browser));
 			updateStatus(String.format("Launching the %s browser", browser));
+			baseURL = configData.get("Base URL");
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
 				// launchTool.setEnabled(true);
@@ -400,6 +401,7 @@ public class SimpleToolBarEx {
 		});
 
 		pageExploreTool.setData("Application", app);
+		// see also: https://eclipsesource.com/blogs/2014/03/24/how-to-use-swt-with-java-8/
 		pageExploreTool
 				.addSelectionListener(new AsyncDataCollectionListener(pageExploreTool));
 
@@ -739,7 +741,7 @@ public class SimpleToolBarEx {
 	private void updateStatus(String newStatus) {
 		// NOTE: there is no `HORIZONTAL ELLIPSIS` in code page 437
 		logger.info(String.format("%s%s", newStatus,
-				(osName.startsWith("windows")) ? "..." : "\u2026"));
+				osName.startsWith("windows") ? "..." : "\u2026"));
 		this.statusMessage.setText(String.format("%s\u2026", newStatus));
 		this.statusMessage.pack();
 		this.shell.pack();
@@ -877,6 +879,7 @@ public class SimpleToolBarEx {
 		iconCache.clear();
 	}
 
+	// see also: http://www.gnu.org/software/kawa/api/index.html?gnu/jemacs/swt/SwtHelper.html
 	private class AsyncDataCollectionListener implements SelectionListener {
 		private ToolItem parentToolItem;
 		private SimpleToolBarEx parentApp;
@@ -922,7 +925,8 @@ public class SimpleToolBarEx {
 							parentApp.updateStatus("Waiting for data");
 						}
 					});
-					Map<String, String> elementData = parentApp.addElementLocatorInformation();
+					Map<String, String> elementData = parentApp
+							.addElementLocatorInformation();
 					if (!elementData.containsKey("CommandId")) {
 						// TODO: better handle invalid elementData
 					} else {

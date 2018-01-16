@@ -87,6 +87,7 @@ class ScrolledTextEx {
 		}
 		shell.setText("Generated QA source");
 		shell.setLayout(new GridLayout(2, false));
+		// see also: http://www.eclipse.org/articles/StyledText%201/article1.html
 		styledText = createStyledText();
 		styledText.setLayoutData(
 				GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());

@@ -16,6 +16,8 @@ import org.apache.log4j.Category;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -120,7 +122,7 @@ public class ComplexFormEx {
 						parentShell.setData("result", result);
 						parentShell.setData("updated", true);
 					} else {
-						logger.info("Handle Close: updating the parent shell: " + result);
+						logger.info("Updating parent: " + result);
 					}
 				}
 				shell.dispose();
@@ -189,8 +191,7 @@ public class ComplexFormEx {
 					updated = true;
 					if (parentShell != null) {
 						if (result != "{}") {
-							// logger.info("Handle OK: updating the parent shell: " +
-							// result);
+							logger.info("Updating parent: " + result);
 							parentShell.setData("result", result);
 							parentShell.setData("updated", true);
 						}
@@ -235,20 +236,16 @@ public class ComplexFormEx {
 
 		private static void doSelection(Button button) {
 			if (button.getSelection()) {
-				String selectedKey = (String) button.getData("key");
-				if (selectedKey != null && selectedKey != ""
-						&& elementData.containsKey(selectedKey)) {
-					// System.out.println("Process selection of key " + selectedKey);
-					elementData.replace("ElementSelectedBy", selectedKey);
+				String key = (String) button.getData("key");
+				if (key != null && key != "" && elementData.containsKey(key)) {
+					elementData.replace("ElementSelectedBy", key);
+					logger.info("Set ElementSelectedBy: " + key);
 				} else {
 					// System.out.println(
 					// String.format("Skip processing of key '%s'", selectedKey));
 				}
-				// } else {
-				// System.out.println("do work for deselection " + button);
 			}
 			/*
-			  // Java 6 style
 			  idRadio.addListener(SWT.Selection, new Listener() {
 			    public void handleEvent(Event event) {
 			      switch (event.type) {
@@ -307,6 +304,17 @@ public class ComplexFormEx {
 							data.replace((String) text.getData("key"), text.getText());
 						}
 					});
+					// see also:
+					// http://blog.vogella.com/2013/11/21/the-small-details-in-life-the-focus-restore/
+					locatorValue.addListener(SWT.FocusOut, new Listener() {
+						@Override
+						public void handleEvent(Event event) {
+							Text text = (Text) event.widget;
+							logger.info(String.format("%s = %s", (String) text.getData("key"),
+									text.getText()));
+						}
+					});
+
 				} else {
 
 					final Button locatorRadio = new Button(this, SWT.RADIO);

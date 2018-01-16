@@ -18,6 +18,8 @@ import org.apache.log4j.Category;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -104,8 +106,8 @@ public class ConfigFormEx {
 		}
 		// http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java
 		String dirPath = null;
-		dirPath = (osName.toLowerCase().startsWith("windows"))
-				? OSUtils.getDesktopPath() : System.getProperty("user.home");
+		dirPath = osName.startsWith("windows") ? OSUtils.getDesktopPath()
+				: System.getProperty("user.home");
 
 		utils.readData(
 				parent != null ? parentShell.getData("CurrentConfig").toString()
@@ -256,13 +258,25 @@ public class ConfigFormEx {
 			if (data.containsKey(configKey)) {
 				directory.setText(data.get(configKey));
 			}
+
+			directory.addFocusListener(new FocusListener() {
+				public void focusLost(FocusEvent event) {
+					Text text = (Text) event.widget;
+					logger.info(String.format("%s = %s", (String) text.getData("key"),
+							text.getText()));
+				}
+
+				@Override
+				public void focusGained(FocusEvent event) {
+				}
+			});
+
 			directory.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent event) {
-					Text sender = (Text) event.widget;
-					String value = sender.getText();
-					String key = (String) sender.getData("key");
-					logger.info(String.format("Updating %s = %s", (String) key, value));
+					Text text = (Text) event.widget;
+					String key = (String) text.getData("key");
+					String value = text.getText();
 					if (data.containsKey(key)) {
 						data.replace(key, value);
 					} else {
@@ -375,16 +389,24 @@ public class ConfigFormEx {
 							// configValue.setText(String.format("%s...", configKey));
 						}
 						configValue.setData("key", configKey);
+						// see also:
+						// http://gamedev.sleptlate.org/blog/107-swt-listeners-are-incompatible-with-java-lambdas/
+						configValue.addListener(SWT.FocusOut, event -> {
+							Text text = (Text) event.widget;
+							logger.info(String.format("%s = %s", (String) text.getData("key"),
+									text.getText()));
+						});
+						// TODO: defer to FocusEvent
 						configValue.addModifyListener(new ModifyListener() {
 							@Override
 							public void modifyText(ModifyEvent event) {
 								Text text = (Text) event.widget;
-								logger.info(String.format("%s = %s",
-										(String) text.getData("key"), text.getText()));
-								if (data.containsKey((String) text.getData("key"))) {
-									data.replace((String) text.getData("key"), text.getText());
+								String key = (String) text.getData("key");
+								String value = text.getText();
+								if (data.containsKey(key)) {
+									data.replace(key, value);
 								} else {
-									data.put((String) text.getData("key"), text.getText());
+									data.put(key, value);
 								}
 							}
 						});
