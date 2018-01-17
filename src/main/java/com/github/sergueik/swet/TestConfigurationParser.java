@@ -77,9 +77,11 @@ public class TestConfigurationParser {
 			}
 
 			String[] columns = line.split(separator);
+			/*
 			for (String column : columns) {
 				System.err.println("data column: " + column);
 			}
+			*/
 			result.add(columns);
 		}
 		scanner.close();

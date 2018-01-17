@@ -374,6 +374,7 @@
       }
       closeClickHandler = "";
             element.innerHTML = '\
+            <form name="SWDForm"> \
               <table id="SWDTable">\
                 <tr>\
                   <td>Code identifier</td>\
@@ -391,7 +392,7 @@
                 </tr>\
                 <tr>\
                   <td>\
-                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementId"/>\
+                    <input type="radio" name="ElementSelectedBy" id="ElementId"/>\
                     <label for="ElementId">Id:</label>\
                   </td>\
                   <td>\
@@ -408,7 +409,7 @@
                 </tr>\
                 <tr>\
                   <td>\
-                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementXPath"/>\
+                    <input type="radio" name="ElementSelectedBy" id="ElementXPath"/>\
                     <label for="ElementXPath">XPath:</label>\
                   </td>\
                   <td>\
@@ -417,7 +418,7 @@
                 </tr>\
                 <tr>\
                   <td>\
-                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementCssSelector" checked="checked"/>\
+                    <input type="radio" name="ElementSelectedBy" id="ElementCssSelector" checked="checked"/>\
                     <label for="ElementCssSelector">Css:</label>\
                   </td>\
                   <td>\
@@ -426,7 +427,7 @@
                 </tr>\
                 <tr>\
                   <td>\
-                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementText"/>\
+                    <input type="radio" name = "ElementSelectedBy" id="ElementText"/>\
                     <label for="ElementText">Text:</label>\
                   </td>\
                   <td>\
@@ -435,7 +436,7 @@
                 </tr>\
                 <tr>\
                   <td>\
-                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementTagName"/>\
+                    <input type="radio" name = "ElementSelectedBy" id="ElementTagName"/>\
                     <label for="ElementTagName">TagName:</label>\
                   </td>\
                   <td>\
@@ -444,7 +445,7 @@
                 </tr>\
               </table>\
               <input type="button" value="Add element" onclick="document.SWD_Page_Recorder.addElement()"/>\
-              ';
+              </form>';
       return bye("createElementForm");
     };
 
@@ -457,19 +458,17 @@
       var xPathLocatorElement = document.getElementById('SwdPR_PopUp_XPathLocator');
       var elementTextElement = document.getElementById('SwdPR_PopUp_ElementText');
       var elementTagName = document.getElementById('SwdPR_PopUp_ElementTagName');
-      var elementSelectedBy = ''; 
-      if (document.getElementById('SwdPR_Radio_ElementCssSelector').getAttribute('checked')) { 
-        elementSelectedBy =  'ElementCssSelector';
-      }
-      if (document.getElementById('SwdPR_Radio_ElementText').getAttribute('checked')) { 
-        elementSelectedBy =  'ElementText';
-      }
-      if (document.getElementById('SwdPR_Radio_ElementId').getAttribute('checked')) { 
-        elementSelectedBy =  'ElementId';
-      }
-      if (document.getElementById('SwdPR_Radio_ElementXPath').getAttribute('checked')) { 
-        elementSelectedBy =  'ElementXPath';
-      }
+      var elementSelectedBy = 'ElementCssSelector';
+      
+      var radios = document.SWDForm.ElementSelectedBy;
+      if (radios){ // this code is unstable
+        for (i=0; i < radios.length; i++) {    
+          if (radios[i].checked) {
+            elementSelectedBy = radios[i].getAttribute('id');
+            // hello(radios[i].getAttribute('id') + ' you got a value');     
+          }
+        }        
+      } 
       hello('ElementSelectedBy : ' + elementSelectedBy);
       var JsonData = {
         'Command': 'AddElement',

@@ -285,7 +285,9 @@ public class SimpleToolBarEx {
 			String browser = configData.get("Browser");
 			logger.info(String.format("Launching the %s browser", browser));
 			updateStatus(String.format("Launching the %s browser", browser));
-			baseURL = configData.get("Base URL");
+			if (configData.containsKey("Base URL")) {
+				baseURL = configData.get("Base URL");
+			}
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
 				// launchTool.setEnabled(true);
@@ -401,7 +403,8 @@ public class SimpleToolBarEx {
 		});
 
 		pageExploreTool.setData("Application", app);
-		// see also: https://eclipsesource.com/blogs/2014/03/24/how-to-use-swt-with-java-8/
+		// see also:
+		// https://eclipsesource.com/blogs/2014/03/24/how-to-use-swt-with-java-8/
 		pageExploreTool
 				.addSelectionListener(new AsyncDataCollectionListener(pageExploreTool));
 
@@ -568,7 +571,7 @@ public class SimpleToolBarEx {
 							pageExploreTool.getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									app.pageExploreTool.setEnabled(true);
+									pageExploreTool.setEnabled(true);
 									app.saveTool.setEnabled(true);
 								}
 							});
@@ -879,7 +882,8 @@ public class SimpleToolBarEx {
 		iconCache.clear();
 	}
 
-	// see also: http://www.gnu.org/software/kawa/api/index.html?gnu/jemacs/swt/SwtHelper.html
+	// see also:
+	// http://www.gnu.org/software/kawa/api/index.html?gnu/jemacs/swt/SwtHelper.html
 	private class AsyncDataCollectionListener implements SelectionListener {
 		private ToolItem parentToolItem;
 		private SimpleToolBarEx parentApp;
