@@ -157,7 +157,8 @@ public class Utils {
 			while (propIterator.hasNext()) {
 				String propertyKey = propIterator.next();
 				String propertyVal = elementObj.getString(propertyKey);
-				// System.err.println(propertyKey + ": " + propertyVal);
+				// logger.info(propertyKey + ": " + propertyVal);
+				System.err.println("readData: " + propertyKey + ": " + propertyVal);
 				collector.put(propertyKey, propertyVal);
 			}
 		} catch (JSONException e) {
@@ -190,6 +191,7 @@ public class Utils {
 		// NOTE: elementCodeName will not be set if
 		// user clicked the SWD Table Close Button
 		// ElementId is always set
+		// TODO: read the 'ElementSelectedBy'
 		return result;
 	}
 
@@ -476,6 +478,32 @@ public class Utils {
 		});
 		return stepNumbers.stream().map(e -> e.getKey())
 				.collect(Collectors.toList());
+	}
+
+	public void sleep(Integer seconds) {
+		long secondsLong = (long) seconds;
+		try {
+			Thread.sleep(secondsLong);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void flash(WebElement element) {
+		String bgcolor = element.getCssValue("backgroundColor");
+		for (int i = 0; i < 3; i++) {
+			changeColor("rgb(0,200,0)", element);
+			changeColor(bgcolor, element);
+		}
+	}
+
+	public void changeColor(String color, WebElement element) {
+		executeScript("arguments[0].style.backgroundColor = '" + color + "'",
+				element);
+		try {
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	// sorting example from
