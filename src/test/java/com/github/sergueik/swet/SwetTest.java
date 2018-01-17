@@ -3,17 +3,24 @@ package com.github.sergueik.swet;
  * Copyright 2014 - 2017 Serguei Kouzmine
  */
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasEntry;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import junit.framework.Assert;
+
+// import junit.framework.Assert;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +30,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,9 +61,11 @@ public class SwetTest {
 	private static WebDriver driver;
 	private static WebDriverWait wait;
 	private static Actions actions;
-	private static Alert alert;
+
+	private static Alert alert; // unused
+
 	private static Keys keyCTRL;
-	private static int flexibleWait = 5;
+	private static int flexibleWait = 30;
 	private static int implicitWait = 1;
 	private static long pollingInterval = 500;
 	private static String browser = "chrome";
@@ -62,11 +73,12 @@ public class SwetTest {
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 	private static Map<String, String> data = new HashMap<>();
 	private static String osName = OSUtils.getOsName();
-	private static boolean pause_after_script_injection = false;
-	private static long timeout_after_script_injection = 1000000;
-	private static boolean pause_after_test = false;
-	private static long timeout_after_test = 1000000;
 	private Utils utils = Utils.getInstance();
+
+	private static boolean pause_after_script_injection = false;
+	private static int timeout_after_script_injection = 1000;
+	private static boolean pause_after_test = false;
+	private static int timeout_after_test = 1000;
 
 	// Converting legacy SWD "Element selected By" keys to
 	// selectorTable keys
@@ -77,7 +89,7 @@ public class SwetTest {
 		mapSWD2CoreSelenium.put("ElementText", "text");
 		mapSWD2CoreSelenium.put("ElementId", "id");
 		// TODO:
-		mapSWD2CoreSelenium.put("ElementLinkText", "linkText");
+		// mapSWD2CoreSelenium.put("ElementLinkText", "linkText");
 		mapSWD2CoreSelenium.put("ElementTagName", "tagName");
 	}
 
@@ -125,7 +137,7 @@ public class SwetTest {
 		driver.get("about:blank");
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void testWebPageElementSearch() {
 		driver.get("https://www.codeproject.com/");
@@ -135,13 +147,9 @@ public class SwetTest {
 		utils.injectScripts(Optional.<String> empty());
 		// pause_after_script_injection
 		if (pause_after_script_injection) {
-			try {
-				Thread.sleep(timeout_after_script_injection);
-			} catch (InterruptedException e) {
-			}
-
+			utils.sleep(timeout_after_script_injection);
 		}
-		highlight(element);
+		utils.highlight(element);
 		// Act
 		inspectElement(element);
 		completeVisualSearch("element name");
@@ -149,16 +157,41 @@ public class SwetTest {
 		// Assert
 		String payload = (String) utils.executeScript(getSWDCommand);
 		assertFalse(payload.isEmpty());
-		// System.err.println("Result:\n" + readVisualSearchResult(payload));
-		Map<String, String> resultDetails = new HashMap<>();
-		utils.readData(payload, Optional.of(resultDetails));
-		verifySelectors(resultDetails);
+		System.err.println("Result:\n" + readVisualSearchResult(payload));
+		Map<String, String> payloadDetails = new HashMap<>();
+		utils.readData(payload, Optional.of(payloadDetails));
+		verifyNeededKeys(payloadDetails);
+		// verifyEntry(payloadDetails, "ElementSelectedBy", nil);
+		verifySelectors(payloadDetails);
 		if (pause_after_test) {
-			try {
-				Thread.sleep(timeout_after_test);
-			} catch (InterruptedException e) {
-			}
+			utils.sleep(timeout_after_test);
 		}
+	}
+
+	// see also:
+	// https://github.com/dimitrisli/JUnitShowcase/blob/master/src/test/java/com/dimitrisli/junitshowcase/hamcrest/HamcrestMatchersTesting.java
+	private void verifyEntry(Map<String, String> result, String key,
+			String value) {
+
+		// TODO: a straight assert
+		assertThat(result, Matchers.<String> hasKey(key));
+		assertTrue(result.containsKey((Object) key));
+		assertThat(result, hasEntry(key, value));
+	}
+
+	private void verifyNeededKeys(Map<String, String> result) {
+
+		// TODO: a better assert
+
+		Object[] objSWDkeys = mapSWD2CoreSelenium.keySet().toArray();
+		String[] neededKeys = new String[objSWDkeys.length + 1];
+
+		for (int cnt = 0; cnt != objSWDkeys.length; cnt++) {
+			// "ElementLinkText" is not returned yet
+			neededKeys[cnt] = objSWDkeys[cnt].toString();
+		}
+		neededKeys[neededKeys.length - 1] = "ElementSelectedBy";
+		assertThat(result.keySet(), hasItems(neededKeys));
 	}
 
 	// TODO: automatically discover new methods using reflection ?
@@ -178,7 +211,7 @@ public class SwetTest {
 				WebElement element = driver
 						.findElement((By) method.invoke(null, result.get(methodKey)));
 				assertThat(element, notNullValue());
-				highlight(element);
+				utils.highlight(element);
 			} catch (NoSuchMethodException | SecurityException
 					| IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
@@ -190,13 +223,13 @@ public class SwetTest {
 		WebElement element = driver
 				.findElement(By.cssSelector(result.get("ElementCssSelector")));
 		assertThat(element, notNullValue());
-		highlight(element);
+		utils.highlight(element);
 		element = driver.findElement(By.xpath(result.get("ElementXPath")));
 		assertThat(element, notNullValue());
-		highlight(element);
+		utils.highlight(element);
 	}
 
-	// @Ignore
+	@Ignore
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testNoIds() {
@@ -204,7 +237,7 @@ public class SwetTest {
 		WebElement element = wait.until(
 				ExpectedConditions.visibilityOf(driver.findElement(By.id("uh-logo"))));
 		assertThat(element, notNullValue());
-		highlight(element);
+		utils.highlight(element);
 		element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(
 				// TODO: no such element: Unable to locate element: {"method":"css
 				// selector","selector":"h1[id *='yui_'] > a[ href =
@@ -214,19 +247,15 @@ public class SwetTest {
 				By.cssSelector("h1 > a[ href = 'https://www.yahoo.com/' ]"))));
 		assertThat(element, notNullValue());
 
-		highlight(element);
+		utils.highlight(element);
 		// System.err.println("Parent (1):\n" +
 		// element.findElement(By.xpath("..")).getAttribute("outerHTML")) ;
 		utils.injectScripts(Optional.<String> empty());
 		// pause_after_script_injection
 		if (pause_after_script_injection) {
-			try {
-				Thread.sleep(timeout_after_script_injection);
-			} catch (InterruptedException e) {
-			}
-
+			utils.sleep(timeout_after_script_injection);
 		}
-		highlight(element);
+		utils.highlight(element);
 		// Act
 		inspectElement(element);
 		completeVisualSearch("Yahoo Logo");
@@ -249,34 +278,28 @@ public class SwetTest {
 			String expectedValue = expected.get(selector);
 			String actualValue = details.get(selector);
 			// NOTE: this assert method is deprecated
-			Assert
-					.assertEquals(
-							String.format("Expected:\n%s\nActual:\n%s\n", expectedValue,
-									actualValue),
-							replaceID(expectedValue), replaceID(actualValue));
+			assertThat(actualValue, is(equalTo(expectedValue)));
 			assertThat(replaceID(expectedValue), equalTo(replaceID(actualValue)));
 		}
 		if (pause_after_test) {
-			try {
-				Thread.sleep(timeout_after_test);
-			} catch (InterruptedException e) {
-			}
+			utils.sleep(timeout_after_test);
 		}
 	}
 
 	// @Ignore
 	@Test
-	public void testStatic() {
+	public void testStaticPage() {
 		driver.get(utils.getResourceURI("ElementSearch.html"));
 		utils.injectScripts(Optional.<String> empty());
 		// Unsupported URL protocol:
 		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
 		WebElement element = wait.until(
 				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
-		highlight(element);
+		utils.highlight(element);
 		// Act
 		inspectElement(element);
 		// Assert
+		utils.sleep(1000);
 		completeVisualSearch("this element name");
 
 		// Assert
@@ -301,6 +324,41 @@ public class SwetTest {
 		config.elements = testData;
 
 		YamlHelper.printConfiguration(config);
+	}
+
+	@Test
+	public void testChangeElementSelectedBy() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		WebElement element = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		utils.highlight(element);
+		// Act
+		inspectElement(element);
+		// Assert
+		List<String> labels = driver
+				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
+				.map(e -> e.getAttribute("for")).collect(Collectors.toList());
+
+		String lastLabel = null;
+		Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
+		for (String label : labels) {
+			utils.sleep(1000);
+			WebElement radioElement = wait
+					.until(ExpectedConditions.visibilityOf(driver.findElement(By
+							.xpath(String.format("//*[@id='%s']", label)))));
+			assertThat(radioElement, notNullValue());
+			radioElement.click();
+			lastLabel = label;
+		}
+		completeVisualSearch("this element name");
+		// Assert
+		String payload = (String) utils.executeScript(getSWDCommand);
+		assertFalse(payload.isEmpty());
+		Map<String, String> payloadDetails = new HashMap<>();
+		utils.readData(payload, Optional.of(payloadDetails));
+		verifyNeededKeys(payloadDetails);
+		verifyEntry(payloadDetails, "ElementSelectedBy", lastLabel);
 	}
 
 	public static String getOsName() {
@@ -389,8 +447,8 @@ public class SwetTest {
 				@Override
 				public WebElement apply(WebDriver _driver) {
 					Iterator<WebElement> _elements = _driver
-							.findElements(
-									By.cssSelector("div#SwdPR_PopUp > input[type='button']"))
+							.findElements(By
+									.cssSelector("div#SwdPR_PopUp > form > input[type='button']"))
 							.iterator();
 					WebElement result = null;
 					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
@@ -413,7 +471,8 @@ public class SwetTest {
 		}
 
 		assertThat(swdAddElementButton, notNullValue());
-		highlight(swdAddElementButton);
+		utils.highlight(swdAddElementButton);
+		utils.flash(swdAddElementButton);
 		// Act
 		swdAddElementButton.click();
 	}
@@ -450,7 +509,7 @@ public class SwetTest {
 				}
 			});
 			assertThat(swdCloseButton, notNullValue());
-			highlight(swdCloseButton);
+			utils.highlight(swdCloseButton);
 			swdCloseButton.click();
 		
 		} catch (Exception e) {
@@ -462,29 +521,8 @@ public class SwetTest {
 		WebElement swdCloseButton = wait.until(ExpectedConditions.visibilityOf(
 				swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
 		assertThat(swdCloseButton, notNullValue());
-		highlight(swdCloseButton);
+		utils.highlight(swdCloseButton);
 		swdCloseButton.click();
-	}
-
-	private void highlight(WebElement element) {
-		highlight(element, 100);
-	}
-
-	// http://stackoverflow.com/questions/11010569/highlight-a-dom-element-on-mouse-over-like-inspect-does
-	private void highlight(WebElement element, long highlight_interval) {
-		if (wait == null) {
-			wait = new WebDriverWait(driver, flexibleWait);
-		}
-		wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
-		try {
-			wait.until(ExpectedConditions.visibilityOf(element));
-			utils.executeScript("arguments[0].style.border='3px solid yellow'",
-					element);
-			Thread.sleep(highlight_interval);
-			utils.executeScript("arguments[0].style.border=''", element);
-		} catch (InterruptedException e) {
-			System.err.println("Ignored: " + e.toString());
-		}
 	}
 
 	private String getElementText(WebElement element) {

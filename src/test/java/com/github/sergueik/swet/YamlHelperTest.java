@@ -210,6 +210,7 @@ public class YamlHelperTest {
 		assertTrue(result);
 	}
 
+	@Ignore
 	@Test
 	public void exactMatchTest() throws IOException {
 
