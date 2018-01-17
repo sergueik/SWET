@@ -374,46 +374,77 @@
       }
       closeClickHandler = "";
             element.innerHTML = '\
-        <table id="SWDTable">\
-            <tr>\
-              <td>Code identifier</td>\
-              <td>\
+              <table id="SWDTable">\
+                <tr>\
+                  <td>Code identifier</td>\
+                  <td>\
                     <div id="SwdPR_PopUp_Element_Name">\
-                        <span id="SwdPR_PopUp_CodeID">\
-                            <input type="text" id="SwdPR_PopUp_CodeIDText">\
-                        </span>\
-                        <span id="SwdPR_PopUp_CodeClose"></span>\
-                        <span id="SwdPR_PopUp_CloseButton" onclick="document.SWD_Page_Recorder.closeForm()">X</span>\
-                     </div>\
-              </td>\
-            </tr>\
-            <tr>\
-              <td>Id:</td>\
-              <td><span id="SwdPR_PopUp_ElementId">Element Id</span></td>\
-            </tr>\
-            <tr>\
-              <td>GUID:</td>\
-              <td><span id="SwdPR_PopUp_ElementGUID">Element GUID</span></td>\
-            </tr>\
-            <tr>\
-              <td>XPath:</td>\
-              <td><span id="SwdPR_PopUp_XPathLocator">Element XPath</span></td>\
-            </tr>\
-            <tr>\
-              <td>Css:</td>\
-              <td><span id="SwdPR_PopUp_CssSelector">Element Css</span></td>\
-            </tr>\
-            <tr>\
-              <td>Text:</td>\
-              <td><span id="SwdPR_PopUp_ElementText">Element Text</span></td>\
-            </tr>\
-            <tr>\
-              <td>TagName:</td>\
-              <td><span id="SwdPR_PopUp_ElementTagName">Element TagName</span></td>\
-            </tr>\
-            </table>\
-        <input type="button" value="Add element" onclick="document.SWD_Page_Recorder.addElement()">\
-        ';
+                      <span id="SwdPR_PopUp_CodeID">\
+                        <input type="text" id="SwdPR_PopUp_CodeIDText"/>\
+                      </span>\
+                      <span id="SwdPR_PopUp_CodeClose"/>\
+                      <span id="SwdPR_PopUp_CloseButton" onclick="document.SWD_Page_Recorder.closeForm()">\
+                        <svg width="10" height="10"><circle cx="5" cy="5" r="4" stroke="red" stroke-width="1" fill="pink" />X</svg>\
+                      </span>\
+                    </div>\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td>\
+                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementId"/>\
+                    <label for="ElementId">Id:</label>\
+                  </td>\
+                  <td>\
+                    <span id="SwdPR_PopUp_ElementId">Element Id</span>\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td>\
+                    <label>GUID:</label>\
+                  </td>\
+                  <td>\
+                    <span id="SwdPR_PopUp_ElementGUID">Element GUID</span>\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td>\
+                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementXPath"/>\
+                    <label for="ElementXPath">XPath:</label>\
+                  </td>\
+                  <td>\
+                    <span id="SwdPR_PopUp_XPathLocator">Element XPath</span>\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td>\
+                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementCssSelector" checked="checked"/>\
+                    <label for="ElementCssSelector">Css:</label>\
+                  </td>\
+                  <td>\
+                    <span id="SwdPR_PopUp_CssSelector">Element Css</span>\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td>\
+                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementText"/>\
+                    <label for="ElementText">Text:</label>\
+                  </td>\
+                  <td>\
+                    <span id="SwdPR_PopUp_ElementText">Element Text</span>\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td>\
+                    <input type="radio" name = "ElementSelectedBy" id="SwdPR_Radio_ElementTagName"/>\
+                    <label for="ElementTagName">TagName:</label>\
+                  </td>\
+                  <td>\
+                    <span id="SwdPR_PopUp_ElementTagName">Element TagName</span>\
+                  </td>\
+                </tr>\
+              </table>\
+              <input type="button" value="Add element" onclick="document.SWD_Page_Recorder.addElement()"/>\
+              ';
       return bye("createElementForm");
     };
 
@@ -426,10 +457,25 @@
       var xPathLocatorElement = document.getElementById('SwdPR_PopUp_XPathLocator');
       var elementTextElement = document.getElementById('SwdPR_PopUp_ElementText');
       var elementTagName = document.getElementById('SwdPR_PopUp_ElementTagName');
+      var elementSelectedBy = ''; 
+      if (document.getElementById('SwdPR_Radio_ElementCssSelector').getAttribute('checked')) { 
+        elementSelectedBy =  'ElementCssSelector';
+      }
+      if (document.getElementById('SwdPR_Radio_ElementText').getAttribute('checked')) { 
+        elementSelectedBy =  'ElementText';
+      }
+      if (document.getElementById('SwdPR_Radio_ElementId').getAttribute('checked')) { 
+        elementSelectedBy =  'ElementId';
+      }
+      if (document.getElementById('SwdPR_Radio_ElementXPath').getAttribute('checked')) { 
+        elementSelectedBy =  'ElementXPath';
+      }
+      hello('ElementSelectedBy : ' + elementSelectedBy);
       var JsonData = {
         'Command': 'AddElement',
         'Caller': 'addElement',
         'CommandId': pseudoGuid(),
+        'ElementSelectedBy': elementSelectedBy,
         'ElementCodeName': codeIDTextElement.value,
         'ElementId': (htmlIdElement.hasChildNodes()) ? htmlIdElement.firstChild.nodeValue:'',
         'ElementCssSelector': (cssSelectorElement.hasChildNodes())?cssSelectorElement.firstChild.nodeValue : '',
