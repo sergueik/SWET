@@ -14,8 +14,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-// import junit.framework.Assert;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -178,6 +176,29 @@ public class SwetTest {
 		assertThat(result, Matchers.<String> hasKey(key));
 		assertTrue(result.containsKey((Object) key));
 		assertThat(result, hasEntry(key, value));
+	}
+
+	private void verifyNeededKeys(Map<String, String> result) {
+
+		// TODO: a better assert
+
+		Object[] objSWDkeys = mapSWD2CoreSelenium.keySet().toArray();
+		String[] neededKeys = new String[objSWDkeys.length + 1];
+
+		for (int cnt = 0; cnt != objSWDkeys.length; cnt++) {
+			// "ElementLinkText" is not returned yet
+			neededKeys[cnt] = objSWDkeys[cnt].toString();
+		}
+		neededKeys[neededKeys.length - 1] = "ElementSelectedBy";
+		assertThat(result.keySet(), hasItems(neededKeys));
+	}
+
+	private void verifyKey(Map<String, String> result, String key, String Value) {
+
+		assertTrue(result.containsKey((Object) key));
+
+		// TODO: a better assert
+		assertThat(result, Matchers.<String> hasKey(key));
 	}
 
 	private void verifyNeededKeys(Map<String, String> result) {
