@@ -374,7 +374,7 @@
       }
       closeClickHandler = "";
             element.innerHTML = '\
-            <form name="SWDForm"> \
+            <form name="SWDForm" id="SWDForm"> \
               <table id="SWDTable">\
                 <tr>\
                   <td>Code identifier</td>\
@@ -436,7 +436,7 @@
                 </tr>\
                 <tr>\
                   <td>\
-                    <input type="radio" name = "ElementSelectedBy" id="ElementTagName"/>\
+                    <input type="radio" name = "ElementSelectedBy" id="ElementTagName" disabled="disabled"/>\
                     <label for="ElementTagName">TagName:</label>\
                   </td>\
                   <td>\

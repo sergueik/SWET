@@ -528,6 +528,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [jProcesses](https://github.com/profesorfalken/jProcesses)
   * [jedi-tester/Ext2POI](https://github.com/jedi-tester/Ext2POI)
   * [free java license-management projects](http://freshmeat.sourceforge.net/tags/license-management)
+  * [Hamcrest tutorial](http://www.vogella.com/tutorials/Hamcrest/article.html)
 
 ### Note
 

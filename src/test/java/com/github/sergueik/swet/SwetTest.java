@@ -42,6 +42,7 @@ import org.junit.Test;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -326,6 +327,33 @@ public class SwetTest {
 		YamlHelper.printConfiguration(config);
 	}
 
+	//
+	@Test
+	public void testExcludeDisabledElementSelectedByChoices() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		WebElement element = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		utils.highlight(element);
+		// Act
+		inspectElement(element);
+		// Assert
+		List<String> labels = driver
+				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
+				.map(e -> e.getAttribute("for")).collect(Collectors.toList());
+		for (String label : labels) {
+			// NOTE: org.openqa.selenium.InvalidSelectorException
+			Optional<WebElement> radioElement = driver.findElements(By.xpath(String
+					.format("//*[@id='%s'][not( @disabled) or not(@disabled='disabled')]",
+							label)))
+					.stream().findFirst();
+			if (radioElement.isPresent()) {
+				utils.sleep(1000);
+				radioElement.get().click();
+			}
+		}
+	}
+
 	@Test
 	public void testChangeElementSelectedBy() {
 		driver.get(utils.getResourceURI("ElementSearch.html"));
@@ -344,9 +372,8 @@ public class SwetTest {
 		Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
 		for (String label : labels) {
 			utils.sleep(1000);
-			WebElement radioElement = wait
-					.until(ExpectedConditions.visibilityOf(driver.findElement(By
-							.xpath(String.format("//*[@id='%s']", label)))));
+			WebElement radioElement = wait.until(ExpectedConditions.visibilityOf(
+					driver.findElement(By.xpath(String.format("//*[@id='%s']", label)))));
 			assertThat(radioElement, notNullValue());
 			radioElement.click();
 			lastLabel = label;
