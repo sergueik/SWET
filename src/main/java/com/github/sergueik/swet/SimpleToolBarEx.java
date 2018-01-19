@@ -595,7 +595,7 @@ public class SimpleToolBarEx {
 		Boolean browserRunaway = false;
 		String name = null;
 		while (waitingForData) {
-			String payload = utils.getpayload();
+			String payload = utils.getPayload();
 			if (!payload.isEmpty()) {
 				if (payload.contains((CharSequence) "ElementCodeName")) {
 					// objects cannot suicide

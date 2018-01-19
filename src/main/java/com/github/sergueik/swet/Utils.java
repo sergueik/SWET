@@ -45,8 +45,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -63,18 +65,27 @@ import org.apache.log4j.PropertyConfigurator;
 public class Utils {
 
 	private static Utils instance = new Utils();
+
+	private static Keys keyCTRL;
+	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
+
+	private static String osName = OSUtils.getOsName();
 	private WebDriver driver;
 	private WebDriverWait wait;
+	private Actions actions;
 	private int flexibleWait = 5;
-	private final String getCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 
 	public void setFlexibleWait(int flexibleWait) {
 		this.flexibleWait = flexibleWait;
 		this.wait = new WebDriverWait(this.driver, flexibleWait);
 	}
 
-	public void setDriver(WebDriver driver) {
-		this.driver = driver;
+	public void setDriver(WebDriver value) {
+		this.driver = value;
+	}
+
+	public void setActions(Actions value) {
+		this.actions = value;
 	}
 
 	private Utils() {
@@ -223,8 +234,8 @@ public class Utils {
 				public WebElement apply(WebDriver _driver) {
 					System.err.println("Waiting for the element to become available...");
 					Iterator<WebElement> _elements = _driver
-							.findElements(
-									By.cssSelector("div#SwdPR_PopUp > form > input[type='button']"))
+							.findElements(By
+									.cssSelector("div#SwdPR_PopUp > form > input[type='button']"))
 							.iterator();
 					WebElement result = null;
 					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
@@ -400,6 +411,29 @@ public class Utils {
 		swdCloseButton.click();
 	}
 
+	public String getElementText(WebElement element) {
+		// http://stackoverflow.com/questions/6743912/get-the-pure-text-without-html-element-by-javascript
+		String script = "var element = arguments[0];var text = element.innerText || element.textContent || ''; return text;";
+		return (String) executeScript(script, element);
+	}
+
+	public void inspectElement(WebElement element) {
+		keyCTRL = osName.startsWith("Mac") ? Keys.COMMAND : Keys.CONTROL;
+
+		if (osName.startsWith("Mac")) {
+			actions.keyDown(keyCTRL).build().perform();
+			actions.moveToElement(element).contextClick().build().perform();
+			actions.keyUp(keyCTRL).build().perform();
+		} else {
+			actions.moveToElement(element).build().perform();
+			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
+		}
+		// Assert
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+	}
 
 	public void highlight(WebElement element) {
 		highlight(element, 100);
@@ -535,10 +569,6 @@ public class Utils {
 		}
 	}
 
-	public String getpayload() {
-		return executeScript(getCommand).toString();
-	}
-
 	public Object executeScript(String script, Object... arguments) {
 		if (driver != null && (driver instanceof JavascriptExecutor)) {
 			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
@@ -584,6 +614,10 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public String getPayload() {
+		return executeScript(getSWDCommand).toString();
 	}
 
 	// sorting elements by valueColumn, returns Array List of indexColumn

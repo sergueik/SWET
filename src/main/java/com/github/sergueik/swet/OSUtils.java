@@ -36,9 +36,12 @@ public class OSUtils {
 
 	public static String getOsName() {
 		if (osName == null) {
-			osName = System.getProperty("os.name");
+			osName = System.getProperty("os.name").toLowerCase();
+			if (osName.startsWith("windows")) {
+				osName = "windows";
+			}
 		}
-		return osName.toLowerCase();
+		return osName;
 	}
 
 	public static String getDesktopPath() {

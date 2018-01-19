@@ -3,13 +3,11 @@ package com.github.sergueik.swet;
  * Copyright 2014 - 2017 Serguei Kouzmine
  */
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasEntry;
-
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -21,13 +19,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matchers;
@@ -37,22 +32,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.github.sergueik.swet.Utils;
-import com.github.sergueik.swet.ExceptionDialogEx;
 
 @SuppressWarnings("deprecation")
 public class SwetTest {
@@ -63,21 +49,18 @@ public class SwetTest {
 
 	private static Alert alert; // unused
 
-	private static Keys keyCTRL;
-	private static int flexibleWait = 30;
-	private static int implicitWait = 1;
-	private static long pollingInterval = 500;
-	private static String browser = "chrome";
-	private static String baseURL = "about:blank";
-	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
-	private static Map<String, String> data = new HashMap<>();
+	private static final String browser = "chrome";
+	private static final String baseURL = "about:blank";
 	private static String osName = OSUtils.getOsName();
 	private Utils utils = Utils.getInstance();
 
 	private static boolean pause_after_script_injection = false;
-	private static int timeout_after_script_injection = 1000;
+	private static final int timeout_after_script_injection = 1000;
 	private static boolean pause_after_test = false;
-	private static int timeout_after_test = 1000;
+	private static final int timeout_after_test = 1000;
+	private static final int flexibleWait = 30;
+	private static final int implicitWait = 1;
+	private static final long pollingInterval = 500;
 
 	// Converting legacy SWD "Element selected By" keys to
 	// selectorTable keys
@@ -99,9 +82,8 @@ public class SwetTest {
 
 		System.err.println("os: " + osName);
 		if (osName.startsWith("windows")) {
-
 			driver = BrowserDriver.initialize(browser);
-		} else if (osName.startsWith("Mac")) {
+		} else if (osName.startsWith("mac")) {
 			driver = BrowserDriver.initialize("safari");
 		} else {
 			driver = BrowserDriver.initialize("firefox");
@@ -110,7 +92,6 @@ public class SwetTest {
 		wait = new WebDriverWait(driver, flexibleWait);
 		wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
 		actions = new Actions(driver);
-		keyCTRL = osName.startsWith("Mac") ? Keys.COMMAND : Keys.CONTROL;
 	}
 
 	@AfterClass
@@ -130,6 +111,7 @@ public class SwetTest {
 		driver.get(baseURL);
 		utils.setDriver(driver);
 		utils.setFlexibleWait(flexibleWait);
+		utils.setActions(actions);
 	}
 
 	@After
@@ -151,11 +133,11 @@ public class SwetTest {
 		}
 		utils.highlight(element);
 		// Act
-		inspectElement(element);
+		utils.inspectElement(element);
 		utils.completeVisualSearch("element name");
 
 		// Assert
-		String payload = (String) utils.executeScript(getSWDCommand);
+		String payload = utils.getPayload();
 		assertFalse(payload.isEmpty());
 		System.err.println("Result:\n" + readVisualSearchResult(payload));
 		Map<String, String> payloadDetails = new HashMap<>();
@@ -257,11 +239,11 @@ public class SwetTest {
 		}
 		utils.highlight(element);
 		// Act
-		inspectElement(element);
+		utils.inspectElement(element);
 		utils.completeVisualSearch("Yahoo Logo");
 
 		// Assert
-		String payload = (String) utils.executeScript(getSWDCommand);
+		String payload = utils.getPayload();
 		assertFalse(payload.isEmpty());
 		String result = readVisualSearchResult(payload);
 		System.err.println("Result:\n" + result);
@@ -297,13 +279,13 @@ public class SwetTest {
 				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
 		utils.highlight(element);
 		// Act
-		inspectElement(element);
+		utils.inspectElement(element);
 		// Assert
 		utils.sleep(1000);
 		utils.completeVisualSearch("this element name");
 
 		// Assert
-		String payload = (String) utils.executeScript(getSWDCommand);
+		String payload = utils.getPayload();
 		assertFalse(payload.isEmpty());
 		Map<String, String> elementData = new HashMap<>();
 		String elementName = readVisualSearchResult(payload,
@@ -314,7 +296,7 @@ public class SwetTest {
 		browserConfiguration.version = "54.0";
 		browserConfiguration.driverVersion = "2.27";
 		browserConfiguration.driverPath = "c:/java/selenium/chromedriver.exe";
-		browserConfiguration.platform = getOsName();
+		browserConfiguration.platform = OSUtils.getOsName();
 		config.created = new Date();
 		config.browserConfiguration = browserConfiguration;
 		config.updated = new Date();
@@ -335,7 +317,7 @@ public class SwetTest {
 				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
 		utils.highlight(element);
 		// Act
-		inspectElement(element);
+		utils.inspectElement(element);
 		// Assert
 		List<String> labels = driver
 				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
@@ -361,7 +343,7 @@ public class SwetTest {
 				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
 		utils.highlight(element);
 		// Act
-		inspectElement(element);
+		utils.inspectElement(element);
 		// Assert
 		List<String> labels = driver
 				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
@@ -380,23 +362,12 @@ public class SwetTest {
 		utils.completeVisualSearch(
 				"Element with changing 'ElementSelectedBy' attribute");
 		// Assert
-		String payload = (String) utils.executeScript(getSWDCommand);
+		String payload = utils.getPayload();
 		assertFalse(payload.isEmpty());
 		Map<String, String> payloadDetails = new HashMap<>();
 		utils.readData(payload, Optional.of(payloadDetails));
 		verifyNeededKeys(payloadDetails);
 		verifyEntry(payloadDetails, "ElementSelectedBy", lastLabel);
-	}
-
-	public static String getOsName() {
-
-		if (osName == null) {
-			osName = System.getProperty("os.name");
-			if (osName.startsWith("Windows")) {
-				osName = "windows";
-			}
-		}
-		return osName;
 	}
 
 	private String replaceID(String selectorValue) {
@@ -423,26 +394,4 @@ public class SwetTest {
 		return result;
 	}
 
-	private String getElementText(WebElement element) {
-		// http://stackoverflow.com/questions/6743912/get-the-pure-text-without-html-element-by-javascript
-		String script = "var element = arguments[0];var text = element.innerText || element.textContent || ''; return text;";
-		return (String) utils.executeScript(script, element);
-	}
-
-	private void inspectElement(WebElement element) {
-
-		if (osName.startsWith("Mac")) {
-			actions.keyDown(keyCTRL).build().perform();
-			actions.moveToElement(element).contextClick().build().perform();
-			actions.keyUp(keyCTRL).build().perform();
-		} else {
-			actions.moveToElement(element).build().perform();
-			actions.keyDown(keyCTRL).contextClick().keyUp(keyCTRL).build().perform();
-		}
-		// Assert
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-	}
 }

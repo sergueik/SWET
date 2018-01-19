@@ -132,7 +132,7 @@ public class AsyncExecEx {
 					Thread.sleep(DELAY);
 				} catch (InterruptedException e) {
 				}
-				String payload = utils.getpayload();
+				String payload = utils.getPayload();
 				// simplified
 				if (!payload.isEmpty()) {
 					System.err.println(payload);
@@ -196,7 +196,7 @@ public class AsyncExecEx {
 						waitingForData = false;
 					}
 					while (waitingForData) {
-						String payload = utils.getpayload();
+						String payload = utils.getPayload();
 						// simplified
 						if (!payload.isEmpty()) {
 							System.err.println(payload);
