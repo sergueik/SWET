@@ -94,6 +94,265 @@ public class SwetTest {
 		actions = new Actions(driver);
 	}
 
+	@Before
+	public void loadBaseURL() {
+		driver.get(baseURL);
+		utils.setDriver(driver);
+		utils.setFlexibleWait(flexibleWait);
+		utils.setActions(actions);
+	}
+
+	// @Ignore
+	@Test
+	public void testWebPageElementSearch() {
+		driver.get("https://www.codeproject.com/");
+		WebElement target = wait.until(ExpectedConditions.visibilityOf(driver
+				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
+		assertThat(target, notNullValue());
+		utils.injectScripts(Optional.<String> empty());
+		// pause_after_script_injection
+		if (pause_after_script_injection) {
+			utils.sleep(timeout_after_script_injection);
+		}
+		utils.highlight(target);
+		// Act
+		utils.inspectElement(target);
+		utils.completeVisualSearch("element name");
+
+		// Assert
+		String payload = utils.getPayload();
+		assertFalse(payload.isEmpty());
+		System.err.println("Result:\n" + utils.readVisualSearchResult(payload));
+		Map<String, String> details = new HashMap<>();
+		utils.readData(payload, Optional.of(details));
+		verifyNeededKeys(details);
+		// verifyEntry(details, "ElementSelectedBy", nil);
+		verifySelectors(details);
+		if (pause_after_test) {
+			utils.sleep(timeout_after_test);
+		}
+	}
+
+	// @Ignore
+	@Test
+	public void testStaticPage() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		// Unsupported URL protocol:
+		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
+		WebElement target = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		utils.highlight(target);
+		// Act
+		utils.inspectElement(target);
+		// Assert
+		utils.sleep(1000);
+		utils.completeVisualSearch("this element name");
+
+		// Assert
+		String payload = utils.getPayload();
+		assertFalse(payload.isEmpty());
+		Map<String, String> elementData = new HashMap<>();
+		String elementName = utils.readVisualSearchResult(payload,
+				Optional.of(elementData));
+		Configuration config = new Configuration();
+		BrowserConfiguration browserConfiguration = new BrowserConfiguration();
+		browserConfiguration.name = "chrome";
+		browserConfiguration.version = "54.0";
+		browserConfiguration.driverVersion = "2.27";
+		browserConfiguration.driverPath = "c:/java/selenium/chromedriver.exe";
+		browserConfiguration.platform = OSUtils.getOsName();
+		config.created = new Date();
+		config.browserConfiguration = browserConfiguration;
+		config.updated = new Date();
+		Map<String, Map<String, String>> testData = new HashMap<>();
+		String commandId = elementData.get("CommandId");
+		testData.put(commandId, elementData);
+		config.elements = testData;
+
+		YamlHelper.printConfiguration(config);
+	}
+
+	// @Ignore
+	@Test
+	public void testOnOffSearch() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		// Unsupported URL protocol:
+		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
+		WebElement target = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		// Act
+		for (int cnt = 0; cnt != 3; cnt++) {
+			utils.highlight(target);
+			utils.inspectElement(target);
+			// Assert
+			utils.sleep(1000);
+			utils.closeVisualSearch();
+		}
+		utils.inspectElement(target);
+		utils.completeVisualSearch("this element name");
+
+		// TODO: refactor
+		String payload = utils.getPayload();
+		assertFalse(payload.isEmpty());
+		System.err.println("Result:\n" + utils.readVisualSearchResult(payload));
+		Map<String, String> details = new HashMap<>();
+		utils.readData(payload, Optional.of(details));
+		verifyNeededKeys(details);
+
+	}
+
+	// @Ignore
+	@Test
+	public void testIncompleteSubmission() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		// Unsupported URL protocol:
+		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
+		WebElement target = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		utils.highlight(target);
+		// Act
+		utils.inspectElement(target);
+		utils.completeVisualSearch("");
+
+		utils.completeVisualSearch("this element name");
+
+		// TODO: refactor
+		String payload = utils.getPayload();
+		assertFalse(payload.isEmpty());
+		System.err.println("Result:\n" + utils.readVisualSearchResult(payload));
+		Map<String, String> details = new HashMap<>();
+		utils.readData(payload, Optional.of(details));
+		verifyNeededKeys(details);
+
+	}
+
+	// @Ignore
+	@Test
+	public void testExcludeDisabledElementSelectedByChoices() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		WebElement target = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		utils.highlight(target);
+		// Act
+		utils.inspectElement(target);
+		// Assert
+		List<String> labels = driver
+				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
+				.map(e -> e.getAttribute("for")).collect(Collectors.toList());
+		for (String label : labels) {
+			// NOTE: org.openqa.selenium.InvalidSelectorException
+			Optional<WebElement> radioElement = driver.findElements(By.xpath(String
+					.format("//*[@id='%s'][not( @disabled) or not(@disabled='disabled')]",
+							label)))
+					.stream().findFirst();
+			if (radioElement.isPresent()) {
+				utils.sleep(1000);
+				radioElement.get().click();
+			}
+		}
+	}
+
+	// @Ignore
+	@Test
+	public void testChangeElementSelectedBy() {
+		driver.get(utils.getResourceURI("ElementSearch.html"));
+		utils.injectScripts(Optional.<String> empty());
+		WebElement target = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
+		utils.highlight(target);
+		// Act
+		utils.inspectElement(target);
+		// Assert
+		List<String> labels = driver
+				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
+				.map(e -> e.getAttribute("for")).collect(Collectors.toList());
+
+		String lastLabel = null;
+		Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
+		for (String label : labels) {
+			utils.sleep(100);
+			WebElement radioElement = wait.until(ExpectedConditions.visibilityOf(
+					driver.findElement(By.xpath(String.format("//*[@id='%s']", label)))));
+			assertThat(radioElement, notNullValue());
+			radioElement.click();
+			lastLabel = label;
+		}
+		utils.completeVisualSearch("changing strategy attribute");
+		// Assert
+		String payload = utils.getPayload();
+		assertFalse(payload.isEmpty());
+		Map<String, String> details = new HashMap<>();
+		utils.readData(payload, Optional.of(details));
+		verifyNeededKeys(details);
+		verifyEntry(details, "ElementSelectedBy", lastLabel);
+	}
+
+	// @Ignore
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testNoIds() {
+		driver.get("http://www.yahoo.com/");
+		WebElement element = wait.until(
+				ExpectedConditions.visibilityOf(driver.findElement(By.id("uh-logo"))));
+		assertThat(element, notNullValue());
+		utils.highlight(element);
+		element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(
+				// TODO: no such element: Unable to locate element: {"method":"css
+				// selector","selector":"h1[id *='yui_'] > a[ href =
+				// 'https://www.yahoo.com/' ]"}(..)
+				// By.cssSelector("h1[id *='yui_'] > a[ href = 'https://www.yahoo.com/'
+				// ]")
+				By.cssSelector("h1 > a[ href = 'https://www.yahoo.com/' ]"))));
+		assertThat(element, notNullValue());
+
+		utils.highlight(element);
+		// System.err.println("Parent (1):\n" +
+		// element.findElement(By.xpath("..")).getAttribute("outerHTML")) ;
+		utils.injectScripts(Optional.<String> empty());
+		// pause_after_script_injection
+		if (pause_after_script_injection) {
+			utils.sleep(timeout_after_script_injection);
+		}
+		utils.highlight(element);
+		// Act
+		utils.inspectElement(element);
+		utils.completeVisualSearch("Yahoo Logo");
+
+		// Assert
+		String payload = utils.getPayload();
+		assertFalse(payload.isEmpty());
+		String result = utils.readVisualSearchResult(payload);
+		System.err.println("Result:\n" + result);
+		Map<String, String> details = new HashMap<>();
+		utils.readData(payload, Optional.of(details));
+		Map<String, String> expected = new HashMap<>();
+		expected.put("ElementId", "uh-logo");
+		expected.put("ElementXPath",
+				"id(\"yui_3_18_0_4_1508530499248_1058\")/a[ @href = \"https://www.yahoo.com/\" ]");
+		expected.put("ElementCssSelector",
+				"h1#yui_3_18_0_4_1516464233498_948 > a[ href = \"https://www.yahoo.com/\" ]");
+
+		for (String selector : expected.keySet()) {
+			String expectedValue = expected.get(selector);
+			String actualValue = details.get(selector);
+			// NOTE: this assert method is deprecated
+			assertThat(actualValue, is(equalTo(expectedValue)));
+			assertThat(replaceID(expectedValue), equalTo(replaceID(actualValue)));
+		}
+		if (pause_after_test) {
+			utils.sleep(timeout_after_test);
+		}
+	}
+
+	@After
+	public void resetBrowser() {
+		driver.get("about:blank");
+	}
+
 	@AfterClass
 	public static void afterSuiteMethod() {
 		if (driver != null) {
@@ -106,49 +365,7 @@ public class SwetTest {
 		}
 	}
 
-	@Before
-	public void loadBaseURL() {
-		driver.get(baseURL);
-		utils.setDriver(driver);
-		utils.setFlexibleWait(flexibleWait);
-		utils.setActions(actions);
-	}
-
-	@After
-	public void resetBrowser() {
-		driver.get("about:blank");
-	}
-
-	@Ignore
-	@Test
-	public void testWebPageElementSearch() {
-		driver.get("https://www.codeproject.com/");
-		WebElement element = wait.until(ExpectedConditions.visibilityOf(driver
-				.findElement(By.cssSelector("img[src *= 'post_an_article.png']"))));
-		assertThat(element, notNullValue());
-		utils.injectScripts(Optional.<String> empty());
-		// pause_after_script_injection
-		if (pause_after_script_injection) {
-			utils.sleep(timeout_after_script_injection);
-		}
-		utils.highlight(element);
-		// Act
-		utils.inspectElement(element);
-		utils.completeVisualSearch("element name");
-
-		// Assert
-		String payload = utils.getPayload();
-		assertFalse(payload.isEmpty());
-		System.err.println("Result:\n" + readVisualSearchResult(payload));
-		Map<String, String> payloadDetails = new HashMap<>();
-		utils.readData(payload, Optional.of(payloadDetails));
-		verifyNeededKeys(payloadDetails);
-		// verifyEntry(payloadDetails, "ElementSelectedBy", nil);
-		verifySelectors(payloadDetails);
-		if (pause_after_test) {
-			utils.sleep(timeout_after_test);
-		}
-	}
+	// Utils
 
 	// see also:
 	// https://github.com/dimitrisli/JUnitShowcase/blob/master/src/test/java/com/dimitrisli/junitshowcase/hamcrest/HamcrestMatchersTesting.java
@@ -161,9 +378,13 @@ public class SwetTest {
 		assertThat(result, hasEntry(key, value));
 	}
 
-	private void verifyNeededKeys(Map<String, String> result) {
+	private String replaceID(String value) {
+		return value.replaceAll("id\\(.+\\)", "id(<ID>)")
+				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
+	}
 
-		// TODO: a better assert
+	// TODO: a better assert
+	private void verifyNeededKeys(Map<String, String> result) {
 
 		Object[] objSWDkeys = mapSWD2CoreSelenium.keySet().toArray();
 		String[] neededKeys = new String[objSWDkeys.length + 1];
@@ -209,189 +430,6 @@ public class SwetTest {
 		element = driver.findElement(By.xpath(result.get("ElementXPath")));
 		assertThat(element, notNullValue());
 		utils.highlight(element);
-	}
-
-	@Ignore
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testNoIds() {
-		driver.get("http://www.yahoo.com/");
-		WebElement element = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.id("uh-logo"))));
-		assertThat(element, notNullValue());
-		utils.highlight(element);
-		element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(
-				// TODO: no such element: Unable to locate element: {"method":"css
-				// selector","selector":"h1[id *='yui_'] > a[ href =
-				// 'https://www.yahoo.com/' ]"}(..)
-				// By.cssSelector("h1[id *='yui_'] > a[ href = 'https://www.yahoo.com/'
-				// ]")
-				By.cssSelector("h1 > a[ href = 'https://www.yahoo.com/' ]"))));
-		assertThat(element, notNullValue());
-
-		utils.highlight(element);
-		// System.err.println("Parent (1):\n" +
-		// element.findElement(By.xpath("..")).getAttribute("outerHTML")) ;
-		utils.injectScripts(Optional.<String> empty());
-		// pause_after_script_injection
-		if (pause_after_script_injection) {
-			utils.sleep(timeout_after_script_injection);
-		}
-		utils.highlight(element);
-		// Act
-		utils.inspectElement(element);
-		utils.completeVisualSearch("Yahoo Logo");
-
-		// Assert
-		String payload = utils.getPayload();
-		assertFalse(payload.isEmpty());
-		String result = readVisualSearchResult(payload);
-		System.err.println("Result:\n" + result);
-		Map<String, String> details = new HashMap<>();
-		utils.readData(payload, Optional.of(details));
-		Map<String, String> expected = new HashMap<>();
-		expected.put("ElementId", "uh-logo");
-		expected.put("ElementXPath",
-				"id(\"yui_3_18_0_4_1508530499248_1058\")/a[ @href = \"https://www.yahoo.com/\" ]");
-		expected.put("ElementCssSelector",
-				"h1#yui_3_18_0_4_1508531183201_1027 > a[ href = \"https://www.yahoo.com/\" ]");
-
-		for (String selector : expected.keySet()) {
-			String expectedValue = expected.get(selector);
-			String actualValue = details.get(selector);
-			// NOTE: this assert method is deprecated
-			assertThat(actualValue, is(equalTo(expectedValue)));
-			assertThat(replaceID(expectedValue), equalTo(replaceID(actualValue)));
-		}
-		if (pause_after_test) {
-			utils.sleep(timeout_after_test);
-		}
-	}
-
-	// @Ignore
-	@Test
-	public void testStaticPage() {
-		driver.get(utils.getResourceURI("ElementSearch.html"));
-		utils.injectScripts(Optional.<String> empty());
-		// Unsupported URL protocol:
-		// file:///Users/sergueik/dev/selenium_java/swd_recorder/target/test-classes/ElementSearch.html
-		WebElement element = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
-		utils.highlight(element);
-		// Act
-		utils.inspectElement(element);
-		// Assert
-		utils.sleep(1000);
-		utils.completeVisualSearch("this element name");
-
-		// Assert
-		String payload = utils.getPayload();
-		assertFalse(payload.isEmpty());
-		Map<String, String> elementData = new HashMap<>();
-		String elementName = readVisualSearchResult(payload,
-				Optional.of(elementData));
-		Configuration config = new Configuration();
-		BrowserConfiguration browserConfiguration = new BrowserConfiguration();
-		browserConfiguration.name = "chrome";
-		browserConfiguration.version = "54.0";
-		browserConfiguration.driverVersion = "2.27";
-		browserConfiguration.driverPath = "c:/java/selenium/chromedriver.exe";
-		browserConfiguration.platform = OSUtils.getOsName();
-		config.created = new Date();
-		config.browserConfiguration = browserConfiguration;
-		config.updated = new Date();
-		Map<String, Map<String, String>> testData = new HashMap<>();
-		String commandId = elementData.get("CommandId");
-		testData.put(commandId, elementData);
-		config.elements = testData;
-
-		YamlHelper.printConfiguration(config);
-	}
-
-	//
-	@Test
-	public void testExcludeDisabledElementSelectedByChoices() {
-		driver.get(utils.getResourceURI("ElementSearch.html"));
-		utils.injectScripts(Optional.<String> empty());
-		WebElement element = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
-		utils.highlight(element);
-		// Act
-		utils.inspectElement(element);
-		// Assert
-		List<String> labels = driver
-				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
-				.map(e -> e.getAttribute("for")).collect(Collectors.toList());
-		for (String label : labels) {
-			// NOTE: org.openqa.selenium.InvalidSelectorException
-			Optional<WebElement> radioElement = driver.findElements(By.xpath(String
-					.format("//*[@id='%s'][not( @disabled) or not(@disabled='disabled')]",
-							label)))
-					.stream().findFirst();
-			if (radioElement.isPresent()) {
-				utils.sleep(1000);
-				radioElement.get().click();
-			}
-		}
-	}
-
-	@Test
-	public void testChangeElementSelectedBy() {
-		driver.get(utils.getResourceURI("ElementSearch.html"));
-		utils.injectScripts(Optional.<String> empty());
-		WebElement element = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.tagName("h1"))));
-		utils.highlight(element);
-		// Act
-		utils.inspectElement(element);
-		// Assert
-		List<String> labels = driver
-				.findElements(By.cssSelector("form#SWDForm label[for]")).stream()
-				.map(e -> e.getAttribute("for")).collect(Collectors.toList());
-
-		String lastLabel = null;
-		Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
-		for (String label : labels) {
-			utils.sleep(1000);
-			WebElement radioElement = wait.until(ExpectedConditions.visibilityOf(
-					driver.findElement(By.xpath(String.format("//*[@id='%s']", label)))));
-			assertThat(radioElement, notNullValue());
-			radioElement.click();
-			lastLabel = label;
-		}
-		utils.completeVisualSearch(
-				"Element with changing 'ElementSelectedBy' attribute");
-		// Assert
-		String payload = utils.getPayload();
-		assertFalse(payload.isEmpty());
-		Map<String, String> payloadDetails = new HashMap<>();
-		utils.readData(payload, Optional.of(payloadDetails));
-		verifyNeededKeys(payloadDetails);
-		verifyEntry(payloadDetails, "ElementSelectedBy", lastLabel);
-	}
-
-	private String replaceID(String selectorValue) {
-		return selectorValue.replaceAll("id\\(.+\\)", "id(<ID>)")
-				.replaceAll("#(?:\\S+)(\\s)", "#<ID>$1");
-	}
-
-	String readVisualSearchResult(String payload) {
-		return readVisualSearchResult(payload,
-				Optional.<Map<String, String>> empty());
-	}
-
-	private String readVisualSearchResult(final String payload,
-			Optional<Map<String, String>> parameters) {
-		// System.err.println("Processing payload: " + payload);
-		Boolean collectResults = parameters.isPresent();
-		Map<String, String> collector = (collectResults) ? parameters.get()
-				: new HashMap<>();
-		String result = utils.readData(payload, Optional.of(collector));
-		assertTrue(collector.containsKey("ElementId"));
-		// NOTE: elementCodeName will not be set if
-		// user clicked the SWD Table Close Button
-		// ElementId is always set
-		return result;
 	}
 
 }
