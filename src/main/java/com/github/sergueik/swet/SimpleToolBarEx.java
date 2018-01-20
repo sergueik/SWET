@@ -361,11 +361,11 @@ public class SimpleToolBarEx {
 
 					Map<String, String> elementData = testData.get(stepId);
 
-					// Append Breadcrump Button
+					// Append Breadcrumb Button
 
 					String commandId = elementData.get("CommandId");
 					stepKeys.add(commandId);
-					addBreadCrumpItem(elementData.get("ElementCodeName"), commandId,
+					addBreadCrumbItem(elementData.get("ElementCodeName"), commandId,
 							elementData, bc);
 					shell.layout(true, true);
 					shell.pack();
@@ -453,6 +453,7 @@ public class SimpleToolBarEx {
 				System.exit(0);
 				break;
 			case 2: /* close the browser */
+				browserStatus.replace("closed", true);
 				closeBrowser();
 				updateStatus("Ready");
 				shutdownTool.setEnabled(true);
@@ -524,6 +525,9 @@ public class SimpleToolBarEx {
 		return new Thread() {
 			public void run() {
 				while (true) {
+					if ((boolean) browserStatus.get("closed")) {
+						break;
+					}
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
@@ -532,7 +536,7 @@ public class SimpleToolBarEx {
 					try {
 						driver.getCurrentUrl();
 					} catch (Exception e) {
-						logger.warn("Should be signaling that browser is closed");
+						logger.warn("Signal that browser is closed");
 						browserStatus.replace("closed", true);
 						pageExploreTool.getDisplay().asyncExec(new Runnable() {
 							@Override
@@ -558,6 +562,9 @@ public class SimpleToolBarEx {
 			public void run() {
 
 				while (true) {
+					if ((boolean) browserStatus.get("closed")) {
+						break;
+					}
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
@@ -575,13 +582,14 @@ public class SimpleToolBarEx {
 									app.saveTool.setEnabled(true);
 								}
 							});
-
 							break;
 						}
 					} catch (NoSuchSessionException e) {
 						// possibly closing the application
+						break;
 					} catch (WebDriverException e) {
 						// possibly closing the application
+						break;
 					}
 				}
 			}
@@ -595,7 +603,13 @@ public class SimpleToolBarEx {
 		Boolean browserRunaway = false;
 		String name = null;
 		while (waitingForData) {
-			String payload = utils.getPayload();
+			String payload = null;
+			try {
+				payload = utils.getPayload();
+			} catch (NoSuchSessionException e) {
+				waitingForData = false;
+				break;
+			}
 			if (!payload.isEmpty()) {
 				if (payload.contains((CharSequence) "ElementCodeName")) {
 					// objects cannot suicide
@@ -660,8 +674,8 @@ public class SimpleToolBarEx {
 		}
 	}
 
-	// Paginates the BreadCrump
-	private void paginateBreadCrump() {
+	// Paginates the BreadCrumb
+	private void paginateBreadCrumb() {
 		Rectangle rect = bc.getBounds();
 		if (rect.width > shell.getBounds().width - 5
 				|| rect.width > java.awt.Toolkit.getDefaultToolkit()
@@ -672,11 +686,11 @@ public class SimpleToolBarEx {
 		}
 	}
 
-	// Adds a bredCrump item to BreadCrump canvas
+	// Adds a bredCrump item to BreadCrumb canvas
 	// attached Shell / Form for Element editing
-	private void addBreadCrumpItem(String name, String commandId,
+	private void addBreadCrumbItem(String name, String commandId,
 			Map<String, String> data, Breadcrumb bc) {
-		paginateBreadCrump();
+		paginateBreadCrumb();
 		final BreadcrumbItem item = new BreadcrumbItem(bc, SWT.CENTER | SWT.TOGGLE);
 		item.setData("CommandId", commandId);
 		int step_number = (data.containsKey("ElementStepNumber"))
@@ -950,13 +964,14 @@ public class SimpleToolBarEx {
 						parentToolItem.getDisplay().asyncExec(new Runnable() {
 							@Override
 							public void run() {
-								parentApp.addBreadCrumpItem(elementData.get("ElementCodeName"),
+								parentApp.addBreadCrumbItem(elementData.get("ElementCodeName"),
 										commandId, elementData, bc);
 								parentApp.shell.layout(true, true);
 								parentApp.shell.pack();
 								parentToolItem.setEnabled(true);
 								parentApp.updateStatus("Ready");
 								browserStatus.put("runaway", false);
+								browserStatus.put("closed", false);
 								parentApp.saveTool.setEnabled(true);
 							}
 						});
