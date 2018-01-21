@@ -149,6 +149,22 @@ public class SimpleToolBarEx {
 	public void open(Display display) {
 		testData = new HashMap<>(); // infer
 		shell = new Shell(display, SWT.CENTER | SWT.SHELL_TRIM); // (~SWT.RESIZE)));
+
+		shell.addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event) {
+				// signal the possibly running background threads watching the browser,
+				// to stop
+				if (browserStatus.containsKey("closed")) {
+					browserStatus.replace("closed", true);
+				} else {
+					browserStatus.put("closed", true);
+				}
+				closeBrowser();
+				// event.doit = false;
+				shell.setVisible(false);
+			}
+		});
+
 		Rectangle boundRect = new Rectangle(0, 0, shellWidth, shellHeight);
 		shell.setBounds(boundRect);
 		shell.setImage(new Image(display,
