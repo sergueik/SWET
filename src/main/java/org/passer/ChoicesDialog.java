@@ -18,7 +18,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import com.github.sergueik.swet.Utils;
@@ -138,6 +140,21 @@ public class ChoicesDialog {
 					shell.close();
 				}
 			});
+
+			// Allow closing a dialog with escape
+
+			// origin:
+			// http://webcache.googleusercontent.com/search?q=cache:http://jexp.ru/index.php/Java_Tutorial/SWT/Dialog
+			// For a list of all SWT example snippets see
+			// http://www.eclipse.org/swt/snippets/
+			shell.addListener(SWT.Traverse, new Listener() {
+				public void handleEvent(Event e) {
+					if (e.detail == SWT.TRAVERSE_ESCAPE) {
+						ChoicesDialog.this.choice = -1;
+						e.doit = true;
+					}
+				}
+			});
 		}
 
 		shell.pack();
@@ -214,4 +231,5 @@ public class ChoicesDialog {
 					"Unsupports only one of APPLICATION_MODAL, PRIMARY_MODAL, SYSTEM_MODAL or SWT.MODELESS");
 		}
 	}
+
 }

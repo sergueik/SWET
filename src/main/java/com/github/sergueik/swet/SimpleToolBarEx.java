@@ -5,49 +5,32 @@ package com.github.sergueik.swet;
  */
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.log4j.Category;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.IOUtils;
-
+import org.apache.log4j.Category;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -57,24 +40,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
 import org.mihalis.opal.breadcrumb.Breadcrumb;
 import org.mihalis.opal.breadcrumb.BreadcrumbItem;
-
-import org.openqa.selenium.By;
+// NOTE: on a mac, NoSuchSessionException is uresolved
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import org.passer.ChoiceItem;
 import org.passer.ChoicesDialog;
-
-import com.github.sergueik.swet.ExceptionDialogEx;
-import com.github.sergueik.swet.Utils;
 
 /**
  * Main form for Selenium WebDriver Elementor Tool (SWET)
@@ -451,7 +425,9 @@ public class SimpleToolBarEx {
 			dialog.setShowArrows(false);
 
 			int choice = dialog.open();
-			logger.info("Selected: " + items[choice].getText());
+			if (choice >= 0) {
+				logger.info("Selected: " + items[choice].getText());
+			}
 			switch (choice) {
 			case -1: /* dialog closed */
 				updateStatus("Ready");
@@ -600,6 +576,7 @@ public class SimpleToolBarEx {
 							});
 							break;
 						}
+						// NOTE: on a mac, NoSuchSessionException is uresolved
 					} catch (NoSuchSessionException e) {
 						// possibly closing the application
 						break;
