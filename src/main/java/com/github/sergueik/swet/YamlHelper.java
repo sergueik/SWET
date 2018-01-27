@@ -27,6 +27,9 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 // for generating the Keywords handled by KeywordLibrary
+
+// TODO:  deploy to maven central
+// NOTE: need to package locally
 import com.github.sergueik.jprotractor.KeywordLibrary;
 
 /**

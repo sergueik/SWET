@@ -152,7 +152,7 @@ public class SimpleToolBarEx {
 
 		shell.addListener(SWT.Close, new Listener() {
 			public void handleEvent(Event event) {
-				// signal the possibly running background threads watching the browser,
+				// signal possibly running background threads watching the browser,
 				// to stop
 				if (browserStatus.containsKey("closed")) {
 					browserStatus.replace("closed", true);

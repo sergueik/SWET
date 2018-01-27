@@ -33,6 +33,7 @@ import com.github.sergueik.swet.OSUtils;
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
+@SuppressWarnings("deprecation")
 public class BrowserDriver {
 
 	public static WebDriver driver;
@@ -50,6 +51,7 @@ public class BrowserDriver {
 	private static String applicationEdgeDriverPath;
 	private static Map<String, String> propertiesMap;
 
+	@SuppressWarnings("deprecation")
 	public static WebDriver initialize(String browser) {
 
 		propertiesMap = PropertiesParser
@@ -84,7 +86,6 @@ public class BrowserDriver {
 		} else if (browser.equals("ipad")) {
 			capabilities = capabilitiesiPad();
 		}
-
 		if (location.toLowerCase().contains("http:")) {
 			try {
 				// log.info("Running on Selenium Grid: " + location);
@@ -251,7 +252,7 @@ public class BrowserDriver {
 				+ System.getProperty("file.separator");
 		chromePrefs.put("download.default_directory", downloadFilepath);
 		chromePrefs.put("enableNetwork", "true");
-		// ignore failures in unsupported methods with Selenium 3.8.1 
+		// ignore failures in unsupported methods with Selenium 3.8.1
 		try {
 			options.addArguments("allow-running-insecure-content");
 			options.addArguments("allow-insecure-localhost");
