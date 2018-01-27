@@ -18,14 +18,17 @@ This is a work in progress, since each keyword driven framework has its own list
 __SWET__ was tested to work on 32 or 64 bit Windows, Mac or Linux platforms.
 __SWET__ is currently beta quality: one can record, load and save sessions, update individual Page Element information,
 convert session to a code fragment in Java or C# language, or an Excel file with a Keyword Driven Framework workflow.
-Eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
+The __SWET__ project was originally written to offer similar functionality as __SWD__, but significantly less [MVC](https://www.codeproject.com/Articles/383153/The-Model-View-Controller-MVC-Pattern-with-Csharp)-heavyy and also
+breaking its dependency on Windows Forms libraries, after an attempt to replace Windows Forms with [XWT](https://github.com/mono/xwt) was made failed with conclysion that XWT look and feel of the time,
+did not seem equivalent. Eventually the full functionality of __SWD__ is to be achieved, also __SWET__ might become an [Eclipse plugin](http://www.vogella.com/tutorials/EclipsePlugin/article.html).
 
-The __SWET__ application is being developed in Ecipse with
-[SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html) plugin,
-on Ubuntu 16.04 and Windows.
+The __SWET__ application is being developed in Ecipse with [SWT Designer/Window Builder](http://www.vogella.com/tutorials/EclipseWindowBuilder/article.html) plugin,
+on Ubuntu 16.04 and Windows. The [javaFx](http://www.java2s.com/Tutorials/Java/JavaFX/) port os __SWET__ is in the works.
 
 For Mac / Safari testing, the [Sierra Final 10.12](https://techsviewer.com/install-macos-sierra-virtualbox-windows/) Virtual Box by TechReviews is being used.
-Currently, working with Safari browser is somewhat flaky but possible.
+Naturally, Apple only licenses OS X for use on their hardware, therefore the fact the author has been using able to boot Sierra and test the code to successfully compile and run
+does not imply he officialy asks anyone do the same, it simply proves the code being robust enough and very likely will run on a real Mac out of gitgub.
+Currently, recording page elements in __SWET__ with Safari browser is somewhat flaky but possible.
 
 The Virtualbox images are setup for Selenium 3.x testing (work in progress).
 
@@ -41,12 +44,29 @@ In order to use __SWET__ one will need to compile the application jar from the s
 Continue reading for info on how to get the dev environment setup.
 
 ### Prerequisites
-The project can be compiled and run from Eclipse or standalone.
+The project can be compiled and run from Eclipse or standalone, through the launcher script. The single executable jar is not being packages by default due to its size - anyone is free to
+try on one's own risk.
+
+
 To build the project outside of Eclipse, JDK 1.8 or later and Maven need to be installed and added to the `PATH`.
 There launcher  scripts is  explained below.
-In the checked-in sample runner scripts, the JDK and Maven is expected to be installed under `c:\java\` for Windows.
-and under
-`/Library/Java/JavaVirtualMachines/jdk$JAVA_VERSION.jdk/Contents/Home` on Mac, which is the default location.
+
+As the time goes on, the following reusable parts of the __SWET__ project became stanalone ones and have been eitherpublished to maven central or need to be cloned and installed locally using maven:
+
+* [jProtractor](https://github.com/sergueik/jProtractor)
+* [SKDF](https://github.com/sergueik/SKDF)
+* [jUnitParams dataproviders](https://github.com/sergueik/junit-dataproviders)
+
+To skip smoke testing of those projects use the command
+```cmd
+mvn -Dmaven.test.skip=true install
+```
+to have them available in `~/.m2/repositories`. Eventually all of these prjects would go to maven central.
+
+In the checked-in sample runner scripts, the JDK and Maven is expected to be installed under `c:\java\` on Windows,
+or into the path
+`/Library/Java/JavaVirtualMachines/jdk$JAVA_VERSION.jdk/Contents/Home`(which is the default location) on the Mac,
+and made available on Linux with [`alternatives`](https://www.linuxquestions.org/linux/answers/Applications_GUI_Multimedia/LINUX_ALTERNATIVES_HOWTO).
 
 All project dependencies are pulled by Maven.
 
@@ -126,11 +146,13 @@ The correct profile is likely be selected automatically. If this does not work f
 ```
 
 Due to some problem with JVM loader, all these platform-dependent jars cannot be included simultaneously.
-The alternative is to package the spring-boot style uber-jar file as explained in
+One alternative is to package the spring-boot style uber-jar file as explained in
 [Multiplatform SWT](https://github.com/jendap/multiplatform-swt) project.
-Unfortulately the resulting bare-bones `multiplatform-swt-loader.jar` file is almost 10 Mb and with all dependencies the
-__SWET__ jar is over 30 Mb which is not very practical.
-Therefore,  we recommend to rely on maven topick the required dependency and to modify the `pom.xml` and use runner scripts to compile it as explained below.
+Unfortulately it is not very practical: the resulting bare-bones `multiplatform-swt-loader.jar` file is almost 10 Mb
+and with all Selenium JSON POI and TWIG dependencies the size of __SWET__ jar exceeds 30 Mb.
+The conversion to javaFx is currently underway.
+Therefore,  we recommend to rely on maven profile facility to pick the required dependency and
+to modify the `pom.xml` and use runner scripts to compile it as explained below.
 
 #### Runner Scripts
 After the project is cloned or downloaded from from github, one will find the following `run.*` scripts helpful to compile and start the application:
@@ -142,14 +164,14 @@ or a batch file
 ```cmd
 run.cmd
 ```
-On Umix /Mac, run Bash script
+On Unix or a Mac, launcher is a bash script
 ```bash
 ./run.sh
 ```
 
-The script has ability to also download the dependency jar(s), which are not hosted on Maven Central repository ( *this is no longer necessary* ),
-compile and package the project using maven
-and run the application jar from the `target` directory.
+The script has ability to also download the dependency jar(s), if there are ones not hosted on Maven Central repository ( *this is no longer necessary* ),
+then to compile and package the project using maven
+and run the application main class from the `target` directory jar and libraries.
 
 The script configuration needs to be updated with the actual paths to Java and Maven:
 ```powershell
@@ -165,8 +187,8 @@ if "%JAVA_VERSION%"=="" set JAVA_VERSION=1.8.0_101
 set JAVA_HOME=c:\java\jdk%JAVA_VERSION%
 if "%MAVEN_VERSION%"=="" set MAVEN_VERSION=3.3.9
 set M2_HOME=c:\java\apache-maven-%MAVEN_VERSION%
-
 ```
+
 ```bash
 JAVA_VERSION='1.8.0_121'
 MAVEN_VERSION='3.3.9'
@@ -184,7 +206,7 @@ java.exe -cp target/swet-0.0.5-SNAPSHOT.jar:target/lib/* com.github.sergueik.swe
 - without changing to the source, there is little reason to recompile it every time. Adding the `META-INF/MANIFEST.MF`
 is a work in progress.
 
-Paths to the browsers and browser drivers are read from the `src/main.resources/applciation.properties` file
+Paths to the browsers and browser drivers are read from the `src/main.resources/application.properties` file
 ```java
 # username / password not currently used - reserved for Sauce Labs or browserStack
 username: username
@@ -249,7 +271,7 @@ opens the configuration dialog
 ![config](https://github.com/sergueik/SWET/blob/master/screenshots/config.png)
 Currently the browser and template selection are configurable, one also can set the base URL.
 
-Currently project is hardcoded to start using Chrome browser on Windows, Safari on Mac and Firefox on the rest of platforms. 
+Currently project is hardcoded to start using Chrome browser on Windows, Safari on Mac and Firefox on the rest of platforms.
 Alternative  browser can be selected during the session, but this preference is not saved.
 Saving / loading the session configuration from the YAML configuration file is a work in progress.
 
