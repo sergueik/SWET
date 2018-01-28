@@ -68,7 +68,7 @@ public class ChoicesDialog {
 
 		Display display = parent.getDisplay();
 		final Shell shell = new Shell(parent,
-				style | SWT.TITLE | SWT.CLOSE | SWT.BORDER);
+				style | SWT.APPLICATION_MODAL | SWT.BORDER);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginBottom = 15;
 		layout.marginTop = 10;
