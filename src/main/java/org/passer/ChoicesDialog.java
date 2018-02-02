@@ -4,7 +4,7 @@ package org.passer;
 /*******************************************************************************
  * Copyright (c) 2015 Fabian Prasser
  *******************************************************************************/
-
+// see also: https://github.com/OpenJML/OpenJML/blob/master/OpenJMLUI/src/org/jmlspecs/openjml/eclipse/widgets/ChoiceDialog.java
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
