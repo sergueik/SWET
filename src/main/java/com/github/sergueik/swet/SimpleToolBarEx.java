@@ -276,7 +276,8 @@ public class SimpleToolBarEx {
 			logger.info(String.format("Launching the %s browser", browser));
 			updateStatus(String.format("Launching the %s browser", browser));
 			if (configData.containsKey("Base URL")) {
-				baseURL = configData.get("Base URL");
+				baseURL = fixBaseURL();
+				logger.info("Base URL: " + baseURL);
 			}
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
@@ -653,6 +654,7 @@ public class SimpleToolBarEx {
 			driver.manage().timeouts().pageLoadTimeout(50, TimeUnit.SECONDS)
 					.implicitlyWait(implicitWait, TimeUnit.SECONDS)
 					.setScriptTimeout(30, TimeUnit.SECONDS);
+
 			driver.get(baseURL);
 			// prevent the customer from launching multiple instances
 			// launchTool.setEnabled(true);
@@ -852,6 +854,20 @@ public class SimpleToolBarEx {
 		gc.fillRectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE);
 		gc.dispose();
 		return image;
+	}
+
+	private String fixBaseURL() {
+		String baseURL = configData.get("Base URL");
+		if (!baseURL.matches("^(?:http|https).*")) {
+			// NOTE: some browsers hide the scheme part of the url, but
+			// it is recommended to auto-correct instead of pasting the raw url
+			// like e.g. "www.google.com" to driver.get
+			// to prevent "cannot navigate to invalid url"
+			// exception
+			logger.info("Fixing baseURL");
+			configData.replace("Base URL", String.format("http://%s", baseURL));
+		}
+		return configData.get("Base URL");
 	}
 
 	protected static Image getImage(InputStream stream) throws IOException {
