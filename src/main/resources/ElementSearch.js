@@ -77,7 +77,7 @@
       result = result.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ' ).replace(/^\s+/, '' ).replace(/\s+$/, '' )
       bye('getText result: ' + result);
       return result;
-		}
+		};
 
     getElementId = function(element) {
          var selector = '';
@@ -112,7 +112,7 @@
            var attr = element.className;
            // ignore className attributes with special characters
            if (attr.indexOf('(') == -1 /* && attr.indexOf('*') == -1 && attr.indexOf('.') == -1 */) {
-             selector += '.' + attr.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/g, '.'); 
+             selector += '.' + attr.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/g, '.');
            }
          } else {
            var element_sibling = element;
@@ -197,7 +197,38 @@
         return bye('getPathTo ' + elementTagName);
     };
 
-  getPageXY = function(element) {
+    // simplified
+    // ng12Hybrid detection not supported yet
+    // not functional yet
+    testForAngular = function() {
+      hello('testForAngular' );
+      var isAngular =  (window.angular && window.angular.resumeBootstrap) ?
+        true: false;
+        return bye('testForAngular ' + isAngular);
+    };
+
+    getProtractorLocators = function(element) {
+      hello('getProtractorLocators' );
+      var specialAttributesArray = ['ng-repeat','ng-binding','ng-model','ng-option'];
+      var elementTagName = element.tagName.toLowerCase();
+      var attribute_postfix = [];
+      var postfix = '';
+      var arrayLength = specialAttributesArray.length;
+      // if (testForAngular()) {
+        for (var i = 0; i < arrayLength; i++) {
+          specialAttribute = specialAttributesArray[i];
+          postfix = probeAttribute(element,specialAttribute,'@');
+          if (postfix) {
+            hello('Found postfix:' + postfix);
+            attribute_postfix.push(postfix);
+          }
+        }
+      // }
+      bye('getProtractorLocators ' +  attribute_postfix.join(','));
+    };
+
+
+    getPageXY = function(element) {
     var x, y;
     hello('getPageXY');
     x = 0;
@@ -288,6 +319,7 @@
       xpath = getPathTo(target, 0);
       txy = getPageXY(target);
       css_selector = getCssSelectorOF(target);
+      var dummy = getProtractorLocators(target);
       id = getElementId(target);
       elementText = getText(target, true);
       tagName = target.tagName;
@@ -372,6 +404,7 @@
       } else {
         say("createElementForm Failed to inject element SwdPR_PopUp. The document has no body");
       }
+      // TODO: fix the id
       closeClickHandler = "";
             element.innerHTML = '\
             <form name="SWDForm" id="SWDForm"> \
@@ -459,16 +492,16 @@
       var elementTextElement = document.getElementById('SwdPR_PopUp_ElementText');
       var elementTagName = document.getElementById('SwdPR_PopUp_ElementTagName');
       var elementSelectedBy = 'ElementCssSelector';
-      
+
       var radios = document.SWDForm.ElementSelectedBy;
       if (radios){ // this code is unstable
-        for (i=0; i < radios.length; i++) {    
+        for (i=0; i < radios.length; i++) {
           if (radios[i].checked) {
             elementSelectedBy = radios[i].getAttribute('id');
-            // hello(radios[i].getAttribute('id') + ' you got a value');     
+            // hello(radios[i].getAttribute('id') + ' you got a value');
           }
-        }        
-      } 
+        }
+      }
       hello('ElementSelectedBy : ' + elementSelectedBy);
       var JsonData = {
         'Command': 'AddElement',
