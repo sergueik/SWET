@@ -1,11 +1,9 @@
 package com.github.sergueik.swet;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +26,7 @@ import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
 
 // origin: http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java 
+// see also:https://github.com/java-native-access/jna/blob/master/contrib/ntservice/src/jnacontrib/win32/Win32Service.java
 public class OSUtils {
 
 	private static String osName = null;

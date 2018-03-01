@@ -61,6 +61,13 @@
       <groupId>com.github.sergueik.jprotractor</groupId>
       <artifactId>skdf_jprotractor</artifactId>
       <version>0.9-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <!-- exclude the testng jar dependencyy some early versions of skdf may have had -->
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.github.sergueik.jprotractor</groupId>
