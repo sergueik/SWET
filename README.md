@@ -510,7 +510,11 @@ __SWET__is licensed under Apache License, Version 2.0
   * [StringTemplate](http://www.stringtemplate.org/)
   * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
 
-#### Existing Selenium Test Generation plugins
+#### Existing Selenium Test Generation recorders and plugins
+
+  * [Muse Test Framework](https://github.com/ChrisLMerrill/muse), [Muse examples](https://github.com/ChrisLMerrill/muse-examples),  [Muse IDE](https://github.com/ChrisLMerrill/muse-pageobjects)
+  * [Bromiomi browser based framework for running automated integration and end-to-end tests](https://github.com/hristo-vrigazov/bromium)
+  * [alibabba/uirecorder](https://github.com/alibaba/uirecorder)
   * [top 10 test automation instruments](http://automated-testing.info/t/top-10-instrumentov-avtomatizaczii-testirovaniya-2018/17404)(in russian)
   * [links in the Selenium IDE retirement memo](https://blog.testproject.io/2017/09/03/farewell-selenium-ide/)
   * [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)
@@ -554,7 +558,8 @@ __SWET__is licensed under Apache License, Version 2.0
 
 ### Note
 
-[Swet](http://www.urbandictionary.com/define.php?term=swet&defid=6820405) - *a word that describes something that's hot. Or something that would typically take a lot of skill and practice to do, therefore causing the person to sweat*.
+[Swet](http://www.urbandictionary.com/define.php?term=swet&defid=6820405) - according to 
+urbanictionary, describes *something that's hot. Or something that would typically take a lot of skill and practice to do, therefore causing the person to sweat*.
 
 ####  Source Code History
 
