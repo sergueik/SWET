@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -74,16 +75,67 @@ public class ConfigFormEx {
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
+	static Map<String, String> browserApps = new HashMap<>();
+
+	static {
+
+		if (osName.matches("mac os x")) {
+			browserApps.put("Chrome", "Google Chrome");
+			browserApps.put("Firefox", "Firefox");
+			browserApps.put("Safari", "Safari");
+		} else if (osName.matches("windows")) {
+			browserApps.put("Chrome", "chrome.exe");
+			browserApps.put("Firefox", "firefox.exe");
+			browserApps.put("Internet Explorer", "iexplore.exe");
+			browserApps.put("Safari", "safari.exe");
+		} else {
+			browserApps.put("Chrome", "google-chrome");
+			browserApps.put("Firefox", "firefox");
+		}
+	}
+
 	ConfigFormEx(Display parentDisplay, Shell parent) {
 
 		utils.initializeLogger();
 		logger.info("Initialized logger.");
 
 		Map<String, String> browserOptions = new HashMap<>();
+		/*
 		for (String browser : new ArrayList<String>(Arrays.asList(new String[] {
 				"Chrome", "Firefox", "Internet Explorer", "Edge", "Safari" }))) {
-			browserOptions.put(browser, "unused");
+			browserOptions.put(browser, "");
 		}
+		
+		 */
+
+		if (osName.matches("windows")) {
+			List<String> foundBrowsers = OSUtils.findInstalledBrowsers(); // sets
+																																		// is64bit
+			logger.info("Found Browsers: " + foundBrowsers);
+			for (String value : new ArrayList<String>(Arrays.asList(new String[] {
+					"Chrome", "Firefox", "Internet Explorer", "Safari" }))) {
+				if (foundBrowsers.contains((Object) browserApps.get(value))) {
+					browserOptions.put(value, "");
+				}
+			}
+		} else {
+			// os x, Linux
+			for (String value : new ArrayList<String>(Arrays.asList(new String[] {
+					"Chrome", "Firefox", "Internet Explorer", "Safari" }))) {
+				if (osName.matches("mac os x")) {
+					if (OSUtils.findAppInPath(browserApps.get(value) + ".app")) {
+						browserOptions.put(value, "");
+					}
+				} else {
+					if (OSUtils.findAppInPath(browserApps.get(value))) {
+						browserOptions.put(value, "");
+					}
+				}
+			}
+		}
+		System.err
+				.println("Broswer options: " + new ArrayList(browserOptions.keySet()));
+
 		configOptions.put("Browser", browserOptions);
 		// offer templates embedded in the application jar and
 		// make rest up to customer

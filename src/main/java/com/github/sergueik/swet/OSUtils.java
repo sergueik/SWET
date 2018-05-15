@@ -147,9 +147,11 @@ public class OSUtils {
 				? getVersionInfo(installedBrowsers.get(browserName))[3] : 0;
 	}
 
-	private static void findInstalledBrowsers() {
+	public static List<String> findInstalledBrowsers() {
 		if (System.getProperty("os.arch").contains("64")) {
 			is64bit = true;
+		} else {
+			is64bit = false;
 		}
 		installedBrowsers = new HashMap<>();
 		Set<String> pathsList = new HashSet<>();
@@ -160,6 +162,7 @@ public class OSUtils {
 			String browser = tmp[tmp.length - 1];
 			installedBrowsers.put(browser, path);
 		}
+		return new ArrayList(installedBrowsers.keySet());
 	}
 
 	@SuppressWarnings("unused")
@@ -193,7 +196,7 @@ public class OSUtils {
 		return new int[] { v1, v2, v3, v4 };
 	}
 
-	private static List<String> findBrowsersInProgramFiles() {
+	public static List<String> findBrowsersInProgramFiles() {
 		// find possible root
 		File[] rootPaths = File.listRoots();
 		List<String> browsers = new ArrayList<>();
@@ -211,8 +214,13 @@ public class OSUtils {
 		for (File rootPath : rootPaths) {
 			for (String defPath : defaultPath) {
 				File exe = new File(rootPath + defPath);
+				System.err.println("Inspecting browser path: " + rootPath + defPath);
 				if (exe.exists()) {
-					browsers.add(exe.toString());
+					// browsers.add(exe.toString());
+					String browser = exe.toString().replaceAll("\\\\", "/")
+							.replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
+					System.err.println("Found browser: " + browser);
+					browsers.add(browser);
 				}
 			}
 		}
@@ -237,8 +245,12 @@ public class OSUtils {
 								regPath + "\\" + browserName + "\\shell\\open\\command", "")
 						.replace("\"", "");
 				if (path != null && new File(path).exists()) {
-					System.err.println("Browser path: " + path);
-					browsers.add(path);
+					// System.err.println("Browser path: " + path);
+					// browsers.add(exe.toString());
+					String browser = path.replaceAll("\\\\", "/")
+							.replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
+					System.err.println("Found browser: " + browser);
+					browsers.add(browser);
 				}
 			}
 		} catch (Exception e) {
@@ -292,4 +304,135 @@ public class OSUtils {
 			System.err.println("Exception (ignored): " + e.getMessage());
 		}
 	}
+
+	// on osx to open the url in selected browser, use open
+	// https://coderanch.com/t/111494/os/launching-Safari-Java-App
+	// one can find the absolute path to the application via spotlight
+	// /usr/bin/mdfind "kMDItemFSName = Firefox.app"
+	// but running application directly via like
+	// /Applications/Firefox.app/Contents/MacOS/firefox http://ya.ru
+
+	// would lead to an error:
+	// "A copy of Firefox is already open.
+	// Only one copy of Firefox can be open at a time."
+	public static void runAppCommand(String browserAppName, String url) {
+		try {
+
+			Runtime runtime = Runtime.getRuntime();
+			String processName = null;
+			String[] processArgs = new String[] {};
+			if (osName.matches("mac os x")) {
+
+				processName = "/usr/bin/open";
+				processArgs = new String[] { processName, "-a", browserAppName, url };
+				/* String.format("\\\"%s\\\"", browserAppName) */
+				// TODO: quote handling
+				// Running: open -a "Firefox" http://ya.ru
+				// Unable to find application named '"Firefox"'
+				// Running: open -a \"Google Chrome\" http://ya.ru
+				// The file /Users/sergueik/src/Chrome\" does not exist.
+			} else if (osName.matches("windows")) {
+				processName = "C:\\Windows\\System32\\cmd.exe";
+				processArgs = new String[] { processName, "/c", "start", browserAppName,
+						url };
+			} else {
+				// TODO: on Linux need to compose the command with bash
+				// to launch browser in the background
+				// or make event handler operate on separate thread
+				processName = "/usr/bin/env";
+				processArgs = new String[] { processName, browserAppName, url };
+			}
+			System.err.println("Running: " + String.join(" ", processArgs));
+			// Process process = runtime.exec(String.join(" ", processArgs));
+			Process process = runtime.exec(processArgs);
+
+			int exitCode = process.waitFor();
+			BufferedReader stdoutBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));
+
+			BufferedReader stderrBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getErrorStream()));
+			String line = null;
+			StringBuffer processOutput = new StringBuffer();
+			while ((line = stdoutBufferedReader.readLine()) != null) {
+				processOutput.append(line);
+			}
+			StringBuffer processError = new StringBuffer();
+			while ((line = stderrBufferedReader.readLine()) != null) {
+				processError.append(line);
+			}
+			if (exitCode != 0 && (exitCode ^ 128) != 0) {
+				System.out.println("Process exit code: " + exitCode);
+				if (processOutput.length() > 0) {
+					System.out.println("<OUTPUT>" + processOutput + "</OUTPUT>");
+				}
+				if (processError.length() > 0) {
+					System.out.println("<ERROR>" + processError + "</ERROR>");
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Exception (ignored): " + e.getMessage());
+		}
+	}
+
+	// TODO:
+	public static boolean findAppInPath(String appName) {
+		boolean status = false;
+		String processName = null;
+		String findCommand = null;
+		if (osName.toLowerCase().matches("mac os x")) {
+			findCommand = String.format("'kMDItemFSName = %s'", appName);
+			processName = "/usr/bin/mdfind";
+		} else if (!(osName.startsWith("windows"))) {
+			processName = "/usr/bin/which";
+			findCommand = appName;
+		}
+		String[] processArgs = new String[] { processName, findCommand };
+		System.err.println("Running: " + String.join(" ", processArgs));
+		try {
+			Runtime runtime = Runtime.getRuntime();
+
+			Process process = runtime.exec(String.join(" ", processArgs));
+			// process.redirectErrorStream( true);
+
+			BufferedReader stdoutBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));
+
+			BufferedReader stderrBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getErrorStream()));
+			String line = null;
+
+			StringBuffer processOutput = new StringBuffer();
+			while ((line = stdoutBufferedReader.readLine()) != null) {
+				processOutput.append(line);
+			}
+			StringBuffer processError = new StringBuffer();
+			while ((line = stderrBufferedReader.readLine()) != null) {
+				processError.append(line);
+			}
+			int exitCode = process.waitFor();
+			// ignore exit code 128: the process "<browser driver>" not found.
+			if (exitCode != 0 && (exitCode ^ 128) != 0) {
+				status = false;
+				System.out.println("Process exit code: " + exitCode);
+				if (processOutput.length() > 0) {
+					System.out.println("<OUTPUT>" + processOutput + "</OUTPUT>");
+					// Failed to create query for: '' kMDItemFSName = Firefox ''.
+				}
+				if (processError.length() > 0) {
+					// e.g.
+					// The process "chromedriver.exe"
+					// with PID 5540 could not be terminated.
+					// Reason: Access is denied.
+					System.out.println("<ERROR>" + processError + "</ERROR>");
+				}
+			} else {
+				status = true;
+			}
+		} catch (Exception e) {
+			System.err.println("Exception (ignored): " + e.getMessage());
+		}
+		return status;
+	}
+
 }

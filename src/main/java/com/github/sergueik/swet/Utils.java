@@ -255,6 +255,7 @@ public class Utils {
 			ExceptionDialogEx.getInstance().render(e);
 			if (driver != null) {
 				try {
+					// NOTE: BrowserDriver static method
 					BrowserDriver.close();
 				} catch (Exception ex) {
 					System.err.println("Exception (ignored): " + ex.toString());
