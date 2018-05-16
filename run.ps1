@@ -1,5 +1,5 @@
-﻿# currently accepts max 6 Java application parameters. 
-# Java application parameters cannot begin wth dash - [ParameterBindingException] 
+﻿# currently accepts max 6 Java application parameters.
+# Java application parameters cannot start with dash - [ParameterBindingException]
 [CmdletBinding()]
 param(
   [Parameter(Mandatory = $false,Position = 0)]
@@ -45,11 +45,32 @@ if ($env:M2_HOME -eq $null) {
 if ($env:M2 -eq $null) {
   $env:M2 = "${env:M2_HOME}\bin"
 }
+
+
 $env:PATH = "${env:JAVA_HOME}\bin;${env:M2};${env:PATH}"
 $env:JAVA_OPTS = $env:MAVEN_OPTS = @( '-Xms256m', '-Xmx512m')
-$PACKAGE_NAME = 'swet'
-$PACKAGE_VERSION = '0.0.8-SNAPSHOT'
-$MAIN_APP_PACKAGE = 'com.github.sergueik.swet'
+
+# NOTE: Powershell / XML is somewhat time consuming. Uncomment as needed
+# $PACKAGE_NAME = 'swet'
+# $PACKAGE_VERSION = '0.0.8-SNAPSHOT'
+# $MAIN_APP_PACKAGE = 'com.github.sergueik.swet'
+
+if (($MAIN_APP_PACKAGE -eq $null ) -or ($PACKAGE_VERSION -eq $null) -or ($PACKAGE_NAME -eq $null ) ){
+  $data = get-content -path 'pom.xml'
+  $project = [xml]$data
+}
+
+if ($MAIN_APP_PACKAGE-eq $null ){
+  $MAIN_APP_PACKAGE = $project.'project'.'groupId'
+}
+if ($PACKAGE_VERSION -eq $null ){
+  $PACKAGE_VERSION = $project.'project'.'version'
+}
+if ($PACKAGE_NAME -eq $null ){
+  $PACKAGE_NAME = $project.'project'.'artifactId'
+}
+
+
 # external dependencies
 $DOWNLOAD_EXTERNAL_JAR = $false
 $DEPENDENCIES = @{ 'opal' = '1.0.4'; }
@@ -74,6 +95,12 @@ if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
 # compile
 & 'mvn.cmd' '-Dmaven.test.skip=true' 'package' 'install'
 # run
+write-output (( @"
+Run:
+& 'java.exe' `
+   '-cp' "target\${PACKAGE_NAME}-${PACKAGE_VERSION}.jar;target\lib\*" `
+"${MAIN_APP_PACKAGE}.${MAIN_APP_CLASS}" "${JAVA_ARGS}"
+"@ -replace '`', '' ) -replace '\r?\n', '')
 & 'java.exe' `
    '-cp' "target\${PACKAGE_NAME}-${PACKAGE_VERSION}.jar;target\lib\*" `
    "${MAIN_APP_PACKAGE}.${MAIN_APP_CLASS}" "${JAVA_ARGS}"
