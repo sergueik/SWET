@@ -1,9 +1,10 @@
 ﻿# currently accepts max 6 Java application parameters.
 # Java application parameters cannot start with dash - [ParameterBindingException]
+# TODO: refactor param with regards of MAIN_CLASS
 [CmdletBinding()]
 param(
   [Parameter(Mandatory = $false,Position = 0)]
-  [string]$MAIN_APP_CLASS = 'SimpleToolBarEx',
+  [string]$MAIN_CLASS = 'SimpleToolBarEx',
   [Parameter(Mandatory = $false,Position = 1)]
   [string]$JAVA_APP_PARAM1,
   [Parameter(Mandatory = $false,Position = 2)]
@@ -20,8 +21,8 @@ param(
 
 try {
   $o = $PSBoundParameters.Values |
-  Where-Object { $_ -ne $MAIN_APP_CLASS } |
-  ForEach-Object { Write-Output $_ }
+  where-object { $_ -ne $MAIN_CLASS } |
+  foreach-object { write-output $_ }
   $JAVA_ARGS = $o -join ' '
 } catch [parameterbindingexception]{}
 if ($env:TOOLS_DIR -ne $null) {
@@ -51,23 +52,23 @@ $env:PATH = "${env:JAVA_HOME}\bin;${env:M2};${env:PATH}"
 $env:JAVA_OPTS = $env:MAVEN_OPTS = @( '-Xms256m', '-Xmx512m')
 
 # NOTE: Powershell / XML is somewhat time consuming. Uncomment as needed
-# $PACKAGE_NAME = 'swet'
-# $PACKAGE_VERSION = '0.0.8-SNAPSHOT'
-# $MAIN_APP_PACKAGE = 'com.github.sergueik.swet'
+# $APP_NAME = 'swet'
+# $APP_VERSION = '0.0.8-SNAPSHOT'
+# $PACKAGE = 'com.github.sergueik.swet'
 
-if (($MAIN_APP_PACKAGE -eq $null ) -or ($PACKAGE_VERSION -eq $null) -or ($PACKAGE_NAME -eq $null ) ){
+if (($PACKAGE -eq $null ) -or ($APP_VERSION -eq $null) -or ($APP_NAME -eq $null ) ){
   $data = get-content -path 'pom.xml'
   $project = [xml]$data
 }
 
-if ($MAIN_APP_PACKAGE-eq $null ){
-  $MAIN_APP_PACKAGE = $project.'project'.'groupId'
+if ($PACKAGE-eq $null ){
+  $PACKAGE = $project.'project'.'groupId'
 }
-if ($PACKAGE_VERSION -eq $null ){
-  $PACKAGE_VERSION = $project.'project'.'version'
+if ($APP_VERSION -eq $null ){
+  $APP_VERSION = $project.'project'.'version'
 }
-if ($PACKAGE_NAME -eq $null ){
-  $PACKAGE_NAME = $project.'project'.'artifactId'
+if ($APP_NAME -eq $null ){
+  $APP_NAME = $project.'project'.'artifactId'
 }
 
 
@@ -75,20 +76,20 @@ if ($PACKAGE_NAME -eq $null ){
 $DOWNLOAD_EXTERNAL_JAR = $false
 $DEPENDENCIES = @{ 'opal' = '1.0.4'; }
 if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
-  $DEPENDENCIES.Keys | ForEach-Object {
+  $DEPENDENCIES.Keys | foreach-object {
     $ALIAS = $_;
     $JARFILE_VERSION = $DEPENDENCIES[$_];
     $JARFILE = "${ALIAS}-${JARFILE_VERSION}.jar"
-    $JARFILE_LOCALPATH = (Resolve-Path '.\src\main\resources').path + '\' + $JARFILE
-    if (-not (Test-Path -Path $JARFILE_LOCALPATH)) {
+    $JARFILE_LOCALPATH = (resolve-path '.\src\main\resources').path + '\' + $JARFILE
+    if (-not (test-path -Path $JARFILE_LOCALPATH)) {
       $URI = "https://github.com/lcaron/opal/blob/releases/V${JARFILE_VERSION}/opal-${JARFILE_VERSION}.jar?raw=true"
-      $request = Invoke-WebRequest -Uri $URI -MaximumRedirection 0 -ErrorAction ignore
+      $request = invoke-webrequest -Uri $URI -MaximumRedirection 0 -ErrorAction ignore
       if ($request.StatusDescription -eq 'found') {
         $uri = $request.Headers.Location
-        Write-Output ('downloading from {0}' -f $uri)
+        write-output ('downloading from {0}' -f $uri)
       }
-      Write-Output "Downloading ${JARFILE_LOCALPATH}"
-      Invoke-WebRequest -Uri $URI -OutFile $JARFILE_LOCALPATH
+      write-output "Downloading ${JARFILE_LOCALPATH}"
+      invoke-webrequest -Uri $URI -OutFile $JARFILE_LOCALPATH
     }
   }
 }
@@ -98,9 +99,9 @@ if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
 write-output (( @"
 Run:
 & 'java.exe' `
-   '-cp' "target\${PACKAGE_NAME}-${PACKAGE_VERSION}.jar;target\lib\*" `
-"${MAIN_APP_PACKAGE}.${MAIN_APP_CLASS}" "${JAVA_ARGS}"
+   '-cp' "target\${APP_NAME}-${APP_VERSION}.jar;target\lib\*" `
+"${PACKAGE}.${MAIN_CLASS}" "${JAVA_ARGS}"
 "@ -replace '`', '' ) -replace '\r?\n', '')
 & 'java.exe' `
-   '-cp' "target\${PACKAGE_NAME}-${PACKAGE_VERSION}.jar;target\lib\*" `
-   "${MAIN_APP_PACKAGE}.${MAIN_APP_CLASS}" "${JAVA_ARGS}"
+   '-cp' "target\${APP_NAME}-${APP_VERSION}.jar;target\lib\*" `
+   "${PACKAGE}.${MAIN_CLASS}" "${JAVA_ARGS}"

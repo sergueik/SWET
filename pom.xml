@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.swet</groupId>
   <artifactId>swet</artifactId>
-  <version>0.0.8-SNAPSHOT</version>
+  <version>0.0.9-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a standalong Java application hosting a browser-based Page Element locator recorder</description>
@@ -17,7 +17,8 @@
     </developer>
   </developers>
   <properties>
-    <main.class>com.github.sergueik.swet.SimpleToolBarEx</main.class>
+    <!-- NOTE: do not use dot in the mainClass property -->
+    <mainClass>SimpleToolBarEx</mainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <commons-exec.version>1.3</commons-exec.version>
     <commons-io.version>2.5</commons-io.version>
@@ -133,7 +134,7 @@
       <version>${opal.version}</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/src/main/resources/opal-${opal.version}.jar</systemPath>
-    </dependency>    
+    </dependency>
     -->
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -192,7 +193,7 @@
           <artifactId>selenium-java</artifactId>
         </exclusion>
       </exclusions>
-    </dependency> 
+    </dependency>
 -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
@@ -241,7 +242,7 @@
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.6.v20170531</version>
+        <version>9.4.6.</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -288,7 +289,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>${main.class}</mainClass>
+              <mainClass>${project.groupId}:${project.artifactId}.${mainClass}</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>
@@ -313,9 +314,9 @@
                 <echo message="build_os = ${build_os}"/>
                 <available file="binaries" property="test.binaries" value=""/>
                 <mkdir dir="binaries"/>
-                <!-- 
-                     NOTE: 
-                     Ant BuildException has occured: Problem: 
+                <!--
+                     NOTE:
+                     Ant BuildException has occured: Problem:
                      mkdir doesn'tupport the "unless" attribute
                      zip doesn't support the "if" attribute
                      failed to create task or type target
@@ -350,7 +351,7 @@
             <exclude>src/main/resources/**</exclude>
           </excludes>
         </configuration>
-      </plugin> 
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>

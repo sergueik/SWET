@@ -1,18 +1,21 @@
 #!/bin/bash
 # set -x
 
-PACKAGE_NAME='swet'
-PACKAGE_VERSION='0.0.8-SNAPSHOT'
-MAIN_APP_PACKAGE='com.github.sergueik.swet'
-MAIN_APP_CLASS=${1:-SimpleToolBarEx}
+APP_NAME='swet'
+APP_VERSION='0.0.8-SNAPSHOT'
+PACKAGE='com.github.sergueik.swet'
+DEFAULT_MAIN_CLASS='SimpleToolBarEx'
 
 which xmllint > /dev/null
 
-if [  $? -eq  0 ] ; theng
-  PACKAGE_VERSION=$( xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'version' ]/text()" pom.xml)
-  MAIN_APP_PACKAGE=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'groupId' ]/text()" pom.xml)
-  PACKAGE_NAME=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'artifactId' ]/text()" pom.xml)
+if [  $? -eq  0 ] ; then
+  APP_VERSION=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'version' ]/text()" pom.xml)
+  PACKAGE=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'groupId' ]/text()" pom.xml)
+  APP_NAME=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'artifactId' ]/text()" pom.xml)
+  DEFAULT_MAIN_CLASS=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'properties' ]/*[local-name() = 'mainClass']/text()" pom.xml)
 fi
+
+MAIN_CLASS=${1:-$DEFAULT_MAIN_CLASS}
 
 DOWNLOAD_EXTERNAL_JAR=false
 ALIAS='opal'
@@ -42,5 +45,6 @@ then
   # http://stackoverflow.com/questions/3976342/running-swt-based-cross-platform-jar-properly-on-a-mac
   LAUNCH_OPTS='-XstartOnFirstThread'
 fi
+
 mvn -Dmaven.test.skip=true package install
-java $LAUNCH_OPTS -cp target/$PACKAGE_NAME-$PACKAGE_VERSION.jar:target/lib/* $MAIN_APP_PACKAGE.$MAIN_APP_CLASS
+java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS

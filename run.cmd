@@ -11,16 +11,16 @@ if "%M2%"=="" set M2=%M2_HOME%\bin
 set MAVEN_OPTS=-Xms256m -Xmx512m
 PATH=%JAVA_HOME%\bin;%M2%;%PATH%
 set TARGET=%CD%\target
-set PACKAGE_NAME=swet
-set PACKAGE_VERSION=0.0.8-SNAPSHOT
-set MAIN_APP_PACKAGE=com.github.sergueik.swet
-set MAIN_APP_CLASS=%1
-if NOT "%MAIN_APP_CLASS%" == "" shift
-if "%MAIN_APP_CLASS%"=="" set MAIN_APP_CLASS=SimpleToolBarEx
+set APP_NAME=swet
+set APP_VERSION=0.0.8-SNAPSHOT
+set PACKAGE=com.github.sergueik.swet
+set MAIN_CLASS=%1
+if NOT "%MAIN_CLASS%" == "" shift
+if "%MAIN_CLASS%"=="" set MAIN_CLASS=SimpleToolBarEx
 set APP_HOME=%CD:\=/%
-REM 
+REM
 REM will be mvn.bat or mvn.md
- 
+
 if "%SKIP_TEST%"=="" (
 REM Test
 call mvn test
@@ -37,8 +37,8 @@ REM passsing the log4j configuration seems to be have no effect
 REM  -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
 
 java ^
-  -cp %TARGET%\%PACKAGE_NAME%-%PACKAGE_VERSION%.jar;%TARGET%\lib\* ^
-  %MAIN_APP_PACKAGE%.%MAIN_APP_CLASS% ^
+  -cp %TARGET%\%APP_NAME%-%APP_VERSION%.jar;%TARGET%\lib\* ^
+  %PACKAGE%.%MAIN_CLASS% ^
   %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 :endlocal
