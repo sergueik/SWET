@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: SwetPlugin
-Bundle-SymbolicName: org.swet;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
