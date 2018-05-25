@@ -289,7 +289,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>${project.groupId}:${project.artifactId}.${mainClass}</mainClass>
+              <mainClass>${project.groupId}.${mainClass}</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>
