@@ -53,7 +53,7 @@ $env:JAVA_OPTS = $env:MAVEN_OPTS = @( '-Xms256m', '-Xmx512m')
 
 # NOTE: Powershell / XML is somewhat time consuming. Uncomment as needed
 # $APP_NAME = 'swet'
-# $APP_VERSION = '0.0.8-SNAPSHOT'
+# $APP_VERSION = '0.0.9-SNAPSHOT'
 # $PACKAGE = 'com.github.sergueik.swet'
 
 if (($PACKAGE -eq $null ) -or ($APP_VERSION -eq $null) -or ($APP_NAME -eq $null ) ){

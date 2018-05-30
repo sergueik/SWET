@@ -2,7 +2,7 @@
 # set -x
 
 APP_NAME='swet'
-APP_VERSION='0.0.8-SNAPSHOT'
+APP_VERSION='0.0.9-SNAPSHOT'
 PACKAGE='com.github.sergueik.swet'
 DEFAULT_MAIN_CLASS='SimpleToolBarEx'
 
