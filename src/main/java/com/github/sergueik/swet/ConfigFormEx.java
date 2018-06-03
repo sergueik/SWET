@@ -25,6 +25,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -322,6 +324,22 @@ public class ConfigFormEx {
 				public void focusGained(FocusEvent event) {
 				}
 			});
+			directory.addTraverseListener(new TraverseListener() {
+				@Override
+				public void keyTraversed(final TraverseEvent e) {
+					if (e.detail == SWT.TRAVERSE_TAB_NEXT
+							|| e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+						// logger.info("Processing key traversal");
+						// this would prevent traversal away via TAB keys
+						// e.doit = false;
+
+						e.doit = true;
+						// can not cast from TraverseEvent to Event
+						// traverse((Event) e);
+					}
+				}
+
+			});
 
 			directory.addModifyListener(new ModifyListener() {
 				@Override
@@ -343,6 +361,8 @@ public class ConfigFormEx {
 			gridData.heightHint = buttonHeight;
 			browse.setLayoutData(gridData);
 			browse.setText("Browse");
+			// set initial focus to directory selection button
+			browse.setFocus();
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					DirectoryDialog dialog = new DirectoryDialog(shell);
@@ -381,6 +401,7 @@ public class ConfigFormEx {
 					// http://www.codejava.net/java-se/swing/jcombobox-basic-tutorial-and-examples
 					// http://stackoverflow.com/questions/19800033/java-swt-list-make-it-unselectable
 					final Combo configValue = new Combo(this, SWT.READ_ONLY);
+
 					String[] items = configOptions.get(configKey).keySet()
 							.toArray(new String[0]);
 					configValue.setItems(items);
@@ -396,30 +417,13 @@ public class ConfigFormEx {
 						public void widgetSelected(SelectionEvent event) {
 							Combo o = (Combo) event.widget;
 							data.replace((String) o.getData("key"), o.getText());
-							// TODO: validation process
-							if (configValue.getText().equals("Safari")) {
-							} else {
-								/*
-								configValue.add("Not Applicable");
-								configValue.setText("Not Applicable");
-								*/
-							}
 						}
 					});
-					/*
-						configValue.addModifyListener(new ModifyListener() {
-						@Override
-						public void modifyText(ModifyEvent event) {
-							Combo o = (Combo) event.widget;
-							data.replace((String) o.getData("key"), o.getText());
-						}
-					});
-					
-					*/
+					// set initial focus to template selection
+					configValue.setFocus();
 				} else {
 
 					if (configKey.indexOf("Directory") >= 0) {
-
 						DirBrowseComposite dirBrowseComposite3 = new DirBrowseComposite(
 								this);
 						GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
@@ -448,6 +452,7 @@ public class ConfigFormEx {
 							logger.info(String.format("%s = %s", (String) text.getData("key"),
 									text.getText()));
 						});
+
 						// TODO: defer to FocusEvent
 						configValue.addModifyListener(new ModifyListener() {
 							@Override
