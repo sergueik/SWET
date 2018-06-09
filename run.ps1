@@ -61,14 +61,37 @@ if (($PACKAGE -eq $null ) -or ($APP_VERSION -eq $null) -or ($APP_NAME -eq $null 
   $project = [xml]$data
 }
 
+
 if ($PACKAGE-eq $null ){
-  $PACKAGE = $project.'project'.'groupId'
+  if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
+    $PACKAGE = (
+      # with apache pom schema
+      # select-xml needs namespace argument hash
+      # accepts arbitraty prefix to be defined in namespace argument hash and used in xpath.
+      # empty key is not supported: '/:project/:version' has an invalid token.
+      # plain element name does not work
+      select-xml -xml $project -XPath '/a:project/a:groupId' `
+        -Namespace @{'a'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
+  } else {
+    $PACKAGE = $project.'project'.'groupId'
+  }
 }
 if ($APP_VERSION -eq $null ){
-  $APP_VERSION = $project.'project'.'version'
+  if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
+    $APP_VERSION = (
+      select-xml -xml $project -XPath '/b:project/b:version' `
+        -Namespace @{'b'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
+  } else {
+    $APP_VERSION = $project.'project'.'version'
+  }
 }
 if ($APP_NAME -eq $null ){
-  $APP_NAME = $project.'project'.'artifactId'
+  if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
+    $APP_NAME = (select-xml -xml $project -XPath '/dom:project/dom:artifactId' `
+      -Namespace @{'dom'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
+  } else {
+    $APP_NAME = $project.'project'.'artifactId'
+  }
 }
 
 
