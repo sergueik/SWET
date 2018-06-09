@@ -69,7 +69,6 @@ if ($PACKAGE-eq $null ){
       # select-xml needs namespace argument hash
       # accepts arbitraty prefix to be defined in namespace argument hash and used in xpath.
       # empty key is not supported: '/:project/:version' has an invalid token.
-      # plain element name does not work
       select-xml -xml $project -XPath '/a:project/a:groupId' `
         -Namespace @{'a'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
   } else {
@@ -78,9 +77,9 @@ if ($PACKAGE-eq $null ){
 }
 if ($APP_VERSION -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
+    # plain element name does not work, local-name() does
     $APP_VERSION = (
-      select-xml -xml $project -XPath '/b:project/b:version' `
-        -Namespace @{'b'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
+    (select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="version"]' ).node.'#text'
   } else {
     $APP_VERSION = $project.'project'.'version'
   }
