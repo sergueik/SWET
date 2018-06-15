@@ -120,6 +120,7 @@ public class SimpleToolBarEx {
 		logger.info("Initialized logger.");
 	}
 
+	@SuppressWarnings("serial")
 	public void open(Display display) {
 		testData = new HashMap<>(); // infer
 		shell = new Shell(display, SWT.CENTER | SWT.SHELL_TRIM); // (~SWT.RESIZE)));
@@ -145,27 +146,36 @@ public class SimpleToolBarEx {
 				utils.getResourceStream("images/document_wrench_color.ico")));
 		try {
 
-			iconCache.put("launch icon",
-					resize(getImage(String.format("images/%s", launchImage)), IMAGE_SIZE,
-							IMAGE_SIZE));
-			iconCache.put("find icon",
-					getImage(String.format("images/%s", findImage)));
-			iconCache.put("prefs icon",
-					getImage(String.format("images/%s", gearImage)));
-			iconCache.put("shutdown icon",
-					getImage(String.format("images/%s", quitImage)));
-			iconCache.put("step icon",
-					getImage(String.format("images/%s", "document_wrench_bw.png")));
-			iconCache.put("codeGen icon",
-					resize(getImage(String.format("images/%s", codeGenImage)), 32, 32));
-			iconCache.put("open icon",
-					getImage(String.format("images/%s", openImage)));
-			iconCache.put("save icon",
-					getImage(String.format("images/%s", saveImage)));
-			iconCache.put("help icon",
-					getImage(String.format("images/%s", helpImage)));
-			iconCache.put("testsuite icon",
-					getImage(String.format("images/%s", testsuiteImage)));
+			(new HashMap<String, String>() {
+				{
+					put("find icon", findImage);
+					put("prefs icon", gearImage);
+					put("shutdown icon", quitImage);
+					put("step icon", elementImage);
+					put("open icon", openImage);
+					put("save icon", saveImage);
+					put("help icon", helpImage);
+					put("testsuite icon", testsuiteImage);
+				}
+			}).forEach((iconName, imageName) -> {
+				iconCache.put(iconName,
+						getImage(String.format("images/%s", imageName)));
+				System.err
+						.println(String.format("Loading %s for %s", imageName, iconName));
+			});
+			(new HashMap<String, String>() {
+				{
+					put("launch icon", launchImage);
+					put("codeGen icon", codeGenImage);
+				}
+			}).forEach((iconName, imageName) -> {
+				iconCache.put(iconName,
+						resize(getImage(String.format("images/%s", imageName)), IMAGE_SIZE,
+								IMAGE_SIZE));
+				System.err
+						.println(String.format("Loading %s for %s", imageName, iconName));
+			});
+
 		} catch (Exception e) {
 			logger.error("Cannot load images: " + e.getMessage());
 			System.exit(1);
@@ -818,6 +828,12 @@ public class SimpleToolBarEx {
 
 	public void setQuitImage(final String data) {
 		this.quitImage = data;
+	}
+
+	private String elementImage = "document_wrench_bw.png";
+
+	public void setElementImage(final String data) {
+		this.elementImage = data;
 	}
 
 	private String testsuiteImage = "excel_gen_32.png";
