@@ -35,11 +35,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 import org.mihalis.opal.breadcrumb.Breadcrumb;
 import org.mihalis.opal.breadcrumb.BreadcrumbItem;
 // NOTE: on a mac, NoSuchSessionException is uresolved
@@ -227,10 +229,10 @@ public class SimpleToolBarEx {
 		shutdownTool.setImage(iconCache.get("shutdown icon"));
 		shutdownTool.setToolTipText("Quit");
 
-		pageExploreTool.setEnabled(false);
-		testsuiteTool.setEnabled(false);
-		codeGenTool.setEnabled(false);
-		saveTool.setEnabled(false);
+		showDisabled(pageExploreTool);
+		showDisabled(testsuiteTool);
+		showDisabled(codeGenTool);
+		showDisabled(saveTool);
 
 		toolBar.pack();
 
@@ -260,7 +262,7 @@ public class SimpleToolBarEx {
 		updateStatus("Loading");
 
 		testsuiteTool.addListener(SWT.Selection, event -> {
-			testsuiteTool.setEnabled(false);
+			showDisabled(testsuiteTool);
 			updateStatus("Launching the TestSuite Excel exporter");
 			try {
 				TableEditorEx tableEditor = new TableEditorEx(Display.getCurrent(),
@@ -276,14 +278,13 @@ public class SimpleToolBarEx {
 				// show the error dialog with exception trace
 				ExceptionDialogEx.getInstance().render(e);
 			}
-			testsuiteTool.setEnabled(true);
+			showEnabled(testsuiteTool);
 			updateStatus("Ready");
 		});
 
 		launchTool.addListener(SWT.Selection, event -> {
-			launchTool.setEnabled(false);
+			showDisabled(launchTool);
 			String browser = configData.get("Browser");
-			logger.info(String.format("Launching the %s browser", browser));
 			updateStatus(String.format("Launching the %s browser", browser));
 			if (configData.containsKey("Base URL")) {
 				baseURL = fixBaseURL();
@@ -291,22 +292,22 @@ public class SimpleToolBarEx {
 			}
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
-				// launchTool.setEnabled(true);
-				pageExploreTool.setEnabled(true);
-				codeGenTool.setEnabled(true);
-				testsuiteTool.setEnabled(true);
+				// showEnabled(launchTool);
+				showEnabled(pageExploreTool);
+				showEnabled(codeGenTool);
+				showEnabled(testsuiteTool);
 				// driver.get(getResourceURI("blankpage.html"));
 			} else {
 				// allow the user to try again
-				launchTool.setEnabled(true);
+				showEnabled(launchTool);
 			}
 			// TODO: detect if closed ?
 			updateStatus("Ready");
 		});
 
 		codeGenTool.addListener(SWT.Selection, event -> {
-			codeGenTool.setEnabled(false);
-			testsuiteTool.setEnabled(false);
+			showDisabled(codeGenTool);
+			showDisabled(testsuiteTool);
 			RenderTemplate renderTemplate = new RenderTemplate();
 			if (configData.containsKey("Template Path")) {
 				updateStatus(String.format("Reading template path \"%s\" \u2026",
@@ -338,12 +339,12 @@ public class SimpleToolBarEx {
 			shell.setData("payload", generatedScript);
 			ScrolledTextEx test = new ScrolledTextEx(Display.getCurrent(), shell);
 			updateStatus("Ready");
-			codeGenTool.setEnabled(true);
-			testsuiteTool.setEnabled(true);
+			showEnabled(codeGenTool);
+			showEnabled(testsuiteTool);
 		});
 
 		openTool.addListener(SWT.Selection, event -> {
-			openTool.setEnabled(false);
+			showDisabled(openTool);
 			FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 			String[] filterNames = new String[] { "YAML sources", "All Files (*)" };
 			String[] filterExtensions = new String[] { "*.yaml", "*" };
@@ -374,22 +375,22 @@ public class SimpleToolBarEx {
 				// YamlHelper.printConfiguration(config);
 				shell.layout(true, true);
 				shell.pack();
-				saveTool.setEnabled(true);
+				showEnabled(saveTool);
 			}
-			openTool.setEnabled(true);
-			codeGenTool.setEnabled(true);
-			testsuiteTool.setEnabled(true);
+			showEnabled(openTool);
+			showEnabled(codeGenTool);
+			showEnabled(testsuiteTool);
 			updateStatus("Ready");
 		});
 
 		saveTool.addListener(SWT.Selection, event -> {
-			saveTool.setEnabled(false);
+			showDisabled(saveTool);
 			saveWorkspace(shell);
-			saveTool.setEnabled(true);
+			showEnabled(saveTool);
 		});
 
 		preferencesTool.addListener(SWT.Selection, event -> {
-			preferencesTool.setEnabled(false);
+			showDisabled(preferencesTool);
 			shell.setData("updated", false);
 
 			shell.setData("CurrentConfig",
@@ -400,7 +401,7 @@ public class SimpleToolBarEx {
 				utils.readData((String) shell.getData("CurrentConfig"),
 						Optional.of(configData));
 			}
-			preferencesTool.setEnabled(true);
+			showEnabled(preferencesTool);
 		});
 
 		pageExploreTool.setData("Application", app);
@@ -410,7 +411,7 @@ public class SimpleToolBarEx {
 				.addSelectionListener(new AsyncDataCollectionListener(pageExploreTool));
 
 		shutdownTool.addListener(SWT.Selection, event -> {
-			shutdownTool.setEnabled(false);
+			showDisabled(shutdownTool);
 
 			/*
 			 *  prompt the user confirmation dialog
@@ -442,7 +443,7 @@ public class SimpleToolBarEx {
 			switch (choice) {
 			case -1: /* dialog closed */
 				updateStatus("Ready");
-				shutdownTool.setEnabled(true);
+				showEnabled(shutdownTool);
 				break;
 			case 0: /* Save the session and exit */
 				saveWorkspace(shell);
@@ -459,11 +460,11 @@ public class SimpleToolBarEx {
 				browserStatus.replace("closed", true);
 				closeBrowser();
 				updateStatus("Ready");
-				shutdownTool.setEnabled(true);
+				showEnabled(shutdownTool);
 				break;
 			case 3: /* return to the program */
 				updateStatus("Ready");
-				shutdownTool.setEnabled(true);
+				showEnabled(shutdownTool);
 				break;
 			}
 		});
@@ -486,7 +487,7 @@ public class SimpleToolBarEx {
 			} catch (Exception e) {
 				logger.debug("Exception (ignored): " + e.toString());
 			} finally {
-				launchTool.setEnabled(true);
+				showEnabled(launchTool);
 			}
 		}
 	}
@@ -544,8 +545,8 @@ public class SimpleToolBarEx {
 						pageExploreTool.getDisplay().asyncExec(new Runnable() {
 							@Override
 							public void run() {
-								app.pageExploreTool.setEnabled(true);
-								app.saveTool.setEnabled(true);
+								app.showEnabled(pageExploreTool);
+								app.showEnabled(saveTool);
 							}
 						});
 
@@ -581,8 +582,8 @@ public class SimpleToolBarEx {
 							pageExploreTool.getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									pageExploreTool.setEnabled(true);
-									app.saveTool.setEnabled(true);
+									showEnabled(pageExploreTool);
+									app.showEnabled(saveTool);
 								}
 							});
 							break;
@@ -667,7 +668,7 @@ public class SimpleToolBarEx {
 
 			driver.get(baseURL);
 			// prevent the customer from launching multiple instances
-			// launchTool.setEnabled(true);
+			// showEnabled(launchTool);
 			if (!osName.startsWith("mac")) {
 				// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
 				// combinations
@@ -758,6 +759,14 @@ public class SimpleToolBarEx {
 	@Override
 	public void finalize() {
 		disposeIconCache();
+	}
+
+	public void showEnabled(ToolItem element) {
+		element.setEnabled(true);
+	}
+
+	public void showDisabled(ToolItem element) {
+		element.setEnabled(false);
 	}
 
 	private void updateStatus(String newStatus) {
@@ -944,7 +953,7 @@ public class SimpleToolBarEx {
 					parentToolItem.getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							parentToolItem.setEnabled(false);
+							showDisabled(parentToolItem);
 							parentApp.updateStatus("Inject script");
 						}
 					});
@@ -993,11 +1002,11 @@ public class SimpleToolBarEx {
 										commandId, elementData, bc);
 								parentApp.shell.layout(true, true);
 								parentApp.shell.pack();
-								parentToolItem.setEnabled(true);
+								showEnabled(parentToolItem);
 								parentApp.updateStatus("Ready");
 								browserStatus.put("runaway", false);
 								browserStatus.put("closed", false);
-								parentApp.saveTool.setEnabled(true);
+								parentApp.showEnabled(saveTool);
 							}
 						});
 
