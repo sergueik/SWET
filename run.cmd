@@ -26,9 +26,9 @@ set APP_VERSION=%VALUE%
 
 if /i NOT "%VERBOSE%"=="true" goto :CONTINUE
 
-echo APP_VERSION="%APP_VERSION%"
-echo APP_NAME="%APP_NAME%"
-echo PACKAGE="%PACKAGE%"
+echo APP_VERSION="%APP_VERSION%">&2
+echo APP_NAME="%APP_NAME%">&2
+echo PACKAGE="%PACKAGE%">&2
 
 :CONTINUE
 
@@ -51,15 +51,16 @@ call mvn -Dmaven.test.skip=true package install
 )
 
 REM Run
-REM NOTE: shift does not affect the value of %*
-REM passsing the log4j configuration seems to be have no effect
-REM  -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
-echo ON
+REM NOTE: shift does not modify %*
+REM The log4j configuration argument seems to be ignored
+REM -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
+set COMMAND=^
 java ^
   -cp %TARGET%\%APP_NAME%-%APP_VERSION%.jar;%TARGET%\lib\* ^
   %PACKAGE%.%MAIN_CLASS% ^
   %1 %2 %3 %4 %5 %6 %7 %8 %9
-@echo OFF
+echo %COMMAND%>&2
+%COMMAND%
 ENDLOCAL
 exit /b
 
