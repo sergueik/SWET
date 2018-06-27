@@ -419,9 +419,9 @@ public class Utils {
 	}
 
 	public void inspectElement(WebElement element) {
-		keyCTRL = osName.startsWith("Mac") ? Keys.COMMAND : Keys.CONTROL;
+		keyCTRL = osName.startsWith("mac") ? Keys.COMMAND : Keys.CONTROL;
 
-		if (osName.startsWith("Mac")) {
+		if (osName.startsWith("mac")) {
 			actions.keyDown(keyCTRL).build().perform();
 			actions.moveToElement(element).contextClick().build().perform();
 			actions.keyUp(keyCTRL).build().perform();
