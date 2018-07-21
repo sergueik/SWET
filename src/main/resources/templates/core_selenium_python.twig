@@ -1,0 +1,26 @@
+{#
+  template: Core Selenium Python
+#}
+
+from selenium import webdriver
+driver = webdriver.Chrome()
+
+def locate_{{ ElementCodeName }}():
+{% if (ElementText != '') -%}
+  # {{ ElementText }}
+{% endif -%}
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+ 	return driver.find_element_by_css('{{ ElementCssSelector }}');
+
+  {% elseif (ElementSelectedBy == 'ElementXPath') -%}
+	return driver.find_element_by_xpath('{{ ElementXPath }}');
+
+  {% elseif (ElementSelectedBy == 'ElementId') -%}
+	return driver.find_element_by_id('{{ ElementId }}');
+
+  {% elseif (ElementSelectedBy == 'ElementText') -%}
+	return  driver.find_element_by_xpath("//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]")
+
+{% endif -%}
+
+# TODO: preserve whitespace

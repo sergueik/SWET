@@ -1,0 +1,33 @@
+{#
+template: Core Selenium Ruby
+#}
+
+require 'selenium-webdriver'
+
+class PageElement
+
+  def initialize(url)
+    @driver=Selenium::WebDriver.for :chrome
+    @driver.manage.window.maximize
+    @driver.navigate.to url
+  end
+  def close_browser()
+    @driver.quit
+  end
+  def locate_{{ ElementCodeName }}()
+  {% if (ElementText != '') -%}
+    # {{ ElementText }}
+  {% endif -%}
+    @driver.find_element(
+{% if (ElementSelectedBy == 'ElementCssSelector') -%}
+    :css, '{{ ElementCssSelector }}'
+{% elseif (ElementSelectedBy == 'ElementXPath') -%}
+    :xpath,'{{ ElementXPath }}'
+{% elseif (ElementSelectedBy == 'ElementId') -%}
+    :id,'{{ ElementId }}'
+{% elseif (ElementSelectedBy == 'ElementText') -%}
+    :xpath, "//{{ ElementTagName }}[contains(normalize-space(text()), '{{ ElementText }}')]"
+{% endif -%}
+    )
+  end
+end
