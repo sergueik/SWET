@@ -23,6 +23,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.RTFTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
+
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -44,6 +50,8 @@ class ScrolledTextEx {
 
 	protected Shell shell;
 	private Display display;
+	private Clipboard clipboard;
+	
 	private String payload = "Nothing here\nyet...";
 	private final static int width = 700;
 	private final static int height = 400;
@@ -68,6 +76,7 @@ class ScrolledTextEx {
 
 		// NOTE: org.eclipse.swt.SWTException: Invalid thread access
 		display = (parentDisplay != null) ? parentDisplay : new Display();
+		clipboard = new Clipboard(display);
 
 		shell = new Shell(display);
 		shell.setSize(20, 20);
@@ -98,14 +107,33 @@ class ScrolledTextEx {
 		buttonComposite.setLayoutData(
 				new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
 		GridLayout gridLayout = new GridLayout();
+		gridLayout.makeColumnsEqualWidth = false;
+		gridLayout.numColumns = 3;
 		gridLayout.marginWidth = 2;
-		buttonComposite.setLayout(new GridLayout(2, false));
-
+		// http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html
+		buttonComposite.setLayout(gridLayout);
 		Button buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
 
 		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
 				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
-		buttonSave.setText("Save");
+		buttonSave.setText("Save in File");
+
+		Button buttonClipboardCopy = new Button(buttonComposite, SWT.PUSH);
+		buttonClipboardCopy.setText("To Clipboard");
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
+				.hint(buttonWidth, buttonHeight).grab(false, false)
+				.applyTo(buttonClipboardCopy);
+		buttonClipboardCopy.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+
+				String rtfPayload = "{\\rtf1 " + payload + " }";
+
+				clipboard.clearContents();
+				clipboard.setContents(new String[] { payload, rtfPayload },
+						new Transfer[] { TextTransfer.getInstance(),
+								RTFTransfer.getInstance() });
+			}
+		});
 
 		Button buttonCancel = new Button(buttonComposite, SWT.PUSH);
 		buttonCancel.setText("Cancel");
@@ -117,6 +145,7 @@ class ScrolledTextEx {
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				styledText.dispose();
+				clipboard.dispose();
 				buttonComposite.dispose();
 				shell.dispose();
 			}
@@ -128,6 +157,7 @@ class ScrolledTextEx {
 
 			@Override
 			public void handleEvent(Event event) {
+				clipboard.dispose();
 				shell.dispose();
 			}
 		});
