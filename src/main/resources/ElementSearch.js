@@ -90,11 +90,11 @@
          return selector;
      };
 
-      // The code for getCssSelectorOF was partially borrowed from chromium project:
+      // The initial version code of getCssSelectorOF was partially borrowed from chromium project:
       // https://chromium.googlesource.com/chromium/src.git
      getCssSelectorOF = function(element) {
        hello('getCssSelectorOF ' + element.tagName);
-       var specialAttributesArray = ['href','src','title','alt'];
+       var specialAttributesArray = ['href','src','title','alt','name', 'value', 'type', 'action', 'onclick'];
        if (!(element instanceof Element))
          return;
        var path = [];
@@ -123,14 +123,25 @@
            }
            if (sibling_cnt != 1)
              selector += ':nth-of-type(' + sibling_cnt + ')';
-         }
-         var arrayLength = specialAttributesArray.length;
-          for (var i = 0; i < arrayLength; i++) {
-          specialAttribute = specialAttributesArray[i];
-          var postfix = probeAttribute(element,specialAttribute,'');
-          if (postfix) {
-            selector += '[ ' + postfix + ' ]';
           }
+          var arrayLength = specialAttributesArray.length;
+          var attribute_conditions_postfix = [];
+          var attribute_condition = '';
+          var prefix = '';
+          // refactored to look similarly with getCssSelectorOF and getPathTo
+          for (var i = 0; i < arrayLength; i++) {
+            specialAttribute = specialAttributesArray[i];
+            attribute_condition = probeAttribute(element,specialAttribute, prefix);
+            if (attribute_condition) {
+              hello('Found attribute condition:' + attribute_condition);
+              attribute_conditions_postfix.push(attribute_condition);
+            }
+          }
+          if (attribute_conditions_postfix.length > 0 ) {
+            for (var i = 0; i < attribute_conditions_postfix.length; i++) {
+              selector += '[ ' + attribute_conditions_postfix[i] + ' ]';
+            }
+            hello('Finished building postfix: ' + element.tagName + ' ' + selector);
           }
          path.unshift(selector);
          element = element.parentNode;
@@ -139,6 +150,7 @@
        return path.join(' > ');
      };
 
+    // prefix : '@' for xpath, empty for css.
     probeAttribute = function(element,attributeName, prefix){
       if (element.hasAttribute(attributeName)) {
         return prefix + attributeName + ' = "' + element.getAttribute(attributeName) + '"';
@@ -149,7 +161,8 @@
     getPathTo = function(element, depth) {
         depth = depth + 1;
         var element_sibling, siblingTagName, siblings, cnt, sibling_count;
-        var specialAttributesArray = ['href','src','title','alt'];
+        var specialAttributesArray = ['href','src','title','alt','name', 'value', 'type', 'action', 'onclick'];
+        var postfixConditions = [];
         var elementTagName = element.tagName.toLowerCase();
         hello('getPathTo ' +  elementTagName );
         if (element.id != '' /* and */ && depth != 1) {
@@ -161,20 +174,21 @@
         } else if (element === document.body) {
           return '/html/' + elementTagName;
         }
-        var attribute_postfix = [];
-        var postfix = '';
+        var attribute_condition = '';
+        var attribute_conditions_postfix = [];
         var arrayLength = specialAttributesArray.length;
+        var prefix = '@';
         for (var i = 0; i < arrayLength; i++) {
           specialAttribute = specialAttributesArray[i];
-          postfix = probeAttribute(element,specialAttribute,'@');
-          if (postfix) {
-            hello('Found postfix:' + postfix);
-            attribute_postfix.push(postfix);
+          attribute_condition = probeAttribute(element,specialAttribute,prefix);
+          if (attribute_condition) {
+            hello('Found attribute condition:' + attribute_condition);
+            attribute_conditions_postfix.push(attribute_condition);
           }
         }
 
-        if (attribute_postfix.length > 0 ) {
-          postfix = '[ '+ attribute_postfix.join(' and ') + ' ]';
+        if (attribute_conditions_postfix.length > 0 ) {
+          postfix = '[ '+ attribute_conditions_postfix.join(' and ') + ' ]';
           hello('Finished building postfix: ' + elementTagName + postfix);
           return ( getPathTo(element.parentNode, depth) + '/' +  elementTagName + postfix );
         }
