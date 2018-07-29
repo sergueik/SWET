@@ -253,7 +253,10 @@ public class TableEditorEx {
 		buttonComposite.setLayout(new GridLayout(2, false));
 		buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
 		buttonSave.setText("Save");
-
+    // for Clipboard one may use TextTransfer and tab-separated values or RTFTransfer with
+    // {\\rtf\\ansi\n{\n\\trowd\\trgaph30\\trleft-30\\trrh316\\clvertalb\\cellx1280\\clvertalb\\cellx2560\\pard\\plain\\intbl\n\\ql A_1\\cell\\ql B_1\\cell\\row\n\\trowd\\trgaph30\\trleft-30\\trrh316\\clvertalb\\cellx1280\\clvertalb\\cellx2560\\pard\\plain\\intbl\n\\ql A_2\\cell\\ql B_2\\cell\\row\n}\n}
+    // see also com.lowagie.text.rtf.RtfWriter2
+    // com.lowagie.itext-rtf
 		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
 				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
 
