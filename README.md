@@ -527,6 +527,8 @@ __SWET__is licensed under Apache License, Version 2.0
    *  [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
    *  [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
    *  [SnapTest](https://www.snaptest.io/) (no source on github -  have to download the `.crx` and find it in `%USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\Extensions\aeofjocnhdlleichkjbaibdbicpcddhp\0.6.9_0\manifest.json` )
+    * [ChroPath Chrome extension](https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en)
+   * [ChroPath for Firefox (claims to be compatible only with FF 48+)](https://addons.mozilla.org/en-US/firefox/addon/chropath-for-firefox/)
 
 #### Selenium Locator Strategies
 
