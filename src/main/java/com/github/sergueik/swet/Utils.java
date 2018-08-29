@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2017 Serguei Kouzmine
+ * Copyright 2014 - 2018 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -97,11 +97,11 @@ public class Utils {
 
 	private static String defaultScript = "ElementSearch.js";
 
+	// NOTE: put inside "WEB-INF/classes" for web hosted app
 	public String getScriptContent(String resourceFileName) {
 		try {
 			/* System.err.println("Script contents: " + getResourceURI(resourceFileName));		*/
-			final InputStream stream = this.getClass().getClassLoader()
-					.getResourceAsStream(resourceFileName);
+			final InputStream stream = getResourceStream(resourceFileName);
 			final byte[] bytes = new byte[stream.available()];
 			stream.read(bytes);
 			return new String(bytes, "UTF-8");
@@ -110,7 +110,8 @@ public class Utils {
 		}
 	}
 
-	// NOTE: getResourceURI does not work well with standalone app.
+	// NOTE: getResourceURI may not work with stand alone or web hosted
+	// application
 	public String getResourceURI(String resourceFileName) {
 		try {
 			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
