@@ -1,9 +1,11 @@
 package com.github.sergueik.swet;
+
 /**
  * Copyright 2014 - 2018 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -12,50 +14,65 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import java.security.CodeSource;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
+//for sorting elements by valueColumn, returns Array List of indexColumn
+//probably a regular class is sufficient for java 8 projects
+//http://backport-jsr166.sourceforge.net/doc/api/edu/emory/mathcs/backport/java/util/Collections.html
+//import edu.emory.mathcs.backport.java.util.Collections;
+import java.util.Collections;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import java.util.stream.Collectors;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Category;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.PropertyConfigurator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import edu.emory.mathcs.backport.java.util.Collections;
-import org.apache.log4j.Category;
-import org.apache.log4j.PropertyConfigurator;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * Common utilities class for Selenium WebDriver Elementor Tool (SWET)
@@ -70,10 +87,33 @@ public class Utils {
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 
 	private static String osName = OSUtils.getOsName();
+	private boolean debug = false;
+
+	public void setDebug(boolean value) {
+		this.debug = value;
+	}
+
 	private WebDriver driver;
 	private WebDriverWait wait;
 	private Actions actions;
 	private int flexibleWait = 5;
+
+	private Utils() {
+	}
+
+	public static Utils getInstance() {
+		return instance;
+	}
+
+	private String defaultScript;
+
+	public String fgetDefaultScript() {
+		return defaultScript;
+	}
+
+	public void setDefaultScript(String value) {
+		this.defaultScript = value;
+	}
 
 	public void setFlexibleWait(int flexibleWait) {
 		this.flexibleWait = flexibleWait;
@@ -88,19 +128,13 @@ public class Utils {
 		this.actions = value;
 	}
 
-	private Utils() {
-	}
-
-	public static Utils getInstance() {
-		return instance;
-	}
-
-	private static String defaultScript = "ElementSearch.js";
-
 	// NOTE: put inside "WEB-INF/classes" for web hosted app
 	public String getScriptContent(String resourceFileName) {
 		try {
-			/* System.err.println("Script contents: " + getResourceURI(resourceFileName));		*/
+			if (debug) {
+				System.err
+						.println("Script contents: " + getResourceURI(resourceFileName));
+			}
 			final InputStream stream = getResourceStream(resourceFileName);
 			final byte[] bytes = new byte[stream.available()];
 			stream.read(bytes);
@@ -116,7 +150,9 @@ public class Utils {
 		try {
 			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
 					.toURI();
-			// System.err.println("Resource URI: " + uri.toString());
+			if (debug) {
+				System.err.println("Resource URI: " + uri.toString());
+			}
 			return uri.toString();
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
@@ -170,7 +206,9 @@ public class Utils {
 				String propertyKey = propIterator.next();
 				String propertyVal = elementObj.getString(propertyKey);
 				// logger.info(propertyKey + ": " + propertyVal);
-				System.err.println("readData: " + propertyKey + ": " + propertyVal);
+				if (debug) {
+					System.err.println("readData: " + propertyKey + ": " + propertyVal);
+				}
 				collector.put(propertyKey, propertyVal);
 			}
 		} catch (JSONException e) {
@@ -512,14 +550,51 @@ public class Utils {
 		return res;
 	}
 
-	// origin:
+	// based on:
 	// https://github.com/TsvetomirSlavov/wdci/blob/master/code/src/main/java/com/seleniumsimplified/webdriver/manager/EnvironmentPropertyReader.java
-	public static String getPropertyEnv(String name, String defaultValue) {
+	/*
+	 public static String getPropertyEnv(String name, String defaultValue) {
 		String value = System.getProperty(name);
 		if (value == null) {
 			value = System.getenv(name);
 			if (value == null) {
 				value = defaultValue;
+			}
+		}
+		return value;
+	}
+	*/
+
+	public String getPropertyEnv(String name, String defaultValue) {
+		String value = System.getProperty(name);
+		if (debug) {
+			System.err.println("Getting propety or environment: " + name);
+		}
+		// compatible with
+		// org.apache.commons.configuration.PropertiesConfiguration.interpolatedConfiguration
+		// https://commons.apache.org/proper/commons-configuration/userguide_v1.10/howto_utilities.html
+		if (value == null) {
+
+			Pattern p = Pattern.compile("^(\\w+:)(\\w+)$");
+			Matcher m = p.matcher(name);
+			if (m.find()) {
+				String propertyName = m.replaceFirst("$2");
+				if (debug) {
+					System.err.println("Interpolating " + propertyName);
+				}
+				value = System.getProperty(propertyName);
+			}
+			if (value == null) {
+				if (debug) {
+					System.err.println("Trying environment " + name);
+				}
+				value = System.getenv(name);
+				if (value == null) {
+					if (debug) {
+						System.err.println("Nothing found for " + name);
+					}
+					value = defaultValue;
+				}
 			}
 		}
 		return value;
@@ -540,6 +615,33 @@ public class Utils {
 		}
 		m.appendTail(sb);
 		return sb.toString();
+	}
+
+	// origin:
+	// https://github.com/abhishek8908/selenium-drivers-download-plugin/blob/master/src/main/java/com/github/abhishek8908/util/DriverUtil.java
+	public static String readProperty(String propertyName) {
+		String resourcePath = "";
+		try {
+			resourcePath = Thread.currentThread().getContextClassLoader()
+					.getResource("").getPath();
+			System.err.println(
+					String.format("The application resource path: \"%s\"", resourcePath));
+		} catch (NullPointerException e) {
+			System.err.println(
+					"Exception for resourcePath: " + resourcePath + " (ignored) :");
+			e.printStackTrace();
+		}
+		Configuration config = null;
+		try {
+			config = new PropertiesConfiguration(
+					resourcePath + "application.properties");
+
+			Configuration extConfig = ((PropertiesConfiguration) config)
+					.interpolatedConfiguration();
+			return extConfig.getProperty(propertyName).toString();
+		} catch (ConfigurationException e) {
+			return null;
+		}
 	}
 
 	// TODO: array

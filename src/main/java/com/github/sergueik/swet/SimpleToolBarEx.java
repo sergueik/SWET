@@ -87,14 +87,11 @@ public class SimpleToolBarEx {
 		browserDefaults.put("linux", "Firefox");
 		browserDefaults.put("mac", "Safari");
 	}
+	private Utils utils = Utils.getInstance();
 	// "Chrome" or better
-	static String browserDefault = Utils.getPropertyEnv("browser.default",
+	private String browserDefault = utils.getPropertyEnv("browser.default",
 			browserDefaults.get(Pattern.compile(" +").split(OSUtils.getOsName())[0]));
 	private static Map<String, String> configData = new HashMap<>();
-	static {
-		configData.put("Browser", browserDefault);
-		configData.put("Template", "Core Selenium Java (embedded)");
-	}
 	private static final String defaultConfig = String.format(
 			"{ \"Browser\": \"%s\", \"Template\": \"%s\", }",
 			configData.get("Browser"), configData.get("Template"));
@@ -107,19 +104,22 @@ public class SimpleToolBarEx {
 	private String generatedScript = null;
 	private Label statusMessage;
 	private TemplateCache templateCache = TemplateCache.getInstance();
-	private Utils utils = Utils.getInstance();
 	private ToolItem launchTool = null;
 	private ToolItem saveTool = null;
 	private ToolItem pageExploreTool = null;
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
-
+	private static String defaultScript = "ElementSearch.js";
 	private Breadcrumb bc;
 
 	@SuppressWarnings("unused")
 	public SimpleToolBarEx() {
 		app = this;
+		configData.put("Browser", browserDefault);
+		configData.put("Template", "Core Selenium Java (embedded)");
 		utils.initializeLogger();
 		logger.info("Initialized logger.");
+		utils.setDefaultScript(defaultScript);
+		logger.info("Set worker script: " + defaultScript);
 	}
 
 	@SuppressWarnings("serial")
