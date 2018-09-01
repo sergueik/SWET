@@ -11,31 +11,39 @@ if "%M2_HOME%"=="" set M2_HOME=%TOOLS_DIR%\apache-maven-%MAVEN_VERSION%
 if "%M2%"=="" set M2=%M2_HOME%\bin
 set MAVEN_OPTS=-Xms256m -Xmx512m
 PATH=%JAVA_HOME%\bin;%M2%;%PATH%
+
 set TARGET=%CD%\target
+set VERBOSE=true
+
 set APP_NAME=swet
 set APP_VERSION=0.0.9-SNAPSHOT
 set PACKAGE=com.github.sergueik.swet
+set DEFAULT_MAIN_CLASS=SimpleToolBarEx
 
-call :CALL_JAVASCRIPT groupId
-set PACKAGE=%VALUE%
+call :CALL_JAVASCRIPT /project/artifactId
+set ARTIFACTID=%VALUE%
 
-call :CALL_JAVASCRIPT artifactId
-set APP_NAME=%VALUE%
-call :CALL_JAVASCRIPT version
-set APP_VERSION=%VALUE%
+call :CALL_JAVASCRIPT /project/groupId
+set GROUPID=%VALUE%
+
+call :CALL_JAVASCRIPT /project/version
+set VERSION=%VALUE%
+
+call :CALL_JAVASCRIPT /project/properties/mainClass
+set DEFAULT_MAIN_CLASS=%VALUE%
 
 if /i NOT "%VERBOSE%"=="true" goto :CONTINUE
 
 echo APP_VERSION="%APP_VERSION%">&2
 echo APP_NAME="%APP_NAME%">&2
 echo PACKAGE="%PACKAGE%">&2
+echo DEFAULT_MAIN_CLASS="%DEFAULT_MAIN_CLASS%">&2
 
 :CONTINUE
 
-
 set MAIN_CLASS=%1
 if NOT "%MAIN_CLASS%" == "" shift
-if "%MAIN_CLASS%"=="" set MAIN_CLASS=SimpleToolBarEx
+if "%MAIN_CLASS%"=="" set MAIN_CLASS=%DEFAULT_MAIN_CLASS%
 set APP_HOME=%CD:\=/%
 REM omit the extension - on different Windows
 REM will be mvn.bat or mvn.cmd
@@ -66,25 +74,24 @@ exit /b
 
 :CALL_JAVASCRIPT
 
+REM This script extracts project g.a.v a custom property from pom.xml using mshta.exe and DOM selectSingleNode method
 set "SCRIPT=mshta.exe "javascript:{"
 set "SCRIPT=%SCRIPT% var fso = new ActiveXObject('Scripting.FileSystemObject');"
 set "SCRIPT=%SCRIPT% var out = fso.GetStandardStream(1);"
-set "SCRIPT=%SCRIPT% var handle = fso.OpenTextFile('pom.xml',1,1);"
-set "SCRIPT=%SCRIPT% var xml = new ActiveXObject('Msxml2.DOMDocument.6.0');"
-set "SCRIPT=%SCRIPT% xml.async = false;"
-set "SCRIPT=%SCRIPT% xml.loadXML(handle.ReadAll());"
-set "SCRIPT=%SCRIPT% root = xml.documentElement;"
-set "SCRIPT=%SCRIPT% var tag ='%~1';"
-set "SCRIPT=%SCRIPT% nodes = root.childNodes;"
-set "SCRIPT=%SCRIPT% for(i = 0; i != nodes .length; i++){"
-set "SCRIPT=%SCRIPT%   if (nodes.item(i).nodeName.match(RegExp(tag, 'g'))) {"
-set "SCRIPT=%SCRIPT%     out.Write(tag + '=' + nodes.item(i).text + '\n');"
-set "SCRIPT=%SCRIPT%   }"
+set "SCRIPT=%SCRIPT% var fh = fso.OpenTextFile('pom.xml', 1, true);"
+set "SCRIPT=%SCRIPT% var xd = new ActiveXObject('Msxml2.DOMDocument');"
+set "SCRIPT=%SCRIPT% xd.async = false;"
+set "SCRIPT=%SCRIPT% data = fh.ReadAll();"
+set "SCRIPT=%SCRIPT% xd.loadXML(data);"
+set "SCRIPT=%SCRIPT% root = xd.documentElement;"
+set "SCRIPT=%SCRIPT% var xpath = '%~1';"
+set "SCRIPT=%SCRIPT% var xmlnode = root.selectSingleNode( xpath);"
+set "SCRIPT=%SCRIPT% if (xmlnode != null) {"
+set "SCRIPT=%SCRIPT%   out.Write(xpath + '=' + xmlnode.text);"
+set "SCRIPT=%SCRIPT% } else {"
+set "SCRIPT=%SCRIPT%   out.Write('ERR');"
 set "SCRIPT=%SCRIPT% }"
-set "SCRIPT=%SCRIPT%close();}""
-
-REM if /i "%DEBUG%"=="true" echo %SCRIPT%
-REM if /i "%DEBUG%"=="true" for /F "delims=" %%_ in ('%SCRIPT% 1 ^| more') do echo %%_
+set "SCRIPT=%SCRIPT% close();}""
 
 for /F "tokens=2 delims==" %%_ in ('%SCRIPT% 1 ^| more') do set VALUE=%%_
 ENDLOCAL
