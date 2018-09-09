@@ -187,20 +187,6 @@
       <artifactId>selenium-server</artifactId>
       <version>${selenium.version}</version>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>org.seleniumhq.selenium.fluent</groupId>
-      <artifactId>fluent-selenium</artifactId>
-      <version>1.18</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.seleniumhq.selenium</groupId>
-          <artifactId>selenium-java</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
--->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-api</artifactId>
