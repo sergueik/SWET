@@ -16,7 +16,9 @@ param(
   [Parameter(Mandatory = $false,Position = 5)]
   [string]$JAVA_APP_PARAM5,
   [Parameter(Mandatory = $false,Position = 6)]
-  [string]$JAVA_APP_PARAM6
+  [string]$JAVA_APP_PARAM6,
+  [Parameter(Mandatory = $false)]
+  [switch]$clean
 )
 
 try {
@@ -47,43 +49,70 @@ if ($env:M2 -eq $null) {
   $env:M2 = "${env:M2_HOME}\bin"
 }
 
+$build_clean = [bool]$PSBoundParameters['clean'].IsPresent
 
 $env:PATH = "${env:JAVA_HOME}\bin;${env:M2};${env:PATH}"
 $env:JAVA_OPTS = $env:MAVEN_OPTS = @( '-Xms256m', '-Xmx512m')
 
-# NOTE: Powershell / XML is somewhat time consuming. Uncomment as needed
-# $APP_NAME = 'swet'
-# $APP_VERSION = '0.0.9-SNAPSHOT'
-# $PACKAGE = 'com.github.sergueik.swet'
+# early versions os SWET there was an external jar dependency
+# on Opal Project 'SWT new widgets' library
+$DEPENDENCIES = @{
+  'opal' = '1.0.9';
+}
+# download external dependency jars
+$DOWNLOAD_EXTERNAL_JAR = $false
+$DOWNLOAD_EXTERNAL_JAR = $true
 
+# NOTE: powershell / XML is somewhat time consuming. Uncomment as needed
+
+# $APP_NAME = 'swet'
+# $APP_VERSION = '0.0.10-SNAPSHOT'
+# $PACKAGE = 'com.github.sergueik.swet'
+# $MAIN_CLASS = 'SimpleToolBarEx'
+
+write-debug 'Reading the parameters from "pom.xml"'
 if (($PACKAGE -eq $null ) -or ($APP_VERSION -eq $null) -or ($APP_NAME -eq $null ) ){
   $data = get-content -path 'pom.xml'
   $project = [xml]$data
 }
 
 
-if ($PACKAGE-eq $null ){
+if ($PACKAGE -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
     $PACKAGE = (
-      # with apache pom schema
-      # select-xml needs namespace argument hash
-      # accepts arbitraty prefix to be defined in namespace argument hash and used in xpath.
-      # empty key is not supported: '/:project/:version' has an invalid token.
+      # apache pom namespace schema has to be honored by
+      # select-xml via namespace argument hash which it will use in resolving xpath.
+      # except with empty key, which will not work: '/:project/:version' has an invalid token.
       select-xml -xml $project -XPath '/a:project/a:groupId' `
         -Namespace @{'a'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
   } else {
     $PACKAGE = $project.'project'.'groupId'
   }
+  write-debug ('PACKAGE={0}' -f $PACKAGE)
 }
+
+
+if ($DEFAULT_MAIN_CLASS -eq $null ){
+  if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
+    $DEFAULT_MAIN_CLASS = (
+      # alternative way of dealing with schema XML is
+      # use local-name() in xpath, like with xmlint
+      select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="mainClass"]' ).node.'#text'
+  } else {
+    $DEFAULT_MAIN_CLASS = $project.'project'.'properties'.'mainClass'
+  }
+  write-debug ('DEFAULT_MAIN_CLASS={0}' -f $DEFAULT_MAIN_CLASS)
+}
+
 if ($APP_VERSION -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
-    # plain element name does not work, local-name() does
-    $APP_VERSION = (
-    (select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="version"]' ).node.'#text'
+    $APP_VERSION = ( select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="version"]' ).node.'#text'
   } else {
     $APP_VERSION = $project.'project'.'version'
   }
+  write-debug ('APP_VERSION={0}' -f $APP_VERSION)
 }
+
 if ($APP_NAME -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
     $APP_NAME = (select-xml -xml $project -XPath '/dom:project/dom:artifactId' `
@@ -91,12 +120,9 @@ if ($APP_NAME -eq $null ){
   } else {
     $APP_NAME = $project.'project'.'artifactId'
   }
+  write-debug ('APP_NAME={0}' -f $APP_NAME)
 }
 
-
-# external dependencies
-$DOWNLOAD_EXTERNAL_JAR = $false
-$DEPENDENCIES = @{ 'opal' = '1.0.4'; }
 if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
   $DEPENDENCIES.Keys | foreach-object {
     $ALIAS = $_;
@@ -104,7 +130,9 @@ if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
     $JARFILE = "${ALIAS}-${JARFILE_VERSION}.jar"
     $JARFILE_LOCALPATH = (resolve-path '.\src\main\resources').path + '\' + $JARFILE
     if (-not (test-path -Path $JARFILE_LOCALPATH)) {
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $URI = "https://github.com/lcaron/opal/blob/releases/V${JARFILE_VERSION}/opal-${JARFILE_VERSION}.jar?raw=true"
+      write-debug ("Running invoke-webrequest -Uri $URI -MaximumRedirection 0 -ErrorAction ignore")
       $request = invoke-webrequest -Uri $URI -MaximumRedirection 0 -ErrorAction ignore
       if ($request.StatusDescription -eq 'found') {
         $uri = $request.Headers.Location
@@ -116,9 +144,15 @@ if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
   }
 }
 # compile
-& 'mvn.cmd' '-Dmaven.test.skip=true' 'package' 'install'
+if ($build_clean ) {
+  write-debug ("Run: & 'mvn.cmd' '-Dmaven.test.skip=true' 'clean' 'package' 'install'")
+  & 'mvn.cmd' '-Dmaven.test.skip=true' 'clean' 'package' 'install'
+} else {
+  write-debug ("Run: & 'mvn.cmd' '-Dmaven.test.skip=true' 'package' 'install'")
+  & 'mvn.cmd' '-Dmaven.test.skip=true' 'package' 'install'
+}
 # run
-write-output (( @"
+write-debug (( @"
 Run:
 & 'java.exe' `
    '-cp' "target\${APP_NAME}-${APP_VERSION}.jar;target\lib\*" `
@@ -127,3 +161,11 @@ Run:
 & 'java.exe' `
    '-cp' "target\${APP_NAME}-${APP_VERSION}.jar;target\lib\*" `
    "${PACKAGE}.${MAIN_CLASS}" "${JAVA_ARGS}"
+
+if ($build_clean ) {
+  # if the run.ps1 was "sourced" the variables stay defined
+  $APP_NAME = $null
+  $APP_VERSION = $null
+  $PACKAGE =  $null
+  $MAIN_CLASS =  $null
+}
