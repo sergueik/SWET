@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.swet</groupId>
   <artifactId>swet</artifactId>
-  <version>0.0.9-SNAPSHOT</version>
+  <version>0.0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>SWET is a standalong Java application hosting a browser-based Page Element locator recorder</description>
+  <description>SWET is a standalone Java application hosting a browser-based Page Element locator recorder</description>
   <url>https://github.com/sergueik/SWET</url>
   <developers>
     <developer>
@@ -42,12 +42,10 @@
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <!-- <opal.version>1.0.4</opal.version> -->
-    <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
-    <!-- for Selenum versions  3.2.x there are compilation errors with invalid action signatures -->
+    <!-- <opal.version>1.0.9</opal.version> -->
     <poi.version>3.17</poi.version>
     <poiooxml.version>3.17</poiooxml.version>
-    <selenium.version>3.8.1</selenium.version>
+    <selenium.version>3.13.0</selenium.version>
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <snakeyaml.version>1.21</snakeyaml.version>
@@ -66,7 +64,7 @@
       <version>${skdf_jprotractor.version}</version>
       <exclusions>
         <exclusion>
-          <!-- exclude the testng jar dependencyy some early versions of skdf may have had -->
+          <!-- exclude possible outdated versions of testng jar dependency through skdf -->
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
         </exclusion>
@@ -81,6 +79,13 @@
      <scope>system</scope>
      <systemPath>${project.basedir}/src/main/resources/jprotractor-${jprotractor.version}.jar</systemPath>
 -->
+      <exclusions>
+        <exclusion>
+          <!-- exclude possible outdated versions of selenium jar dependency through jprotractor -->
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-java</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -431,6 +436,7 @@
         <build_os>mac64</build_os>
         <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</eclipse.swt.artifactId>
         <selenium.version>2.48.0</selenium.version>
+	    <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
       </properties>
     </profile>
     <profile>

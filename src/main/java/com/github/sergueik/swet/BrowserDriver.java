@@ -119,7 +119,11 @@ public class BrowserDriver {
 	private static DesiredCapabilities capabilitiesSafari() {
 		DesiredCapabilities capabilities = DesiredCapabilities.safari();
 		SafariOptions options = new SafariOptions();
-		options.setUseCleanSession(true);
+		// TODO: need to conditionally compile:
+		// With Selenium 3.13.x
+		// setUseCleanSession
+		// no longer not exist in org.openqa.selenium.safari.SafariOptions
+		// options.setUseCleanSession(true);
 		capabilities.setCapability(SafariOptions.CAPABILITY, options);
 		return capabilities;
 	}
