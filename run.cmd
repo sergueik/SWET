@@ -12,38 +12,73 @@ if "%M2%"=="" set M2=%M2_HOME%\bin
 set MAVEN_OPTS=-Xms256m -Xmx512m
 PATH=%JAVA_HOME%\bin;%M2%;%PATH%
 
-set TARGET=%CD%\target
+set DEBUG=true
+set TARGET=target
 set VERBOSE=true
 
 set APP_NAME=swet
-set APP_VERSION=0.0.9-SNAPSHOT
-set PACKAGE=com.github.sergueik.swet
+set APP_VERSION=0.0.10-SNAPSHOT
+set APP_PACKAGE=com.github.sergueik.swet
 set DEFAULT_MAIN_CLASS=SimpleToolBarEx
 
 call :CALL_JAVASCRIPT /project/artifactId
-set ARTIFACTID=%VALUE%
+set APP_NAME=%VALUE%
 
 call :CALL_JAVASCRIPT /project/groupId
-set GROUPID=%VALUE%
+set APP_PACKAGE=%VALUE%
 
 call :CALL_JAVASCRIPT /project/version
-set VERSION=%VALUE%
+set APP_VERSION=%VALUE%
 
 call :CALL_JAVASCRIPT /project/properties/mainClass
 set DEFAULT_MAIN_CLASS=%VALUE%
 
+set APP_JAR=%APP_NAME%.jar
+
+if /i "%SKIP_PACKAGE_VERSION%"=="true" goto :SKIP_PACKAGE_VERSION
+set APP_JAR=%APP_NAME%-%APP_VERSION%.jar
+:SKIP_PACKAGE_VERSION
+
 if /i NOT "%VERBOSE%"=="true" goto :CONTINUE
 
-echo APP_VERSION="%APP_VERSION%">&2
-echo APP_NAME="%APP_NAME%">&2
-echo PACKAGE="%PACKAGE%">&2
-echo DEFAULT_MAIN_CLASS="%DEFAULT_MAIN_CLASS%">&2
+call :SHOW_VARIABLE APP_VERSION
+call :SHOW_VARIABLE APP_NAME
+call :SHOW_VARIABLE APP_PACKAGE
+call :SHOW_VARIABLE APP_JAR
+call :SHOW_VARIABLE DEFAULT_MAIN_CLASS
 
 :CONTINUE
 
-set MAIN_CLASS=%1
+CALL :SHOW_LAST_ARGUMENT %*
+
+if "%ARGS_COUNT%"=="1" set CLEAN=%1
+if "%ARGS_COUNT%"=="2" set CLEAN=%2
+if "%ARGS_COUNT%"=="3" set CLEAN=%3
+if "%ARGS_COUNT%"=="4" set CLEAN=%4
+if "%ARGS_COUNT%"=="5" set CLEAN=%5
+if "%ARGS_COUNT%"=="6" set CLEAN=%6
+if "%ARGS_COUNT%"=="7" set CLEAN=%7
+if "%ARGS_COUNT%"=="8" set CLEAN=%8
+if "%ARGS_COUNT%"=="9" set CLEAN=%9
+
+if "%ARGS_COUNT%"=="1" shift
+if /i "%DEBUG%"=="true" (
+  echo >&2 CLEAN=%CLEAN%
+  echo >&2 ARG1=%1
+  echo >&2 ARG2=%2
+  echo >&2 ARG3=%3
+  echo >&2 ARG4=%4
+  echo >&2 ARG5=%5
+  echo >&2 ARG6=%6
+  echo >&2 ARG7=%7
+  echo >&2 ARG8=%8
+  echo >&2 ARG9=%9
+)
+
+set MAIN_CLASS=%~1
 if NOT "%MAIN_CLASS%" == "" shift
 if "%MAIN_CLASS%"=="" set MAIN_CLASS=%DEFAULT_MAIN_CLASS%
+
 set APP_HOME=%CD:\=/%
 REM omit the extension - on different Windows
 REM will be mvn.bat or mvn.cmd
@@ -64,8 +99,8 @@ REM The log4j configuration argument seems to be ignored
 REM -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
 set COMMAND=^
 java ^
-  -cp %TARGET%\%APP_NAME%-%APP_VERSION%.jar;%TARGET%\lib\* ^
-  %PACKAGE%.%MAIN_CLASS% ^
+  -cp %TARGET%\%APP_JAR%;%TARGET%\lib\* ^
+  %APP_PACKAGE%.%MAIN_CLASS% ^
   %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo %COMMAND%>&2
 %COMMAND%
@@ -96,3 +131,38 @@ set "SCRIPT=%SCRIPT% close();}""
 for /F "tokens=2 delims==" %%_ in ('%SCRIPT% 1 ^| more') do set VALUE=%%_
 ENDLOCAL
 exit /b
+
+
+:SHOW_VARIABLE
+SETLOCAL ENABLEDELAYEDEXPANSION
+set VAR=%1
+if /i "%DEBUG%"=="true" echo>&2 VAR=!VAR!
+set RESULT=!VAR!
+call :SHOW_VARIABLE_VALUE !%VAR%!
+set RESULT=!RESULT!="!DATA!"
+echo>&2 !RESULT!
+ENDLOCAL
+goto :EOF
+
+:SHOW_VARIABLE_VALUE
+set VAL=%1
+if /i "%DEBUG%"=="true" echo>&2 %1
+set DATA=%VAL%
+if /i "%DEBUG%"=="true" echo>&2 VALUE=%VAL%
+goto :EOF
+
+
+:SHOW_LAST_ARGUMENT
+REM https://stackoverflow.com/questions/1291941/batch-files-number-of-command-line-arguments
+set /A ARGS_COUNT=0
+for %%_ in (%*) DO SET /A ARGS_COUNT+=1
+if /i "%DEBUG%"=="true" echo>&2 The number of arguments is %ARGS_COUNT%
+REM the following does not work
+SETLOCAL ENABLEDELAYEDEXPANSION
+for /F "tokens=*" %%_ in ('echo %%!ARGS_COUNT!') DO set P=%%_
+if /i "%DEBUG%"=="true" echo P=%P%
+call :SHOW_VARIABLE_VALUE !P!
+set CLEAN=%VALUE%
+REM the value disappears after ENDLOCAL
+ENDLOCAL
+goto :EOF
