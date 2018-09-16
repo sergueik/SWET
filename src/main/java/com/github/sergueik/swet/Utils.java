@@ -786,17 +786,32 @@ public class Utils {
 						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
-	// TODO: convert to Apache Log4j2
-	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
-	public void initializeLogger() {
+	public void initializeLogger(String propertiesFilePath) {
 		Properties logProperties = new Properties();
-		String log4J_properties = String.format("%s/%s/%s",
-				System.getProperty("user.dir"), "src/main/resources", "log4j.xml");
 		try {
-			logProperties.load(new FileInputStream(log4J_properties));
+			// Can not load XML configuration?
+			// Log Properties: [[</appender>, </root>, <root>, </log4j, <log4j,
+			// <layout, <!--,
+			// <?xml, log4j, debug, value, <level, The, <appender, </layout>,
+			// <!DOCTYPE, <appender-ref, -->, <param]]
+			// Confirmed in test, that the default log4j properties is being loaded
+			if (debug) {
+				System.err.println("Log Properties file path: " + propertiesFilePath);
+			}
+			logProperties.load(new FileInputStream(propertiesFilePath));
+			if (debug) {
+				System.err.println(
+						"Log Properties: " + Arrays.asList(logProperties.keySet()));
+			}
 			PropertyConfigurator.configure(logProperties);
 		} catch (IOException e) {
-			throw new RuntimeException("Fail to load: " + log4J_properties);
+			throw new RuntimeException("Fail to load: " + propertiesFilePath);
 		}
+	}
+
+	public void initializeLogger() {
+		String defaultLog4JPropertiesFilePath = String.format("%s/%s/%s",
+				System.getProperty("user.dir"), "src/main/resources", "log4j.xml");
+		initializeLogger(defaultLog4JPropertiesFilePath);
 	}
 }

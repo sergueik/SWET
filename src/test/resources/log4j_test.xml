@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="true">
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="TEST TEST %-5p - %m%n" />
+		</layout>
+		<param name="threshold" value="INFO" />
+		<param name="Target" value="System.err" />
+	</appender>
+	<appender name="file" class="org.apache.log4j.RollingFileAppender">
+		<!-- NOTE:
+		log4j:WARN
+		The content of element type "appender" must match  "(errorHandler?,param*,rollingPolicy?,triggeringPolicy?,connectionSource?,layout?,filter*,appender-ref*)".
+		-->
+		<param name="append" value="false" />
+		<param name="maxFileSize" value="1MB" />
+		<param name="maxBackupIndex" value="100" />
+		<param name="threshold" value="DEBUG" />
+		<param name="file" value="SWET.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="TEST TEST %-5p %d{yyyy-MM-dd HH:mm:ss} %F [%c{1}] - [%M] - %m%n" />
+		</layout>
+	</appender>
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="file" />
+		<appender-ref ref="console" />
+	</root>
+</log4j:configuration>

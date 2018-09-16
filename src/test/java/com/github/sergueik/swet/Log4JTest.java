@@ -33,6 +33,8 @@ public class Log4JTest {
 	static final Logger logger = (Logger) Logger.getInstance(Log4JTest.class);
 	private static Utils utils = Utils.getInstance();
 
+	// @Before
+
 	@Test
 	public void sampleLog4Jtest() {
 		Sample sample = new Sample();
@@ -50,7 +52,11 @@ public class Log4JTest {
 		private static Utils utils = Utils.getInstance();
 
 		public Sample() {
-			utils.initializeLogger();
+			utils.setDebug(true);
+			// utils.initializeLogger();
+			utils.initializeLogger(
+					String.format("%s/%s/%s", System.getProperty("user.dir"),
+							"src/test/resources", "log4j_test.xml"));
 			logger.info("Sample constructor (info) done.");
 			logger.debug("Sample constructor  (debug) done.");
 		}
