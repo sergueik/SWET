@@ -1,7 +1,7 @@
 package com.github.sergueik.swet;
 
 /**
- * Copyright 2014 - 2017 Serguei Kouzmine
+ * Copyright 2014 - 2018 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.hasItem;

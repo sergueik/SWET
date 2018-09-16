@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2017 Serguei Kouzmine
+ * Copyright 2014 - 2018 Serguei Kouzmine
  */
 
 import java.io.FileInputStream;
@@ -61,22 +61,18 @@ import org.eclipse.swt.widgets.Text;
 import com.github.sergueik.swet.ExceptionDialogEx;
 import com.github.sergueik.swet.Utils;
 
-
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class TableEditorEx {
 
-	private static Button buttonSave;
-	private static Button buttonCancel;
-	private final static int buttonWidth = 120;
-	private final static int buttonHeight = 28;
 	private static Table table;
 	private static Display display;
 	private static Shell shell;
-	private Utils utils = Utils.getInstance();
 	private static Shell parentShell = null;
+
+	private Utils utils = Utils.getInstance();
 	// need to defer initialization to avoid org.eclipse.swt.SWTException: Invalid
 	// thread access
 	// private static ExceptionDialogEx exceptionDialogEx = null;
@@ -125,6 +121,10 @@ public class TableEditorEx {
 	}
 
 	public void render() {
+		Button buttonSave;
+		Button buttonCancel;
+		int buttonWidth = 120;
+		int buttonHeight = 28;
 		if (yamlFilePath != null) {
 			logger.info("Loading " + yamlFilePath);
 			Configuration _testCase = YamlHelper.loadConfiguration(yamlFilePath);
@@ -253,10 +253,14 @@ public class TableEditorEx {
 		buttonComposite.setLayout(new GridLayout(2, false));
 		buttonSave = new Button(buttonComposite, SWT.BORDER | SWT.PUSH);
 		buttonSave.setText("Save");
-    // for Clipboard one may use TextTransfer and tab-separated values or RTFTransfer with
-    // {\\rtf\\ansi\n{\n\\trowd\\trgaph30\\trleft-30\\trrh316\\clvertalb\\cellx1280\\clvertalb\\cellx2560\\pard\\plain\\intbl\n\\ql A_1\\cell\\ql B_1\\cell\\row\n\\trowd\\trgaph30\\trleft-30\\trrh316\\clvertalb\\cellx1280\\clvertalb\\cellx2560\\pard\\plain\\intbl\n\\ql A_2\\cell\\ql B_2\\cell\\row\n}\n}
-    // see also com.lowagie.text.rtf.RtfWriter2
-    // com.lowagie.itext-rtf
+		// for Clipboard one may use TextTransfer and tab-separated values or
+		// RTFTransfer with
+		// {\\rtf\\ansi\n{\n\\trowd\\trgaph30\\trleft-30\\trrh316\\clvertalb\\cellx1280\\clvertalb\\cellx2560\\pard\\plain\\intbl\n\\ql
+		// A_1\\cell\\ql
+		// B_1\\cell\\row\n\\trowd\\trgaph30\\trleft-30\\trrh316\\clvertalb\\cellx1280\\clvertalb\\cellx2560\\pard\\plain\\intbl\n\\ql
+		// A_2\\cell\\ql B_2\\cell\\row\n}\n}
+		// see also com.lowagie.text.rtf.RtfWriter2
+		// com.lowagie.itext-rtf
 		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER)
 				.hint(buttonWidth, buttonHeight).grab(false, false).applyTo(buttonSave);
 
@@ -408,10 +412,10 @@ public class TableEditorEx {
 			for (String locator : selectorFromSWD.values()) {
 				selectorChoiceCombo.add(locator);
 			}
-			int currentSelector = new ArrayList<String>(selectorFromSWD.values())
-					.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy")));
-
-			selectorChoiceCombo.select(currentSelector);
+			// java.lang.ClassCastException: java.util.LinkedHashMap$LinkedValues
+			// cannot be cast to java.util.List
+			selectorChoiceCombo.select(new ArrayList<String>(selectorFromSWD.values())
+					.indexOf(selectorFromSWD.get(elementData.get("ElementSelectedBy"))));
 			selectorChoiceEditor.grabHorizontal = true;
 			int selectorChoiceColumn = 3;
 			selectorChoiceCombo.setData("item", tableItem);
@@ -451,7 +455,7 @@ public class TableEditorEx {
 		for (String keyword : keywordTable.keySet()) {
 			keywordChoiceCombo.add(keyword);
 		}
-		// NOTE: none of options is initially selected
+		// NOTE: none of options can be currently pre-selected
 		keywordChoiceEditor.grabHorizontal = true;
 		int keywordChoiceColumn = 2;
 		keywordChoiceCombo.setData("column", keywordChoiceColumn);

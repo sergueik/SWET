@@ -51,28 +51,20 @@ call :SHOW_VARIABLE DEFAULT_MAIN_CLASS
 
 CALL :SHOW_LAST_ARGUMENT %*
 
-if "%ARGS_COUNT%"=="1" set CLEAN=%1
-if "%ARGS_COUNT%"=="2" set CLEAN=%2
-if "%ARGS_COUNT%"=="3" set CLEAN=%3
-if "%ARGS_COUNT%"=="4" set CLEAN=%4
-if "%ARGS_COUNT%"=="5" set CLEAN=%5
-if "%ARGS_COUNT%"=="6" set CLEAN=%6
-if "%ARGS_COUNT%"=="7" set CLEAN=%7
-if "%ARGS_COUNT%"=="8" set CLEAN=%8
-if "%ARGS_COUNT%"=="9" set CLEAN=%9
+set CLEAN=%1
 
-if "%ARGS_COUNT%"=="1" shift
-if /i "%DEBUG%"=="true" (
-  echo >&2 CLEAN=%CLEAN%
-  echo >&2 ARG1=%1
-  echo >&2 ARG2=%2
-  echo >&2 ARG3=%3
-  echo >&2 ARG4=%4
-  echo >&2 ARG5=%5
-  echo >&2 ARG6=%6
-  echo >&2 ARG7=%7
-  echo >&2 ARG8=%8
-  echo >&2 ARG9=%9
+if /i "%CLEAN%" EQU "clean" shift
+if /i "%DEBUG%" EQU "true" (
+  if /i "%CLEAN%" EQU "clean" echo >&2 CLEAN=%CLEAN%
+  if "%ARGS_COUNT%" GEQ "1" echo >&2 ARG1=%1
+  if "%ARGS_COUNT%" GEQ "2" echo >&2 ARG2=%2
+  if "%ARGS_COUNT%" GEQ "3" echo >&2 ARG3=%3
+  if "%ARGS_COUNT%" GEQ "4" echo >&2 ARG4=%4
+  if "%ARGS_COUNT%" GEQ "5" echo >&2 ARG5=%5
+  if "%ARGS_COUNT%" GEQ "6" echo >&2 ARG6=%6
+  if "%ARGS_COUNT%" GEQ "7" echo >&2 ARG7=%7
+  if "%ARGS_COUNT%" GEQ "8" echo >&2 ARG8=%8
+  if "%ARGS_COUNT%" GEQ "9" echo >&2 ARG9=%9
 )
 
 set MAIN_CLASS=%~1
@@ -86,15 +78,17 @@ REM will be mvn.bat or mvn.cmd
 if "%SKIP_TEST%"=="" (
 REM Test
 call mvn test
-REM Compile
-call mvn package install
 ) else (
-REM compile
-call mvn -Dmaven.test.skip=true package install
+REM Compile
+if /i "%CLEAN%" EQU "clean" (
+  call mvn -Dmaven.test.skip=true clean package install
+) else (
+  call  -Dmaven.test.skip=true mvn package install
+)
 )
 
 REM Run
-REM NOTE: shift does not modify %*
+REM NOTE: shift does not modify the %*
 REM The log4j configuration argument seems to be ignored
 REM -Dlog4j.configuration=file:///%APP_HOME%/src/main/resources/log4j.properties ^
 set COMMAND=^
