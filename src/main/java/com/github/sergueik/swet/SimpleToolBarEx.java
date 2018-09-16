@@ -20,7 +20,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -75,7 +76,8 @@ public class SimpleToolBarEx {
 	private Configuration config = null;
 	private SimpleToolBarEx app;
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(SimpleToolBarEx.class);
+	static final Logger logger = (Logger) Logger
+			.getInstance(SimpleToolBarEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

@@ -37,6 +37,7 @@
     <skdf_jprotractor.version>0.9-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.12</junit.version>
     <log4j.version>1.2.17</log4j.version>
+    <log4j-core.version>2.11.1</log4j-core.version>
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
@@ -48,16 +49,22 @@
     <selenium.version>3.13.0</selenium.version>
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
-    <snakeyaml.version>1.21</snakeyaml.version>
+    <snakeyaml.version>1.23</snakeyaml.version>
     <!--   <build_os>win64</build_os> -->
   </properties>
   <dependencies>
+    <!-- 
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>${log4j-core.version}</version>
+</dependency>
+-->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j.version}</version>
     </dependency>
-    <!-- experimental -->
     <dependency>
       <groupId>com.github.sergueik.jprotractor</groupId>
       <artifactId>skdf_jprotractor</artifactId>
@@ -436,7 +443,7 @@
         <build_os>mac64</build_os>
         <eclipse.swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</eclipse.swt.artifactId>
         <selenium.version>2.48.0</selenium.version>
-	    <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
+        <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
       </properties>
     </profile>
     <profile>

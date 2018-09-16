@@ -16,7 +16,7 @@ import java.util.Formatter;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 public class ChoiceDialogEx {
 
@@ -27,7 +27,7 @@ public class ChoiceDialogEx {
 	private static Utils utils = Utils.getInstance();
 
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(ChoiceDialogEx.class);
+	static final Logger logger = (Logger) Logger.getInstance(ChoiceDialogEx.class);
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {

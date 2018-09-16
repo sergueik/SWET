@@ -1,9 +1,10 @@
 package com.github.sergueik.swet;
 
-// NOTE: the org.apache.log4j.Category  has been deprecated and needs to be replaced by the Logger.
+// NOTE: the org.apache.log4j.Category 
+// has been deprecated and needs to be replaced by the org.apache.log4jLogger
 // NOTE: the latter does not appear to allow different ConversionPattern for STDERR and FILE
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.apache.log4j.PropertyConfigurator;
 
@@ -29,7 +30,7 @@ public class Log4JTest {
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(Log4JTest.class);
+	static final Logger logger = (Logger) Logger.getInstance(Log4JTest.class);
 	private static Utils utils = Utils.getInstance();
 
 	@Test
@@ -45,7 +46,7 @@ public class Log4JTest {
 		private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
 		@SuppressWarnings("deprecation")
-		static final Category logger = Category.getInstance(Sample.class);
+		static final Logger logger = (Logger) Logger.getInstance(Sample.class);
 		private static Utils utils = Utils.getInstance();
 
 		public Sample() {

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
@@ -72,7 +72,9 @@ public class RenderTemplate {
 	}
 
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(RenderTemplate.class);
+	static final Logger logger = (Logger) Logger
+			.getInstance(RenderTemplate.class);
+
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -73,7 +73,7 @@ public class ConfigFormEx {
 	private static Map<String, String> templates = new HashMap<>();
 
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(ConfigFormEx.class);
+	static final Logger logger = (Logger) Logger.getInstance(ConfigFormEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

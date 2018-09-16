@@ -57,8 +57,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Category;
-import org.apache.log4j.PropertyConfigurator;
+
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import org.json.JSONException;
@@ -786,6 +786,8 @@ public class Utils {
 						(e1, e2) -> e1, LinkedHashMap::new));
 	}
 
+	// TODO: convert to Apache Log4j2
+	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
 	public void initializeLogger() {
 		Properties logProperties = new Properties();
 		String log4J_properties = String.format("%s/%s/%s",

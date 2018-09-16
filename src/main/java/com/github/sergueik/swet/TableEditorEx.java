@@ -16,8 +16,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-
-import org.apache.log4j.Category;
+// org.apache.log4j.Category 
+// was deprecated and replaced by  
+// org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
+// 
+// import org.apache.logging.log4j.LogManager;
+// import org.apache.logging.log4j.Logger;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -95,7 +100,8 @@ public class TableEditorEx {
 	private static String path = null;
 
 	@SuppressWarnings("deprecation")
-	static final Category logger = Category.getInstance(TableEditorEx.class);
+	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
+	static final Logger logger = (Logger) Logger.getInstance(TableEditorEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
