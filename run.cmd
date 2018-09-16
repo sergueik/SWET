@@ -83,7 +83,7 @@ REM Compile
 if /i "%CLEAN%" EQU "clean" (
   call mvn -Dmaven.test.skip=true clean package install
 ) else (
-  call  -Dmaven.test.skip=true mvn package install
+  call mvn -Dmaven.test.skip=true package install
 )
 )
 

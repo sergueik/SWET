@@ -21,7 +21,7 @@ DOWNLOAD_EXTERNAL_JAR=false
 ALIAS='opal'
 JARFILE_VERSION='1.0.4'
 JARFILE="$ALIAS-$JARFILE_VERSION.jar"
-URL="https://github.com/lcaron/opal/blob/releases/V$JARFILE_VERSION/opal-$JARFILE_VERSION.jar?raw=true"
+URL="https://github.com/lcaron/${ALIAS}/blob/releases/V$JARFILE_VERSION/${ALIAS}-$JARFILE_VERSION.jar?raw=true"
 
 if [[ $DOWNLOAD_EXTERNAL_JAR ]]
 then
