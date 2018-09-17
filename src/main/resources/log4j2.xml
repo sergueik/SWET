@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+  <!--  JAVA argument: " -DAPP_LOG_ROOT=c:/temp "  -> defines path to logs -->
+  <Properties>
+    <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
+    <Property name="CONSOLE_LOG_PATTERN">%-5p - %m%n</Property>
+    <Property name="ERROR_LOG_PATTERN">%-5p %d{yyyy-MM-dd HH:mm:ss} **** %F [%c{1}] - [%M] - %m%n</Property>
+  </Properties>
+  <Appenders>
+    <!--  Appender to console -->
+    <Console name="Console" target="SYSTEM_ERR" follow="true">
+      <PatternLayout pattern="${CONSOLE_LOG_PATTERN}"/>
+      <LevelRangeFilter maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+    </Console>
+    <!--  File appender for Debug level  -->
+    <RollingFile name="debugLog" fileName="${sys:APP_LOG_ROOT}/application-debug.log" filePattern="${sys:APP_LOG_ROOT}/application-debug-%d{yyyy-MM-dd}-%i.log">
+      <!-- Matches only DEBUG level -->
+      <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+    <!--  File appender for Info level  -->
+    <RollingFile name="infoLog" fileName="${sys:APP_LOG_ROOT}/application-info.log" filePattern="${sys:APP_LOG_ROOT}/application-info-%d{yyyy-MM-dd}-%i.log">
+      <!-- Matches only INFO level -->
+      <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+    <!--  File appender for Error level  -->
+    <RollingFile name="errorLog" fileName="${sys:APP_LOG_ROOT}/application-error.log" filePattern="${sys:APP_LOG_ROOT}/application-error-%d{yyyy-MM-dd}-%i.log">
+      <!-- Matches only ERROR level -->
+      <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${ERROR_LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <!-- All java classes within my package will log -->
+    <Logger name="com.github.sergueik.swet" additivity="false">
+      <AppenderRef ref="debugLog"/>
+      <AppenderRef ref="infoLog"/>
+      <AppenderRef ref="errorLog"/>
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <!-- Root level establish the overall level -->
+    <Root level="all">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
