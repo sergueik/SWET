@@ -10,6 +10,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.time.Duration;
+
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -43,13 +46,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+
 import org.mihalis.opal.breadcrumb.Breadcrumb;
 import org.mihalis.opal.breadcrumb.BreadcrumbItem;
+
 // NOTE: on a mac, NoSuchSessionException is uresolved
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import org.passer.ChoiceItem;
 import org.passer.ChoicesDialog;
 
@@ -65,7 +71,7 @@ public class SimpleToolBarEx {
 	private WebDriverWait wait;
 	private int flexibleWait = 5;
 	private int implicitWait = 1;
-	private long pollingInterval = 500;
+	private int pollingInterval = 500;
 	private String baseURL = "about:blank";
 	// private final String getCommand = "return document.swdpr_command ===
 	// undefined ? '' : document.swdpr_command;";
@@ -960,7 +966,7 @@ public class SimpleToolBarEx {
 						}
 					});
 					wait = new WebDriverWait(parentApp.driver, flexibleWait);
-					wait.pollingEvery(pollingInterval, TimeUnit.MILLISECONDS);
+		                        wait.pollingEvery(Duration.ofMillis(pollingInterval));
 					try {
 						utils.injectElementSearch(Optional.<String> empty());
 					} catch (Exception e) {

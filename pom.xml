@@ -3,7 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.swet</groupId>
   <artifactId>swet</artifactId>
-  <version>0.0.11-SNAPSHOT</version>
+  <!--
+  origin: https://habr.com/post/424425/
+  for build time version management, use
+  RELEASE_TAG=...
+  mvn -B versions:set -DnewVersion=$RELEASE_TAG
+  -->
+  <version>0.0.12-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a standalone Java application hosting a browser-based Page Element locator recorder</description>
@@ -38,11 +44,13 @@
     <junit.version>4.12</junit.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j-core.version>2.11.1</log4j-core.version>
+    <!-- freezing plugin dependency versions -->
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+    <versions-maven-plugin.version>2.6</versions-maven-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- <opal.version>1.0.9</opal.version> -->
     <poi.version>3.17</poi.version>
@@ -74,10 +82,31 @@
       <artifactId>skdf_jprotractor</artifactId>
       <version>${skdf_jprotractor.version}</version>
       <exclusions>
+        <!--
+TODO:
+
+shuffling around the selenium versions occasionally leads to the following compile error:
+[ERROR] /c:/developer/sergueik/SWET/src/main/java/com/github/sergueik/swet/Utils.java:[409,45] method until in class org.openqa.selenium.support.ui.FluentWait<T> cannot be applied to given types;
+  required: java.util.function.Function<? super org.openqa.selenium.WebDriver,V>
+
+  found: org.openqa.selenium.support.ui.ExpectedCondition<org.openqa.selenium.WebElement>
+  reason: cannot infer type-variable(s) V
+    (argument mismatch; org.openqa.selenium.support.ui.ExpectedCondition<org.openqa.selenium.WebElement> cannot be converted to java.util.function.Function<? super org.openqa.selenium.WebDriver,V>)
+
+    -->
         <exclusion>
-          <!-- exclude possible outdated versions of testng jar dependency through skdf -->
+          <!-- exclude side by side versions of testng jar from skdf -->
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
+        </exclusion>
+        <!-- exclude side by side versions of selenium jar from skdf -->
+        <exclusion>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-server</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -91,10 +120,14 @@
      <systemPath>${project.basedir}/src/main/resources/jprotractor-${jprotractor.version}.jar</systemPath>
 -->
       <exclusions>
+        <!-- exclude side by side versions of selenium jar from jprotractor -->
         <exclusion>
-          <!-- exclude possible outdated versions of selenium jar dependency through jprotractor -->
           <groupId>org.seleniumhq.selenium</groupId>
           <artifactId>selenium-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-server</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -232,6 +265,11 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${json.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>versions-maven-plugin</artifactId>
+      <version>${versions-maven-plugin.version}</version>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -402,6 +440,11 @@
         </executions>
       </plugin>
       -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+      </plugin>
     </plugins>
   </build>
   <profiles>
