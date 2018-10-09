@@ -16,6 +16,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.github.sergueik.swet.OSUtils;
+import com.google.common.collect.Lists;
 
 public class BrowserDiscoveryTest {
 
@@ -92,6 +93,7 @@ public class BrowserDiscoveryTest {
 					}
 				} catch (IOException | InterruptedException e) {
 					System.err.println("Exception (ignnord): " + e.getMessage());
+=======
 				}
 			}
 		}
