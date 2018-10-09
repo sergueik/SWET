@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// https://en.wikipedia.org/wiki/Java_Native_Access
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -20,13 +21,15 @@ import com.sun.jna.PointerType;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.VerRsrc.VS_FIXEDFILEINFO;
 import com.sun.jna.platform.win32.WinReg;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
 
-// origin: http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java 
-// see also:https://github.com/java-native-access/jna/blob/master/contrib/ntservice/src/jnacontrib/win32/Win32Service.java
+
+
 public class OSUtils {
 
 	private static String osName = null;
@@ -43,6 +46,8 @@ public class OSUtils {
 		return osName;
 	}
 
+	// origin:
+	// http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java
 	public static String getDesktopPath() {
 		HWND hwndOwner = null;
 		int nFolder = Shell32.CSIDL_DESKTOPDIRECTORY;
@@ -260,9 +265,12 @@ public class OSUtils {
 	}
 
 	// https://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
+	// see
+	// also:https://github.com/java-native-access/jna/blob/master/contrib/ntservice/src/jnacontrib/win32/Win32Service.java
+
 	public static void killProcess(String processName) {
 
-		String command = String.format((osName.toLowerCase().startsWith("windows"))
+		String command = String.format((osName.equals("windows"))
 				? "taskkill.exe /F /IM %s" : "killall %s", processName.trim());
 
 		try {
@@ -312,7 +320,7 @@ public class OSUtils {
 	// but running application directly via like
 	// /Applications/Firefox.app/Contents/MacOS/firefox http://ya.ru
 
-	// would lead to an error:
+	// would likely lead to an error:
 	// "A copy of Firefox is already open.
 	// Only one copy of Firefox can be open at a time."
 	public static void runAppCommand(String browserAppName, String url) {
@@ -333,8 +341,7 @@ public class OSUtils {
 				// The file /Users/sergueik/src/Chrome\" does not exist.
 			} else if (osName.matches("windows")) {
 				processName = "C:\\Windows\\System32\\cmd.exe";
-				processArgs = new String[] { processName, "/c", "start", browserAppName,
-						url };
+				processArgs = new String[] { processName, "/c", "start", browserAppName, url };
 			} else {
 				// TODO: on Linux need to compose the command with bash
 				// to launch browser in the background
@@ -347,11 +354,9 @@ public class OSUtils {
 			Process process = runtime.exec(processArgs);
 
 			int exitCode = process.waitFor();
-			BufferedReader stdoutBufferedReader = new BufferedReader(
-					new InputStreamReader(process.getInputStream()));
+			BufferedReader stdoutBufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-			BufferedReader stderrBufferedReader = new BufferedReader(
-					new InputStreamReader(process.getErrorStream()));
+			BufferedReader stderrBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String line = null;
 			StringBuffer processOutput = new StringBuffer();
 			while ((line = stdoutBufferedReader.readLine()) != null) {
@@ -375,15 +380,19 @@ public class OSUtils {
 		}
 	}
 
-	// TODO:
+  // TODO: on mac os x mdfind status is 0 even with succefful ot failed search: one needs to examine the output
+  // NOTE: few modifications to acomodate older versio of Selenium  on mac os x are not checkec in 
 	public static boolean findAppInPath(String appName) {
 		boolean status = false;
 		String processName = null;
 		String findCommand = null;
-		if (osName.toLowerCase().matches("mac os x")) {
-			findCommand = String.format("'kMDItemFSName = %s'", appName);
+		if (osName.matches("mac os x")) {
+			// NOTE: for cached saved spotlight search a.k.a. smart folder, use
+			// findCommand = String.format("'kMDItemFSName = %s'", appName);
+			// Could not find smart folder /Users/sergueik/Library/Saved Searches/kMDItemFSName = 'Google Chrome'.savedSearch
+			findCommand = String.format("-onlyin /Applications -name '%s'", appName);
 			processName = "/usr/bin/mdfind";
-		} else if (!(osName.startsWith("windows"))) {
+		} else if (!(osName.equals("windows"))) {
 			processName = "/usr/bin/which";
 			findCommand = appName;
 		}
@@ -395,11 +404,9 @@ public class OSUtils {
 			Process process = runtime.exec(String.join(" ", processArgs));
 			// process.redirectErrorStream( true);
 
-			BufferedReader stdoutBufferedReader = new BufferedReader(
-					new InputStreamReader(process.getInputStream()));
+			BufferedReader stdoutBufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-			BufferedReader stderrBufferedReader = new BufferedReader(
-					new InputStreamReader(process.getErrorStream()));
+			BufferedReader stderrBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String line = null;
 
 			StringBuffer processOutput = new StringBuffer();
@@ -417,7 +424,8 @@ public class OSUtils {
 				System.out.println("Process exit code: " + exitCode);
 				if (processOutput.length() > 0) {
 					System.out.println("<OUTPUT>" + processOutput + "</OUTPUT>");
-					// Failed to create query for: '' kMDItemFSName = Firefox ''.
+					// Failed to create query for: '' kMDItemFSName = Firefox
+					// ''.
 				}
 				if (processError.length() > 0) {
 					// e.g.

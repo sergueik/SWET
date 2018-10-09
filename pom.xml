@@ -4,10 +4,11 @@
   <groupId>com.github.sergueik.swet</groupId>
   <artifactId>swet</artifactId>
   <!--
-  origin: https://habr.com/post/424425/
+  origin: https://habr.com/post/424425/, https://www.mojohaus.org/versions-maven-plugin/examples/set.html
   for build time version management, use
   RELEASE_TAG=...
   mvn -B versions:set -DnewVersion=$RELEASE_TAG
+  NOTE: will modify 'pom.xml' in place and create a 'pom.xml.versionsBackup'
   -->
   <version>0.0.12-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -83,16 +84,21 @@
       <version>${skdf_jprotractor.version}</version>
       <exclusions>
         <!--
-TODO:
+    TODO:
 
-shuffling around the selenium versions occasionally leads to the following compile error:
-[ERROR] /c:/developer/sergueik/SWET/src/main/java/com/github/sergueik/swet/Utils.java:[409,45] method until in class org.openqa.selenium.support.ui.FluentWait<T> cannot be applied to given types;
-  required: java.util.function.Function<? super org.openqa.selenium.WebDriver,V>
-
-  found: org.openqa.selenium.support.ui.ExpectedCondition<org.openqa.selenium.WebElement>
+    Shuffling around selenium jar versions without purging ~/.m2/repository occasionally leads to the following compile error:
+    [ERROR] ...Utils.java:[409,45] method until in class
+    org.openqa.selenium.support.ui.FluentWait<T>
+    cannot be applied to given types;
+  required:
+    java.util.function.Function<? super org.openqa.selenium.WebDriver,V>
+  found:
+    org.openqa.selenium.support.ui.ExpectedCondition<org.openqa.selenium.WebElement>
   reason: cannot infer type-variable(s) V
-    (argument mismatch; org.openqa.selenium.support.ui.ExpectedCondition<org.openqa.selenium.WebElement> cannot be converted to java.util.function.Function<? super org.openqa.selenium.WebDriver,V>)
-
+    (argument mismatch;
+      org.openqa.selenium.support.ui.ExpectedCondition<org.openqa.selenium.WebElement>
+      cannot be converted to
+      java.util.function.Function<? super org.openqa.selenium.WebDriver,V>)
     -->
         <exclusion>
           <!-- exclude side by side versions of testng jar from skdf -->
