@@ -25,12 +25,12 @@ import org.junit.Test;
 import com.github.sergueik.swet.Utils;
 
 // based on: https://alvinalexander.com/blog/post/java/sample-how-format-log4j-logging-logfile-output
-public class Log4JTest {
+public class Log4jTest {
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
 	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger.getInstance(Log4JTest.class);
+	static final Logger logger = (Logger) Logger.getInstance(Log4jTest.class);
 	private static Utils utils = Utils.getInstance();
 
 	// @Before
