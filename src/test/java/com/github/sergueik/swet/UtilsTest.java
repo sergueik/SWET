@@ -19,6 +19,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.github.sergueik.swet.Utils;
 
 @SuppressWarnings("deprecation")
@@ -48,6 +53,15 @@ public class UtilsTest {
 		// subkeys.remove("Url");
 		Set<Object> dataSet = new HashSet<Object>(subkeys);
 		assertTrue(new HashSet<Object>(elementData.keySet()).containsAll(dataSet));
+	}
+
+	@Test
+	public void testReadData() {
+		String payload = "{\"cluster\":{\"datacenter\":\"moscow\",\"node\":\"consul\",\"par\":[\"a\",\"b\",\"c\"],\"par2\":{\"key1\":\"val1\",\"key2\":\"val2\"},\"par3\":{\"key3\":[{\"key4\":\"val4\",\"key5\":\"val5\"},{\"key6\":\"val6\",\"key7\":\"val7\"}]}}}";
+		// Exception (ignored): org.json.JSONException: JSONObject["cluster"] not a string.
+		utils.readData(payload, Optional.of(elementData));
+		System.err.println("Loaded: " + elementData.keySet());
+
 	}
 
 	@Ignore
