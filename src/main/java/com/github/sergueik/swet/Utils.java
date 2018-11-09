@@ -84,6 +84,7 @@ public class Utils {
 	private static Utils instance = new Utils();
 
 	private static Keys keyCTRL;
+	private final String defaultKey = "ElementCodeName";
 	private static final String getSWDCommand = "return document.swdpr_command === undefined ? '' : document.swdpr_command;";
 
 	private static String osName = OSUtils.getOsName();
@@ -185,10 +186,115 @@ public class Utils {
 		return payload;
 	}
 
+	public String readSideData(Optional<Map<String, Object>> parameters) {
+		return readSideData(null, parameters);
+	}
+
+	public String readSideData(String payload,
+			Optional<Map<String, Object>> parameters) {
+
+		return readSideData(payload, parameters, "(?:id|name|url|tests)");
+	}
+
+	// Deserialize the hashmap from the JSON
+	// see also
+	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
+	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
+	public String readSideData(String payload,
+			Optional<Map<String, Object>> parameters, String acceptedKeys) {
+		if (debug) {
+			System.err.println("Accepted keys: " + acceptedKeys);
+		}
+
+		Map<String, Object> collector = (parameters.isPresent()) ? parameters.get()
+				: new HashMap<>();
+
+		String data = (payload == null)
+				? "{\"id\":\"837d3acd-285e-478a-8d46-817df0a5b4d9\",\"name\":\"Google<br>\",\"url\":\"https://www.google.com \t\",\"tests\":[{\"id\":\"ae13d6ad-c3f2-4fb8-aaeb-14af40f2b3b9\",\"name\":\"Google\",\"commands\":[{\"id\":\"160c2276-d9b3-4523-bdf3-b914111ca407\",\"comment\":\"\",\"command\":\"open\",\"target\":\"/images\",\"value\":\"\"}]}],\"suites\":[{\"id\":\"05e89807-cb33-4ca6-8ca4-10e1cdf127c3\",\"name\":\"Default Suite\",\"tests\":[\"ae13d6ad-c3f2-4fb8-aaeb-14af40f2b3b9\"]}],\"urls\":[\"https://www.google.co.in\",\"https://www.google.co.in\"]}"
+				: payload;
+		if (debug) {
+			System.err.println("Processing payload: " + data.replaceAll(",", ",\n"));
+		}
+		try {
+			JSONObject elementObj = new JSONObject(data);
+			@SuppressWarnings("unchecked")
+			Iterator<String> propIterator = elementObj.keys();
+			while (propIterator.hasNext()) {
+
+				String propertyKey = propIterator.next();
+				if (!propertyKey.matches(acceptedKeys /*"(?:id|name|url|tests)"*/)) {
+					System.err.println("Ignoring key: " + propertyKey);
+					continue;
+				}
+				if (debug) {
+					System.err.println("Processing key: " + propertyKey);
+				}
+				Boolean found = false;
+				try {
+					String propertyVal = (String) elementObj.getString(propertyKey);
+					// logger.info(propertyKey + ": " + propertyVal);
+					if (debug) {
+						System.err
+								.println("Loaded string: " + propertyKey + ": " + propertyVal);
+					}
+					collector.put(propertyKey, propertyVal);
+					found = true;
+				} catch (JSONException e) {
+					System.err.println("Exception (ignored, continue): " + e.toString());
+				}
+				if (found) {
+					continue;
+				}
+				try {
+					org.json.JSONArray propertyArrayVal = elementObj
+							.getJSONArray(propertyKey);
+					int length = propertyArrayVal.length();
+					if (debug) {
+						System.err.println("Can process array of size: " + length);
+					}
+					StringBuffer innerData = new StringBuffer();
+					;
+					for (int index = 0; index < length; index++) {
+						JSONObject rowObject = propertyArrayVal.getJSONObject(index);
+						if (debug) {
+							System.err.println("Can process object: " + rowObject.toString());
+						}
+						// "comment,id,value,command,target"
+						readSideData(rowObject.toString(),
+								Optional.<Map<String, Object>> empty(),
+								"(?:comment|id|value|command|target)");
+
+						Iterator<String> rowObjectIterator = rowObject.keys();
+
+						while (rowObjectIterator.hasNext()) {
+							String rowObjectKey = rowObjectIterator.next();
+							innerData.append(String.format("%s,", rowObjectKey));
+							if (debug) {
+								System.err.println("Processing Row key: " + rowObjectKey);
+							}
+						}
+					}
+					collector.put(propertyKey, innerData.toString());
+					found = true;
+				} catch (JSONException e) {
+					System.err.println("Exception (ignored, continue): " + e.toString());
+				}
+			}
+		} catch (JSONException e) {
+			System.err.println("Exception (ignored, aborting): " + e.toString());
+			return null;
+		}
+		return (String) collector.get("id");
+	}
+
 	public String readData(Optional<Map<String, String>> parameters) {
 		return readData(null, parameters);
 	}
 
+	// Deserialize the hashmap from the JSON
+	// see also
+	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
+	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
 	public String readData(String payload,
 			Optional<Map<String, String>> parameters) {
 
@@ -215,7 +321,7 @@ public class Utils {
 			System.err.println("Exception (ignored): " + e.toString());
 			return null;
 		}
-		return collector.get("ElementCodeName");
+		return collector.get(defaultKey);
 	}
 
 	public void flushVisualSearchResult() {
