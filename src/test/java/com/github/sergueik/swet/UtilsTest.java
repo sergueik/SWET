@@ -116,4 +116,37 @@ public class UtilsTest {
 				.println("Returned (keys): " + result.keySet() + " " + result.values());
 
 	}
+
+	private SideRecording sideRecording = new SideRecording();
+	private SideSuite sideSuite = new SideSuite();
+	private SideTest sideTest = new SideTest();
+	private SideCommand sideCommand = new SideCommand();
+	private List<SideSuite> suites = new ArrayList<>();
+	private List<SideCommand> commands = new ArrayList<>();
+	private List<SideTest> tests = new ArrayList<>();
+	private List<String> testNames = new ArrayList<>();
+	private String testName = "test 1";
+
+	@Test
+	public void scratchSideRecordingTest() {
+
+		sideTest.setId("test 1");
+		sideSuite.setId("suite 1");
+		sideTest.setName("name of test 1");
+		sideRecording.setId("Recording 1");
+		commands.add(sideCommand);
+		sideTest.setCommands(commands);
+		testNames.add(testName);
+		tests.add(sideTest);
+		sideSuite.setTestNames(testNames);
+		sideSuite.setName("name of suite1");
+		suites.add(sideSuite);
+		sideRecording.setSuites(suites);
+		sideRecording.setTests(tests);
+		// sideTest.setCommand("command of test 1");
+
+		System.err
+				.println("Created side test recording: " + sideRecording.toString());
+	}
+
 }
