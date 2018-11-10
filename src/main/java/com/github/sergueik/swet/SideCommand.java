@@ -19,6 +19,7 @@ final class SideCommand {
 	private String name;
 	private String id;
 	private String command;
+	private String comment;
 	private String target;
 	private String value;
 
@@ -38,21 +39,20 @@ final class SideCommand {
 		this.id = data;
 	}
 
-	@Override
-	public String toString() {
-		return new StringBuilder().append(format("\"id\": \"%s\"\n", id))
-				.append(format("\"name\": \"%s\"\n", name))
-				.append(format("\"command\": \"%s\"\n", command))
-				.append(format("\"target\": \"%s\"\n", target))
-				.append(format("\"value\": %s\n", value)).toString();
-	}
-
 	public String getCommand() {
 		return command;
 	}
 
-	public void setCommand(String command) {
-		this.command = command;
+	public void setCommand(String data) {
+		this.command = data;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String data) {
+		this.comment = data;
 	}
 
 	public String getTarget() {
@@ -67,7 +67,17 @@ final class SideCommand {
 		return value;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setValue(String data) {
+		this.value = data;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder().append(format("\"id\": \"%s\"\n", id))
+				.append(format("\"name\": \"%s\"\n", name))
+				.append(format("\"command\": \"%s\"\n", command))
+				.append(format("\"comment\": \"%s\"\n", comment))
+				.append(format("\"target\": \"%s\"\n", target))
+				.append(format("\"value\": %s\n", value)).toString();
 	}
 }

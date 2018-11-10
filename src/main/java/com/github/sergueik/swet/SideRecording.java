@@ -74,6 +74,7 @@ final class SideRecording {
 	public String toString() {
 		return new StringBuilder().append(format("\"id\": \"%s\"\n", id))
 				.append(format("\"name\": \"%s\"\n", name))
+				.append(format("\"urls\": \"%s\"\n", urls.toString()))
 				.append(format("\"tests\": %s\n", tests.toString()))
 				.append(format("\"suites\": %s\n", suites.toString())).toString();
 	}

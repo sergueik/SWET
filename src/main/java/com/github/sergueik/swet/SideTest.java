@@ -40,7 +40,7 @@ final class SideTest {
 		this.commands = data;
 	}
 
-	public List<SideCommand> getCommand() {
+	public List<SideCommand> getCommands() {
 		return commands;
 	}
 

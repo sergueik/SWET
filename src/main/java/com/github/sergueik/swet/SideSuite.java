@@ -8,10 +8,10 @@ import static java.lang.String.format;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import com.github.sergueik.swet.SideRecording;
 import com.github.sergueik.swet.SideTest;
 import com.github.sergueik.swet.SideCommand;
-import com.github.sergueik.swet.SideSuite;
 
 /**
  * Side Suite serializer class for Selenium WebDriver Elementor Tool (SWET)
