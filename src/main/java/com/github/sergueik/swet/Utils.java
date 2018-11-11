@@ -43,7 +43,7 @@ import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -824,6 +824,10 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public String id() {
+		return UUID.randomUUID().toString();
 	}
 
 	public String getPayload() {
