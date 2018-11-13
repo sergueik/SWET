@@ -523,12 +523,13 @@ __SWET__is licensed under Apache License, Version 2.0
   * [CITS-Firefox-Addon](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter-Firefox-Addon)
   * [IntelliJ Selenium Plugin](http://perfect-test.com/index.php/ru/instruments-rus-menu/15-selenium-plugin-rus), [форум](http://automated-testing.info/t/intellij-selenium-plugin-novyj-plagin-dlya-uproshheniya-sozdaniya-java-webdriver-testov/6514/39)
   * [ ui-automation-chrome-extension](https://github.com/TsvetomirSlavov/ui-automation-chrome-extension) - see implementations of `XPathGenerator.js` and `CSSGenerator.js`
-   *  [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome)
-   *  [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
-   *  [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
-   *  [SnapTest](https://www.snaptest.io/) (no source on github -  have to download the `.crx` and find it in `%USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\Extensions\aeofjocnhdlleichkjbaibdbicpcddhp\0.6.9_0\manifest.json` )
-    * [ChroPath Chrome extension](https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en)
-   * [ChroPath for Firefox (claims to be compatible only with FF 48+)](https://addons.mozilla.org/en-US/firefox/addon/chropath-for-firefox/)
+  * [wsbaser/Natu.WebSync.Chrome](https://github.com/wsbaser/Natu.WebSync.Chrome)
+  * [watarus-nt/SeleniumGenerator](https://github.com/watarus-nt/SeleniumGenerator)
+  * [Silk-WebDriver (not open source)](https://community.microfocus.com/borland/test/silk-webdriver/)
+  * [SnapTest](https://www.snaptest.io/) (no source on github -  have to download the `.crx` and find it in `%USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\Extensions\aeofjocnhdlleichkjbaibdbicpcddhp\0.6.9_0\manifest.json` )
+  * [ChroPath Chrome extension](https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en)
+  * [ChroPath for Firefox (claims to be compatible only with FF 48+)](https://addons.mozilla.org/en-US/firefox/addon/chropath-for-firefox/)
+  * [Catchpoint Script Recorder (alternative download of version 1.9.5 (ondjkacanajgdlnhcnpiapajjpgilplo), no longer in App Store)](https://www.crx4chrome.com/crx/49424/)
 
 #### Selenium Locator Strategies
 
