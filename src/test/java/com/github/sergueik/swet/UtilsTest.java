@@ -25,6 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 import com.google.gson.Gson;
@@ -123,4 +125,4 @@ public class UtilsTest {
 
 	}
 
-s}
+}
