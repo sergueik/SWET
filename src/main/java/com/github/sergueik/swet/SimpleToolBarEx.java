@@ -59,6 +59,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.passer.ChoiceItem;
 import org.passer.ChoicesDialog;
 
+import com.github.sergueik.swet.ConfigData;
+import com.github.sergueik.swet.ConfigDataSerializer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
  * Main form for Selenium WebDriver Elementor Tool (SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -99,10 +104,11 @@ public class SimpleToolBarEx {
 	// "Chrome" or better
 	private String browserDefault = utils.getPropertyEnv("browser.default",
 			browserDefaults.get(Pattern.compile(" +").split(OSUtils.getOsName())[0]));
-	private static Map<String, String> configData = new HashMap<>();
-	private static final String defaultConfig = String.format(
+	private static Map<String, String> configDataMap = new HashMap<>();
+	private static final String defaultConfigMap = String.format(
 			"{ \"Browser\": \"%s\", \"Template\": \"%s\", }",
-			configData.get("Browser"), configData.get("Template"));
+			configDataMap.get("Browser"), configDataMap.get("Template"));
+	private static ConfigData configDataObj = new ConfigData();
 
 	private static final int shellWidth = 768;
 	private static final int shellHeight = 324;
@@ -122,8 +128,10 @@ public class SimpleToolBarEx {
 	@SuppressWarnings("unused")
 	public SimpleToolBarEx() {
 		app = this;
-		configData.put("Browser", browserDefault);
-		configData.put("Template", "Core Selenium Java (embedded)");
+		configDataMap.put("Browser", browserDefault);
+		configDataMap.put("Template", "Core Selenium Java (embedded)");
+		configDataObj.setTemplateName(configDataMap.get("Template"));
+		configDataObj.setBrowser(configDataMap.get("Browser"));
 		utils.initializeLogger();
 		logger.info("Initialized logger.");
 		utils.setDefaultScript(defaultScript);
@@ -292,12 +300,16 @@ public class SimpleToolBarEx {
 
 		launchTool.addListener(SWT.Selection, event -> {
 			showDisabled(launchTool);
-			String browser = configData.get("Browser");
+			String browser = configDataMap.get("Browser");
 			updateStatus(String.format("Launching the %s browser", browser));
-			if (configData.containsKey("Base URL")) {
+			if (configDataMap.containsKey("Base URL")) {
+				configDataObj.setBaseURL(configDataMap.get("Base URL"));
 				baseURL = fixBaseURL();
 				logger.info("Base URL: " + baseURL);
 			}
+			// Exception (ignored) java.lang.NoSuchMethodError:
+			// com.google.common.collect.ImmutableList.copyOf([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;
+			// https://stackoverflow.com/questions/3126330/no-such-method-error-immutablelist-copyof
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
 				// showEnabled(launchTool);
@@ -317,22 +329,24 @@ public class SimpleToolBarEx {
 			showDisabled(codeGenTool);
 			showDisabled(testsuiteTool);
 			RenderTemplate renderTemplate = new RenderTemplate();
-			if (configData.containsKey("Template Path")) {
+			if (configDataMap.containsKey("Template Path")) {
+				configDataObj.setTemplatePath(configDataMap.get("Template Path"));
 				updateStatus(String.format("Reading template path \"%s\" \u2026",
-						configData.get("Template Path")));
-				renderTemplate.setTemplateAbsolutePath(configData.get("Template Path")
-						.replace("\\\\", "\\").replace("\\", "/"));
+						configDataMap.get("Template Path")));
+				renderTemplate.setTemplateAbsolutePath(configDataMap
+						.get("Template Path").replace("\\\\", "\\").replace("\\", "/"));
 			} else {
-
+				configDataObj.setTemplateName(configDataMap.get("Template"));
 				updateStatus(String.format("Finding template: %s \u2026",
-						configData.get("Template")));
+						configDataMap.get("Template")));
 				templateCache.fillEmbeddedTemplateCache();
 				String templateResourcePath = templateCache
-						.getItem(templateCache.approxLookup(configData.get("Template")));
+						.getItem(templateCache.approxLookup(configDataMap.get("Template")));
 				if (templateResourcePath == null) {
 					logger.info(
 							"Using the default template: " + defaultTemplateResourcePath);
 					renderTemplate.setTemplateName(defaultTemplateResourcePath);
+					configDataObj.setTemplateName(defaultTemplateResourcePath); // ?
 				} else {
 					renderTemplate.setTemplateName(templateResourcePath);
 				}
@@ -402,12 +416,38 @@ public class SimpleToolBarEx {
 			shell.setData("updated", false);
 
 			shell.setData("CurrentConfig",
-					utils.writeDataJSON(configData, defaultConfig));
+					utils.writeDataJSON(configDataMap, defaultConfigMap));
+
+			// reload ConfigData instance
+			com.google.gson.Gson gson = new GsonBuilder()
+					.registerTypeAdapter(ConfigData.class, new ConfigDataSerializer())
+					.create();
+			System.err.println(
+					"Reloading Configuration Object: " + gson.toJson(configDataObj));
+			configDataObj = new Gson().fromJson(gson.toJson(configDataObj),
+					ConfigData.class);
 			ConfigFormEx o = new ConfigFormEx(Display.getCurrent(), shell);
 			o.render();
 			if ((Boolean) shell.getData("updated")) {
 				utils.readData((String) shell.getData("CurrentConfig"),
-						Optional.of(configData));
+						Optional.of(configDataMap));
+			}
+			// convert configDataMap to ConfigDataObj
+			if (configDataMap.containsKey("Base URL")) {
+				configDataObj.setBaseURL(configDataMap.get("Base URL"));
+			}
+			if (configDataMap.containsKey("Template Directory")) {
+				configDataObj
+						.setTemplateDirectory(configDataMap.get("Template Directory"));
+			}
+			if (configDataMap.containsKey("Template")) {
+				configDataObj.setTemplateName(configDataMap.get("Template"));
+			}
+			if (configDataMap.containsKey("Browser")) {
+				configDataObj.setBrowser(configDataMap.get("Browser"));
+			}
+			if (configDataMap.containsKey("Template Path")) {
+				configDataObj.setTemplatePath(configDataMap.get("Template Path"));
 			}
 			showEnabled(preferencesTool);
 		});
@@ -890,7 +930,7 @@ public class SimpleToolBarEx {
 	}
 
 	private String fixBaseURL() {
-		String baseURL = configData.get("Base URL");
+		String baseURL = configDataMap.get("Base URL");
 		if (!baseURL.matches("^(?:http|https).*")) {
 			// NOTE: some browsers hide the scheme part of the url, but
 			// it is recommended to auto-correct instead of pasting the raw url
@@ -898,9 +938,10 @@ public class SimpleToolBarEx {
 			// to prevent "cannot navigate to invalid url"
 			// exception
 			logger.info("Fixing baseURL");
-			configData.replace("Base URL", String.format("http://%s", baseURL));
+			configDataMap.replace("Base URL", String.format("http://%s", baseURL));
+			configDataObj.setBaseURL(String.format("http://%s", baseURL));
 		}
-		return configData.get("Base URL");
+		return configDataMap.get("Base URL");
 	}
 
 	protected static Image getImage(InputStream stream) throws IOException {
@@ -966,7 +1007,8 @@ public class SimpleToolBarEx {
 						}
 					});
 					wait = new WebDriverWait(parentApp.driver, flexibleWait);
-		                        wait.pollingEvery(Duration.ofMillis(pollingInterval));
+					// NOTE: not compatible with 3.8.1 or earlier
+					wait.pollingEvery(Duration.ofMillis(pollingInterval));
 					try {
 						utils.injectElementSearch(Optional.<String> empty());
 					} catch (Exception e) {

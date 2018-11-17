@@ -42,6 +42,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import com.github.sergueik.swet.ConfigData;
+import com.github.sergueik.swet.ConfigDataSerializer;
+
 import custom.swt.widgets.InfoPopup;
 
 /**
@@ -64,7 +70,7 @@ public class ConfigFormEx {
 	private static Boolean debug = false;
 
 	private static String osName = OSUtils.getOsName();
-	private static Map<String, String> configData = new HashMap<>();
+	private static Map<String, String> configDataMap = new HashMap<>();
 	private static Utils utils = Utils.getInstance();
 
 	// NOTE: use the same DOM for Browser config options to simplify code
@@ -141,7 +147,7 @@ public class ConfigFormEx {
 		configOptions.put("Browser", browserOptions);
 		// offer templates embedded in the application jar and
 		// make rest up to customer
-		configData.put("Template", "Core Selenium Java (embedded)");
+		configDataMap.put("Template", "Core Selenium Java (embedded)");
 
 		configOptions.put("Template", new HashMap<String, String>());
 		templates = configOptions.get("Template");
@@ -170,9 +176,9 @@ public class ConfigFormEx {
 								+ String.format("\"Template Directory\": \"%s\", ",
 										dirPath.replace("/", "\\").replace("\\", "\\\\"))
 								+ "\"Template Path\": \"\"}",
-				Optional.of(configData));
-		if (configData.containsKey("Template Directory")) {
-			dirPath = configData.get("Template Directory");
+				Optional.of(configDataMap));
+		if (configDataMap.containsKey("Template Directory")) {
+			dirPath = configDataMap.get("Template Directory");
 			if (dirPath != "") {
 				templates = configOptions.get("Template");
 				// Scan the template directory and build the options hash with template
@@ -192,7 +198,7 @@ public class ConfigFormEx {
 		GridLayoutFactory.swtDefaults().numColumns(1).applyTo(shell);
 
 		GridComposite gridComposite = new GridComposite(shell);
-		gridComposite.renderData(configData);
+		gridComposite.renderData(configDataMap);
 		gridComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		gridComposite.pack();
 
@@ -213,7 +219,7 @@ public class ConfigFormEx {
 		buttonSave.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				String templateLabel = configData.get("Template");
+				String templateLabel = configDataMap.get("Template");
 				String configKey = null;
 				String data = null;
 				if (templateLabel != ""
@@ -231,14 +237,41 @@ public class ConfigFormEx {
 							templateLabel));
 
 				}
-				if (configData.containsKey(configKey)) {
-					configData.replace(configKey, data);
+				if (configDataMap.containsKey(configKey)) {
+					configDataMap.replace(configKey, data);
 				} else {
-					configData.put(configKey, data);
+					configDataMap.put(configKey, data);
 				}
-				String result = utils.writeDataJSON(configData, "{}");
+				String result = utils.writeDataJSON(configDataMap, "{}");
+
+				// serialization
+				ConfigData configDataObj = new ConfigData();
+				if (configDataMap.containsKey("Base URL")) {
+					configDataObj.setBaseURL(configDataMap.get("Base URL"));
+				}
+				if (configDataMap.containsKey("Template Directory")) {
+					configDataObj
+							.setTemplateDirectory(configDataMap.get("Template Directory"));
+				}
+				if (configDataMap.containsKey("Template")) {
+					configDataObj.setTemplateName(configDataMap.get("Template"));
+				}
+				if (configDataMap.containsKey("Browser")) {
+					configDataObj.setBrowser(configDataMap.get("Browser"));
+				}
+				if (configDataMap.containsKey("Template Path")) {
+					configDataObj.setTemplatePath(configDataMap.get("Template Path"));
+				}
+
+				Gson gson = new GsonBuilder()
+						.registerTypeAdapter(ConfigData.class, new ConfigDataSerializer())
+						.create();
+				System.err.println(
+						"Saving Configuration Object: " + gson.toJson(configDataObj));
+
 				if (parentShell != null) {
 					parentShell.setData("CurrentConfig", result);
+					parentShell.setData("CurrentConfigObj", gson.toJson(configDataObj));
 					parentShell.setData("updated", true);
 				}
 			}
@@ -262,7 +295,7 @@ public class ConfigFormEx {
 		shell.pack();
 		shell.setSize(formWidth, formHeight);
 
-		// infopopup example
+		// info popup example
 		/*
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			Rectangle shellBounds = shell.getBounds();
@@ -406,10 +439,10 @@ public class ConfigFormEx {
 							.toArray(new String[0]);
 					configValue.setItems(items);
 					logger.info(String.format("Setting index of %s to %d",
-							configData.get(configKey),
-							Arrays.asList(items).indexOf(configData.get(configKey))));
-					configValue
-							.select(Arrays.asList(items).indexOf(configData.get(configKey)));
+							configDataMap.get(configKey),
+							Arrays.asList(items).indexOf(configDataMap.get(configKey))));
+					configValue.select(
+							Arrays.asList(items).indexOf(configDataMap.get(configKey)));
 					configValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					configValue.setData("key", configKey);
 
@@ -475,7 +508,7 @@ public class ConfigFormEx {
 	}
 
 	public void setData(String key, String value) {
-		configData.put(key, value);
+		configDataMap.put(key, value);
 	}
 
 	@SuppressWarnings("unused")

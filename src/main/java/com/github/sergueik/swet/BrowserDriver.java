@@ -32,7 +32,11 @@ import com.github.sergueik.swet.OSUtils;
  * Browser Driver wrapper class for Selenium WebDriver Elementor Tool(SWET)
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
-
+// TODO: Exception in thread "main" java.lang.NoSuchMethodError:
+// com.google.common.base.Preconditions.checkState(ZLjava/lang/String;Ljava/lang/Object;)V
+// at
+// org.openqa.selenium.remote.service.DriverService.checkExecutable(DriverService.java:136)
+// guava 21,22,23,24-jre
 @SuppressWarnings("deprecation")
 public class BrowserDriver {
 
