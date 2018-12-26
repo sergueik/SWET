@@ -10,6 +10,12 @@ if "%MAVEN_VERSION%"=="" set MAVEN_VERSION=3.5.0
 if "%M2_HOME%"=="" set M2_HOME=%TOOLS_DIR%\apache-maven-%MAVEN_VERSION%
 if "%M2%"=="" set M2=%M2_HOME%\bin
 set MAVEN_OPTS=-Xms256m -Xmx512m
+
+REM Clear the environment entry that is created by git bash when starting cmd and ruins Maven 3.5.0 ANSI colors.
+REM see also: https://issues.apache.org/jira/browse/MNG-6282
+REM See also: https://stackoverflow.com/questions/43425304/how-to-customize-colors-in-maven-3-5-console-output
+set TERM=
+
 PATH=%JAVA_HOME%\bin;%M2%;%PATH%
 
 set DEBUG=true
@@ -77,7 +83,7 @@ REM will be mvn.bat or mvn.cmd
 
 if "%SKIP_TEST%"=="" (
 REM Test
-call mvn test
+call mvn test 2 > NUL
 ) else (
 REM Compile
 if /i "%CLEAN%" EQU "clean" (

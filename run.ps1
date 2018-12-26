@@ -33,7 +33,7 @@ if ($env:TOOLS_DIR -ne $null) {
 if ($env:MAVEN_VERSION -ne $null) {
   $MAVEN_VERSION = $env:MAVEN_VERSION
 } else {
-  $MAVEN_VERSION = '3.3.9'
+  $MAVEN_VERSION = '3.5.0'
 }
 if ($env:JAVA_VERSION -ne $null) {
   $JAVA_VERSION = $env:JAVA_VERSION
@@ -50,6 +50,10 @@ if ($env:M2 -eq $null) {
 }
 
 $build_clean = [bool]$PSBoundParameters['clean'].IsPresent
+
+# Clear the environment entry that is created by git bash when starting powershell and ruins Maven 3.5.0 ANSI colors.
+[Environment]::SetEnvironmentVariable('TERM', $null,'Process')
+# write-output $env:TERM
 
 $env:PATH = "${env:JAVA_HOME}\bin;${env:M2};${env:PATH}"
 $env:JAVA_OPTS = $env:MAVEN_OPTS = @( '-Xms256m', '-Xmx512m')
