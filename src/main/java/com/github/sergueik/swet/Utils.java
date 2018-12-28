@@ -108,7 +108,7 @@ public class Utils {
 
 	private String defaultScript;
 
-	public String fgetDefaultScript() {
+	public String getDefaultScript() {
 		return defaultScript;
 	}
 
