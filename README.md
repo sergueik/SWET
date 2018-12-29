@@ -169,6 +169,25 @@ On Unix or a Mac, launcher is a bash script
 ./run.sh
 ```
 
+### Debugging and adding Features
+
+The __SWET__ application is a Gimp style multi dialog desktop app. Practically every class (SWT or console) in the project directory can be started standalone with the help of the 
+launcher script(s) `run.cmd`, `run.ps1` in Windows OS and `run.sh` in OSX or Linux os like e.g.:
+
+```cmd
+run.cmd ComplexFormEx
+```
+compiles the app and launches the specific class' `main` method which most of the classes already provide:
+```java
+@SuppressWarnings("unused")
+public static void main(String[] arg) {
+  ComplexFormEx o = new ComplexFormEx(null, null);
+  o.render();
+}
+```
+![Running and debugging Form Example](https://github.com/sergueik/SWET/blob/master/screenshots/capture_run_complexformex.png)
+
+##
 The script has ability to also download the dependency jar(s), if there are ones not hosted on Maven Central repository ( *this is no longer necessary* ),
 then to compile and package the project using maven
 and run the application main class from the `target` directory jar and libraries.

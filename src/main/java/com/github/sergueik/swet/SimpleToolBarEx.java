@@ -307,9 +307,6 @@ public class SimpleToolBarEx {
 				baseURL = fixBaseURL();
 				logger.info("Base URL: " + baseURL);
 			}
-			// Exception (ignored) java.lang.NoSuchMethodError:
-			// com.google.common.collect.ImmutableList.copyOf([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;
-			// https://stackoverflow.com/questions/3126330/no-such-method-error-immutablelist-copyof
 			if (initializeBrowser(browser, baseURL)) {
 				// prevent the customer from launching multiple instances
 				// showEnabled(launchTool);

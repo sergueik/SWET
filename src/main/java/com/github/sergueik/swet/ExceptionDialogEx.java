@@ -72,6 +72,7 @@ public class ExceptionDialogEx {
 
 	private static MultiStatus createMultiStatus(String description,
 			Throwable t) {
+
 		List<Status> childStatuses = new ArrayList<>();
 
 		for (StackTraceElement stackTrace : t.getStackTrace()) {
@@ -79,7 +80,9 @@ public class ExceptionDialogEx {
 				System.err.println(
 						String.format("Adding stack trace: %s", stackTrace.toString()));
 			}
-			Status status = new Status(IStatus.ERROR, "com.github.sergueik.swet",
+
+			Status status = new Status(IStatus.ERROR,
+					ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
 					stackTrace.toString());
 			childStatuses.add(status);
 		}
@@ -89,19 +92,20 @@ public class ExceptionDialogEx {
 				System.err.println(
 						String.format("Adding stack trace: %s", stackTrace.toString()));
 			}
-			Status status = new Status(IStatus.ERROR, "com.github.sergueik.swet",
+			Status status = new Status(IStatus.ERROR,
+					ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
 					stackTrace.toString());
 			childStatuses.add(status);
 		}
 
 		String summary = (description != null) ? description : t.toString();
-		MultiStatus status = new MultiStatus("com.github.sergueik.swet", IStatus.ERROR,
-				childStatuses.toArray(new Status[] {}),
+		MultiStatus status = new MultiStatus(
+				ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
+				IStatus.ERROR, childStatuses.toArray(new Status[] {}),
 				(summary.length() > 120) ? summary.substring(0, 120) : summary, t);
 		return status;
 	}
 
-	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
 		debug = true;
 		try {
@@ -111,6 +115,7 @@ public class ExceptionDialogEx {
 			// need to defer initialization to after the application is started
 			// to avoid org.eclipse.swt.SWTException: Invalid thread access
 			// ExceptionDialogEx x = ExceptionDialogEx.getInstance();
+
 			ExceptionDialogEx.getInstance().render(e);
 		}
 	}

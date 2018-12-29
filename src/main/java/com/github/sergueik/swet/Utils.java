@@ -145,7 +145,7 @@ public class Utils {
 		}
 	}
 
-	// NOTE: getResourceURI may not work with stand alone or web hosted
+	// NOTE: getResourceURI may not work with standalone or web hosted
 	// application
 	public String getResourceURI(String resourceFileName) {
 		try {
