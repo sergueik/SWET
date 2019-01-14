@@ -93,7 +93,6 @@ public class BrowserDiscoveryTest {
 					}
 				} catch (IOException | InterruptedException e) {
 					System.err.println("Exception (ignnord): " + e.getMessage());
-=======
 				}
 			}
 		}
