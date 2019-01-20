@@ -20,28 +20,34 @@ import org.apache.log4j.Logger;
 // 
 // import org.apache.logging.log4j.LogManager;
 // import org.apache.logging.log4j.Logger;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
+
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+
 /**
- * Excel export and load class for Selenium WebDriver Elementor Tool (SWET) TableViewer
+ * Excel export and load class for 
+ * Selenium WebDriver Elementor Tool (SWET) 
+ * TableViewer
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class ExcelFileUtils {
 
 	private static List<Map<Integer, String>> tableData = new ArrayList<>();
 	private static Map<Integer, String> rowData = new HashMap<>();
-	@SuppressWarnings("deprecation")
+
 	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
+	@SuppressWarnings("deprecation")
 	static final Logger logger = (Logger) Logger
 			.getInstance(ExcelFileUtils.class);
 
@@ -49,15 +55,18 @@ public class ExcelFileUtils {
 		tableData = data;
 	}
 
-	private static String excelFileName = null; // name of excel file
-	private static String sheetName = "Sheet1"; // name of the sheet
-
-	public static void setSheetName(String data) {
-		ExcelFileUtils.sheetName = data;
-	}
+	// name of excel file
+	private static String excelFileName = null;
 
 	public static void setExcelFileName(String data) {
 		ExcelFileUtils.excelFileName = data;
+	}
+
+	// name of the sheet
+	private static String sheetName = "Sheet1";
+
+	public static void setSheetName(String data) {
+		ExcelFileUtils.sheetName = data;
 	}
 
 	public static void readXLSFile() throws IOException {
@@ -84,9 +93,13 @@ public class ExcelFileUtils {
 					logger.info(cell.getStringCellValue() + " ");
 				} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
 					logger.info(cell.getNumericCellValue() + " ");
+				} else if (type == org.apache.poi.ss.usermodel.CellType.BOOLEAN) {
+					logger.info(cell.getBooleanCellValue() + " ");
 				} else {
 					logger.info("? ");
-					// TODO: Boolean, Formula, Errors
+					// NOTE: not parsing either of
+					// org.apache.poi.ss.usermodel.CellType.FORMULA
+					// org.apache.poi.ss.usermodel.CellType.ERROR
 				}
 			}
 			logger.info("");
@@ -113,8 +126,12 @@ public class ExcelFileUtils {
 					logger.info(cell.getStringCellValue() + " ");
 				} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
 					logger.info(cell.getNumericCellValue() + " ");
+				} else if (type == org.apache.poi.ss.usermodel.CellType.BOOLEAN) {
+					logger.info(cell.getBooleanCellValue() + " ");
 				} else {
-					// TODO: Boolean, Formula, Errors
+					// NOTE: not parsing either of
+					// org.apache.poi.ss.usermodel.CellType.FORMULA
+					// org.apache.poi.ss.usermodel.CellType.ERROR
 					logger.info("? ");
 				}
 			}
@@ -125,37 +142,34 @@ public class ExcelFileUtils {
 
 	public static void writeXLSFile() throws IOException {
 
-		HSSFWorkbook wbObj = new HSSFWorkbook();
-		HSSFSheet sheet = wbObj.createSheet(sheetName);
+		HSSFWorkbook hddfwb = new HSSFWorkbook();
+		HSSFSheet sheet = hddfwb.createSheet(sheetName);
 
 		for (int row = 0; row < tableData.size(); row++) {
-			HSSFRow rowObj = sheet.createRow(row);
+			HSSFRow hssfrow = sheet.createRow(row);
 			rowData = tableData.get(row);
 			for (int col = 0; col < rowData.size(); col++) {
-				HSSFCell cellObj = rowObj.createCell(col);
-				cellObj.setCellValue(rowData.get(col));
+				HSSFCell hssfcell = hssfrow.createCell(col);
+				hssfcell.setCellValue(rowData.get(col));
 			}
 		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
-		wbObj.write(fileOut);
-		wbObj.close();
+		hddfwb.write(fileOut);
+		hddfwb.close();
 		fileOut.flush();
 		fileOut.close();
 	}
 
 	public static void writeXLSXFile() throws IOException {
 
-		// Exception in thread "main" 
-		// java.lang.NoClassDefFoundError: org/apache/commons/collections4/ListValuedMap
-		// https://stackoverflow.com/questions/39670382/apache-poi-error-loading-xssfworkbook-class
 		XSSFWorkbook xssfwb = new XSSFWorkbook();
 		XSSFSheet sheet = xssfwb.createSheet(sheetName);
 		for (int row = 0; row < tableData.size(); row++) {
-			XSSFRow rowObj = sheet.createRow(row);
+			XSSFRow xddfrow = sheet.createRow(row);
 			rowData = tableData.get(row);
 			for (int col = 0; col < rowData.size(); col++) {
-				XSSFCell cell = rowObj.createCell(col);
+				XSSFCell cell = xddfrow.createCell(col);
 				cell.setCellValue(rowData.get(col));
 				logger.info("Writing " + row + " " + col + "  " + rowData.get(col));
 			}
