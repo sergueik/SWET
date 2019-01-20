@@ -21,6 +21,7 @@
     <mainClass>SimpleToolBarEx</mainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <commons-configuration.version>1.10</commons-configuration.version>
+    <commons-collections4.version>4.2</commons-collections4.version>
     <commons-exec.version>1.3</commons-exec.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-lang3.version>3.3.1</commons-lang3.version>
@@ -93,9 +94,12 @@
 -->
       <exclusions>
         <exclusion>
-          <!-- exclude possible outdated versions of selenium jar dependency through jprotractor -->
           <groupId>org.seleniumhq.selenium</groupId>
           <artifactId>selenium-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-server</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -173,6 +177,11 @@
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
       <version>${commons-configuration.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>${commons-collections4.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

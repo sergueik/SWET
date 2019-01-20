@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2018 Serguei Kouzmine
+ * Copyright 2014 - 2019 Serguei Kouzmine
  */
 
 import java.io.FileInputStream;
@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.github.sergueik.swet.ExceptionDialogEx;
 import com.github.sergueik.swet.Utils;
+import com.github.sergueik.swet.ExcelFileUtils;
 
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
@@ -303,17 +304,26 @@ public class TableEditorEx {
 						tableData.add(rowData);
 					}
 
+					ExcelFileUtils.setExcelFileName(testSuitePath);
+					ExcelFileUtils.setSheetName("test123");
+					ExcelFileUtils.setTableData(tableData);
+
+					/*
 					ReadWriteExcelFileEx.setExcelFileName(testSuitePath);
 					ReadWriteExcelFileEx.setSheetName("test123");
 					ReadWriteExcelFileEx.setTableData(tableData);
-
+					*/
 					try {
 						if (testSuitePath.matches(".*\\.xlsx$")) {
-							ReadWriteExcelFileEx.writeXLSXFile();
-							ReadWriteExcelFileEx.readXLSXFile();
+							// ReadWriteExcelFileEx.writeXLSXFile();
+							// ReadWriteExcelFileEx.readXLSXFile();
+							ExcelFileUtils.writeXLSXFile();
+							ExcelFileUtils.readXLSXFile();
 						} else {
-							ReadWriteExcelFileEx.writeXLSFile();
-							ReadWriteExcelFileEx.readXLSFile();
+							// ReadWriteExcelFileEx.writeXLSFile();
+							// ReadWriteExcelFileEx.readXLSFile();
+							ExcelFileUtils.writeXLSFile();
+							ExcelFileUtils.readXLSFile();
 						}
 						// label.setText(String.format("Saved to \"%s\"", testSuitePath));
 						// label.update();
@@ -566,7 +576,6 @@ public class TableEditorEx {
 
 			InputStream ExcelFileToRead = new FileInputStream(excelFileName);
 			XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
-			XSSFWorkbook test = new XSSFWorkbook();
 			XSSFSheet sheet = wb.getSheetAt(0);
 			XSSFRow row;
 			XSSFCell cell;
@@ -606,6 +615,8 @@ public class TableEditorEx {
 
 			FileOutputStream fileOut = new FileOutputStream(excelFileName);
 			wbObj.write(fileOut);
+			// Exception in thread "main" java.lang.NoClassDefFoundError:
+			// org/apache/commons/collections4/ListValuedMap
 			wbObj.close();
 			fileOut.flush();
 			fileOut.close();
