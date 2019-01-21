@@ -71,8 +71,8 @@ public class ExcelFileUtils {
 
 	public static void readXLSFile() throws IOException {
 
-		InputStream ExcelFileToRead = new FileInputStream(excelFileName);
-		HSSFWorkbook hddfwb = new HSSFWorkbook(ExcelFileToRead);
+		InputStream fileInputStream = new FileInputStream(excelFileName);
+		HSSFWorkbook hddfwb = new HSSFWorkbook(fileInputStream);
 		HSSFSheet sheet = hddfwb.getSheetAt(0);
 		HSSFRow row;
 		HSSFCell cell;
@@ -105,12 +105,13 @@ public class ExcelFileUtils {
 			logger.info("");
 		}
 		hddfwb.close();
+		fileInputStream.close();
 	}
 
 	public static void readXLSXFile() throws IOException {
 
-		InputStream ExcelFileToRead = new FileInputStream(excelFileName);
-		XSSFWorkbook xssfwb = new XSSFWorkbook(ExcelFileToRead);
+		InputStream fileInputStream = new FileInputStream(excelFileName);
+		XSSFWorkbook xssfwb = new XSSFWorkbook(fileInputStream);
 		// XSSFWorkbook test = new XSSFWorkbook();
 		XSSFSheet sheet = xssfwb.getSheetAt(0);
 		XSSFRow row;
@@ -138,6 +139,7 @@ public class ExcelFileUtils {
 			logger.info("");
 		}
 		xssfwb.close();
+		fileInputStream.close();
 	}
 
 	public static void writeXLSFile() throws IOException {
@@ -154,11 +156,11 @@ public class ExcelFileUtils {
 			}
 		}
 
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
-		hddfwb.write(fileOut);
+		FileOutputStream fileOutputStream = new FileOutputStream(excelFileName);
+		hddfwb.write(fileOutputStream);
 		hddfwb.close();
-		fileOut.flush();
-		fileOut.close();
+		fileOutputStream.flush();
+		fileOutputStream.close();
 	}
 
 	public static void writeXLSXFile() throws IOException {
@@ -174,10 +176,10 @@ public class ExcelFileUtils {
 				logger.info("Writing " + row + " " + col + "  " + rowData.get(col));
 			}
 		}
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
-		xssfwb.write(fileOut);
+		FileOutputStream fileOutputStream = new FileOutputStream(excelFileName);
+		xssfwb.write(fileOutputStream);
 		xssfwb.close();
-		fileOut.flush();
-		fileOut.close();
+		fileOutputStream.flush();
+		fileOutputStream.close();
 	}
 }
