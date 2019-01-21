@@ -43,23 +43,30 @@ import org.apache.poi.ss.usermodel.Row;
  */
 public class ExcelFileUtils {
 
-	private static List<Map<Integer, String>> tableData = new ArrayList<>();
-	private static Map<Integer, String> rowData = new HashMap<>();
-
 	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
 	@SuppressWarnings("deprecation")
 	static final Logger logger = (Logger) Logger
 			.getInstance(ExcelFileUtils.class);
 
+	private static List<Map<Integer, String>> tableData = new ArrayList<>();
+
 	public static void setTableData(List<Map<Integer, String>> data) {
 		tableData = data;
 	}
+
+	private static Map<Integer, String> rowData = new HashMap<>();
 
 	// name of excel file
 	private static String excelFileName = null;
 
 	public static void setExcelFileName(String data) {
 		ExcelFileUtils.excelFileName = data;
+	}
+
+	private static String sheetFormat = "Excel 2007"; // format of the sheet
+
+	public static void setSheetFormat(String data) {
+		ExcelFileUtils.sheetFormat = data;
 	}
 
 	// name of the sheet
@@ -69,80 +76,96 @@ public class ExcelFileUtils {
 		ExcelFileUtils.sheetName = data;
 	}
 
-	public static void readXLSFile() throws IOException {
+	public static void readXLSFile() throws Exception {
 
-		InputStream fileInputStream = new FileInputStream(excelFileName);
-		HSSFWorkbook hddfwb = new HSSFWorkbook(fileInputStream);
-		HSSFSheet sheet = hddfwb.getSheetAt(0);
-		HSSFRow row;
-		HSSFCell cell;
+		try (InputStream fileInputStream = new FileInputStream(excelFileName)) {
+			HSSFWorkbook hddfwb = new HSSFWorkbook(fileInputStream);
+			HSSFSheet sheet = hddfwb.getSheetAt(0);
+			HSSFRow row;
+			HSSFCell cell;
 
-		Iterator<Row> rows = sheet.rowIterator();
+			Iterator<Row> rows = sheet.rowIterator();
 
-		while (rows.hasNext()) {
+			while (rows.hasNext()) {
 
-			row = (HSSFRow) rows.next();
-			Iterator<Cell> cells = row.cellIterator();
+				row = (HSSFRow) rows.next();
+				Iterator<Cell> cells = row.cellIterator();
 
-			while (cells.hasNext()) {
+				while (cells.hasNext()) {
 
-				cell = (HSSFCell) cells.next();
-				CellType type = cell.getCellTypeEnum();
+					cell = (HSSFCell) cells.next();
+					CellType type = cell.getCellTypeEnum();
 
-				if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
-					logger.info(cell.getStringCellValue() + " ");
-				} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
-					logger.info(cell.getNumericCellValue() + " ");
-				} else if (type == org.apache.poi.ss.usermodel.CellType.BOOLEAN) {
-					logger.info(cell.getBooleanCellValue() + " ");
-				} else {
-					logger.info("? ");
-					// NOTE: not parsing either of
-					// org.apache.poi.ss.usermodel.CellType.FORMULA
-					// org.apache.poi.ss.usermodel.CellType.ERROR
+					if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
+						logger.info(cell.getStringCellValue() + " ");
+					} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
+						logger.info(cell.getNumericCellValue() + " ");
+					} else if (type == org.apache.poi.ss.usermodel.CellType.BOOLEAN) {
+						logger.info(cell.getBooleanCellValue() + " ");
+					} else {
+						logger.info("? ");
+						// NOTE: not parsing either of
+						// org.apache.poi.ss.usermodel.CellType.FORMULA
+						// org.apache.poi.ss.usermodel.CellType.ERROR
+					}
 				}
+				logger.info("");
 			}
-			logger.info("");
+			hddfwb.close();
+			fileInputStream.close();
+		} catch (IOException e) {
+			String message = String.format("Exception reading XLS file %s\n",
+					excelFileName) + e.getMessage();
+			logger.info(message);
+			// NOTE: throw exceptions with user friendly messages to be rendered
+			// by the master app
+			throw new Exception(message);
 		}
-		hddfwb.close();
-		fileInputStream.close();
 	}
 
-	public static void readXLSXFile() throws IOException {
+	public static void readXLSXFile() throws Exception {
 
-		InputStream fileInputStream = new FileInputStream(excelFileName);
-		XSSFWorkbook xssfwb = new XSSFWorkbook(fileInputStream);
-		// XSSFWorkbook test = new XSSFWorkbook();
-		XSSFSheet sheet = xssfwb.getSheetAt(0);
-		XSSFRow row;
-		XSSFCell cell;
-		Iterator<Row> rows = sheet.rowIterator();
-		while (rows.hasNext()) {
-			row = (XSSFRow) rows.next();
-			Iterator<Cell> cells = row.cellIterator();
-			while (cells.hasNext()) {
-				cell = (XSSFCell) cells.next();
-				CellType type = cell.getCellTypeEnum();
-				if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
-					logger.info(cell.getStringCellValue() + " ");
-				} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
-					logger.info(cell.getNumericCellValue() + " ");
-				} else if (type == org.apache.poi.ss.usermodel.CellType.BOOLEAN) {
-					logger.info(cell.getBooleanCellValue() + " ");
-				} else {
-					// NOTE: not parsing either of
-					// org.apache.poi.ss.usermodel.CellType.FORMULA
-					// org.apache.poi.ss.usermodel.CellType.ERROR
-					logger.info("? ");
+		try (InputStream fileInputStream = new FileInputStream(excelFileName)) {
+			XSSFWorkbook xssfwb = new XSSFWorkbook(fileInputStream);
+			// XSSFWorkbook test = new XSSFWorkbook();
+			XSSFSheet sheet = xssfwb.getSheetAt(0);
+			XSSFRow row;
+			XSSFCell cell;
+			Iterator<Row> rows = sheet.rowIterator();
+			while (rows.hasNext()) {
+				row = (XSSFRow) rows.next();
+				Iterator<Cell> cells = row.cellIterator();
+				while (cells.hasNext()) {
+					cell = (XSSFCell) cells.next();
+					CellType type = cell.getCellTypeEnum();
+					if (type == org.apache.poi.ss.usermodel.CellType.STRING) {
+						logger.info(cell.getStringCellValue() + " ");
+					} else if (type == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
+						logger.info(cell.getNumericCellValue() + " ");
+					} else if (type == org.apache.poi.ss.usermodel.CellType.BOOLEAN) {
+						logger.info(cell.getBooleanCellValue() + " ");
+					} else {
+						// NOTE: not parsing either of
+						// org.apache.poi.ss.usermodel.CellType.FORMULA
+						// org.apache.poi.ss.usermodel.CellType.ERROR
+						logger.info("? ");
+					}
 				}
+				logger.info("");
 			}
-			logger.info("");
+			xssfwb.close();
+			fileInputStream.close();
+		} catch (IOException e) {
+			String message = String.format("Exception reading XLSX file %s\n",
+					excelFileName) + e.getMessage();
+			logger.info(message);
+			// NOTE: throw exceptions with user friendly messages to be rendered
+			// by the master app
+			throw new Exception(message);
 		}
-		xssfwb.close();
-		fileInputStream.close();
 	}
 
-	public static void writeXLSFile() throws IOException {
+	public static void writeXLSFile() throws Exception {
 
 		HSSFWorkbook hddfwb = new HSSFWorkbook();
 		HSSFSheet sheet = hddfwb.createSheet(sheetName);
@@ -156,14 +179,25 @@ public class ExcelFileUtils {
 			}
 		}
 
-		FileOutputStream fileOutputStream = new FileOutputStream(excelFileName);
-		hddfwb.write(fileOutputStream);
-		hddfwb.close();
-		fileOutputStream.flush();
-		fileOutputStream.close();
+		try (FileOutputStream fileOutputStream = new FileOutputStream(
+				excelFileName)) {
+			hddfwb.write(fileOutputStream);
+			hddfwb.close();
+			fileOutputStream.flush();
+			fileOutputStream.close();
+		} catch (IOException e) {
+			String message = String.format("Exception saving XLS file %s\n",
+					excelFileName) + e.getMessage();
+			logger.info(message);
+			// NOTE: throw exceptions with user friendly messages to be rendered
+			// by the master app
+			throw new Exception(message);
+		}
 	}
 
-	public static void writeXLSXFile() throws IOException {
+	// NOTE: throw exceptions with user friendly messages to be rendered
+	// by the master app
+	public static void writeXLSXFile() throws Exception {
 
 		XSSFWorkbook xssfwb = new XSSFWorkbook();
 		XSSFSheet sheet = xssfwb.createSheet(sheetName);
@@ -176,10 +210,23 @@ public class ExcelFileUtils {
 				logger.info("Writing " + row + " " + col + "  " + rowData.get(col));
 			}
 		}
-		FileOutputStream fileOutputStream = new FileOutputStream(excelFileName);
-		xssfwb.write(fileOutputStream);
-		xssfwb.close();
-		fileOutputStream.flush();
-		fileOutputStream.close();
+
+		try (FileOutputStream fileOutputStream = new FileOutputStream(
+				excelFileName)) {
+
+			xssfwb.write(fileOutputStream);
+			xssfwb.close();
+			fileOutputStream.flush();
+			fileOutputStream.close();
+
+		} catch (IOException e) {
+			String message = String.format("Exception saving XLSX file %s\n",
+					excelFileName) + e.getMessage();
+			logger.info(message);
+			// NOTE: throw exceptions with user friendly messages to be rendered
+			// by the master app
+			throw new Exception(message);
+
+		}
 	}
 }

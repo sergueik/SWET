@@ -282,20 +282,22 @@ public class TableEditorEx {
 					}
 
 					ExcelFileUtils.setExcelFileName(testSuitePath);
-					ExcelFileUtils.setSheetName("test123");
+					ExcelFileUtils.setSheetName("SWT Test");
 					ExcelFileUtils.setTableData(tableData);
 
 					try {
 						if (testSuitePath.matches(".*\\.xlsx$")) {
+							ExcelFileUtils.setSheetFormat("Excel 2007");
 							ExcelFileUtils.writeXLSXFile();
 							ExcelFileUtils.readXLSXFile();
 						} else {
+							ExcelFileUtils.setSheetFormat("Excel 2003");
 							ExcelFileUtils.writeXLSFile();
 							ExcelFileUtils.readXLSFile();
 						}
+						// TODO: create the for status update indicator label on the app
 						// label.setText(String.format("Saved to \"%s\"", testSuitePath));
 						// label.update();
-						System.out.println(String.format("Saved to \"%s\"", testSuitePath));
 					} catch (Exception e) {
 						ExceptionDialogEx.getInstance().render(e);
 					}
