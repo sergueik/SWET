@@ -28,8 +28,6 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
 
-
-
 public class OSUtils {
 
 	private static String osName = null;
@@ -55,7 +53,8 @@ public class OSUtils {
 		HANDLE hToken = null;
 		int dwFlags = Shell32.SHGFP_TYPE_CURRENT;
 		char[] pszPath = new char[Shell32.MAX_PATH];
-		int hResult = Shell32.INSTANCE.SHGetFolderPath(hwndOwner, nFolder, hToken, dwFlags, pszPath);
+		int hResult = Shell32.INSTANCE.SHGetFolderPath(hwndOwner, nFolder, hToken,
+				dwFlags, pszPath);
 		if (Shell32.S_OK == hResult) {
 			String path = new String(pszPath);
 			return (path.substring(0, path.indexOf('\0')));
@@ -85,7 +84,8 @@ public class OSUtils {
 		public static final int SHGFP_TYPE_DEFAULT = 1;
 		public static final int S_OK = 0;
 
-		static Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class, OPTIONS);
+		static Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class,
+				OPTIONS);
 
 		/**
 		 * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
@@ -93,7 +93,8 @@ public class OSUtils {
 		 * HRESULT SHGetFolderPath( HWND hwndOwner, int nFolder, HANDLE hToken,
 		 * DWORD dwFlags, LPTSTR pszPath);
 		 */
-		public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, int dwFlags, char[] pszPath);
+		public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken,
+				int dwFlags, char[] pszPath);
 
 	}
 
@@ -111,7 +112,8 @@ public class OSUtils {
 		if (installedBrowsers == null) {
 			findInstalledBrowsers();
 		}
-		return installedBrowsers.containsKey(browserName) ? installedBrowsers.get(browserName) : null;
+		return installedBrowsers.containsKey(browserName)
+				? installedBrowsers.get(browserName) : null;
 	}
 
 	public static boolean isInstalled(String browserName) {
@@ -125,24 +127,28 @@ public class OSUtils {
 		if (!isInstalled(browserName))
 			return null;
 		int[] version = getVersionInfo(installedBrowsers.get(browserName));
-		return String.valueOf(version[0]) + "." + String.valueOf(version[1]) + "." + String.valueOf(version[2]) + "."
-				+ String.valueOf(version[3]);
+		return String.valueOf(version[0]) + "." + String.valueOf(version[1]) + "."
+				+ String.valueOf(version[2]) + "." + String.valueOf(version[3]);
 	}
 
 	public static int getMajorVersion(String browserName) {
-		return isInstalled(browserName) ? getVersionInfo(installedBrowsers.get(browserName))[0] : 0;
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[0] : 0;
 	}
 
 	public static int getMinorVersion(String browserName) {
-		return isInstalled(browserName) ? getVersionInfo(installedBrowsers.get(browserName))[1] : 0;
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[1] : 0;
 	}
 
 	public static int getBuildVersion(String browserName) {
-		return isInstalled(browserName) ? getVersionInfo(installedBrowsers.get(browserName))[2] : 0;
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[2] : 0;
 	}
 
 	public static int getRevisionVersion(String browserName) {
-		return isInstalled(browserName) ? getVersionInfo(installedBrowsers.get(browserName))[3] : 0;
+		return isInstalled(browserName)
+				? getVersionInfo(installedBrowsers.get(browserName))[3] : 0;
 	}
 
 	public static List<String> findInstalledBrowsers() {
@@ -171,18 +177,20 @@ public class OSUtils {
 		IntByReference dwDummy = new IntByReference();
 		dwDummy.setValue(0);
 
-		int versionlength = com.sun.jna.platform.win32.Version.INSTANCE.GetFileVersionInfoSize(path, dwDummy);
+		int versionlength = com.sun.jna.platform.win32.Version.INSTANCE
+				.GetFileVersionInfoSize(path, dwDummy);
 
 		byte[] bufferarray = new byte[versionlength];
 		Pointer lpData = new Memory(bufferarray.length);
 		PointerByReference lplpBuffer = new PointerByReference();
 		IntByReference puLen = new IntByReference();
-		boolean fileInfoResult = com.sun.jna.platform.win32.Version.INSTANCE.GetFileVersionInfo(path, 0, versionlength,
-				lpData);
-		boolean verQueryVal = com.sun.jna.platform.win32.Version.INSTANCE.VerQueryValue(lpData, "\\", lplpBuffer,
-				puLen);
+		boolean fileInfoResult = com.sun.jna.platform.win32.Version.INSTANCE
+				.GetFileVersionInfo(path, 0, versionlength, lpData);
+		boolean verQueryVal = com.sun.jna.platform.win32.Version.INSTANCE
+				.VerQueryValue(lpData, "\\", lplpBuffer, puLen);
 
-		VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(lplpBuffer.getValue());
+		VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(
+				lplpBuffer.getValue());
 		lplpBufStructure.read();
 
 		int v1 = (lplpBufStructure.dwFileVersionMS).intValue() >> 16;
@@ -197,10 +205,12 @@ public class OSUtils {
 		File[] rootPaths = File.listRoots();
 		List<String> browsers = new ArrayList<>();
 		String[] defaultPath = (is64bit)
-				? new String[] { "Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+				? new String[] {
+						"Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
 						"Program Files (x86)\\Internet Explorer\\iexplore.exe",
 						"Program Files (x86)\\Mozilla Firefox\\firefox.exe" }
-				: new String[] { "Program Files\\Google\\Chrome\\Application\\chrome.exe",
+				: new String[] {
+						"Program Files\\Google\\Chrome\\Application\\chrome.exe",
 						"Program Files\\Internet Explorer\\iexplore.exe",
 						"Program Files\\Mozilla Firefox\\firefox.exe" };
 
@@ -211,8 +221,8 @@ public class OSUtils {
 				System.err.println("Inspecting browser path: " + rootPath + defPath);
 				if (exe.exists()) {
 					// browsers.add(exe.toString());
-					String browser = exe.toString().replaceAll("\\\\", "/").replaceAll("^(?:.+)/([^/]+)(.exe)$",
-							"$1$2");
+					String browser = exe.toString().replaceAll("\\\\", "/")
+							.replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
 					System.err.println("Found browser: " + browser);
 					browsers.add(browser);
 				}
@@ -225,19 +235,24 @@ public class OSUtils {
 	// https://java-native-access.github.io/jna/4.2.0/com/sun/jna/platform/win32/Advapi32Util.html
 	private static List<String> findBrowsersInRegistry() {
 		// String regPath = "SOFTWARE\\Clients\\StartMenuInternet\\";
-		String regPath = is64bit ? "SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\"
+		String regPath = is64bit
+				? "SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\"
 				: "SOFTWARE\\Clients\\StartMenuInternet\\";
 
 		List<String> browsers = new ArrayList<>();
 		String path = null;
 		try {
-			for (String browserName : Advapi32Util.registryGetKeys(WinReg.HKEY_LOCAL_MACHINE, regPath)) {
-				path = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
-						regPath + "\\" + browserName + "\\shell\\open\\command", "").replace("\"", "");
+			for (String browserName : Advapi32Util
+					.registryGetKeys(WinReg.HKEY_LOCAL_MACHINE, regPath)) {
+				path = Advapi32Util
+						.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
+								regPath + "\\" + browserName + "\\shell\\open\\command", "")
+						.replace("\"", "");
 				if (path != null && new File(path).exists()) {
 					// System.err.println("Browser path: " + path);
 					// browsers.add(exe.toString());
-					String browser = path.replaceAll("\\\\", "/").replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
+					String browser = path.replaceAll("\\\\", "/")
+							.replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
 					System.err.println("Found browser: " + browser);
 					browsers.add(browser);
 				}
@@ -254,17 +269,20 @@ public class OSUtils {
 
 	public static void killProcess(String processName) {
 
-		String command = String.format((osName.equals("windows"))
-				? "taskkill.exe /F /IM %s" : "killall %s", processName.trim());
+		String command = String.format(
+				(osName.equals("windows")) ? "taskkill.exe /F /IM %s" : "killall %s",
+				processName.trim());
 
 		try {
 			Runtime runtime = Runtime.getRuntime();
 			Process process = runtime.exec(command);
 			// process.redirectErrorStream( true);
 
-			BufferedReader stdoutBufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader stdoutBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));
 
-			BufferedReader stderrBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			BufferedReader stderrBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getErrorStream()));
 			String line = null;
 
 			StringBuffer processOutput = new StringBuffer();
@@ -303,8 +321,8 @@ public class OSUtils {
 	// /Applications/Firefox.app/Contents/MacOS/firefox http://ya.ru
 
 	// would likely lead to an error:
-	// "A copy of Firefox is already open.
-	// Only one copy of Firefox can be open at a time."
+	// "A copy of Firefox is already open. Only one copy of Firefox can be open at
+	// a time."
 	public static void runAppCommand(String browserAppName, String url) {
 		try {
 
@@ -323,7 +341,8 @@ public class OSUtils {
 				// The file /Users/sergueik/src/Chrome\" does not exist.
 			} else if (osName.matches("windows")) {
 				processName = "C:\\Windows\\System32\\cmd.exe";
-				processArgs = new String[] { processName, "/c", "start", browserAppName, url };
+				processArgs = new String[] { processName, "/c", "start", browserAppName,
+						url };
 			} else {
 				// TODO: on Linux need to compose the command with bash
 				// to launch browser in the background
@@ -336,9 +355,11 @@ public class OSUtils {
 			Process process = runtime.exec(processArgs);
 
 			int exitCode = process.waitFor();
-			BufferedReader stdoutBufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader stdoutBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));
 
-			BufferedReader stderrBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			BufferedReader stderrBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getErrorStream()));
 			String line = null;
 			StringBuffer processOutput = new StringBuffer();
 			while ((line = stdoutBufferedReader.readLine()) != null) {
@@ -362,8 +383,11 @@ public class OSUtils {
 		}
 	}
 
-  // TODO: on mac os x mdfind status is 0 even with succefful ot failed search: one needs to examine the output
-  // NOTE: few modifications to acomodate older versio of Selenium  on mac os x are not checkec in 
+	// TODO: on mac os x mdfind status is 0 regardless of whether search was
+	// successful or failed.
+	// one needs to examine the details of its output
+	// NOTE: few code modifications to support linking with older version of
+	// Selenium on OSX are not checked in
 	public static boolean findAppInPath(String appName) {
 		boolean status = false;
 		String processName = null;
@@ -371,7 +395,8 @@ public class OSUtils {
 		if (osName.matches("mac os x")) {
 			// NOTE: for cached saved spotlight search a.k.a. smart folder, use
 			// findCommand = String.format("'kMDItemFSName = %s'", appName);
-			// Could not find smart folder /Users/sergueik/Library/Saved Searches/kMDItemFSName = 'Google Chrome'.savedSearch
+			// Could not find smart folder /Users/sergueik/Library/Saved
+			// Searches/kMDItemFSName = 'Google Chrome'.savedSearch
 			findCommand = String.format("-onlyin /Applications -name '%s'", appName);
 			processName = "/usr/bin/mdfind";
 		} else if (!(osName.equals("windows"))) {
@@ -386,9 +411,11 @@ public class OSUtils {
 			Process process = runtime.exec(String.join(" ", processArgs));
 			// process.redirectErrorStream( true);
 
-			BufferedReader stdoutBufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader stdoutBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));
 
-			BufferedReader stderrBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			BufferedReader stderrBufferedReader = new BufferedReader(
+					new InputStreamReader(process.getErrorStream()));
 			String line = null;
 
 			StringBuffer processOutput = new StringBuffer();

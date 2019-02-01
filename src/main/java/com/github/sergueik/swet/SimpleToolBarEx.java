@@ -50,7 +50,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.mihalis.opal.breadcrumb.Breadcrumb;
 import org.mihalis.opal.breadcrumb.BreadcrumbItem;
 
-// NOTE: on a mac, NoSuchSessionException is uresolved
+// NOTE: on a mac, Selenum 2.48 is used during build 
+// NoSuchSessionException is uresolved in this version
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -633,8 +634,10 @@ public class SimpleToolBarEx {
 							});
 							break;
 						}
-						// NOTE: on a mac, NoSuchSessionException is uresolved
-					} catch (NoSuchSessionException e) {
+						// NOTE: on OSX, one has to use archaic version of Selenium jar
+						// where NoSuchSessionException is not yet defined, but this code
+						// still needs to compile therefore commenting next line
+					// } catch (org.openqa.selenium.NoSuchSessionException e) {
 						// possibly closing the application
 						break;
 					} catch (WebDriverException e) {
@@ -656,7 +659,11 @@ public class SimpleToolBarEx {
 			String payload = null;
 			try {
 				payload = utils.getPayload();
-			} catch (NoSuchSessionException e) {
+			// NOTE: on OSX, one has to use archaic version of Selenium jar
+			// where NoSuchSessionException is not yet defined, but this code
+			// still needs to compile therefore commenting next line
+		// 	} catch (NoSuchSessionException e) {
+		 	} catch (Exception e) {
 				waitingForData = false;
 				break;
 			}
