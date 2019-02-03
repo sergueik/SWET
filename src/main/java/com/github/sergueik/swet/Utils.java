@@ -928,7 +928,7 @@ public class Utils {
 	private StringBuilder sb = new StringBuilder(512 * 1024);
 
 	@SuppressWarnings("unused")
-	private String escape(String value) {
+	public String escape(String value) {
 		sb.setLength(0);
 		int offset = 0;
 		while (offset < value.length()) {

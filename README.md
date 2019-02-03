@@ -549,7 +549,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [ChroPath Chrome extension](https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en)
   * [ChroPath for Firefox (claims to be compatible only with FF 48+)](https://addons.mozilla.org/en-US/firefox/addon/chropath-for-firefox/)
   * [Catchpoint Script Recorder (alternative download of version 1.9.5 (ondjkacanajgdlnhcnpiapajjpgilplo), no longer in App Store)](https://www.crx4chrome.com/crx/49424/)
-
+  * [FireBreath cross-platform browser plugin framework](https://github.com/firebreath/FireBreath) see also [](https://www.firebreath.org/)
 #### Selenium Locator Strategies
 
   * [Choosing Effective XPaths](http://toolsqa.com/selenium-webdriver/choosing-effective-xpath/)

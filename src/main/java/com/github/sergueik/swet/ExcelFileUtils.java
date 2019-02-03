@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -179,7 +180,7 @@ public class ExcelFileUtils {
 			}
 		}
 
-		try (FileOutputStream fileOutputStream = new FileOutputStream(
+		try (OutputStream fileOutputStream = new FileOutputStream(
 				excelFileName)) {
 			hddfwb.write(fileOutputStream);
 			hddfwb.close();
@@ -211,7 +212,7 @@ public class ExcelFileUtils {
 			}
 		}
 
-		try (FileOutputStream fileOutputStream = new FileOutputStream(
+		try (OutputStream fileOutputStream = new FileOutputStream(
 				excelFileName)) {
 
 			xssfwb.write(fileOutputStream);
