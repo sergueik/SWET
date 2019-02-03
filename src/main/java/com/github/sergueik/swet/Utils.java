@@ -924,4 +924,54 @@ public class Utils {
 				System.getProperty("user.dir"), "src/main/resources", "log4j.xml");
 		initializeLogger(defaultLog4JPropertiesFilePath);
 	}
+
+	private StringBuilder sb = new StringBuilder(512 * 1024);
+
+	@SuppressWarnings("unused")
+	private String escape(String value) {
+		sb.setLength(0);
+		int offset = 0;
+		while (offset < value.length()) {
+			int codePoint = value.codePointAt(offset);
+			escape(codePoint);
+			offset += Character.charCount(codePoint);
+		}
+		return sb.toString();
+	}
+
+	// origin:
+	// https://github.com/dhatim/fastexcel/blob/master/fastexcel-writer/src/main/java/org/dhatim/fastexcel/Writer.java
+	// Formats the char with relevant XML escaping. Invalid characters in XML 1.0
+	// are
+	private void escape(int c) {
+		if (!(c == 0x9 || c == 0xa || c == 0xD || (c >= 0x20 && c <= 0xd7ff)
+				|| (c >= 0xe000 && c <= 0xfffd) || (c >= 0x10000 && c <= 0x10ffff))) {
+			return;
+		}
+		switch (c) {
+		case '<':
+			sb.append("&lt;");
+			break;
+		case '>':
+			sb.append("&gt;");
+			break;
+		case '&':
+			sb.append("&amp;");
+			break;
+		case '\'':
+			sb.append("&apos;");
+			break;
+		case '"':
+			sb.append("&quot;");
+			break;
+		default:
+			if (c > 0x7e || c < 0x20) {
+				sb.append("&#x").append(Integer.toHexString(c)).append(';');
+			} else {
+				sb.append((char) c);
+			}
+			break;
+		}
+	}
+
 }
