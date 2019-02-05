@@ -531,9 +531,10 @@ __SWET__is licensed under Apache License, Version 2.0
 
 #### Existing Selenium Test Generation recorders and plugins
 
+  * [Katalon Studio overbview (in Russian)](http://www.software-testing.ru/library/testing/testing-automation/2551-katalon-studio), official memo covering [Katalon Studio GUI Linux version](https://docs.katalon.com/katalon-studio/docs/katalon-studio-gui-beta-for-linux.html)
   * [Muse Test Framework](https://github.com/ChrisLMerrill/muse), [Muse examples](https://github.com/ChrisLMerrill/muse-examples),  [Muse IDE](https://github.com/ChrisLMerrill/muse-pageobjects)
   * [Bromiomi browser based framework for running automated integration and end-to-end tests](https://github.com/hristo-vrigazov/bromium)
-  * [alibabba/uirecorder](https://github.com/alibaba/uirecorder)
+  * [alibaba/uirecorder](https://github.com/alibaba/uirecorder)
   * [top 10 test automation instruments](http://automated-testing.info/t/top-10-instrumentov-avtomatizaczii-testirovaniya-2018/17404)(in russian)
   * [links in the Selenium IDE retirement memo](https://blog.testproject.io/2017/09/03/farewell-selenium-ide/)
   * [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)
