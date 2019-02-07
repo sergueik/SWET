@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.*;
 // during a long running process
 // using org.eclipse.swt.custom.BusyIndicator .
 
-
 // based on:
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/DemonstratesBusyIndicator.htm
 
@@ -53,12 +52,8 @@ final class BusyIndicatorEx {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				button.setText("Running...");
-				// use org.eclipse.swt.custom.BusyIndicator to toggle to a Busy Cursor
-				// during a long running process.
 				BusyIndicator.showWhile(button.getDisplay(),
 						new SleepThread(SLEEP_TIME));
-
-				// Thread has completed; reset the button's text
 				button.setText("Press to Start");
 			}
 		});
