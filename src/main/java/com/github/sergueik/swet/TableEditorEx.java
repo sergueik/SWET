@@ -44,8 +44,11 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * TestSuite Excel export Table Viewer class for Selenium WebDriver Elementor Tool (SWET)
+ * 
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
+// some based on
+// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableEditor.htm
 public class TableEditorEx {
 
 	private static Table table;
