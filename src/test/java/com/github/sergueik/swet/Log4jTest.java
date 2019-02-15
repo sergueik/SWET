@@ -36,10 +36,10 @@ public class Log4jTest {
 	// @Before
 
 	@Test
-	public void sampleLog4Jtest() {
+	public void sampleLog4jtest() {
 		Sample sample = new Sample();
-		logger.debug("sampleLog4Jtest (debug) done.");
-		logger.info("sampleLog4Jtest (info) done.");
+		logger.debug("sampleLog4jtest (debug) done.");
+		logger.info("sampleLog4jtest (info) done.");
 	}
 
 	private static class Sample {
