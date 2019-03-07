@@ -578,7 +578,9 @@ __SWET__is licensed under Apache License, Version 2.0
   * [jedi-tester/Ext2POI](https://github.com/jedi-tester/Ext2POI)
   * [free java license-management projects](http://freshmeat.sourceforge.net/tags/license-management)
   * [Hamcrest tutorial](http://www.vogella.com/tutorials/Hamcrest/article.html)
-
+  * [Autoit documentation](https://www.autoitscript.com/autoit3/docs/introduction.htm)
+  * [Autoit JNA wrapper](https://github.com/midorlo/JNAutoIt)
+  * [Autoit COM jva bridge](https://github.com/accessrichard/autoitx4java)
 ### Note
 
 [Swet](http://www.urbandictionary.com/define.php?term=swet&defid=6820405) - according to 

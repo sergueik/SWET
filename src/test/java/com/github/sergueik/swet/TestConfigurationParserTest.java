@@ -16,6 +16,11 @@ import static org.junit.Assert.*;
 // just for resolving method 'containsInAnyOrder'
 import static org.hamcrest.Matchers.*;
 
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.containsString;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -63,6 +68,19 @@ public class TestConfigurationParserTest {
 	public void orderSensitiveTest() {
 		// order-sensitive
 		assertThat(result.toArray(), is(expected));
+	}
+
+	@Test
+	public void iterateAnyOfTest() {
+		for (Object resultItem : result) {
+			// only works with small sets
+			// will be failing with
+			// Expected: (is "A1" or is "A2" or is "A3" or is "B1" or is "B2" or is
+			// "B3")
+			// but: was "C1"
+			assertThat(resultItem, anyOf(is(expected[0]), is(expected[1]),
+					is(expected[2]), is(expected[3]), is(expected[4]), is(expected[5])));
+		}
 	}
 
 	// https://www.javaworld.com/article/2074689/core-java/hamcrest-containing-matchers.html
