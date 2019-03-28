@@ -480,7 +480,7 @@ __SWET__is licensed under Apache License, Version 2.0
 
 #### SWT
 
-  * [main SWT snippets directory](https://www.eclipse.org/swt/snippets/)
+  * [main SWT snippets directory](https://www.eclipse.org/swt/snippets)
   * [SWT examples on javased.com](http://www.javased.com/?api=org.eclipse.swt.widgets.FileDialog)
   * [SWT - Tutorial by Lars Vogel, Simon Scholz](http://www.vogella.com/tutorials/SWT/article.html)
   * [Opal Project (SWT new widgets library) by Laurent Caron](https://github.com/lcaron/opal)
@@ -489,7 +489,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [swt Ruby gem](https://github.com/danlucraft/swt)
   * [fab1an/appkit toolkit for swt app design](https://github.com/fab1an/appkit)
   * [SWT dependency repositories](http://stackoverflow.com/questions/5096299/maven-project-swt-3-5-dependency-any-official-public-repo)
-  * [SWT jar ANT helper](http://mchr3k.github.io/swtjar/)
+  * [SWT jar ANT helper](http://mchr3k.github.io/swtjar)
   * [Examples](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/CatalogSWT-JFace-Eclipse.htm)
   * [Examples](https://github.com/ReadyTalk/avian-swt-examples)
   * [swt-bling](https://github.com/ReadyTalk/swt-bling)
@@ -511,6 +511,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
   * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
   * [SWING to SWT transformation tool](https://github.com/xgdsmileboy/SWING-SWT-Transformation)
+
   * [SWT custom components](https://github.com/SWTCustomComponents/SWTCustomComponents)
   * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
   * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
@@ -551,6 +552,8 @@ __SWET__is licensed under Apache License, Version 2.0
   * [ChroPath for Firefox (claims to be compatible only with FF 48+)](https://addons.mozilla.org/en-US/firefox/addon/chropath-for-firefox/)
   * [Catchpoint Script Recorder (alternative download of version 1.9.5 (ondjkacanajgdlnhcnpiapajjpgilplo), no longer in App Store)](https://www.crx4chrome.com/crx/49424/)
   * [FireBreath cross-platform browser plugin framework](https://github.com/firebreath/FireBreath) see also [](https://www.firebreath.org/)
+  * [UI Recorder (nodejs)](https://github.com/alibaba/uirecorder)
+
 #### Selenium Locator Strategies
 
   * [Choosing Effective XPaths](http://toolsqa.com/selenium-webdriver/choosing-effective-xpath/)
@@ -579,8 +582,10 @@ __SWET__is licensed under Apache License, Version 2.0
   * [free java license-management projects](http://freshmeat.sourceforge.net/tags/license-management)
   * [Hamcrest tutorial](http://www.vogella.com/tutorials/Hamcrest/article.html)
   * [Autoit documentation](https://www.autoitscript.com/autoit3/docs/introduction.htm)
-  * [Autoit JNA wrapper](https://github.com/midorlo/JNAutoIt)
+  * [Autoit JNA wrapper](https://github.com/midorlo/JNAutoIt), also forked. 
   * [Autoit COM jva bridge](https://github.com/accessrichard/autoitx4java)
+  * [Mock server](https://github.com/jamesdbloom/mockserver)
+  
 ### Note
 
 [Swet](http://www.urbandictionary.com/define.php?term=swet&defid=6820405) - according to 
