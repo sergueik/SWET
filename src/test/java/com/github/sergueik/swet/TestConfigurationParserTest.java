@@ -72,8 +72,11 @@ public class TestConfigurationParserTest {
 
 	@Test
 	public void iterateAnyOfTest() {
+		// origin: https://github.com/junit-team/junit4/blob/master/src/test/java/org/junit/experimental/categories/CategoryTest.java
+		// see also: https://www.programcreek.com/java-api-examples/index.php?api=org.hamcrest.core.AnyOf
 		for (Object resultItem : result) {
-			// only works with small sets
+			// this expectation tailored to small sets
+			// http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/core/AnyOf.html
 			// will be failing with
 			// Expected: (is "A1" or is "A2" or is "A3" or is "B1" or is "B2" or is
 			// "B3")
