@@ -52,7 +52,7 @@
     <selenium.version>3.13.0</selenium.version>
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
-    <snakeyaml.version>1.23</snakeyaml.version>
+    <snakeyaml.version>1.24</snakeyaml.version>
     <!--   <build_os>win64</build_os> -->
   </properties>
   <dependencies>
