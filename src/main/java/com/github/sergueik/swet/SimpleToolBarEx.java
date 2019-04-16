@@ -1,7 +1,7 @@
 package com.github.sergueik.swet;
 
 /**
- * Copyright 2014 - 2018 Serguei Kouzmine
+ * Copyright 2014 - 2019 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -637,7 +637,7 @@ public class SimpleToolBarEx {
 						// NOTE: on OSX, one has to use archaic version of Selenium jar
 						// where NoSuchSessionException is not yet defined, but this code
 						// still needs to compile therefore commenting next line
-					// } catch (org.openqa.selenium.NoSuchSessionException e) {
+						// } catch (org.openqa.selenium.NoSuchSessionException e) {
 						// possibly closing the application
 						break;
 					} catch (WebDriverException e) {
@@ -659,11 +659,11 @@ public class SimpleToolBarEx {
 			String payload = null;
 			try {
 				payload = utils.getPayload();
-			// NOTE: on OSX, one has to use archaic version of Selenium jar
-			// where NoSuchSessionException is not yet defined, but this code
-			// still needs to compile therefore commenting next line
-		// 	} catch (NoSuchSessionException e) {
-		 	} catch (Exception e) {
+				// NOTE: on OSX, one has to use archaic version of Selenium jar
+				// where NoSuchSessionException is not yet defined, but this code
+				// still needs to compile therefore commenting next line
+				// } catch (NoSuchSessionException e) {
+			} catch (Exception e) {
 				waitingForData = false;
 				break;
 			}
@@ -991,6 +991,8 @@ public class SimpleToolBarEx {
 
 		AsyncDataCollectionListener(ToolItem parentToolItem) {
 			this.parentToolItem = parentToolItem;
+			// cannot easily get SimpleToolBarEx parent app through getParent() calls
+			// chain.
 			parentApp = (SimpleToolBarEx) parentToolItem.getData("Application");
 		}
 

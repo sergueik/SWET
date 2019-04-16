@@ -1,7 +1,7 @@
 package com.github.sergueik.swet;
 
 /**
- * Copyright 2014 - 2018 Serguei Kouzmine
+ * Copyright 2014 - 2019 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -723,9 +723,9 @@ public class Utils {
 		return sb.toString();
 	}
 
-	// origin:
+	// based on:
 	// https://github.com/abhishek8908/selenium-drivers-download-plugin/blob/master/src/main/java/com/github/abhishek8908/util/DriverUtil.java
-	public static String readProperty(String propertyName) {
+	public static String readProperty(String propertyName, String propertyFile) {
 		String resourcePath = "";
 		try {
 			resourcePath = Thread.currentThread().getContextClassLoader()
@@ -739,8 +739,7 @@ public class Utils {
 		}
 		Configuration config = null;
 		try {
-			config = new PropertiesConfiguration(
-					resourcePath + "application.properties");
+			config = new PropertiesConfiguration(resourcePath + propertyFile);
 
 			Configuration extConfig = ((PropertiesConfiguration) config)
 					.interpolatedConfiguration();
@@ -748,6 +747,10 @@ public class Utils {
 		} catch (ConfigurationException e) {
 			return null;
 		}
+	}
+
+	public static String readProperty(String propertyName) {
+		return readProperty(propertyName, "application.properties");
 	}
 
 	// TODO: array

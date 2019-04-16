@@ -1,4 +1,7 @@
 package com.github.sergueik.swet;
+/**
+ * Copyright 2018 - 2019 Serguei Kouzmine
+ */
 
 import java.io.BufferedReader;
 import java.io.File;

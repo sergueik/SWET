@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2018 Serguei Kouzmine
+ * Copyright 2014 - 2019 Serguei Kouzmine
  */
 
 import java.io.File;
@@ -106,6 +106,7 @@ public class BrowserDriver {
 		} else if (browser.equals("edge")) {
 			driver = new EdgeDriver(capabilities);
 		} else if (browser.equals("chrome")) {
+			// Exception in thread "main" java.lang.NoSuchMethodError: com.google.common.base.Preconditions.checkState(ZLjava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V at org.openqa.selenium.remote.service.DriverService.findExecutable(DriverService.java:125)
 			driver = new ChromeDriver(capabilities);
 		} else if (browser.equals("internet explorer")) {
 			driver = new InternetExplorerDriver(capabilities);
@@ -283,7 +284,13 @@ public class BrowserDriver {
 			System.err.println("Exception (ignored) " + e.toString());
 		}
 		capabilities.setBrowserName(DesiredCapabilities.chrome().getBrowserName());
-		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+		// debugging
+		try {
+			// capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+			// surprisingly the exception get caught but thrown again.
+		} catch (Exception e) {
+			System.err.println("Exception (ignored): " + e.toString());
+		}
 		capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
 		return capabilities;
 	}

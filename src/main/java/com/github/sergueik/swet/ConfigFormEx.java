@@ -1,5 +1,9 @@
 package com.github.sergueik.swet;
 
+/**
+ * Copyright 2014 - 2019 Serguei Kouzmine
+ */
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 

@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2018 Serguei Kouzmine
+ * Copyright 2014 - 2019 Serguei Kouzmine
  */
 
 import static org.junit.Assert.assertArrayEquals;
@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThat;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -39,9 +40,6 @@ import com.google.gson.GsonBuilder;
 
 import com.github.sergueik.swet.Utils;
 import com.github.sergueik.swet.OSUtils;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.containsString;
 
 @SuppressWarnings("deprecation")
 public class OSUtilsAndWinRegistryTest {

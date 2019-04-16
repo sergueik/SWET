@@ -1,4 +1,7 @@
 package com.github.sergueik.swet;
+/**
+ * Copyright 2014 - 2019 Serguei Kouzmine
+ */
 
 // NOTE: the org.apache.log4j.Category 
 // has been deprecated and needs to be replaced by the org.apache.log4jLogger

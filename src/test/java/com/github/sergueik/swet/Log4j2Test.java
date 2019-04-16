@@ -1,4 +1,7 @@
 package com.github.sergueik.swet;
+/**
+ * Copyright 2014 - 2019 Serguei Kouzmine
+ */
 
 // for jvm arguments. Must have "-DAPP_LOG_ROOT=c:/temp"
 // can also assert if the -Dfile.encoding=UTF-8 argument is passed into surefile plugin properly
