@@ -103,6 +103,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- added just to confirm the project.local repository usage -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-opera-driver</artifactId>
+      <version>2.53.1</version>
+    </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-all</artifactId>
@@ -511,6 +517,11 @@
     </profile>
   </profiles>
   <repositories>
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file:${project.basedir}/repo</url>
+    </repository>
     <repository>
       <id>ossrh</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
