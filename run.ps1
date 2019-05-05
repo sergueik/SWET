@@ -33,7 +33,7 @@ if ($env:TOOLS_DIR -ne $null) {
 if ($env:MAVEN_VERSION -ne $null) {
   $MAVEN_VERSION = $env:MAVEN_VERSION
 } else {
-  $MAVEN_VERSION = '3.5.0'
+  $MAVEN_VERSION = '3.6.1'
 }
 if ($env:JAVA_VERSION -ne $null) {
   $JAVA_VERSION = $env:JAVA_VERSION

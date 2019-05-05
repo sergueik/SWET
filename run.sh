@@ -48,7 +48,7 @@ then
   M2=$(mdfind -onlyin "${HOME}/Downloads" -name mvn | sed -n 's|^\(.*\)/mvn$|\1|p'|head -1)
 
   if [ -z $M2 ] ; then
-    MAVEN_VERSION='3.3.9'
+    MAVEN_VERSION='3.6.1'
     export M2_HOME="$HOME/Downloads/apache-maven-$MAVEN_VERSION"
     export M2="$M2_HOME/bin"
   else
