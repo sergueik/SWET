@@ -51,6 +51,7 @@ public class YamlHelper {
 	public static Map<String, Map<String, String>> loadData(String fileName) {
 		if (yaml == null) {
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			options.setExplicitStart(true);
 			yaml = new Yaml(options);
 		}
 
@@ -71,6 +72,7 @@ public class YamlHelper {
 	public static Map<String, String> loadHelp(String fileName) {
 		if (yaml == null) {
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			options.setExplicitStart(true);
 			yaml = new Yaml(options);
 		}
 		Map<String, String> data = new HashMap<>();
@@ -88,6 +90,7 @@ public class YamlHelper {
 	public static Configuration loadConfiguration(String fileName) {
 		if (yaml == null) {
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			options.setExplicitStart(true);
 			yaml = new Yaml(options);
 		}
 		Configuration config = null;
@@ -114,6 +117,7 @@ public class YamlHelper {
 	public static void saveConfiguration(Object config, String fileName) {
 		if (yaml == null) {
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			options.setExplicitStart(true);
 			yaml = new Yaml(options);
 		}
 		/*
