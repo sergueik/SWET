@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Text;
 // http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableEditor.htm
 public class TableEditorEx {
 
-	private static TableItem checkedItem = null;
 	private static Table table;
 	private static Display display;
 	private static Shell shell;
@@ -132,16 +131,11 @@ public class TableEditorEx {
 
 		List<String> sortedSteps = utils.sortSteps(testData, "CommandId",
 				"ElementStepNumber");
-		// http://www.java2s.com/Tutorial/Java/0280__SWT/TableWithCheckBoxCell.htm
-		// http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/DemonstratesCellEditors.htm
 
-		table = new Table(tableComposite,
-				SWT.CHECK | SWT.LEFT | SWT.BORDER | SWT.MULTI);
+		table = new Table(tableComposite, /* SWT.CHECK | */ SWT.BORDER | SWT.MULTI);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		// see also:
-		// http://qaru.site/questions/1487998/how-to-find-index-of-swt-table-column
 		for (int titleItem = 0; titleItem < columnHeaders.length; titleItem++) {
 			TableColumn column = new TableColumn(table, SWT.NULL);
 			column.setText(columnHeaders[titleItem]);
@@ -176,19 +170,6 @@ public class TableEditorEx {
 		final TableEditor editor = new TableEditor(table);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
-		table.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (event.detail == SWT.CHECK) {
-					checkedItem = (TableItem) event.item;
-					checkedItem.setChecked(checkedItem.getChecked());
-					System.err.println("Checkbox: " + checkedItem.toString()
-					/* will contain index like : "TableItem {2}" */ + " "
-							+ checkedItem.getChecked() + " " + table
-									.getSelectionIndex() /* will return index after a row was selected, -1 otherwise*/ );
-
-				}
-			}
-		});
 		table.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent(Event event) {
 				Rectangle clientArea = table.getClientArea();
@@ -510,4 +491,5 @@ public class TableEditorEx {
 			tc.pack();
 		}
 	}
+
 }

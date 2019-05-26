@@ -47,6 +47,8 @@ public class YamlHelperTest {
 	private static String internalConfiguration = String.format(
 			"%s/src/main/resources/%s", System.getProperty("user.dir"),
 			"internalConfiguration.yaml");
+	// found character '\t(TAB)' that cannot start any token. (Do not use \t(TAB)
+	// for indentation)
 	private static List<String> keywordList = new ArrayList<>();
 	private static Object[] keywordArray = new Object[] {}; // empty
 	private static List<String> supportedKeywordList = new ArrayList<>();

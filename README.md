@@ -553,6 +553,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Catchpoint Script Recorder (alternative download of version 1.9.5 (ondjkacanajgdlnhcnpiapajjpgilplo), no longer in App Store)](https://www.crx4chrome.com/crx/49424/)
   * [FireBreath cross-platform browser plugin framework](https://github.com/firebreath/FireBreath) see also [](https://www.firebreath.org/)
   * [UI Recorder (nodejs)](https://github.com/alibaba/uirecorder)
+  * [AutonomiQ - Test Data  / Test Script Generation - commercial](https://autonomiq.io/) 
 
 #### Selenium Locator Strategies
 
