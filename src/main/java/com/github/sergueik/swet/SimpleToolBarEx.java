@@ -606,47 +606,53 @@ public class SimpleToolBarEx {
 	// http://www.vogella.com/tutorials/EclipseJobs/article.html#using-syncexec-and-asyncexec
 	public Thread detectPageChange(WebDriver driver,
 			Map<String, Boolean> browserStatus) {
-		final String URL = driver.getCurrentUrl();
+		try {
+			final String URL = driver.getCurrentUrl();
 
-		return new Thread() {
-			public void run() {
+			return new Thread() {
+				public void run() {
 
-				while (true) {
-					if ((boolean) browserStatus.get("closed")) {
-						break;
-					}
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					try {
-						if (driver.getCurrentUrl().indexOf(URL) != 0) {
-							logger.info("Signaling URL change.");
-							browserStatus.replace("runaway", true);
-
-							pageExploreTool.getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									showEnabled(pageExploreTool);
-									app.showEnabled(saveTool);
-								}
-							});
+					while (true) {
+						if ((boolean) browserStatus.get("closed")) {
 							break;
 						}
-						// NOTE: on OSX, one has to use archaic version of Selenium jar
-						// where NoSuchSessionException is not yet defined, but this code
-						// still needs to compile therefore commenting next line
-						// } catch (org.openqa.selenium.NoSuchSessionException e) {
-						// possibly closing the application
-						break;
-					} catch (WebDriverException e) {
-						// possibly closing the application
-						break;
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						try {
+							if (driver.getCurrentUrl().indexOf(URL) != 0) {
+								logger.info("Signaling URL change.");
+								browserStatus.replace("runaway", true);
+
+								pageExploreTool.getDisplay().asyncExec(new Runnable() {
+									@Override
+									public void run() {
+										showEnabled(pageExploreTool);
+										app.showEnabled(saveTool);
+									}
+								});
+								break;
+							}
+							// NOTE: on OSX, one has to use archaic version of Selenium jar
+							// where NoSuchSessionException is not yet defined, but this code
+							// still needs to compile therefore commenting next line
+							// } catch (org.openqa.selenium.NoSuchSessionException e) {
+							// possibly closing the application
+							break;
+						} catch (WebDriverException e) {
+							// possibly closing the application
+							break;
+						}
 					}
 				}
-			}
-		};
+			};
+		} catch (java.lang.NullPointerException e) {
+			// NOTE: java.lang.ExceptionInInitializerError
+			ExceptionDialogEx.getInstance().render(e);
+			return (Thread) null;
+		}
 	}
 
 	private Map<String, String> addElementLocatorInformation() {
@@ -719,12 +725,14 @@ public class SimpleToolBarEx {
 					.setScriptTimeout(30, TimeUnit.SECONDS);
 
 			driver.get(baseURL);
+
 			// prevent the customer from launching multiple instances
 			// showEnabled(launchTool);
 			if (!osName.startsWith("mac")) {
 				// TODO: add a sorry dialog for Mac / Safari, any OS / Firefox
 				// combinations
 			}
+			// throw new Exception("Exception handling test");
 			return true;
 		} catch (Exception e) {
 			ExceptionDialogEx.getInstance().render(e);
@@ -1004,7 +1012,11 @@ public class SimpleToolBarEx {
 				@Override
 				public void run() {
 					SimpleToolBarEx.browserStatus.put("runaway", false);
-					parentApp.detectPageChange(driver, browserStatus).start();
+					Thread pageChangeWacherThread = parentApp.detectPageChange(driver,
+							browserStatus);
+					if (pageChangeWacherThread != null) {
+						pageChangeWacherThread.start();
+					}
 					parentToolItem.getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {

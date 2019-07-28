@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.omg.SendingContext.RunTime;
 
 import com.github.sergueik.swet.Utils;
 
@@ -26,23 +27,36 @@ import org.eclipse.swt.SWTException;
 
 public class ExceptionDialogEx {
 
-	private MultiStatus status;
 	private Shell shell = null;
-	private Display display = null;
 	private static boolean debug = false;
-	private static Utils utils = Utils.getInstance();
-	private static ExceptionDialogEx instance = new ExceptionDialogEx();
+	private static final Utils utils = Utils.getInstance();
+	private static final ExceptionDialogEx instance = new ExceptionDialogEx();
+
+	public static void setDebug(boolean debug) {
+		ExceptionDialogEx.debug = debug;
+	}
 
 	public static ExceptionDialogEx getInstance() {
 		return instance;
 	}
 
-	private static void testFunction() throws Exception {
-		throw new Exception(
-				"This is a test exception from " + utils.readManifestVersion());
+	private static void testFunction1() throws Exception {
+		testFunction2();
+	}
+
+	private static void testFunction2() throws Exception {
+		testFunction3();
+	}
+
+	// throwing exception from a function to illustrate the calling stack
+	private static void testFunction3() throws Exception {
+		throw new Exception("This is a test exception by "
+				+ instance.getClass().getName() + " " + utils.readManifestVersion());
 	}
 
 	public void render(Throwable e) {
+
+		MultiStatus status;
 		// Collect the exception stack trace
 		Exception eCause = (Exception) e.getCause();
 		if (eCause != null) {
@@ -53,10 +67,14 @@ public class ExceptionDialogEx {
 		} else {
 			status = createMultiStatus(e.getLocalizedMessage(), e);
 		}
-		ErrorDialog.openError(shell, "Error", "Exception thrown", status);
+		ErrorDialog.openError(shell, "Error", "Exception thrown by "
+				+ instance.getClass().getName() + " " + utils.readManifestVersion()
+		/* "Exception thrown" */, status);
+
 	}
 
 	private ExceptionDialogEx() {
+		Display display = null;
 		try {
 			display = Display.getCurrent();
 		} catch (SWTException e) {
@@ -109,7 +127,7 @@ public class ExceptionDialogEx {
 	public static void main(String[] arg) {
 		debug = true;
 		try {
-			testFunction();
+			testFunction1();
 		} catch (Exception e) {
 			// when using in SWT application,
 			// need to defer initialization to after the application is started
