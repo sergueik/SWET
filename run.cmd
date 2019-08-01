@@ -24,14 +24,16 @@ set VERBOSE=true
 
 set APP_NAME=swet
 set APP_VERSION=0.0.10-SNAPSHOT
-set APP_PACKAGE=com.github.sergueik.swet
+REM if "%APP_PACKAGE%"=="" set APP_PACKAGE=com.github.sergueik.swet
 set DEFAULT_MAIN_CLASS=SimpleToolBarEx
 
 call :CALL_JAVASCRIPT /project/artifactId
 set APP_NAME=%VALUE%
 
+if NOT "%APP_PACKAGE%"=="" goto :app_package_set_explicitly
 call :CALL_JAVASCRIPT /project/groupId
 set APP_PACKAGE=%VALUE%
+:app_package_set_explicitly
 
 call :CALL_JAVASCRIPT /project/version
 set APP_VERSION=%VALUE%

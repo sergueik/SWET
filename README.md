@@ -486,6 +486,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Opal Project (SWT new widgets library) by Laurent Caron](https://github.com/lcaron/opal)
   * [Nebula - Supplemental Widgets for SWT](https://github.com/eclipse/nebula)
   * [danlucraft/jruby-swt-cookbook](https://github.com/danlucraft/jruby-swt-cookbook)
+  * Misc. [SWT widgets](https://github.com/greipadmin/greip), in particular, the `StyledLabel`
   * [swt Ruby gem](https://github.com/danlucraft/swt)
   * [fab1an/appkit toolkit for swt app design](https://github.com/fab1an/appkit)
   * [SWT dependency repositories](http://stackoverflow.com/questions/5096299/maven-project-swt-3-5-dependency-any-official-public-repo)
@@ -498,20 +499,22 @@ __SWET__is licensed under Apache License, Version 2.0
   * [SWT Single Jar Packager](https://github.com/mchr3k/swtjar)
   * [SWT custom preference dialog](https://github.com/prasser/swtpreferences) - needs too recent versions of SWT and JFace
   * [SWT multiple choice dialogs](https://github.com/prasser/swtchoices)
-  * [Misc JFace/SWT UI elements and utils](https://github.com/Albertus82/JFaceUtils)
-  * [SWT System Tray](https://github.com/dorkbox/SystemTray)
+  * [Misc JFace/SWT UI elements and utils](https://github.com/Albertus82/JFaceUtils)
+  * [SWT System Tray](https://github.com/dorkbox/SystemTray)
+  * [Chromium widget for SWT](https://github.com/maketechnology/chromium.swt) 
   * [Console](https://github.com/dorkbox/Console)
   * [Notify](https://github.com/dorkbox/Notify)
   * [System Tray](https://github.com/Vladimir-Novick/System-Tray)
   * [SWT/WMI](https://github.com/ctron/wmisample)
   * [SWT Tools](https://github.com/bp-FLN/SWT-Tools)
   * [SWTools](https://github.com/Sanglinard26/SWTools)
+  * [SWT Button conrol with a drop down menu](https://github.com/SubashJanarthanan/SWT_Button_DropDown)
   * [vogellacompany/swt-custom-widgets](https://github.com/vogellacompany/swt-custom-widgets) eclipse plugin
   * [SWT Browser component based recorder](https://github.com/itspanzi/swt-browser-recorder-spike)
   * [Joptions Pane examples](http://alvinalexander.com/java/java-joptionpane-examples-tutorials-dialogs)
   * [Haixing-Hu/swt-widgets](https://github.com/Haixing-Hu/swt-widgets/wiki/Dialog)
-  * [SWING to SWT transformation tool](https://github.com/xgdsmileboy/SWING-SWT-Transformation)
-
+  * [SWING to SWT transformation tool](https://github.com/xgdsmileboy/SWING-SWT-Transformation)
+  * [SWT UI described in JSON](https://github.com/milanaleksic/baobab)
   * [SWT custom components](https://github.com/SWTCustomComponents/SWTCustomComponents)
   * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
   * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
@@ -532,10 +535,11 @@ __SWET__is licensed under Apache License, Version 2.0
 
 #### Existing Selenium Test Generation recorders and plugins
 
-  * [Katalon Studio overbview (in Russian)](http://www.software-testing.ru/library/testing/testing-automation/2551-katalon-studio), official memo covering [Katalon Studio GUI Linux version](https://docs.katalon.com/katalon-studio/docs/katalon-studio-gui-beta-for-linux.html)
+  * [Katalon Studio overview (in Russian)](http://www.software-testing.ru/library/testing/testing-automation/2551-katalon-studio), official memo covering [Katalon Studio GUI Linux version](https://docs.katalon.com/katalon-studio/docs/katalon-studio-gui-beta-for-linux.html)
   * [Muse Test Framework](https://github.com/ChrisLMerrill/muse), [Muse examples](https://github.com/ChrisLMerrill/muse-examples),  [Muse IDE](https://github.com/ChrisLMerrill/muse-pageobjects)
   * [Bromiomi browser based framework for running automated integration and end-to-end tests](https://github.com/hristo-vrigazov/bromium)
   * [alibaba/uirecorder](https://github.com/alibaba/uirecorder)
+  * [selenium2/webdriver test script recorder](https://github.com/fudax/selenium_recorder), uses Swing
   * [top 10 test automation instruments](http://automated-testing.info/t/top-10-instrumentov-avtomatizaczii-testirovaniya-2018/17404)(in russian)
   * [links in the Selenium IDE retirement memo](https://blog.testproject.io/2017/09/03/farewell-selenium-ide/)
   * [CognizantQAHub/Cognizant-Intelligent-Test-Scripter](https://github.com/CognizantQAHub/Cognizant-Intelligent-Test-Scripter)

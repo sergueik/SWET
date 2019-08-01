@@ -82,6 +82,8 @@ import com.github.sergueik.swet.Utils;
  * 
  * @since 1.0
  */
+// origin:
+// https://github.com/cosbi-research/SWTCustomComponents/blob/master/src/custom/swt/widgets/PopupDialog.java
 public class PopupDialog extends Window {
 
 	private static String osName = OSUtils.getOsName();
@@ -1495,7 +1497,7 @@ public class PopupDialog extends Window {
 	 *            color assigned
 	 */
 	private void applyBackgroundColor(Color color, Control control,
-			List<Object>exclusions) {
+			List<Object> exclusions) {
 		if (!exclusions.contains(control)) {
 			control.setBackground(color);
 		}
@@ -1572,7 +1574,7 @@ public class PopupDialog extends Window {
 	 * @return the List of controls
 	 */
 	// workaround for warning:
-	// found raw type: java.util.List 
+	// found raw type: java.util.List
 	// missing type arguments for generic class java.util.List<E>
 	protected List<Object> getBackgroundColorExclusions() {
 		List<Object> list = new ArrayList<Object>(2);
