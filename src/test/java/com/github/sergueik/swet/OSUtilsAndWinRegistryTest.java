@@ -6,7 +6,6 @@ package com.github.sergueik.swet;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertThat;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
@@ -34,6 +33,7 @@ import org.json.JSONObject;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.AnyOf.anyOf;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

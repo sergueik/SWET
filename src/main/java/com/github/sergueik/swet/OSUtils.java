@@ -172,6 +172,7 @@ public class OSUtils {
 				? getVersionInfo(installedBrowsers.get(browserName))[3] : 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<String> findInstalledBrowsers() {
 		if (System.getProperty("os.arch").contains("64")) {
 			is64bit = true;

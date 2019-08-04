@@ -33,12 +33,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TypedListener;
 
+// origin: http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableTree.htm
 // based on: http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/DemonstratesTableTreeTableTree.htm
+//TODO: compare with org.eclipse.swt.custom.TableTree
 
+@SuppressWarnings("unused")
 public class ManageableTableTreeEx {
-
-	// origin: http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/SWTTableTree.htm
-	// TODO: compare with org.eclipse.swt.custom.TableTree
 
 	private static class TableTree extends Composite {
 
