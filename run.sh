@@ -9,12 +9,26 @@ DEFAULT_MAIN_CLASS='SimpleToolBarEx'
 which xmllint > /dev/null
 
 if [  $? -eq  0 ] ; then
-  APP_VERSION=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'version' ]/text()" pom.xml)
-  PACKAGE=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'groupId' ]/text()" pom.xml)
-  APP_NAME=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'artifactId' ]/text()" pom.xml)
-  DEFAULT_MAIN_CLASS=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'properties' ]/*[local-name() = 'mainClass']/text()" pom.xml)
+  echo 'Missing xmllint'
+  exit 1
 fi
 
+if [ -z "${APP_VERSION}" ]
+then
+  APP_VERSION=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'version' ]/text()" pom.xml)
+fi
+if [ -z "${PACKAGE}" ]
+then
+  PACKAGE=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'groupId' ]/text()" pom.xml)
+fi
+if [ -Z "${APP_NAME}" ]
+then
+  APP_NAME=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'artifactId' ]/text()" pom.xml)
+fi
+if [ -z "${DEFAULT_MAIN_CLASS}" ]
+then
+  DEFAULT_MAIN_CLASS=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'properties' ]/*[local-name() = 'mainClass']/text()" pom.xml)
+fi
 MAIN_CLASS=${1:-$DEFAULT_MAIN_CLASS}
 
 DOWNLOAD_EXTERNAL_JAR=false

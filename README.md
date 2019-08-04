@@ -518,6 +518,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [SWT custom components](https://github.com/SWTCustomComponents/SWTCustomComponents)
   * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
   * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
+  * [Kitten](https://github.com/uniquejava/KittenBox) - fully functional SWT applicaion
 
 #### Eclipse Plugins
   * [Eclipse Plugin documentation](https://github.com/vtrao/Eclipse-Plugin/tree/master/Articles)

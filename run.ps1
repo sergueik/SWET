@@ -90,10 +90,12 @@ if ($PACKAGE -eq $null ){
       select-xml -xml $project -XPath '/a:project/a:groupId' `
         -Namespace @{'a'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
   } else {
+    # use VB-style MS XML traversatl DSL
     $PACKAGE = $project.'project'.'groupId'
   }
-  write-debug ('PACKAGE={0}' -f $PACKAGE)
 }
+
+write-debug ('PACKAGE={0}' -f $PACKAGE)
 
 
 if ($DEFAULT_MAIN_CLASS -eq $null ){
@@ -103,29 +105,32 @@ if ($DEFAULT_MAIN_CLASS -eq $null ){
       # use local-name() in xpath, like with xmlint
       select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="mainClass"]' ).node.'#text'
   } else {
+    # use VB-style MS XML traversatl DSL
     $DEFAULT_MAIN_CLASS = $project.'project'.'properties'.'mainClass'
   }
-  write-debug ('DEFAULT_MAIN_CLASS={0}' -f $DEFAULT_MAIN_CLASS)
 }
+write-debug ('DEFAULT_MAIN_CLASS={0}' -f $DEFAULT_MAIN_CLASS)
 
 if ($APP_VERSION -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
     $APP_VERSION = ( select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="version"]' ).node.'#text'
   } else {
+    # use VB-style MS XML traversatl DSL
     $APP_VERSION = $project.'project'.'version'
   }
-  write-debug ('APP_VERSION={0}' -f $APP_VERSION)
 }
+write-debug ('APP_VERSION={0}' -f $APP_VERSION)
 
 if ($APP_NAME -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
     $APP_NAME = (select-xml -xml $project -XPath '/dom:project/dom:artifactId' `
       -Namespace @{'dom'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
   } else {
+    # use VB-style MS XML traversatl DSL
     $APP_NAME = $project.'project'.'artifactId'
   }
-  write-debug ('APP_NAME={0}' -f $APP_NAME)
 }
+write-debug ('APP_NAME={0}' -f $APP_NAME)
 
 if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
   $DEPENDENCIES.Keys | foreach-object {
