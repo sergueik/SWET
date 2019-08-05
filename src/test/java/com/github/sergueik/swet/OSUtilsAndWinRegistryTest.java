@@ -71,7 +71,7 @@ public class OSUtilsAndWinRegistryTest {
 	public void registryReadZoomTest() {
 		int zoom = OSUtils.getZoom();
 		assertThat(zoom, notNullValue());
-		assertThat(zoom, anyOf(equalTo(100000), equalTo(-1)));
+		assertThat(zoom, anyOf(equalTo(100000), equalTo(80000), equalTo(-1)));
 		// NOTE: possibly after a cold reboot:
 		// Expected: <100000>
 		// but: was <-1>

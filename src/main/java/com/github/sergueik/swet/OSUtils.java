@@ -10,9 +10,13 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import static java.lang.System.err;
+import static java.lang.System.out;
+
 import java.util.prefs.Preferences;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,18 +51,27 @@ public class OSUtils {
 	 * Private constructor to prevent instantiation.
 	 */
 	private OSUtils() {
-		throw new AssertionError("OSUtils is a utility class with static methods. "
-				+ " The OSUtils object cannot be instantiated");
+		throw new AssertionError(
+				"OSUtils utility class with static methods and cannot be instantiated");
 	}
 
 	private static String osName = null;
 	private static boolean is64bit = false;
-	private static Map<String, String> installedBrowsers;
+	private static Map<String, String> installedBrowsers = null;
+	private static Map<String, int[]> browserVersionInfo = new HashMap<>();
+
+	// for
+	private static boolean debug = false;
+
+	public void setDebug(boolean value) {
+		this.debug = value;
+	}
 
 	public static String getOsName() {
 		if (osName == null) {
 			osName = System.getProperty("os.name").toLowerCase();
-			System.err.println("OS Name: " + osName);
+			if (debug)
+				err.println("OS Name: " + osName);
 			if (osName.startsWith("windows")) {
 				osName = "windows";
 			}
@@ -137,42 +150,88 @@ public class OSUtils {
 				? installedBrowsers.get(browserName) : null;
 	}
 
-	public static boolean isInstalled(String browserName) {
+	public static boolean isInstalled(String browser) {
 		if (installedBrowsers == null) {
 			findInstalledBrowsers();
 		}
-		return installedBrowsers.containsKey(browserName);
+		return installedBrowsers.containsKey(browser);
 	}
 
-	public static String getVersion(String browserName) {
-		if (!isInstalled(browserName))
+	private static int[] getBrowserVersionInfo(String browser) {
+
+		if (browserVersionInfo == null
+				|| !browserVersionInfo.containsKey(browser)) {
+			if (debug)
+				err.println("Processing browser " + browser);
+			int[] versionInfo = getVersionInfo(installedBrowsers.get(browser));
+			if (debug)
+				err.println("Adding version info for " + browser + " "
+						+ Arrays.asList(versionInfo));
+			browserVersionInfo.put(browser, versionInfo);
+		} else {
+			if (debug)
+				err.println(
+						"getBrowserVersionInfo returning cached value for " + browser);
+		}
+
+		return browserVersionInfo.get(browser);
+	}
+
+	public static String getVersion(String browser) {
+		if (!isInstalled(browser))
 			return null;
-		int[] version = getVersionInfo(installedBrowsers.get(browserName));
-		return String.valueOf(version[0]) + "." + String.valueOf(version[1]) + "."
-				+ String.valueOf(version[2]) + "." + String.valueOf(version[3]);
+		if (debug)
+			err.println("get version for: " + browser);
+		int[] versionInfo = getBrowserVersionInfo(browser);
+		return String.valueOf(versionInfo[0]) + "." + String.valueOf(versionInfo[1])
+				+ "." + String.valueOf(versionInfo[2]) + "."
+				+ String.valueOf(versionInfo[3]);
 	}
 
-	public static int getMajorVersion(String browserName) {
-		return isInstalled(browserName)
-				? getVersionInfo(installedBrowsers.get(browserName))[0] : 0;
+	public static int getMajorVersion(String browser) {
+		if (isInstalled(browser)) {
+			if (debug)
+				err.println("get major version for: " + browser);
+			int[] versionInfo = getBrowserVersionInfo(browser);
+			return versionInfo[0];
+		} else {
+			return 0;
+		}
 	}
 
-	public static int getMinorVersion(String browserName) {
-		return isInstalled(browserName)
-				? getVersionInfo(installedBrowsers.get(browserName))[1] : 0;
+	public int getMinorVersion(String browser) {
+		if (isInstalled(browser)) {
+			if (debug)
+				err.println("get minor version for: " + browser);
+			int[] versionInfo = getBrowserVersionInfo(browser);
+			return versionInfo[1];
+		} else {
+			return 0;
+		}
 	}
 
-	public static int getBuildVersion(String browserName) {
-		return isInstalled(browserName)
-				? getVersionInfo(installedBrowsers.get(browserName))[2] : 0;
+	public int getBuildVersion(String browser) {
+		if (isInstalled(browser)) {
+			if (debug)
+				err.println("get build version for: " + browser);
+			int[] versionInfo = getBrowserVersionInfo(browser);
+			return versionInfo[2];
+		} else {
+			return 0;
+		}
 	}
 
-	public static int getRevisionVersion(String browserName) {
-		return isInstalled(browserName)
-				? getVersionInfo(installedBrowsers.get(browserName))[3] : 0;
+	public static int getRevisionVersion(String browser) {
+		if (isInstalled(browser)) {
+			if (debug)
+				err.println("get revision version for: " + browser);
+			int[] versionInfo = getBrowserVersionInfo(browser);
+			return versionInfo[3];
+		} else {
+			return 0;
+		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<String> findInstalledBrowsers() {
 		if (System.getProperty("os.arch").contains("64")) {
 			is64bit = true;
@@ -186,28 +245,35 @@ public class OSUtils {
 		for (String path : pathsList) {
 			String[] tmp = (path.split("\\\\"));
 			String browser = tmp[tmp.length - 1];
+			if (debug)
+				err.println("Cached path to: " + browser + " is " + path);
 			installedBrowsers.put(browser, path);
 		}
-		return new ArrayList(installedBrowsers.keySet());
+		return new ArrayList<String>(installedBrowsers.keySet());
 	}
 
+	// https://java-native-access.github.io/jna/4.2.0/com/sun/jna/platform/win32/package-summary.html
+	// https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/Version.java
+	// https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/VersionUtil.java
+	// https://msdn.microsoft.com/en-us/library/windows/desktop/aa381058(v=vs.85).aspx
 	@SuppressWarnings("unused")
-	private static int[] getVersionInfo(String path) {
+	private static int[] getVersionInfo(String browserFilePath) {
 		if (installedBrowsers == null) {
 			findInstalledBrowsers();
 		}
 		IntByReference dwDummy = new IntByReference();
 		dwDummy.setValue(0);
-
+		if (debug)
+			err.println("Get version of the file " + browserFilePath);
 		int versionlength = com.sun.jna.platform.win32.Version.INSTANCE
-				.GetFileVersionInfoSize(path, dwDummy);
+				.GetFileVersionInfoSize(browserFilePath, dwDummy);
 
 		byte[] bufferarray = new byte[versionlength];
 		Pointer lpData = new Memory(bufferarray.length);
 		PointerByReference lplpBuffer = new PointerByReference();
 		IntByReference puLen = new IntByReference();
 		boolean fileInfoResult = com.sun.jna.platform.win32.Version.INSTANCE
-				.GetFileVersionInfo(path, 0, versionlength, lpData);
+				.GetFileVersionInfo(browserFilePath, 0, versionlength, lpData);
 		boolean verQueryVal = com.sun.jna.platform.win32.Version.INSTANCE
 				.VerQueryValue(lpData, "\\", lplpBuffer, puLen);
 
@@ -240,15 +306,61 @@ public class OSUtils {
 		for (File rootPath : rootPaths) {
 			for (String defPath : defaultPath) {
 				File exe = new File(rootPath + defPath);
-				System.err.println("Inspecting browser path: " + rootPath + defPath);
-				if (exe.exists()) {
-					// browsers.add(exe.toString());
-					String browser = exe.toString().replaceAll("\\\\", "/")
-							.replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
-					System.err.println("Found browser: " + browser);
+				if (debug)
+					System.err.println("Inspecting browser path: " + rootPath + defPath);
+				if (exe.exists())
+					browsers.add(exe.toString());
+			}
+		}
+		return browsers;
+	}
+
+	// http://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java
+	private static List<String> findBrowsersInRegistryWithExec() {
+
+		String regPath = is64bit
+				? "SOFTWARE\\Wow6432Node\\Clients\\StartMenuInternet\\"
+				: "SOFTWARE\\Clients\\StartMenuInternet\\";
+
+		List<String> browsers = new ArrayList<>();
+		List<String> values = new ArrayList<>();
+		try {
+			Process findBrowsers = Runtime.getRuntime()
+					.exec("reg.exe query \"" + "HKEY_LOCAL_MACHINE\\" + regPath + " \"");
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(findBrowsers.getInputStream()));
+			String inputLine;
+
+			// read browser names
+			while ((inputLine = in.readLine()) != null) {
+				if (inputLine.contains(regPath))
+					values.add(inputLine);
+			}
+			in.close();
+			// read browser paths (through `defaulticon`)
+			for (String value : values) {
+				Process findPath = Runtime.getRuntime()
+						.exec("reg.exe query \"" + value + "\\DefaultIcon\"");
+				BufferedReader ins = new BufferedReader(
+						new InputStreamReader(findPath.getInputStream()));
+				String result = "";
+				String inLine;
+				while ((inLine = ins.readLine()) != null) {
+					result = result.concat(inLine);
+				}
+				ins.close();
+				final String REGSTR_TOKEN = "REG_SZ";
+				int p = result.indexOf(REGSTR_TOKEN);
+				if (p == -1)
+					continue;
+				String browser = ((result.substring(p + REGSTR_TOKEN.length()).trim())
+						.split(","))[0];
+				if (browser != null && new File(browser).exists()) {
 					browsers.add(browser);
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return browsers;
 	}
@@ -271,12 +383,11 @@ public class OSUtils {
 								regPath + "\\" + browserName + "\\shell\\open\\command", "")
 						.replace("\"", "");
 				if (path != null && new File(path).exists()) {
-					// System.err.println("Browser path: " + path);
-					// browsers.add(exe.toString());
 					String browser = path.replaceAll("\\\\", "/")
 							.replaceAll("^(?:.+)/([^/]+)(.exe)$", "$1$2");
-					System.err.println("Found browser: " + browser);
-					browsers.add(browser);
+					if (debug)
+						err.println("Found browser: " + browser);
+					browsers.add(path.toString());
 				}
 			}
 		} catch (Exception e) {
@@ -294,7 +405,7 @@ public class OSUtils {
 			value = Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER,
 					"Software\\Microsoft\\Internet Explorer\\Zoom", "ZoomFactor");
 		} catch (com.sun.jna.platform.win32.Win32Exception e) {
-			System.err.println("Exception (ignored):  " + e.toString());
+			err.println("Exception (ignored):  " + e.toString());
 			// The system cannot find the file specified
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -360,7 +471,7 @@ public class OSUtils {
 				}
 			}
 		} catch (Exception e) {
-			System.err.println("Exception (ignored): " + e.getMessage());
+			err.println("Exception (ignored): " + e.getMessage());
 		}
 	}
 
@@ -402,7 +513,8 @@ public class OSUtils {
 				processName = "/usr/bin/env";
 				processArgs = new String[] { processName, browserAppName, url };
 			}
-			System.err.println("Running: " + String.join(" ", processArgs));
+			if (debug)
+				err.println("Running: " + String.join(" ", processArgs));
 			// Process process = runtime.exec(String.join(" ", processArgs));
 			Process process = runtime.exec(processArgs);
 
@@ -431,7 +543,7 @@ public class OSUtils {
 				}
 			}
 		} catch (Exception e) {
-			System.err.println("Exception (ignored): " + e.getMessage());
+			err.println("Exception (ignored): " + e.getMessage());
 		}
 	}
 
@@ -456,7 +568,7 @@ public class OSUtils {
 			findCommand = appName;
 		}
 		String[] processArgs = new String[] { processName, findCommand };
-		System.err.println("Running: " + String.join(" ", processArgs));
+		err.println("Running: " + String.join(" ", processArgs));
 		try {
 			Runtime runtime = Runtime.getRuntime();
 
@@ -499,7 +611,7 @@ public class OSUtils {
 				status = true;
 			}
 		} catch (Exception e) {
-			System.err.println("Exception (ignored): " + e.getMessage());
+			err.println("Exception (ignored): " + e.getMessage());
 		}
 		return status;
 	}
