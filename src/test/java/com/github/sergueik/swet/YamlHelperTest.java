@@ -147,6 +147,36 @@ public class YamlHelperTest {
 						*/
 	}
 
+	/*
+	 Expected: (
+	 a collection containing "missing key 2" and 
+	 a collection containing "missing key 1" and 
+	 a collection containing "Saving and restoring sessions" 
+	 and a collection containing "missing key 3" 
+	 and a collection containing "Testsuite Program creation" 
+	 and a collection containing "Keyword-driven Framework flow creation")
+	   but: 
+	 a collection containing "missing key 2" 
+	 was 
+	 "Saving and restoring sessions", was "Testsuite Program creation", was "Keyword-driven Framework flow creation"
+	 */
+	@Ignore
+	@Test
+	public void hasItemsErrorRportTest() {
+		Set<String> example1 = help.keySet();
+		HashSet<String> example2 = new HashSet<>();
+
+		for (String key : help.keySet()) {
+			example2.add(key);
+		}
+		example2.add("missing key 1");
+		example2.add("missing key 2");
+		example2.add("missing key 3");
+		String[] example3 = new String[example2.size()];
+		example2.toArray(example3);
+		assertThat(example1, hasItems((String[]) example3));
+	}
+
 	// containsInAnyOrder methoda list mismatches,
 	// NOTE: containsInAnyOrder would fail when
 	// first arg has elements absent from the second arg
@@ -251,7 +281,7 @@ public class YamlHelperTest {
 				new ArrayList<Object>(Arrays.asList(helpTopics))));
 	}
 
-	// NOTE: argument signature is String... the array will work
+	// NOTE: the (String...) method argument signature - array will work
 	@Test
 	public void arrayContainingInAnyOrderTest() {
 		String[] example1 = { "one", "two", "three", "four" };
@@ -269,11 +299,30 @@ public class YamlHelperTest {
 	@Test
 	public void arrayContainingInAnyOrderFailingTest() {
 		String[] str1 = { "one", "two", "three" };
-		String[] str2 = { "threee", "one", "one" };
+		String[] str2 = { "three", "one", "one" };
 		assertThat("Checking array", str1,
 				is(not(arrayContainingInAnyOrder(str2))));
-		help.put("extra row", "something");
+		help.put("extra row", null);
+		help.put("another row", null);
+		help.put("something else", null);
 		assertThat("Checking array", help.keySet().toArray(),
 				is(not(arrayContainingInAnyOrder((Object[]) helpTopics))));
+	}
+
+	// NOTE: poor failure reporting: only
+	// Not matched: "extra row" is listed in
+	// AssertionError "Checking not matching arrays"
+	@Ignore
+	@Test
+	public void arrayContainingErrorReportingTest() {
+		String[] str1 = { "one", "two", "three" };
+		String[] str2 = { "three", "one", "one" };
+		assertThat("Checking array", str1,
+				is(not(arrayContainingInAnyOrder(str2))));
+		help.put("extra row", null);
+		help.put("another row", null);
+		help.put("something else", null);
+		assertThat("Checking not matching arrays", help.keySet().toArray(),
+				is(arrayContainingInAnyOrder((Object[]) helpTopics)));
 	}
 }
