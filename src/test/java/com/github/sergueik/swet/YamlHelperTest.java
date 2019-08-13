@@ -19,6 +19,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+// https://self-learning-java-tutorial.blogspot.com/2018/03/hamcrest-arraycontaininginanyorder.html
+import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -112,10 +114,9 @@ public class YamlHelperTest {
 		}
 	}
 
-	// NOTE: `containsAll` takes sets and does not show the outliers
+	// NOTE: containsAll method operates sets and does not show the outliers
 	@Test
 	public void supportedKeywordsContainsKeywordTableTest() {
-
 		assertTrue(supportedKeywords.containsAll(keywordTable.keySet()));
 		assertFalse(keywordTable.keySet().containsAll(supportedKeywords));
 	}
@@ -129,7 +130,8 @@ public class YamlHelperTest {
 				.containsAll(new HashSet<Object>(supportedKeywordList)));
 	}
 
-	// NOTE: `hasItems` prints information about mismatches in a funny way
+	// NOTE: hasItems method reports about mismatches in a funny way
+	// http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html
 	@Test
 	public void supportedKeywordsHasItemsKeywordTableTest() {
 		assertThat(new HashSet<Object>(supportedKeywordList),
@@ -145,7 +147,8 @@ public class YamlHelperTest {
 						*/
 	}
 
-	// `containsInAnyOrder` shows the mismatches, but appear to fail when
+	// containsInAnyOrder methoda list mismatches,
+	// NOTE: containsInAnyOrder would fail when
 	// first arg has elements absent from the second arg
 	@Test
 	public void loadKeywordTableTest() {
@@ -248,4 +251,29 @@ public class YamlHelperTest {
 				new ArrayList<Object>(Arrays.asList(helpTopics))));
 	}
 
+	// NOTE: argument signature is String... the array will work
+	@Test
+	public void arrayContainingInAnyOrderTest() {
+		String[] example1 = { "one", "two", "three", "four" };
+		String[] example2 = Arrays.copyOf(example1, example1.length);
+		Arrays.sort(example2, Collections.reverseOrder());
+		assertThat("Checking example array and direct arguments", example1,
+				arrayContainingInAnyOrder("one", "two", "three", "four"));
+		assertThat("Checking array", example2, arrayContainingInAnyOrder(example1));
+
+		assertThat("Checking Help Topics and help keyset", help.keySet().toArray(),
+				arrayContainingInAnyOrder(helpTopics));
+	}
+
+	// @Ignore
+	@Test
+	public void arrayContainingInAnyOrderFailingTest() {
+		String[] str1 = { "one", "two", "three" };
+		String[] str2 = { "threee", "one", "one" };
+		assertThat("Checking array", str1,
+				is(not(arrayContainingInAnyOrder(str2))));
+		help.put("extra row", "something");
+		assertThat("Checking array", help.keySet().toArray(),
+				is(not(arrayContainingInAnyOrder((Object[]) helpTopics))));
+	}
 }
