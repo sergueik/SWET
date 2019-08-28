@@ -100,11 +100,14 @@
       </exclusions>
     </dependency>
     <!-- added just to confirm the project.local repository usage -->
+    <!-- wil fail on a vanilla machine -->
+    <!--
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-opera-driver</artifactId>
       <version>2.53.1</version>
     </dependency>
+-->
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-all</artifactId>

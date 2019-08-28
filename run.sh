@@ -1,27 +1,26 @@
 #!/bin/bash
 # set -x
 
-APP_NAME='swet'
-APP_VERSION='0.0.9-SNAPSHOT'
-PACKAGE='com.github.sergueik.swet'
-DEFAULT_MAIN_CLASS='SimpleToolBarEx'
-
 which xmllint > /dev/null
 
-if [  $? -eq  0 ] ; then
+if [ $? -ne 0 ] ; then
   echo 'Missing xmllint'
   exit 1
 fi
 
+echo 'Loading parameters from the project "pom.xml"'
+
 if [ -z "${APP_VERSION}" ]
 then
   APP_VERSION=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'version' ]/text()" pom.xml)
+else 
+  echo "Using provided APP_VERSION=${APP_VERSION}"
 fi
 if [ -z "${PACKAGE}" ]
 then
   PACKAGE=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'groupId' ]/text()" pom.xml)
 fi
-if [ -Z "${APP_NAME}" ]
+if [ -z "${APP_NAME}" ]
 then
   APP_NAME=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'artifactId' ]/text()" pom.xml)
 fi
@@ -32,13 +31,14 @@ fi
 MAIN_CLASS=${1:-$DEFAULT_MAIN_CLASS}
 
 DOWNLOAD_EXTERNAL_JAR=false
-ALIAS='opal'
-JARFILE_VERSION='1.0.4'
-JARFILE="$ALIAS-$JARFILE_VERSION.jar"
-URL="https://github.com/lcaron/${ALIAS}/blob/releases/V$JARFILE_VERSION/${ALIAS}-$JARFILE_VERSION.jar?raw=true"
+
 
 if [[ $DOWNLOAD_EXTERNAL_JAR ]]
 then
+  ALIAS='opal'
+  JARFILE_VERSION='1.0.4'
+  JARFILE="$ALIAS-$JARFILE_VERSION.jar"
+  URL="https://github.com/lcaron/${ALIAS}/blob/releases/V$JARFILE_VERSION/${ALIAS}-$JARFILE_VERSION.jar?raw=true"
   if [[ ! -f "src/main/resources/$JARFILE" ]]
   then
     pushd 'src/main/resources/'
@@ -47,9 +47,11 @@ then
     # https://ftp.mozilla.org/pub/firefox/releases/40.0.3/mac/en-US/
   fi
 fi
+
 if $(uname -s | grep -qi 'Darwin')
 then
 
+  # OSX-specific
   # https://www.java.com/en/download/help/version_manual.xml
   JAVA_VERSION=$('/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java' -version 2>& 1| sed -n 's|^.*"\(.*\)\".*$|\1|p')
   if [ -z $JAVA_VERSION} ]; then
@@ -76,4 +78,6 @@ then
 fi
 
 mvn -Dmaven.test.skip=true package install
+
+# echo "java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS"
 java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS
