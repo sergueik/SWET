@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
+// this import is windows-only
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 // origin:
@@ -61,6 +62,7 @@ public class ButtonSizeEx {
 		int windowTextLength = 512;
 		char[] windowText = new char[windowTextLength];
 		User32 user32 = User32.INSTANCE;
+		// the following code is windows-only
 		HWND hwnd = new HWND();
 		hwnd.setPointer(new Pointer(b.handle));
 		user32.GetWindowText(hwnd, windowText, windowTextLength);
