@@ -1,6 +1,5 @@
 package com.github.sergueik.swet;
 
-
 /**
  * Copyright 2019 Serguei Kouzmine
  */
@@ -130,12 +129,12 @@ public class ExcelWriterTest {
 		}
 
 		sheet.setAutoFilter(CellRangeAddress.valueOf("A1:B" + (valuesInt.size())));
-
 		FileOutputStream outputStream = new FileOutputStream(fileName);
-
 		wb.write(outputStream);
 		wb.close();
 		outputStream.close();
 	}
 
 }
+
+
