@@ -1,4 +1,6 @@
 package com.github.sergueik.swet;
+
+
 /**
  * Copyright 2019 Serguei Kouzmine
  */
@@ -135,4 +137,5 @@ public class ExcelWriterTest {
 		wb.close();
 		outputStream.close();
 	}
+
 }
