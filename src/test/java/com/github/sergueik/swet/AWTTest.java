@@ -80,14 +80,14 @@ public class AWTTest {
 	@Test
 	public void printAllCharactersTest() {
 
-		// print range character codes brute force
+		// print range of character codes brute force
 		for (int code = 17; code < 128; code++) {
 			try {
 				robot.keyPress(code);
 				robot.delay(delay);
 				robot.keyRelease(code);
 			} catch (IllegalArgumentException e) {
-				System.out.println(
+				System.err.println(
 						"Failed to press " + code + " " + KeyEvent.getKeyText(code));
 				// Failed to press 91 Open Bracket
 				// Failed to press 93 Close Bracket
@@ -107,24 +107,25 @@ public class AWTTest {
 
 	private void writeString(String s) {
 		for (int code = 0; code < s.length(); code++) {
-			char _char = s.charAt(code);
-			if (Character.isUpperCase(_char)) {
+			char character = s.charAt(code);
+			if (Character.isUpperCase(character)) {
 				robot.keyPress(KeyEvent.VK_SHIFT);
 			}
 			try {
-				System.err.println("Pressing " + _char);
-				robot.keyPress(_char);
+				System.err.println("Pressing " + character);
+				robot.keyPress(character);
 				sleep(delay2);
-				System.err.println("Releasing " + _char);
-				robot.keyRelease(_char);
+				System.err.println("Releasing " + character);
+				robot.keyRelease(character);
 				// https://stackoverflow.com/questions/29665534/type-a-string-using-java-awt-robots
-				// robot.keyPress(KeyEvent.getExtendedKeyCodeForChar((int) _char));
+				// robot.keyPress(KeyEvent.getExtendedKeyCodeForChar((int) character));
 				//
 			} catch (IllegalArgumentException e) {
-				System.err.println("Failed to press " + KeyEvent.getKeyText(code));
+				System.err.println(
+						"Failed to press " + code + " " + KeyEvent.getKeyText(code));
 				//
 			}
-			if (Character.isUpperCase(_char)) {
+			if (Character.isUpperCase(character)) {
 				robot.keyRelease(KeyEvent.VK_SHIFT);
 			}
 		}
