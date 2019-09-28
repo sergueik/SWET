@@ -149,6 +149,10 @@ public class Utils {
 	// application
 	public String getResourceURI(String resourceFileName) {
 		try {
+			if (debug) {
+				System.err.println("Getting resource URI for: " + resourceFileName);
+			}
+
 			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
 					.toURI();
 			if (debug) {
@@ -166,8 +170,12 @@ public class Utils {
 	}
 
 	public String getResourcePath(String resourceFileName) {
-		return String.format("%s/src/main/resources/%s",
+		final String resourcePath = String.format("%s/src/main/resources/%s",
 				System.getProperty("user.dir"), resourceFileName);
+		if (debug) {
+			System.err.println("Project based resource path: " + resourcePath);
+		}
+		return resourcePath;
 	}
 
 	public String writeDataJSON(Map<String, String> data, String defaultPayload) {
@@ -730,12 +738,15 @@ public class Utils {
 		try {
 			resourcePath = Thread.currentThread().getContextClassLoader()
 					.getResource("").getPath();
-			System.err.println(
-					String.format("The application resource path: \"%s\"", resourcePath));
+			System.err.println(String.format(
+					"The running application resource path: \"%s\"", resourcePath));
 		} catch (NullPointerException e) {
-			System.err.println(
-					"Exception for resourcePath: " + resourcePath + " (ignored) :");
-			e.printStackTrace();
+			System.err.println("Exception (ignored): " + e.toString());
+			/*
+			if (debug) {
+				e.printStackTrace();
+			}
+			*/
 		}
 		Configuration config = null;
 		try {
@@ -750,6 +761,7 @@ public class Utils {
 	}
 
 	public static String readProperty(String propertyName) {
+		System.err.println("x");
 		return readProperty(propertyName, "application.properties");
 	}
 
@@ -834,6 +846,8 @@ public class Utils {
 	}
 
 	public String getPayload() {
+		// java.uil.Random
+		// java.security.SecureRandom
 		return executeScript(getSWDCommand).toString();
 	}
 

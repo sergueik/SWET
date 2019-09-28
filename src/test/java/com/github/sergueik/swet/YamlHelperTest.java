@@ -312,6 +312,8 @@ public class YamlHelperTest {
 	// NOTE: poor failure reporting: only
 	// Not matched: "extra row" is listed in
 	// AssertionError "Checking not matching arrays"
+	// https://stackoverflow.com/questions/156503/how-do-you-assert-that-a-certain-exception-is-thrown-in-junit-4-tests/156868
+	// @Test(expected = AssertionError.class)
 	@Ignore
 	@Test
 	public void arrayContainingErrorReportingTest() {

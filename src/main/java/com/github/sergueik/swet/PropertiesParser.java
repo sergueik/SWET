@@ -27,7 +27,7 @@ public class PropertiesParser {
 		String username = propertiesMap.get("username");
 		String password =  propertiesMap.get("password");
 		StringBuilder loggingSb = new StringBuilder();
-		Formatter formatter = new Formatter(loggingSb, Locale.US)
+		Formatter formatter = new Formatter(loggingSb, Locale.US);
 	*/
 
 	public static Map<String, String> getProperties(final String fileName) {
