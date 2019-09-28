@@ -112,7 +112,7 @@ exit /b
 :CALL_JAVASCRIPT
 
 REM This script extracts project g.a.v a custom property from pom.xml using mshta.exe and DOM selectSingleNode method
-set "SCRIPT=mshta.exe "javascript:{"
+set "SCRIPT=javascript:{"
 set "SCRIPT=%SCRIPT% var fso = new ActiveXObject('Scripting.FileSystemObject');"
 set "SCRIPT=%SCRIPT% var out = fso.GetStandardStream(1);"
 set "SCRIPT=%SCRIPT% var fh = fso.OpenTextFile('pom.xml', 1, true);"
@@ -128,9 +128,9 @@ set "SCRIPT=%SCRIPT%   out.Write(xpath + '=' + xmlnode.text);"
 set "SCRIPT=%SCRIPT% } else {"
 set "SCRIPT=%SCRIPT%   out.Write('ERR');"
 set "SCRIPT=%SCRIPT% }"
-set "SCRIPT=%SCRIPT% close();}""
+set "SCRIPT=%SCRIPT% close();}"
 
-for /F "tokens=2 delims==" %%_ in ('%SCRIPT% 1 ^| more') do set VALUE=%%_
+for /F "tokens=2 delims==" %%_ in ('mshta.exe "%SCRIPT%" 1 ^| more') do set VALUE=%%_
 ENDLOCAL
 exit /b
 
