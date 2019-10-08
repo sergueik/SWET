@@ -44,6 +44,7 @@
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+    <!-- runs ant build.xml scripts embedded in the POM -->
     <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -530,7 +531,7 @@
     <repository>
       <id>osgeo</id>
       <name>osgeo repo</name>
-      <url>http://download.osgeo.org/webdav/geotools/</url>
+      <url>https://download.osgeo.org/webdav/geotools/</url>
     </repository>
     <repository>
       <id>seasar</id>
@@ -547,7 +548,10 @@
     </repository>
     <repository>
       <id>central</id>
-      <url>http://central.maven.org/maven2/</url>
+      <!--
+      https://central.maven.org/maven2/ Error 403 Use https://repo1.maven.org
+      -->
+      <url>https://repo1.maven.org/maven2/</url>
     </repository>
     <repository>
       <id>project.local</id>
