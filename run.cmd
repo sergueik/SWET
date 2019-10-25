@@ -26,6 +26,7 @@ set APP_NAME=swet
 set APP_VERSION=0.0.10-SNAPSHOT
 REM if "%APP_PACKAGE%"=="" set APP_PACKAGE=com.github.sergueik.swet
 set DEFAULT_MAIN_CLASS=SimpleToolBarEx
+set SCM_CONNECTION=
 
 call :CALL_JAVASCRIPT /project/artifactId
 set APP_NAME=%VALUE%
@@ -41,6 +42,9 @@ set APP_VERSION=%VALUE%
 call :CALL_JAVASCRIPT /project/properties/mainClass
 set DEFAULT_MAIN_CLASS=%VALUE%
 
+call :CALL_JAVASCRIPT /project/scm/connection
+set SCM_CONNECTION=%VALUE:scm:git:=%
+
 set APP_JAR=%APP_NAME%.jar
 
 if /i "%SKIP_PACKAGE_VERSION%"=="true" goto :SKIP_PACKAGE_VERSION
@@ -54,6 +58,7 @@ call :SHOW_VARIABLE APP_NAME
 call :SHOW_VARIABLE APP_PACKAGE
 call :SHOW_VARIABLE APP_JAR
 call :SHOW_VARIABLE DEFAULT_MAIN_CLASS
+call :SHOW_VARIABLE SCM_CONNECTION
 
 :CONTINUE
 

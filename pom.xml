@@ -8,6 +8,11 @@
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a standalone Java application hosting a browser-based Page Element locator recorder</description>
   <url>https://github.com/sergueik/SWET</url>
+  <scm>
+    <url>https://github.com/sergueik/SWET</url>
+    <connection>scm:git:git@github.com:sergueik/SWET.git</connection>
+    <developerConnection>scm:git:git@github.com:sergueik/SWET.git</developerConnection>
+  </scm>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>
