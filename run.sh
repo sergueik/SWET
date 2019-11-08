@@ -30,8 +30,12 @@ then
 fi
 MAIN_CLASS=${1:-$DEFAULT_MAIN_CLASS}
 
-DOWNLOAD_EXTERNAL_JAR=false
+if [ -z "${SCM_CONNECTION}" ]
+then
+  SCM_CONNECTION=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name()='scm']/*[local-name() = 'connection']/text()" pom.xml | sed  's|scm:git://||')
+fi
 
+DOWNLOAD_EXTERNAL_JAR=false
 
 if [[ $DOWNLOAD_EXTERNAL_JAR ]]
 then

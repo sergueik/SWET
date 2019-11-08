@@ -24,20 +24,26 @@ param(
 try {
   $o = $PSBoundParameters.Values |
   where-object { $_ -ne $MAIN_CLASS } |
-  foreach-object { write-output $_ }
-  $JAVA_ARGS = $o -join ' '
+  foreach-object {
+    write-output $_
+  }
+  $JAVA_ARGS = $o -join ' ';
 } catch [parameterbindingexception]{}
+
 if ($env:TOOLS_DIR -ne $null) {
-  $TOOLS_DIR = $env:TOOLS_DIR
-} else { $TOOLS_DIR = 'c:\java' }
-if ($env:MAVEN_VERSION -ne $null) {
-  $MAVEN_VERSION = $env:MAVEN_VERSION
+  $TOOLS_DIR = $env:TOOLS_DIR;
 } else {
-  $MAVEN_VERSION = '3.6.1'
+  $TOOLS_DIR = 'c:\java';
+}
+if ($env:MAVEN_VERSION -ne $null) {
+  $MAVEN_VERSION = $env:MAVEN_VERSION;
+} else {
+  $MAVEN_VERSION = '3.6.1';
 }
 if ($env:JAVA_VERSION -ne $null) {
   $JAVA_VERSION = $env:JAVA_VERSION
-} else { $JAVA_VERSION = '1.8.0_101'
+} else {
+  $JAVA_VERSION = '1.8.0_101'
 }
 if ($env:JAVA_HOME -eq $null) {
   $env:JAVA_HOME = "${TOOLS_DIR}\jdk${JAVA_VERSION}"
@@ -65,7 +71,7 @@ $DEPENDENCIES = @{
 }
 # download external dependency jars
 $DOWNLOAD_EXTERNAL_JAR = $false
-$DOWNLOAD_EXTERNAL_JAR = $true
+# $DOWNLOAD_EXTERNAL_JAR = $true
 
 # NOTE: powershell / XML is somewhat time consuming. Uncomment as needed
 
@@ -73,6 +79,7 @@ $DOWNLOAD_EXTERNAL_JAR = $true
 # $APP_VERSION = '0.0.10-SNAPSHOT'
 # $PACKAGE = 'com.github.sergueik.swet'
 # $MAIN_CLASS = 'SimpleToolBarEx'
+# $SCM_CONNECTION = $null
 
 write-debug 'Reading the parameters from "pom.xml"'
 if (($PACKAGE -eq $null ) -or ($APP_VERSION -eq $null) -or ($APP_NAME -eq $null ) ){
@@ -131,6 +138,18 @@ if ($APP_NAME -eq $null ){
   }
 }
 write-debug ('APP_NAME={0}' -f $APP_NAME)
+
+if ($SCM_CONNECTION -eq $null ){
+  if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
+    $SCM_CONNECTION = (select-xml -xml $project -XPath '/dom:project/dom:scm/dom:connection' `
+      -Namespace @{'dom'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
+  } else {
+    # use VB-style MS XML traversatl DSL
+    $SCM_CONNECTION = $project.'project'.'scm'.'connection'
+  }
+  $SCM_CONNECTION = $SCM_CONNECTION -replace '^scm:git:', ''
+}
+write-debug ('SCM_CONNECTION={0}' -f $SCM_CONNECTION)
 
 if ($DOWNLOAD_EXTERNAL_JAR -eq $true) {
   $DEPENDENCIES.Keys | foreach-object {
