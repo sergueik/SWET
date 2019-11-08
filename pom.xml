@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.swet</groupId>
   <artifactId>swet</artifactId>
-  <version>0.0.15-SNAPSHOT</version>
+  <version>0.0.16-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a standalone Java application hosting a browser-based Page Element locator recorder</description>
@@ -53,7 +53,7 @@
     <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
-    <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- <opal.version>1.0.9</opal.version> -->
@@ -132,6 +132,11 @@
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>${snakeyaml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.swt</groupId>
+      <artifactId>${eclipse.swt.artifactId}</artifactId>
+      <version>${eclipse.swt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse</groupId>
@@ -395,7 +400,6 @@
                 <echo>Displaying value of 'build_os' property</echo>
                 <echo>[build_os]: ${build_os}</echo>
                 <echo message="build_os = ${build_os}"/>
-                <echo message="eclipse.swt.artifactId = ${eclipse.swt.artifactId}"/>
                 <available file="binaries" property="test.binaries" value=""/>
                 <mkdir dir="binaries"/>
                 <!--
@@ -483,13 +487,6 @@
         <build_os>win32</build_os>
         <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86</eclipse.swt.artifactId>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.swt</groupId>
-          <artifactId>${eclipse.swt.artifactId}</artifactId>
-          <version>${eclipse.swt.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
     <profile>
       <id>windows64</id>
@@ -503,13 +500,6 @@
         <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
         <build_os>win64</build_os>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.swt</groupId>
-          <artifactId>${eclipse.swt.artifactId}</artifactId>
-          <version>${eclipse.swt.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
     <!-- 'profiles.profile.id' must be unique -->
     <profile>
@@ -524,13 +514,6 @@
         <build_os>win64</build_os>
         <eclipse.swt.artifactId>org.eclipse.swt.win32.win32.x86_64</eclipse.swt.artifactId>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.swt</groupId>
-          <artifactId>${eclipse.swt.artifactId}</artifactId>
-          <version>${eclipse.swt.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
     <profile>
       <id>mac64</id>
@@ -546,13 +529,6 @@
         <selenium.version>2.48.0</selenium.version>
         <!-- for Safari extensions, the latest Selenium Driver is 2.48.0. -->
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.swt</groupId>
-          <artifactId>${eclipse.swt.artifactId}</artifactId>
-          <version>${eclipse.swt.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
     <profile>
       <id>unix32</id>
@@ -567,13 +543,6 @@
         <selenium.version>2.53.1</selenium.version>
         <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86</eclipse.swt.artifactId>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.swt</groupId>
-          <artifactId>${eclipse.swt.artifactId}</artifactId>
-          <version>${eclipse.swt.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
     <profile>
       <id>unix64</id>
@@ -587,13 +556,6 @@
         <build_os>unix64</build_os>
         <eclipse.swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</eclipse.swt.artifactId>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.swt</groupId>
-          <artifactId>${eclipse.swt.artifactId}</artifactId>
-          <version>${eclipse.swt.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
   <repositories>
