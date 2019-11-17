@@ -291,8 +291,27 @@
     </dependencies>
   </dependencyManagement>
   <build>
+	  <!--
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>src</testSourceDirectory>
+    -->
+      <!--
+   NOTE: error in eclipse Version: 2019-03 (4.11.0)
+       The declared package "com.github.sergueik.swet" does not match the expected package "main.java.com.github.sergueik.swet", After updating sourceDirectory 
+and testSourceDirectory, still problems with intellisense - solved by deleting and re-importing the project several times. No error in eclipse version Mars.2 Release (4.5.2), probably setting is ignored
+-->
+   <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+ 
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven-antrun-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -384,6 +403,10 @@
           <argLine>-Dfile.encoding=${project.build.sourceEncoding} -DAPP_LOG_ROOT=c:/temp</argLine>
         </configuration>
       </plugin>
+      <!-- https://cduu.wordpress.com/2012/10/17/echo-the-value-of-a-maven-property/ -->
+      <!-- inclusion of the following block leads to error when importing the pom.xml in eclipse:
+No marketplace entries found to handle maven-antrun-plugin:1.8:run in Eclipse. -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -396,19 +419,11 @@
             </goals>
             <configuration>
               <tasks>
-                <!-- https://cduu.wordpress.com/2012/10/17/echo-the-value-of-a-maven-property/ -->
                 <echo>Displaying value of 'build_os' property</echo>
                 <echo>[build_os]: ${build_os}</echo>
                 <echo message="build_os = ${build_os}"/>
                 <available file="binaries" property="test.binaries" value=""/>
                 <mkdir dir="binaries"/>
-                <!--
-                     NOTE:
-                     Ant BuildException has occured: Problem:
-                     mkdir doesn'tupport the "unless" attribute
-                     zip doesn't support the "if" attribute
-                     failed to create task or type target
-                -->
                 <mkdir dir="src/main/resources"/>
                 <zip includes="**" basedir="binaries/" destfile="src/main/resources/native.zip">
                 </zip>
@@ -417,6 +432,7 @@
           </execution>
         </executions>
       </plugin>
+-->
       <!--
       <plugin>
         <groupId>com.mycila</groupId>
