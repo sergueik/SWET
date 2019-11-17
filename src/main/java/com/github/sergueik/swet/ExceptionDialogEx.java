@@ -22,6 +22,7 @@ import org.eclipse.swt.SWTException;
 
 /**
  * Exception dialog for Selenium WebDriver Elementor Tool (SWET)
+ * 
  * @author Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
@@ -30,6 +31,7 @@ public class ExceptionDialogEx {
 	private Shell shell = null;
 	private static boolean debug = false;
 	private static final Utils utils = Utils.getInstance();
+	private static final String manifestVersion = utils.readManifestVersion();
 	private static final ExceptionDialogEx instance = new ExceptionDialogEx();
 
 	public static void setDebug(boolean debug) {
@@ -50,8 +52,7 @@ public class ExceptionDialogEx {
 
 	// throwing exception from a function to illustrate the calling stack
 	private static void testFunction3() throws Exception {
-		throw new Exception("This is a test exception by "
-				+ instance.getClass().getName() + " " + utils.readManifestVersion());
+		throw new Exception("This is a dummy exception thrown by testFunction3");
 	}
 
 	public void render(Throwable e) {
@@ -67,9 +68,20 @@ public class ExceptionDialogEx {
 		} else {
 			status = createMultiStatus(e.getLocalizedMessage(), e);
 		}
-		ErrorDialog.openError(shell, "Error", "Exception thrown by "
-				+ instance.getClass().getName() + " " + utils.readManifestVersion()
-		/* "Exception thrown" */, status);
+		// the following walks the stack, useful to discover the caller during the
+		// regular execution - not so useful with thrower of the exception
+		// https://stackoverflow.com/questions/4065518/java-how-to-get-the-caller-function-name/46590924
+		// https://toster.ru/q/684867
+		StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
+		String originatingMethod = String.format("%s.%s()", stackTraceElement.getClassName(),
+				stackTraceElement.getMethodName());
+		// [0] => getStackTrace
+		// [1] => render
+		// [2] => main
+
+		ErrorDialog.openError(shell, "Exception",
+				"Exception thrown from " + instance.getClass().getName() + " " + manifestVersion
+				/* "Exception thrown" */, status);
 
 	}
 
@@ -88,37 +100,30 @@ public class ExceptionDialogEx {
 		}
 	}
 
-	private static MultiStatus createMultiStatus(String description,
-			Throwable t) {
+	private static MultiStatus createMultiStatus(String description, Throwable t) {
 
 		List<Status> childStatuses = new ArrayList<>();
 
 		for (StackTraceElement stackTrace : t.getStackTrace()) {
 			if (debug) {
-				System.err.println(
-						String.format("Adding stack trace: %s", stackTrace.toString()));
+				System.err.println(String.format("Adding stack trace: %s", stackTrace.toString()));
 			}
 
 			Status status = new Status(IStatus.ERROR,
-					ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
-					stackTrace.toString());
+					ExceptionDialogEx.getInstance().getClass().getPackage().toString(), stackTrace.toString());
 			childStatuses.add(status);
 		}
-		for (StackTraceElement stackTrace : Thread.currentThread()
-				.getStackTrace()) {
+		for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
 			if (debug) {
-				System.err.println(
-						String.format("Adding stack trace: %s", stackTrace.toString()));
+				System.err.println(String.format("Adding stack trace element: %s", stackTraceElement.toString()));
 			}
 			Status status = new Status(IStatus.ERROR,
-					ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
-					stackTrace.toString());
+					ExceptionDialogEx.getInstance().getClass().getPackage().toString(), stackTraceElement.toString());
 			childStatuses.add(status);
 		}
 
 		String summary = (description != null) ? description : t.toString();
-		MultiStatus status = new MultiStatus(
-				ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
+		MultiStatus status = new MultiStatus(ExceptionDialogEx.getInstance().getClass().getPackage().toString(),
 				IStatus.ERROR, childStatuses.toArray(new Status[] {}),
 				(summary.length() > 120) ? summary.substring(0, 120) : summary, t);
 		return status;
