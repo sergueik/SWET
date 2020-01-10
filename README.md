@@ -518,7 +518,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [jGrid - styled SWT grid](https://github.com/GrandmasterTash/jGrid)
   * [Eclipse SWT for Maven Users](https://github.com/maven-eclipse/maven-eclipse.github.io)
   * [Kitten](https://github.com/uniquejava/KittenBox) - fully functional SWT applicaion
-
+  * eclipse [Rich Client Platform](https://www.vogella.com/tutorials/EclipseRCP/article.html) (RCP) tutorial
 #### Eclipse Plugins
   * [Eclipse Plugin documentation](https://github.com/vtrao/Eclipse-Plugin/tree/master/Articles)
   * [java2s](http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/Eclipse-Plugin.htm)
@@ -535,8 +535,10 @@ __SWET__is licensed under Apache License, Version 2.0
 
 #### Existing Selenium Test Generation recorders and plugins
 
+  * [Selenium IDE New gen](https://github.com/SeleniumHQ/selenium-ide/tree/v3/packages) WebExtension code export feature - note, need to switch to `v3` or one of the `code-export` branches to browse the code in github. Currently exportting into Java, C#, Javascript, Ruby, Python
+  * [Katalon Recorder](https://github.com/katalon-studio/katalon-recorder/tree/master/panel/js/katalon/selenium-ide/format/java) supports a number of formatters, likely inherited from old Selenium IDE
   * [Katalon Studio overview (in Russian)](http://www.software-testing.ru/library/testing/testing-automation/2551-katalon-studio), official memo covering [Katalon Studio GUI Linux version](https://docs.katalon.com/katalon-studio/docs/katalon-studio-gui-beta-for-linux.html)
-  * [Muse Test Framework](https://github.com/ChrisLMerrill/muse), [Muse examples](https://github.com/ChrisLMerrill/muse-examples),  [Muse IDE](https://github.com/ChrisLMerrill/muse-pageobjects)
+  * [Muse Test Framework](https://github.com/ChrisLMerrill/muse), [Muse examples](https://github.com/ChrisLMerrill/muse-examples), [Muse IDE](https://github.com/ChrisLMerrill/muse-pageobjects)
   * [Bromiomi browser based framework for running automated integration and end-to-end tests](https://github.com/hristo-vrigazov/bromium)
   * [alibaba/uirecorder](https://github.com/alibaba/uirecorder)
   * [selenium2/webdriver test script recorder](https://github.com/fudax/selenium_recorder), uses Swing
@@ -590,7 +592,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Autoit JNA wrapper](https://github.com/midorlo/JNAutoIt), also forked. 
   * [Autoit COM jva bridge](https://github.com/accessrichard/autoitx4java)
   * [Mock server](https://github.com/jamesdbloom/mockserver)
-  
+  * list of recent APM [vendors](https://stackify.com/application-performance-management-tools/)  
 ### Note
 
 [Swet](http://www.urbandictionary.com/define.php?term=swet&defid=6820405) - according to 
