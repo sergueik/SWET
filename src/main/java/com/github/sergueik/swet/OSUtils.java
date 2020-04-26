@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2018 - 2019 Serguei Kouzmine
+ * Copyright 2018 - 2020 Serguei Kouzmine
  */
 
 import java.io.BufferedReader;
@@ -28,6 +28,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMapped;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 // https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/Advapi32Util.java
@@ -43,8 +44,12 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
 
-// origin: http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java 
+// origin: http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java
 // see also:https://github.com/java-native-access/jna/blob/master/contrib/ntservice/src/jnacontrib/win32/Win32Service.java
+// for mkfifo, see
+// https://www.programcreek.com/java-api-examples/?class=com.sun.jna.Platform&method=isMac
+// https://www.programcreek.com/java-api-examples/?code=DigitalMediaServer%2FDigitalMediaServer%2FDigitalMediaServer-master%2Fsrc%2Fmain%2Fjava%2Fnet%2Fpms%2Fio%2FPipeProcess.java#
+//
 public class OSUtils {
 
 	/**
@@ -123,7 +128,7 @@ public class OSUtils {
 
 		/**
 		 * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
-		 * 
+		 *
 		 * HRESULT SHGetFolderPath( HWND hwndOwner, int nFolder, HANDLE hToken,
 		 * DWORD dwFlags, LPTSTR pszPath);
 		 */
@@ -718,7 +723,7 @@ public class OSUtils {
 			}
 		}
 
-		/**		 * Read value(s) and value name(s) form given key 
+		/**		 * Read value(s) and value name(s) form given key
 		 * @param hkey  HKEY_CURRENT_USER/HKEY_LOCAL_MACHINE
 		 * @param key
 		 * @return the value name(s) plus the value(s)
@@ -981,4 +986,5 @@ public class OSUtils {
 			return result;
 		}
 	}
+
 }

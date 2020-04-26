@@ -41,7 +41,10 @@ import org.junit.Test;
 
 // see also the forum where few initially failing implementations were shown
 // http://software-testing.ru/forum/index.php?/topic/38373-apache-poi-dobavlenie-novoj-stranitcy-v-suschestvuiuschij-fa/
-
+// see also:
+// https://smearg.wordpress.com/2013/01/23/powershell-и-excel-часть-1-заполнение-таблицы/
+// https://powershell.org/forums/topic/dynamically-create-worksheets-in-excel/
+// http://ntcoder.com/bab/2018/01/18/powershell-tidbits-creating-excel-workbook-and-filling-out-data-into-worksheets/
 public class ExcelWriterTest {
 	private static List<String> dummyKeys = new ArrayList<>();
 	private static List<String> dummyValues = new ArrayList<>();
@@ -101,6 +104,23 @@ public class ExcelWriterTest {
 		} else {
 			wb = new XSSFWorkbook();
 		}
+		/*
+		$idx = 1
+		$o = new-object -ComObject 'excel.application'
+		$o.visible = $true
+		$excel = $o.workbooks.add()
+		$excel.worksheets.item(1).delete()
+		
+		@('A1','B2','C3') | foreach-object  {
+		$group = $_
+		$sheet = $excel.worksheets.item($idx)
+		$sheet.name = $group
+		$idx++
+		$excel.worksheets.add($idx)
+		}
+		
+		
+		*/
 		Sheet sheet = wb.getSheet(sheetName) != null ? wb.getSheet(sheetName)
 				: wb.createSheet(sheetName);
 
@@ -129,12 +149,12 @@ public class ExcelWriterTest {
 		}
 
 		sheet.setAutoFilter(CellRangeAddress.valueOf("A1:B" + (valuesInt.size())));
+
 		FileOutputStream outputStream = new FileOutputStream(fileName);
+
 		wb.write(outputStream);
 		wb.close();
 		outputStream.close();
 	}
 
 }
-
-

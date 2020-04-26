@@ -532,10 +532,12 @@ __SWET__is licensed under Apache License, Version 2.0
   * [Thymeleaf](http://www.thymeleaf.org/)
   * [StringTemplate](http://www.stringtemplate.org/)
   * [Protractor page object generator](https://github.com/pageobject-io/pageobject-generator)
+  * [Expression Evaluator](https://github.com/ggrandes/mapexpression) for apache commons-like `${name}` templating
 
 #### Existing Selenium Test Generation recorders and plugins
 
   * [Selenium IDE New gen](https://github.com/SeleniumHQ/selenium-ide/tree/v3/packages) WebExtension code export feature - note, need to switch to `v3` or one of the `code-export` branches to browse the code in github. Currently exportting into Java, C#, Javascript, Ruby, Python
+  * Applitools [Selenium IDE NG](https://applitools.com/blog/why-selenium-ide-2019) promo presentation 
   * [Katalon Recorder](https://github.com/katalon-studio/katalon-recorder/tree/master/panel/js/katalon/selenium-ide/format/java) supports a number of formatters, likely inherited from old Selenium IDE
   * [Katalon Studio overview (in Russian)](http://www.software-testing.ru/library/testing/testing-automation/2551-katalon-studio), official memo covering [Katalon Studio GUI Linux version](https://docs.katalon.com/katalon-studio/docs/katalon-studio-gui-beta-for-linux.html)
   * [Muse Test Framework](https://github.com/ChrisLMerrill/muse), [Muse examples](https://github.com/ChrisLMerrill/muse-examples), [Muse IDE](https://github.com/ChrisLMerrill/muse-pageobjects)
@@ -582,6 +584,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [how to define conditional properties in maven](http://stackoverflow.com/questions/14430122/how-to-define-conditional-properties-in-maven)
   * [eclipse xwt](https://wiki.eclipse.org/XWT_Documentation)
   * [mono/xwt](https://github.com/mono/xwt)
+  * Introduce the GUI program of Java Swing using [small source code examples](https://github.com/aterai/java-swing-tips) - a huge Swing example collection
   * [json2](https://github.com/douglascrockford/JSON-js)
   * [geckodriver](http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/)
   * [jProcesses](https://github.com/profesorfalken/jProcesses)

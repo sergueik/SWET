@@ -74,6 +74,7 @@ public class PropertiesTest {
 	}
 
 	// @Ignore
+	// https://www.baeldung.com/junit-assert-exception
 	@Test(expected = NullPointerException.class)
 	public void failingResourceStreamTest() {
 		utils.setDebug(true);
