@@ -45,7 +45,7 @@
     <skdf_jprotractor.version>0.13-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.12</junit.version>
     <log4j.version>1.2.17</log4j.version>
-    <log4j-core.version>2.11.1</log4j-core.version>
+    <log4j-core.version>2.13.3</log4j-core.version>
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
