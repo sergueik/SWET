@@ -562,6 +562,7 @@ __SWET__is licensed under Apache License, Version 2.0
   * [FireBreath cross-platform browser plugin framework](https://github.com/firebreath/FireBreath) see also [](https://www.firebreath.org/)
   * [UI Recorder (nodejs)](https://github.com/alibaba/uirecorder)
   * [AutonomiQ - Test Data  / Test Script Generation - commercial](https://autonomiq.io/) 
+  * Marathon V5 - Opensource Test Automation for Java/Swing and Java/FX Application [home page](https://marathontesting.com) and github [project](https://github.com/jalian-systems/marathonv5) - commercial
 
 #### Selenium Locator Strategies
 
