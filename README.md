@@ -3,8 +3,7 @@
 <img src="https://github.com/sergueik/SWET/blob/master/src/main/resources/images/document_wrench_color.png" alt="drawing" width="62"/> __Selenium WebDriver Elementor Toolkit__  ( __SWET__  = light , in Russian) is a OS-independent successor to the
 [Selenium WebDriver Page Recorder](https://github.com/dzharii/swd-recorder) (__SWD__) by Dmytro Zharii and author.
 __SWET__ is using [Eclipse Standard Widget Toolkit](https://www.eclipse.org/swt/) with third party [Opal](https://github.com/lcaron/opal) widget library'
-for user interface (instead of Microsoft .Net Windows Forms) and the [Jtwig](http://jtwig.org/documentation/reference) template engine
-instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation.
+for user interface (instead of Microsoft .Net Windows Forms) and the [Jtwig](http://jtwig.org/documentation/reference) template engine instead of [ASP.Net Razor](https://en.wikipedia.org/wiki/ASP.NET_Razor) for code generation. NOTE: the Jtwig template engine project is no longer maintained,the source is still available for cloning at [Jtwig Project github repository](https://github.com/jtwig/jtwig)
 That is just one of the available template exngines - note, __jtwig__ supports the original [PHP Twig](http://twig.sensiolabs.org/doc/2.x/)
 syntax as well.
 
