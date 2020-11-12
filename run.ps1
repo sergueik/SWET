@@ -56,6 +56,7 @@ if ($env:M2 -eq $null) {
 }
 
 $build_clean = [bool]$PSBoundParameters['clean'].IsPresent
+$skip_build = [bool](([System.Environment]::getEnvironmentVariable('SKIP_BUILD', [System.EnvironmentVariableTarget]::User)) -ne $null)
 
 # Clear the environment entry that is created by git bash when starting powershell and ruins Maven 3.5.0 ANSI colors.
 [Environment]::SetEnvironmentVariable('TERM', $null,'Process')

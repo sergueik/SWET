@@ -424,7 +424,7 @@ public class SimpleToolBarEx {
 					"Reloading Configuration Object: " + gson.toJson(configDataObj));
 			configDataObj = new Gson().fromJson(gson.toJson(configDataObj),
 					ConfigData.class);
-			ConfigFormEx o = new ConfigFormEx(Display.getCurrent(), shell);
+			RecorderConfigurationEditor o = new RecorderConfigurationEditor(Display.getCurrent(), shell);
 			o.render();
 			if ((Boolean) shell.getData("updated")) {
 				utils.readData((String) shell.getData("CurrentConfig"),
@@ -787,7 +787,7 @@ public class SimpleToolBarEx {
 				shell.setData("CurrentCommandId", commandId);
 				shell.setData("updated", false);
 				// spawn a separate shell for editing the element attributes
-				ComplexFormEx cs = new ComplexFormEx(Display.getCurrent(), shell);
+				ElementAttributeEditor cs = new ElementAttributeEditor(Display.getCurrent(), shell);
 				for (String key : elementData.keySet()) {
 					logger.info(
 							"Passing to the dialog: " + key + ": " + elementData.get(key));

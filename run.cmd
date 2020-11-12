@@ -92,14 +92,19 @@ if "%SKIP_TEST%"=="" (
 REM Test
 call mvn test 2 > NUL
 ) else (
+if /i NOT "%SKIP_BUILD%" == "true" (
 REM Compile
+
 if /i "%CLEAN%" EQU "clean" (
+  ECHO "DO CLEAN"  
   call mvn -Dmaven.test.skip=true clean package install
 ) else (
+  ECHO "DO INCREMENTAL"  
+
   call mvn -Dmaven.test.skip=true package install
 )
 )
-
+)
 REM Run
 REM NOTE: shift does not modify the %*
 REM The log4j configuration argument seems to be ignored

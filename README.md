@@ -469,7 +469,43 @@ ieDriverPath: c:/java/selenium/IEDriverServer.exe
 ```
 The `username` and `password` entris are not currently used - these are reserved for possible users with accounts on Sauce Labs or browserStack.
 
-License
+### Testing Individual Forms
+One can useshell / cmd script to build and test individual forms (`ElementAttributeEditor`, `RecorderConfigurationEditor`, `ScrolledTextEx` etc.) like
+```cmd
+run.cmd ElementAttributeEditor
+```
+and 
+```powershell
+./run.ps1 ElementAttributeEditor
+```
+and
+```sh
+./run.sh ElementAttributeEditor
+```
+* one can pass form arguments field by field like
+```cmd
+run.cmd ElementAttributeEditor -init -ElementCodeName test123
+```
+or to skip time consuming compilation part one can
+```cmd
+java  -cp "target\swet-0.17.0-SNAPSHOT.jar;target\lib\*"  com.github.sergueik.swet.ElementAttributeEditor -init -ElementSelectedBy ElementCssSelector -ElementCssSelector a#myid -ElementId myid -ElementXPath //div[@someclass]/a
+```
+or
+```cmd
+launch.cmd ElementAttributeEditor -init -ElementSelectedBy ElementCssSelector -ElementCssSelector a#myid -ElementId myid -ElementXPath //div[@someclass]/a
+```
+![Custom Argument init Example](https://github.com/sergueik/SWET/blob/master/screenshots/init_with_custom_arguments.png)
+
+__Note:__
+Powershell is rejecting undeclated arguments and refusing to run e.g.
+```powershell
+ ./run.ps1 ElementAttributeEditor "-init" "-ElementSelectedBy" "ElementCssSelector" "-ElementCssSelector" "a#myid"  "-ElementXPath" "//div[@someclass]/a"
+```
+leads to
+```powershell
+run.ps1 : A positional parameter cannot be foundthat accepts argument '//div[@someclass]/a'.
+```
+### License
 
 __SWET__is licensed under Apache License, Version 2.0
 

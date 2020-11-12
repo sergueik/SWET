@@ -80,8 +80,8 @@ then
   # http://stackoverflow.com/questions/3976342/running-swt-based-cross-platform-jar-properly-on-a-mac
   LAUNCH_OPTS='-XstartOnFirstThread'
 fi
-
-mvn -Dmaven.test.skip=true package install
-
-# echo "java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS"
-java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS
+if [[ $SKIP_BUILD != 'true' ]] ; then
+  mvn -Dmaven.test.skip=true package install
+fi
+echo "java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS" $*
+java $LAUNCH_OPTS -cp target/$APP_NAME-$APP_VERSION.jar:target/lib/* $PACKAGE.$MAIN_CLASS $*
