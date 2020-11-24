@@ -68,13 +68,9 @@ public class LoginDialogEx {
 	}
 
 	/*
-	public LoginDialogVerifier getVerifier() {
-		return verifier;
-	}
-	public void setVerifier(final LoginDialogVerifier value) {
-		verifier = value;
-	}
-	*/
+	 * public LoginDialogVerifier getVerifier() { return verifier; } public void
+	 * setVerifier(final LoginDialogVerifier value) { verifier = value; }
+	 */
 
 	public LoginDialogEx() {
 	}
@@ -87,8 +83,7 @@ public class LoginDialogEx {
 		LoginDialogEx loginDialog = new LoginDialogEx();
 
 		if (loginDialog.open()) {
-			logger.info(String.format("User: %s Password: %s", loginDialog.getLogin(),
-					loginDialog.getPassword()));
+			logger.info(String.format("User: %s Password: %s", loginDialog.getLogin(), loginDialog.getPassword()));
 		} else {
 			logger.info("Login canceled");
 		}
@@ -96,13 +91,10 @@ public class LoginDialogEx {
 
 	public boolean open() {
 		/*
-		if (this.verifier == null) {
-			throw new IllegalArgumentException(
-					"Please set a verifier before opening the dialog box");
-		}
-		*/
-		shell = new Shell(display,
-				SWT.SYSTEM_MODAL | /* SWT.TITLE | */ SWT.BORDER | SWT.RESIZE);
+		 * if (verifier == null) { throw new IllegalArgumentException(
+		 * "Please set a verifier before opening the dialog box"); }
+		 */
+		shell = new Shell(display, SWT.SYSTEM_MODAL | /* SWT.TITLE | */ SWT.BORDER | SWT.RESIZE);
 		// TODO: manage size
 		// https://www.eclipse.org/articles/Article-Understanding-Layouts/Understanding-Layouts.htm
 		// http://www.docjar.org/docs/api/org/eclipse/swt/layout/GridData.html
@@ -114,8 +106,7 @@ public class LoginDialogEx {
 		shell.setLayout(new GridLayout(4, false));
 		shell.addListener(SWT.Resize, rzListener);
 		final Label label = new Label(shell, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL, GridData.BEGINNING, true,
-				false, 4, 1);
+		GridData gridData = new GridData(GridData.FILL, GridData.BEGINNING, true, false, 4, 1);
 		gridData.verticalIndent = 5;
 		gridData.horizontalIndent = 5;
 		label.setLayoutData(gridData);
@@ -132,10 +123,9 @@ public class LoginDialogEx {
 		loginLabel.setLayoutData(gridData);
 		loginLabel.setText("Name");
 
-		final Text loginText = new Text(this.shell, SWT.BORDER);
+		final Text loginText = new Text(shell, SWT.BORDER);
 		loginText.setText(login == null ? "" : login);
-		loginText.setLayoutData(
-				new GridData(GridData.FILL, GridData.END, true, false, 3, 1));
+		loginText.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false, 3, 1));
 		loginText.setFocus();
 		loginText.addModifyListener(new ModifyListener() {
 
@@ -157,8 +147,7 @@ public class LoginDialogEx {
 		passwordText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		// final Text text = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		passwordText.setText(password == null ? "" : password);
-		passwordText.setLayoutData(
-				new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
+		passwordText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
 		passwordText.setEchoChar(new Character((char) 0x2a));
 		logger.debug("Echo character: " + passwordText.getEchoChar());
 
@@ -171,15 +160,14 @@ public class LoginDialogEx {
 				changeButtonOkState();
 			}
 		});
-		final Button displayPasswordCheckBox = new Button(this.shell, SWT.CHECK);
+		final Button displayPasswordCheckBox = new Button(shell, SWT.CHECK);
 
-		gridData = new GridData(GridData.BEGINNING, GridData.CENTER,
-				/* grab excess horizontal space */ true,
+		gridData = new GridData(GridData.BEGINNING, GridData.CENTER, /* grab excess horizontal space */ true,
 				/* grab excess vertical space */ false, 4, 1);
 		gridData.horizontalIndent = 35;
 		displayPasswordCheckBox.setLayoutData(gridData);
 		displayPasswordCheckBox.setText("Display password");
-		displayPasswordCheckBox.setSelection(this.displayPassword);
+		displayPasswordCheckBox.setSelection(displayPassword);
 		displayPasswordCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent selectionEvent) {
@@ -206,10 +194,8 @@ public class LoginDialogEx {
 		buttonOk.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent selectionEvent) {
-				try {/*
-							LoginDialog.this.verifier.authenticate(LoginDialog.this.login,
-							LoginDialog.this.password);
-							*/
+				try {
+					// verifier.authenticate(login, password);
 					returnedValue = true;
 					shell.dispose();
 				} catch (final Exception e) {
@@ -266,7 +252,7 @@ public class LoginDialogEx {
 			switch (event.type) {
 			case SWT.Resize:
 				Point ptSz = shell.getSize();
-				System.out.println("Resize Event received: " + event + " sz=" + ptSz);
+				logger.debug("Resize Event received: " + event + " sz=" + ptSz);
 				if (ptSz.y != stickyHeight) {
 					// stick to fixed height
 					shell.setSize(ptSz.x, stickyHeight);
