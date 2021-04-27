@@ -25,11 +25,11 @@
     <!-- NOTE: do not use dot in the mainClass property -->
     <mainClass>SimpleToolBarEx</mainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <commandline-parser.version>0.2.0-SNAPSHOT</commandline-parser.version>
+    <commandline-parser.version>0.8.0-SNAPSHOT</commandline-parser.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-collections4.version>4.2</commons-collections4.version>
     <commons-exec.version>1.3</commons-exec.version>
-    <commons-io.version>2.5</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <commons-lang3.version>3.3.1</commons-lang3.version>
     <eclipse.swt.version>4.3</eclipse.swt.version>
     <!-- TODO: test with later version e.g. 4.6 -->
@@ -40,10 +40,10 @@
     <hamcrest-all.version>1.3</hamcrest-all.version>
     <java.version>1.8</java.version>
     <jna-platform.version>5.4.0</jna-platform.version>
-    <jprotractor.version>1.12-SNAPSHOT</jprotractor.version>
+    <jprotractor.version>1.13-SNAPSHOT</jprotractor.version>
     <json.version>20170516</json.version>
     <jtwig-core.version>5.87.0.RELEASE</jtwig-core.version>
-    <skdf_jprotractor.version>0.13-SNAPSHOT</skdf_jprotractor.version>
+    <skdf_jprotractor.version>0.14-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.13.1</junit.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j-core.version>2.13.3</log4j-core.version>
@@ -111,6 +111,10 @@
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>		
       </exclusions>
     </dependency>
     <dependency>
@@ -126,6 +130,10 @@
           <groupId>org.seleniumhq.selenium</groupId>
           <artifactId>selenium-server</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>		
       </exclusions>
     </dependency>
     <!-- added just to confirm the project.local repository usage -->
