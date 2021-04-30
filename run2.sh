@@ -2,32 +2,29 @@
 
 # based on:
 # https://www.cyberforum.ru/shell/thread2822786.html
-PROJECT_FILE=${1:-pom.xml}
-VERSION=''
-ARTIFACTID=''
-GROUPID=''
-# only kept for illustration: there is no multiple GAV declarations in pom
+
+get_text() {
+
+TAG=${1:-version}
+PROJECT_FILE=${2:-pom.xml}
+
+if [[ "$DEBUG" = 'true' ]]; then
+  1>&2 printf "started get_text() with TAG=%s PROJECT_FILE=%s\n" $TAG $PROJECT_FILE
+fi  
+RESULT=''
 PRINTED='false'
 IN_PROJECT='false'
 IN_DEPENDENCIES='false'
 while read LINE;
 do
-  # see 
-  # https://tldp.org/LDP/abs/html/abs-guide.html#REGEXMATCHREF
   if [[ "$LINE" =~ '<project '  || "$LINE" =~ '<project>' ]]; then
     IN_PROJECT='true'
-    GROUPID=''
-    ARTIFACTID=''
-    VERSION=''
+    RESULT=''
     PRINTED='false'
   fi
-  # the below does not require bash
-  # is same but more verbose, not easy to combine with other
-  # https://tldp.org/LDP/abs/html/string-manipulation.html
   if [ $(expr match "$LINE" '<dependencies') != '0' ]; then
     IN_DEPENDENCIES='true'
   fi
-
   if [[ $LINE =~ '</project>' ]]; then
     IN_PROJECT='false'
   fi
@@ -37,30 +34,41 @@ do
   fi
 
   if [ "$IN_PROJECT" == 'true' ] ; then
-    if [ $(expr match "$LINE" '<version>') != '0' ]; then
-      VERSION=$(echo $LINE | sed 's/<\/\{0,1\}version>//g')
-    fi
-    if [[ "$LINE" =~ '<groupId>' ]]; then
-      GROUPID=$(echo $LINE | sed 's/<\/*groupId>//g')
-    fi
-    if [[ "$LINE" =~ '<artifactId>' ]]; then
-      ARTIFACTID=$(echo $LINE | sed 's/<\/*artifactId>//g')
-    fi
-    # the following will not find anything in pom.xml
-    # kept for the reference
-    if [[ $LINE =~ '<date>' ]]; then
-      value=`echo $LINE | sed 's/<\/*date>//g'`
-      date=`echo $value | sed 's/^[[:alpha:]]\{3\}, \([[:digit:]]\{2\} [[:alpha:]]\{3\} [[:digit:]]\{4\} [[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}\) +[[:digit:]]\{4\}/\1/g'`
-    fi
 
-    if [[ "$GROUPID" != '' && "$ARTIFACTID" != "" && "$VERSION" != '' && $PRINTED == 'false' && "$IN_DEPENDENCIES" == 'false' ]]; then
-      printf "GROUPID=%s ARTIFACTID=%s VERSION=%s\n" $GROUPID $ARTIFACTID $VERSION
-      PRINTED='true'
+    if [ $(expr match "$LINE" "<${TAG}>") != '0' ]; then
+
+      RESULT=$(echo $LINE | sed "s/<\\/\\{0,1\\}${TAG}>//g")
+      if [[ "$DEBUG" = 'true' ]]; then
+        1>&2 printf "Found result:%s\n" $RESULT
+      fi  
+      # return result immediately
+      echo $RESULT
+      return
     fi
   fi
 done <$PROJECT_FILE
-# alternatively:
-# done <  <(cat $PROJECT_FILE)
+}
 
-# GROUPID=com.github.sergueik.swet ARTIFACTID=swet VERSION=0.17.0-SNAPSHOT
-# GROUPID=example ARTIFACTID=commandline-parser VERSION=${commandline-parser.version}
+PROJECT_FILE=${1:-pom.xml}
+if [[ "$DEBUG" = 'true' ]]; then
+  1>&2 echo 'Started.'
+fi
+TAG='version'
+APP_VERSION=$(get_text $TAG $PROJECT_FILE)
+echo "APP_VERSION=${APP_VERSION}"
+
+TAG='groupId'
+PACKAGE=$(get_text $TAG $PROJECT_FILE)
+echo "PACKAGE=${PACKAGE}"
+
+TAG='artifactId'
+APP_NAME=$(get_text $TAG $PROJECT_FILE)
+echo "APP_NAME=${APP_NAME}"
+
+TAG='mainClass'
+DEFAULT_MAIN_CLASS=$(get_text $TAG $PROJECT_FILE)
+echo "DEFAULT_MAIN_CLASS=${DEFAULT_MAIN_CLASS}"
+
+if [[ "$DEBUG" = 'true' ]]; then
+  1>&2 echo 'Done.'
+fi

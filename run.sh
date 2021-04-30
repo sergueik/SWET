@@ -5,6 +5,9 @@ which xmllint > /dev/null
 
 if [ $? -ne 0 ] ; then
   echo 'Missing xmllint'
+  # use bash scripting to extract project attributes
+  # see run2.sh for the implemtnation.
+  # NOTE: very slow
   exit 1
 fi
 
@@ -13,7 +16,7 @@ echo 'Loading parameters from the project "pom.xml"'
 if [ -z "${APP_VERSION}" ]
 then
   APP_VERSION=$(xmllint -xpath "/*[local-name() = 'project' ]/*[local-name() = 'version' ]/text()" pom.xml)
-else 
+else
   echo "Using provided APP_VERSION=${APP_VERSION}"
 fi
 if [ -z "${PACKAGE}" ]
