@@ -1,11 +1,10 @@
 package com.github.sergueik.swet;
 
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019,2021 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -14,65 +13,53 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.StringWriter;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import java.security.CodeSource;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 //for sorting elements by valueColumn, returns Array List of indexColumn
 //probably a regular class is sufficient for java 8 projects
 //http://backport-jsr166.sourceforge.net/doc/api/edu/emory/mathcs/backport/java/util/Collections.html
 //import edu.emory.mathcs.backport.java.util.Collections;
 import java.util.Collections;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import java.util.stream.Collectors;
-
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-
 import org.apache.commons.io.IOUtils;
-
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 /**
  * Common utilities class for Selenium WebDriver Elementor Tool (SWET)
@@ -134,8 +121,7 @@ public class Utils {
 	public String getScriptContent(String resourceFileName) {
 		try {
 			if (debug) {
-				System.err
-						.println("Script contents: " + getResourceURI(resourceFileName));
+				System.err.println("Script contents: " + getResourceURI(resourceFileName));
 			}
 			final InputStream stream = getResourceStream(resourceFileName);
 			final byte[] bytes = new byte[stream.available()];
@@ -154,8 +140,7 @@ public class Utils {
 				System.err.println("Getting resource URI for: " + resourceFileName);
 			}
 
-			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
-					.toURI();
+			URI uri = this.getClass().getClassLoader().getResource(resourceFileName).toURI();
 			if (debug) {
 				System.err.println("Resource URI: " + uri.toString());
 			}
@@ -166,13 +151,12 @@ public class Utils {
 	}
 
 	public InputStream getResourceStream(String resourceFilePath) {
-		return this.getClass().getClassLoader()
-				.getResourceAsStream(resourceFilePath);
+		return this.getClass().getClassLoader().getResourceAsStream(resourceFilePath);
 	}
 
 	public String getResourcePath(String resourceFileName) {
-		final String resourcePath = String.format("%s/src/main/resources/%s",
-				System.getProperty("user.dir"), resourceFileName);
+		final String resourcePath = String.format("%s/src/main/resources/%s", System.getProperty("user.dir"),
+				resourceFileName);
 		if (debug) {
 			System.err.println("Project based resource path: " + resourcePath);
 		}
@@ -199,8 +183,7 @@ public class Utils {
 		return readSideData(null, parameters);
 	}
 
-	public String readSideData(String payload,
-			Optional<Map<String, Object>> parameters) {
+	public String readSideData(String payload, Optional<Map<String, Object>> parameters) {
 
 		return readSideData(payload, parameters, "(?:id|name|url|tests)");
 	}
@@ -209,14 +192,12 @@ public class Utils {
 	// see also
 	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
 	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
-	public String readSideData(String payload,
-			Optional<Map<String, Object>> parameters, String acceptedKeys) {
+	public String readSideData(String payload, Optional<Map<String, Object>> parameters, String acceptedKeys) {
 		if (debug) {
 			System.err.println("Accepted keys: " + acceptedKeys);
 		}
 
-		Map<String, Object> collector = (parameters.isPresent()) ? parameters.get()
-				: new HashMap<>();
+		Map<String, Object> collector = (parameters.isPresent()) ? parameters.get() : new HashMap<>();
 
 		String data = (payload == null)
 				? "{\"id\":\"837d3acd-285e-478a-8d46-817df0a5b4d9\",\"name\":\"Google<br>\",\"url\":\"https://www.google.com \t\",\"tests\":[{\"id\":\"ae13d6ad-c3f2-4fb8-aaeb-14af40f2b3b9\",\"name\":\"Google\",\"commands\":[{\"id\":\"160c2276-d9b3-4523-bdf3-b914111ca407\",\"comment\":\"\",\"command\":\"open\",\"target\":\"/images\",\"value\":\"\"}]}],\"suites\":[{\"id\":\"05e89807-cb33-4ca6-8ca4-10e1cdf127c3\",\"name\":\"Default Suite\",\"tests\":[\"ae13d6ad-c3f2-4fb8-aaeb-14af40f2b3b9\"]}],\"urls\":[\"https://www.google.co.in\",\"https://www.google.co.in\"]}"
@@ -243,8 +224,7 @@ public class Utils {
 					String propertyVal = (String) elementObj.getString(propertyKey);
 					// logger.info(propertyKey + ": " + propertyVal);
 					if (debug) {
-						System.err
-								.println("Loaded string: " + propertyKey + ": " + propertyVal);
+						System.err.println("Loaded string: " + propertyKey + ": " + propertyVal);
 					}
 					collector.put(propertyKey, propertyVal);
 					found = true;
@@ -255,8 +235,7 @@ public class Utils {
 					continue;
 				}
 				try {
-					org.json.JSONArray propertyArrayVal = elementObj
-							.getJSONArray(propertyKey);
+					org.json.JSONArray propertyArrayVal = elementObj.getJSONArray(propertyKey);
 					int length = propertyArrayVal.length();
 					if (debug) {
 						System.err.println("Can process array of size: " + length);
@@ -269,8 +248,7 @@ public class Utils {
 							System.err.println("Can process object: " + rowObject.toString());
 						}
 						// "comment,id,value,command,target"
-						readSideData(rowObject.toString(),
-								Optional.<Map<String, Object>> empty(),
+						readSideData(rowObject.toString(), Optional.<Map<String, Object>>empty(),
 								"(?:comment|id|value|command|target)");
 
 						Iterator<String> rowObjectIterator = rowObject.keys();
@@ -304,11 +282,9 @@ public class Utils {
 	// see also
 	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
 	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
-	public String readData(String payload,
-			Optional<Map<String, String>> parameters) {
+	public String readData(String payload, Optional<Map<String, String>> parameters) {
 
-		Map<String, String> collector = (parameters.isPresent()) ? parameters.get()
-				: new HashMap<>();
+		Map<String, String> collector = (parameters.isPresent()) ? parameters.get() : new HashMap<>();
 
 		String data = (payload == null)
 				? "{ \"Url\": \"http://www.google.com\", \"ElementCodeName\": \"Name of the element\", \"CommandId\": \"d5be4ea9-c51f-4e61-aefc-e5c83ba00be8\", \"ElementCssSelector\": \"html div.home-logo_custom > img\", \"ElementId\": \"\", \"ElementXPath\": \"/html//img[1]\" }"
@@ -342,15 +318,12 @@ public class Utils {
 	}
 
 	public String readVisualSearchResult(String payload) {
-		return readVisualSearchResult(payload,
-				Optional.<Map<String, String>> empty());
+		return readVisualSearchResult(payload, Optional.<Map<String, String>>empty());
 	}
 
-	public String readVisualSearchResult(final String payload,
-			Optional<Map<String, String>> parameters) {
+	public String readVisualSearchResult(final String payload, Optional<Map<String, String>> parameters) {
 		Boolean collectResults = parameters.isPresent();
-		Map<String, String> collector = (collectResults) ? parameters.get()
-				: new HashMap<>();
+		Map<String, String> collector = (collectResults) ? parameters.get() : new HashMap<>();
 		String result = readData(payload, Optional.of(collector));
 		assertTrue(collector.containsKey("ElementId"));
 		// NOTE: elementCodeName will not be set if
@@ -362,8 +335,7 @@ public class Utils {
 
 	public void highlight(WebElement element, long highlight_interval) {
 		try {
-			new WebDriverWait(driver, flexibleWait)
-					.until(ExpectedConditions.visibilityOf(element));
+			new WebDriverWait(driver, flexibleWait).until(ExpectedConditions.visibilityOf(element));
 			executeScript("arguments[0].style.border='3px solid yellow'", element);
 			Thread.sleep(highlight_interval);
 			executeScript("arguments[0].style.border=''", element);
@@ -375,11 +347,10 @@ public class Utils {
 	public void completeVisualSearch(String elementCodeName) {
 		WebElement swdAddElementButton = null;
 		try {
-			WebElement swdControl = wait.until(ExpectedConditions
-					.visibilityOf(driver.findElement(By.id("SWDTable"))));
+			WebElement swdControl = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
 			assertThat(swdControl, notNullValue());
-			WebElement swdCodeID = wait.until(ExpectedConditions.visibilityOf(
-					swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
+			WebElement swdCodeID = wait
+					.until(ExpectedConditions.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
 			assertThat(swdCodeID, notNullValue());
 			// Act
 			swdCodeID.sendKeys(elementCodeName);
@@ -388,12 +359,9 @@ public class Utils {
 				public WebElement apply(WebDriver _driver) {
 					System.err.println("Waiting for the element to become available...");
 					Iterator<WebElement> _elements = _driver
-							.findElements(By
-									.cssSelector("div#SwdPR_PopUp > form > input[type='button']"))
-							.iterator();
+							.findElements(By.cssSelector("div#SwdPR_PopUp > form > input[type='button']")).iterator();
 					WebElement result = null;
-					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
-							Pattern.CASE_INSENSITIVE);
+					Pattern pattern = Pattern.compile(Pattern.quote("Add element"), Pattern.CASE_INSENSITIVE);
 					while (_elements.hasNext()) {
 						WebElement _element = _elements.next();
 						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
@@ -431,8 +399,7 @@ public class Utils {
 		 * @Override public WebElement apply(WebDriver d) { WebElement e =
 		 * d.findElement(By.id("SWDTable")); return e.isDisplayed() ? e : null; } });
 		 */
-		WebElement swdControl = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		WebElement swdControl = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
 		assertThat(swdControl, notNullValue());
 		/*
 		 * WebElement swdCodeID = wait.until(new Function<WebDriver, WebElement>() {
@@ -441,8 +408,8 @@ public class Utils {
 		 * d.findElement(By.id("SwdPR_PopUp_CodeIDText")); return e.isDisplayed() ? e :
 		 * null; } });
 		 */
-		WebElement swdCodeID = wait.until(ExpectedConditions
-				.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
+		WebElement swdCodeID = wait
+				.until(ExpectedConditions.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CodeIDText"))));
 		assertThat(swdCodeID, notNullValue());
 		swdCodeID.sendKeys(elementCodeName);
 		/*
@@ -468,12 +435,9 @@ public class Utils {
 				public WebElement apply(WebDriver _driver) {
 					System.err.println("Waiting for the element to become available...");
 					Iterator<WebElement> _elements = _driver
-							.findElements(By
-									.cssSelector("div#SwdPR_PopUp > form > input[type='button']"))
-							.iterator();
+							.findElements(By.cssSelector("div#SwdPR_PopUp > form > input[type='button']")).iterator();
 					WebElement result = null;
-					Pattern pattern = Pattern.compile(Pattern.quote("Add element"),
-							Pattern.CASE_INSENSITIVE);
+					Pattern pattern = Pattern.compile(Pattern.quote("Add element"), Pattern.CASE_INSENSITIVE);
 					while (_elements.hasNext()) {
 						WebElement _element = _elements.next();
 						Matcher matcher = pattern.matcher(_element.getAttribute("value"));
@@ -499,12 +463,11 @@ public class Utils {
 	}
 
 	public void closeVisualSearch() {
-		WebElement swdControl = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		WebElement swdControl = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
 		assertThat(swdControl, notNullValue());
 
-		WebElement swdCloseButton = wait.until(ExpectedConditions.visibilityOf(
-				swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
+		WebElement swdCloseButton = wait
+				.until(ExpectedConditions.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
 		assertThat(swdCloseButton, notNullValue());
 		highlight(swdCloseButton);
 		swdCloseButton.click();
@@ -513,8 +476,7 @@ public class Utils {
 	// http://stackoverflow.com/questions/34176392/fluentwait-throwing-the-method-unti-in-the-type-waitwebdriver-is-not-applicab
 	private void closeVisualSearchSaved() {
 
-		WebElement swdControl = wait.until(
-				ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
+		WebElement swdControl = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("SWDTable"))));
 		assertThat(swdControl, notNullValue());
 		/*
 		 * WebElement swdCloseButton = null; try { swdCloseButton = wait.until(new
@@ -534,8 +496,8 @@ public class Utils {
 		 * e.toString()); }
 		 */
 
-		WebElement swdCloseButton = wait.until(ExpectedConditions.visibilityOf(
-				swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
+		WebElement swdCloseButton = wait
+				.until(ExpectedConditions.visibilityOf(swdControl.findElement(By.id("SwdPR_PopUp_CloseButton"))));
 		assertThat(swdCloseButton, notNullValue());
 		highlight(swdCloseButton);
 		swdCloseButton.click();
@@ -587,8 +549,7 @@ public class Utils {
 	 * dateFormat.format(date); } catch (Exception e) { } return ""; }
 	 */
 
-	public static void writeToFile(List<String> content, String filename,
-			Boolean overwriteFlag) {
+	public static void writeToFile(List<String> content, String filename, Boolean overwriteFlag) {
 		File file = new File(filename);
 		if (overwriteFlag) {
 
@@ -613,8 +574,7 @@ public class Utils {
 		}
 	}
 
-	public static List<String> readFileLineByLine(String filename)
-			throws IOException {
+	public static List<String> readFileLineByLine(String filename) throws IOException {
 		FileInputStream fis = new FileInputStream(filename);
 		// Construct BufferedReader from InputStreamReader
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -682,8 +642,7 @@ public class Utils {
 		while (m.find()) {
 			String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
 			String envVarValue = System.getenv(envVarName);
-			m.appendReplacement(sb,
-					null == envVarValue ? "" : envVarValue.replace("\\", "\\\\"));
+			m.appendReplacement(sb, null == envVarValue ? "" : envVarValue.replace("\\", "\\\\"));
 		}
 		m.appendTail(sb);
 		return sb.toString();
@@ -691,13 +650,11 @@ public class Utils {
 
 	// based on:
 	// https://github.com/abhishek8908/selenium-drivers-download-plugin/blob/master/src/main/java/com/github/abhishek8908/util/DriverUtil.java
-	public static String readProperty(String propertyName, String propertyFile) {
+	public static String readProperty(String propertyName, String propertyFile, String defaultValue) {
 		String resourcePath = "";
 		try {
-			resourcePath = Thread.currentThread().getContextClassLoader()
-					.getResource("").getPath();
-			System.err.println(String.format(
-					"The running application resource path: \"%s\"", resourcePath));
+			resourcePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+			System.err.println(String.format("The running application resource path: \"%s\"", resourcePath));
 		} catch (NullPointerException e) {
 			System.err.println("Exception (ignored): " + e.toString());
 			/*
@@ -708,9 +665,9 @@ public class Utils {
 		try {
 			config = new PropertiesConfiguration(resourcePath + propertyFile);
 
-			Configuration extConfig = ((PropertiesConfiguration) config)
-					.interpolatedConfiguration();
-			return extConfig.getProperty(propertyName).toString();
+			Configuration extConfig = ((PropertiesConfiguration) config).interpolatedConfiguration();
+			final String value = extConfig.getProperty(propertyName).toString();
+			return (value == null) ? defaultValue : value;
 		} catch (ConfigurationException e) {
 			return null;
 		}
@@ -718,7 +675,12 @@ public class Utils {
 
 	public static String readProperty(String propertyName) {
 		System.err.println("x");
-		return readProperty(propertyName, "application.properties");
+		return readProperty(propertyName, "application.properties", null);
+	}
+
+	public static String readProperty(String propertyName, String defaultValue) {
+		final String value = readProperty(propertyName, "application.properties", defaultValue);
+		return value == null ? defaultValue : value;
 	}
 
 	// TODO: array
@@ -729,39 +691,34 @@ public class Utils {
 			scripts.add(script.get());
 		}
 		for (String s : scripts) {
-			System.err
-					.println(String.format("Executing: %s\u2026", s.substring(0, 30)));
+			System.err.println(String.format("Executing: %s\u2026", s.substring(0, 30)));
 			if (s != null)
 				executeScript(s);
 		}
 	}
 
 	public void injectElementSearch(Optional<String> script) {
-		List<String> scripts = new ArrayList<>(
-				Arrays.asList(getScriptContent(defaultScript)));
+		List<String> scripts = new ArrayList<>(Arrays.asList(getScriptContent(defaultScript)));
 		if (script.isPresent()) {
 			scripts.add(script.get());
 		}
 		for (String s : scripts) {
 			if (s != null)
-				System.err.println(
-						String.format("Adding the script: %s\u2026", s.substring(0, 100)));
+				System.err.println(String.format("Adding the script: %s\u2026", s.substring(0, 100)));
 			executeScript(s);
 		}
 	}
 
 	public Object executeScript(String script, Object... arguments) {
 		if (driver != null && (driver instanceof JavascriptExecutor)) {
-			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class
-					.cast(driver);
+			JavascriptExecutor javascriptExecutor = JavascriptExecutor.class.cast(driver);
 			// IE: org.openqa.selenium.NoSuchWindowException
 			// Chrome: Exception in thread "main"
 			// org.openqa.selenium.WebDriverException: disconnected: not connected to
 			// DevTools
 			return javascriptExecutor.executeScript(script, arguments);
 		} else {
-			throw new RuntimeException(
-					"Script execution failed: driver it not defined properly");
+			throw new RuntimeException("Script execution failed: driver it not defined properly");
 		}
 	}
 
@@ -780,13 +737,11 @@ public class Utils {
 					InputStream inputStream = getResourceStream(manifestResourcePath);
 					String manifestSource = IOUtils.toString(inputStream, "UTF8");
 
-					Pattern pattern = Pattern.compile(manifestTag,
-							Pattern.CASE_INSENSITIVE);
+					Pattern pattern = Pattern.compile(manifestTag, Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(Pattern.quote(manifestSource));
 					if (matcher.find()) {
 						result = matcher.group(1);
-						System.err.println("Discovered version: " + result
-								+ " in manifest : " + manifestResourcePath);
+						System.err.println("Discovered version: " + result + " in manifest : " + manifestResourcePath);
 					}
 					IOUtils.closeQuietly(inputStream);
 				}
@@ -808,13 +763,11 @@ public class Utils {
 	}
 
 	// sorting elements by valueColumn, returns Array List of indexColumn
-	public List<String> sortSteps(Map<String, Map<String, String>> testData,
-			String indexColumn, String valueColumn) {
+	public List<String> sortSteps(Map<String, Map<String, String>> testData, String indexColumn, String valueColumn) {
 
 		List<String> sortedSteps = new ArrayList<>();
 		Map<String, Integer> elementSteps = testData.values().stream()
-				.collect(Collectors.toMap(o -> o.get(indexColumn),
-						o -> Integer.parseInt(o.get(valueColumn))));
+				.collect(Collectors.toMap(o -> o.get(indexColumn), o -> Integer.parseInt(o.get(valueColumn))));
 		/*
 		 * elementSteps = testData.keySet().stream().collect(Collectors.toMap(o -> o, o
 		 * -> Integer.parseInt(testData.get(o).get(valueColumn))));
@@ -823,14 +776,12 @@ public class Utils {
 		stepNumbers.addAll(elementSteps.entrySet());
 		Collections.sort(stepNumbers, new Comparator<Entry<String, Integer>>() {
 
-			public int compare(Entry<String, Integer> obj_left,
-					Entry<String, Integer> obj_right) {
+			public int compare(Entry<String, Integer> obj_left, Entry<String, Integer> obj_right) {
 				return obj_left.getValue().compareTo(obj_right.getValue());
 
 			}
 		});
-		return stepNumbers.stream().map(e -> e.getKey())
-				.collect(Collectors.toList());
+		return stepNumbers.stream().map(e -> e.getKey()).collect(Collectors.toList());
 	}
 
 	public void sleep(Integer seconds) {
@@ -851,8 +802,7 @@ public class Utils {
 	}
 
 	public void changeColor(String color, WebElement element) {
-		executeScript("arguments[0].style.backgroundColor = '" + color + "'",
-				element);
+		executeScript("arguments[0].style.backgroundColor = '" + color + "'", element);
 		try {
 			Thread.sleep(20);
 		} catch (InterruptedException e) {
@@ -862,11 +812,9 @@ public class Utils {
 	// sorting example from
 	// http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
 	// currently not used
-	public <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(
-			Map<K, V> map) {
+	public <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(Map<K, V> map) {
 		return map.entrySet().stream().sorted(Map.Entry.comparingByValue())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-						(e1, e2) -> e1, LinkedHashMap::new));
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 	public void initializeLogger(String propertiesFilePath) {
@@ -883,8 +831,7 @@ public class Utils {
 			}
 			logProperties.load(new FileInputStream(propertiesFilePath));
 			if (debug) {
-				System.err.println(
-						"Log Properties: " + Arrays.asList(logProperties.keySet()));
+				System.err.println("Log Properties: " + Arrays.asList(logProperties.keySet()));
 			}
 			PropertyConfigurator.configure(logProperties);
 		} catch (IOException e) {
@@ -893,8 +840,8 @@ public class Utils {
 	}
 
 	public void initializeLogger() {
-		String defaultLog4JPropertiesFilePath = String.format("%s/%s/%s",
-				System.getProperty("user.dir"), "src/main/resources", "log4j.xml");
+		String defaultLog4JPropertiesFilePath = String.format("%s/%s/%s", System.getProperty("user.dir"),
+				"src/main/resources", "log4j.xml");
 		initializeLogger(defaultLog4JPropertiesFilePath);
 	}
 
@@ -918,10 +865,8 @@ public class Utils {
 	private void escape(int charCode) {
 		// only render supported range
 		// https://en.wikipedia.org/wiki/Valid_characters_in_XML
-		if (!(charCode == 0x9 || charCode == 0xa || charCode == 0xD
-				|| (charCode >= 0x20 && charCode <= 0xd7ff)
-				|| (charCode >= 0xe000 && charCode <= 0xfffd)
-				|| (charCode >= 0x10000 && charCode <= 0x10ffff))) {
+		if (!(charCode == 0x9 || charCode == 0xa || charCode == 0xD || (charCode >= 0x20 && charCode <= 0xd7ff)
+				|| (charCode >= 0xe000 && charCode <= 0xfffd) || (charCode >= 0x10000 && charCode <= 0x10ffff))) {
 			return;
 		}
 		switch (charCode) {
@@ -942,8 +887,7 @@ public class Utils {
 			break;
 		default:
 			if (charCode > 0x7e || charCode < 0x20) {
-				stringBuilder.append("&#x").append(Integer.toHexString(charCode))
-						.append(';');
+				stringBuilder.append("&#x").append(Integer.toHexString(charCode)).append(';');
 			} else {
 				stringBuilder.append((char) charCode);
 			}
