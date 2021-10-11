@@ -45,9 +45,9 @@ public class User32WakeupTest {
 			char[] name = new char[512];
 
 			User32.INSTANCE.GetWindowText(hWnd, name, name.length);
-
-			if (Native.toString(name).toLowerCase().startsWith(title)) {
-				System.err.println("Found target window");
+			String windowTitle = Native.toString(name).toLowerCase();
+			if (windowTitle.startsWith(title)) {
+				System.err.println("Found target window: " + windowTitle);
 				// Bring the window to the front
 				User32.INSTANCE.SetForegroundWindow(hWnd);
 
@@ -120,31 +120,16 @@ public class User32WakeupTest {
 				User32.INSTANCE.SendInput(new WinDef.DWORD(1),
 						(WinUser.INPUT[]) input.toArray(1), input.size());
 
-				// Prepare mouse button release event reference
-				// input = new WinUser.INPUT();
-
-				// input.type = new WinDef.DWORD(WinUser.INPUT.INPUT_MOUSE);
-				// input.input.setType("mi");
-
-				input.input.mi.dx = new WinDef.LONG(200);
-				input.input.mi.dy = new WinDef.LONG(200);
-
-				input.input.mi.dwFlags = new WinDef.DWORD(WM_LBUTTONDOWN | WM_MOUSEMOVE);
-				User32.INSTANCE.SendInput(new WinDef.DWORD(1),
-						(WinUser.INPUT[]) input.toArray(1), input.size());
-
-
-				input.input.mi.time = new WinDef.DWORD(0);
-				input.input.ki.dwExtraInfo = new BaseTSD.ULONG_PTR(0);
+				input.input.mi.dx = new WinDef.LONG(40);
+				input.input.mi.dy = new WinDef.LONG(60);
+				input.input.mi.dwFlags = new WinDef.DWORD(
+						WM_LBUTTONDOWN | WM_MOUSEMOVE);
 				User32.INSTANCE.SendInput(new WinDef.DWORD(1),
 						(WinUser.INPUT[]) input.toArray(1), input.size());
 				input.input.mi.dx = new WinDef.LONG(0);
 				input.input.mi.dy = new WinDef.LONG(0);
-
-				input.input.mi.dwFlags = new WinDef.DWORD(WM_LBUTTONUP);
-
-				input.input.mi.time = new WinDef.DWORD(0);
 				input.input.ki.dwExtraInfo = new BaseTSD.ULONG_PTR(0);
+				input.input.mi.dwFlags = new WinDef.DWORD(WM_LBUTTONUP);
 				User32.INSTANCE.SendInput(new WinDef.DWORD(1),
 						(WinUser.INPUT[]) input.toArray(1), input.size());
 

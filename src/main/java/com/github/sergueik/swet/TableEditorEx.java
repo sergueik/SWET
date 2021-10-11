@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019,2021 Serguei Kouzmine
  */
 
 import java.util.ArrayList;
@@ -11,13 +11,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-// org.apache.log4j.Category 
-// was deprecated and replaced by  
-// org.apache.log4j.Logger;
-import org.apache.log4j.Logger;
-// 
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -79,9 +75,8 @@ public class TableEditorEx {
 	private static String defaultYamlFile = "sample.yaml";
 	private static String path = null;
 
-	@SuppressWarnings("deprecation")
 	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
-	static final Logger logger = (Logger) Logger.getInstance(TableEditorEx.class);
+	private static final Logger logger = LoggerFactory.getLogger(TableEditorEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	@SuppressWarnings("unused")
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);

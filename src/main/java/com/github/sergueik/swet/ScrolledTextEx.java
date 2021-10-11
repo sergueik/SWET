@@ -15,7 +15,8 @@ import java.util.Formatter;
 import java.util.Locale;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.eclipse.jface.layout.GridDataFactory;
 
@@ -77,9 +78,7 @@ class ScrolledTextEx {
 	public JavaLineStyler lineStyler = new JavaLineStyler();
 	private static String defaultTemplateResourcePath = "templates/core_selenium_java.twig";
 
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger
-			.getInstance(ScrolledTextEx.class);
+	static final Logger logger = LoggerFactory.getLogger(ScrolledTextEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

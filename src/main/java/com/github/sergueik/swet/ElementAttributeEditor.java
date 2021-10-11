@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2020 Serguei Kouzmine
+ * Copyright 2014 - 2021 Serguei Kouzmine
  */
 
 import java.util.Arrays;
@@ -11,7 +11,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -64,9 +65,9 @@ public class ElementAttributeEditor {
 	private static boolean init = false;
 	private static CommandLineParser commandLineParser;
 
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger
-			.getInstance(ElementAttributeEditor.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ElementAttributeEditor.class);
+
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

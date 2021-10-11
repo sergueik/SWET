@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019,2021 Serguei Kouzmine
  */
 
 import org.eclipse.swt.SWT;
@@ -10,13 +10,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.passer.ChoiceItem;
 import org.passer.ChoicesDialog;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
 
 public class ChoiceDialogEx {
 
@@ -26,8 +27,8 @@ public class ChoiceDialogEx {
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 	private static Utils utils = Utils.getInstance();
 
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger.getInstance(ChoiceDialogEx.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ChoiceDialogEx.class);
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {

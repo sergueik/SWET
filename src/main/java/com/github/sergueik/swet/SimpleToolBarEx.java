@@ -1,7 +1,7 @@
 package com.github.sergueik.swet;
 
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019, 2021 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -23,7 +23,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -87,9 +88,7 @@ public class SimpleToolBarEx {
 	private static final int IMAGE_SIZE = 32;
 	private Configuration config = null;
 	private SimpleToolBarEx app;
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger
-			.getInstance(SimpleToolBarEx.class);
+	private static final Logger logger = LoggerFactory.getLogger(SimpleToolBarEx.class);
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

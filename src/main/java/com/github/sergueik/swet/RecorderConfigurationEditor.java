@@ -18,7 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -82,8 +83,9 @@ public class RecorderConfigurationEditor {
 	private static Map<String, Map<String, String>> configOptions = new HashMap<>();
 	private static Map<String, String> templates = new HashMap<>();
 
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger.getInstance(RecorderConfigurationEditor.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(RecorderConfigurationEditor.class);
+
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 
@@ -517,7 +519,8 @@ public class RecorderConfigurationEditor {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
-		RecorderConfigurationEditor configFormEx = new RecorderConfigurationEditor(null, null);
+		RecorderConfigurationEditor configFormEx = new RecorderConfigurationEditor(
+				null, null);
 		RecorderConfigurationEditor.debug = true;
 		configFormEx.render();
 	}

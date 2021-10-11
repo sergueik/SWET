@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019,2021 Serguei Kouzmine
  */
 
 import java.io.FileInputStream;
@@ -14,13 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// org.apache.log4j.Category 
-// was deprecated and replaced by  
-// org.apache.log4j.Logger;
-import org.apache.log4j.Logger;
-// 
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -31,7 +26,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -45,9 +39,8 @@ import org.apache.poi.ss.usermodel.Row;
 public class ExcelFileUtils {
 
 	// https://www.journaldev.com/7128/log4j2-example-tutorial-configuration-levels-appenders
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger
-			.getInstance(ExcelFileUtils.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ExcelFileUtils.class);
 
 	private static List<Map<Integer, String>> tableData = new ArrayList<>();
 
@@ -180,8 +173,7 @@ public class ExcelFileUtils {
 			}
 		}
 
-		try (OutputStream fileOutputStream = new FileOutputStream(
-				excelFileName)) {
+		try (OutputStream fileOutputStream = new FileOutputStream(excelFileName)) {
 			hddfwb.write(fileOutputStream);
 			hddfwb.close();
 			fileOutputStream.flush();
@@ -212,8 +204,7 @@ public class ExcelFileUtils {
 			}
 		}
 
-		try (OutputStream fileOutputStream = new FileOutputStream(
-				excelFileName)) {
+		try (OutputStream fileOutputStream = new FileOutputStream(excelFileName)) {
 
 			xssfwb.write(fileOutputStream);
 			xssfwb.close();

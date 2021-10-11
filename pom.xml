@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.swet</groupId>
   <artifactId>swet</artifactId>
-  <version>0.17.0-SNAPSHOT</version>
+  <version>0.18.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>SWET is a standalone Java application hosting a browser-based Page Element locator recorder</description>
@@ -45,8 +45,8 @@
     <jtwig-core.version>5.87.0.RELEASE</jtwig-core.version>
     <skdf_jprotractor.version>0.14-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.13.1</junit.version>
-    <log4j.version>1.2.17</log4j.version>
     <log4j-core.version>2.13.3</log4j-core.version>
+    <slf4j.version>1.7.5</slf4j.version>
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
@@ -97,9 +97,14 @@
       <version>${log4j-core.version}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.sergueik.jprotractor</groupId>

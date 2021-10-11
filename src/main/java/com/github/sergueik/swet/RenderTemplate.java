@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019,2021 Serguei Kouzmine
  */
 
 import java.util.ArrayList;
@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -87,10 +89,8 @@ public class RenderTemplate {
 		return testData;
 	}
 
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger
-			.getInstance(RenderTemplate.class);
-
+	private static final Logger logger = LoggerFactory.getLogger(RenderTemplate.class);
+	
 	private static StringBuilder loggingSb = new StringBuilder();
 	private static Formatter formatter = new Formatter(loggingSb, Locale.US);
 

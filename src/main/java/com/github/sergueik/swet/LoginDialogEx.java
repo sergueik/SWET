@@ -1,6 +1,5 @@
 package com.github.sergueik.swet;
 
-import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -20,11 +19,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 // based on: https://github.com/lcaron/opal/blob/master/src/main/java/org/mihalis/opal/login/LoginDialog.java
 
 public class LoginDialogEx {
-	@SuppressWarnings("deprecation")
-	static final Logger logger = (Logger) Logger.getInstance(LoginDialogEx.class);
+	static final Logger logger = LoggerFactory.getLogger(LoginDialogEx.class);
 	private String description = "Custom Login Dialog";
 	private String login;
 	private String password;
@@ -75,7 +76,6 @@ public class LoginDialogEx {
 	public LoginDialogEx() {
 	}
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		// Create login dialog
 		logger.info("Initialized logger.");
@@ -83,7 +83,8 @@ public class LoginDialogEx {
 		LoginDialogEx loginDialog = new LoginDialogEx();
 
 		if (loginDialog.open()) {
-			logger.info(String.format("User: %s Password: %s", loginDialog.getLogin(), loginDialog.getPassword()));
+			logger.info(String.format("User: %s Password: %s", loginDialog.getLogin(),
+					loginDialog.getPassword()));
 		} else {
 			logger.info("Login canceled");
 		}
@@ -94,7 +95,8 @@ public class LoginDialogEx {
 		 * if (verifier == null) { throw new IllegalArgumentException(
 		 * "Please set a verifier before opening the dialog box"); }
 		 */
-		shell = new Shell(display, SWT.SYSTEM_MODAL | /* SWT.TITLE | */ SWT.BORDER | SWT.RESIZE);
+		shell = new Shell(display,
+				SWT.SYSTEM_MODAL | /* SWT.TITLE | */ SWT.BORDER | SWT.RESIZE);
 		// TODO: manage size
 		// https://www.eclipse.org/articles/Article-Understanding-Layouts/Understanding-Layouts.htm
 		// http://www.docjar.org/docs/api/org/eclipse/swt/layout/GridData.html
@@ -106,7 +108,8 @@ public class LoginDialogEx {
 		shell.setLayout(new GridLayout(4, false));
 		shell.addListener(SWT.Resize, rzListener);
 		final Label label = new Label(shell, SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL, GridData.BEGINNING, true, false, 4, 1);
+		GridData gridData = new GridData(GridData.FILL, GridData.BEGINNING, true,
+				false, 4, 1);
 		gridData.verticalIndent = 5;
 		gridData.horizontalIndent = 5;
 		label.setLayoutData(gridData);
@@ -125,7 +128,8 @@ public class LoginDialogEx {
 
 		final Text loginText = new Text(shell, SWT.BORDER);
 		loginText.setText(login == null ? "" : login);
-		loginText.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false, 3, 1));
+		loginText.setLayoutData(
+				new GridData(GridData.FILL, GridData.END, true, false, 3, 1));
 		loginText.setFocus();
 		loginText.addModifyListener(new ModifyListener() {
 
@@ -147,7 +151,8 @@ public class LoginDialogEx {
 		passwordText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		// final Text text = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		passwordText.setText(password == null ? "" : password);
-		passwordText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
+		passwordText.setLayoutData(
+				new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
 		passwordText.setEchoChar(new Character((char) 0x2a));
 		logger.debug("Echo character: " + passwordText.getEchoChar());
 
@@ -162,7 +167,8 @@ public class LoginDialogEx {
 		});
 		final Button displayPasswordCheckBox = new Button(shell, SWT.CHECK);
 
-		gridData = new GridData(GridData.BEGINNING, GridData.CENTER, /* grab excess horizontal space */ true,
+		gridData = new GridData(GridData.BEGINNING, GridData.CENTER,
+				/* grab excess horizontal space */ true,
 				/* grab excess vertical space */ false, 4, 1);
 		gridData.horizontalIndent = 35;
 		displayPasswordCheckBox.setLayoutData(gridData);
