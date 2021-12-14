@@ -45,7 +45,7 @@
     <jtwig-core.version>5.87.0.RELEASE</jtwig-core.version>
     <skdf_jprotractor.version>0.14-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.13.1</junit.version>
-    <log4j-core.version>2.15.0</log4j-core.version>
+    <log4j-core.version>2.16.0</log4j-core.version>
     <slf4j.version>1.7.5</slf4j.version>
     <!-- https://maven.apache.org/guides/mini/guide-using-ant.html -->
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
