@@ -98,7 +98,7 @@ if ($PACKAGE -eq $null ){
       select-xml -xml $project -XPath '/a:project/a:groupId' `
         -Namespace @{'a'='http://maven.apache.org/POM/4.0.0';  } ).node.'#text'
   } else {
-    # use VB-style MS XML traversatl DSL
+    # use VB-style MS XML traversatl DSL with namespaces ignored, will work with pom.xml because pom.xml uses empty prefix of default namespace
     $PACKAGE = $project.'project'.'groupId'
   }
 }
@@ -113,7 +113,7 @@ if ($DEFAULT_MAIN_CLASS -eq $null ){
       # use local-name() in xpath, like with xmlint
       select-xml -xml $project -XPath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="mainClass"]' ).node.'#text'
   } else {
-    # use VB-style MS XML traversatl DSL
+    # use VB-style MS XML traversatl DSL with namespaces ignored, will work with pom.xml because pom.xml uses empty prefix of default namespace
     $DEFAULT_MAIN_CLASS = $project.'project'.'properties'.'mainClass'
   }
 }
@@ -128,6 +128,30 @@ if ($APP_VERSION -eq $null ){
   }
 }
 write-debug ('APP_VERSION={0}' -f $APP_VERSION)
+
+# based on:
+# https://www.cyberforum.ru/powershell/thread3017210.html#post16425705
+# the code below would also work with SOAP envelope XML 
+# where every tag is prefixed and there is no default blank namespace
+$XmlDocument = [xml]$data
+# NOTE: cannot strongly type:
+# [System.Xml.DocumentXPathNavigator] $navigator = ...
+# Unable to find type [System.Xml.DocumentXPathNavigator]
+$navigator = $XmlDocument.CreateNavigator()
+
+# MS.Internal.Xml.XPath.CompiledXpathExpr
+$query = $navigator.Compile('/dom:project/dom:artifactId')
+
+$manager = [Xml.XmlNamespaceManager]::new($navigator.NameTable)
+$manager.AddNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+$manager.AddNamespace('schemaLocation', 'http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd')
+$manager.AddNamespace('dom', 'http://maven.apache.org/POM/4.0.0')
+$query.SetContext($manager)
+# NOTE: cannot strongly type:
+# [System.Xml.DocumentXPathNavigator]$nodes = ...
+# Unable to find type [System.Xml.DocumentXPathNavigator]
+$nodes = $navigator.Select($query)
+$APP_NAME = $nodes.InnerXml
 
 if ($APP_NAME -eq $null ){
   if ($PSVersionTable.PSVersion.Major  -gt 3 ) {
