@@ -424,6 +424,13 @@ No error in eclipse version Mars.2 Release (4.5.2)
             </manifest>
           </archive>
         </configuration>
+		<executions>
+                <execution>
+                    <id>default-jar</id>
+                    <!-- put the default-jar in the none phase to skip it from being created -->
+                    <phase>none</phase>
+                </execution>
+            </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

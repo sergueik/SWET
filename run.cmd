@@ -51,6 +51,12 @@ if /i "%SKIP_PACKAGE_VERSION%"=="true" goto :SKIP_PACKAGE_VERSION
 set APP_JAR=%APP_NAME%-%APP_VERSION%.jar
 :SKIP_PACKAGE_VERSION
 
+REM Testing skipping the default jar
+REM origin: https://stackoverflow.com/questions/12809559/remove-jar-created-by-default-in-maven
+REM see also: https://www.cyberforum.ru/javafx/thread3059580.html
+REM TODO: scan the "pom.xml" for the presence of the "finalName" property (custom configuration)
+set APP_JAR=SWTsample.jar
+
 if /i NOT "%VERBOSE%"=="true" goto :CONTINUE
 
 call :SHOW_VARIABLE APP_VERSION
