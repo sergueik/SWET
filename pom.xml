@@ -41,7 +41,7 @@
     <java.version>1.8</java.version>
     <jna-platform.version>5.4.0</jna-platform.version>
     <jprotractor.version>1.13-SNAPSHOT</jprotractor.version>
-    <json.version>20170516</json.version>
+    <json.version>20230227</json.version>
     <jtwig-core.version>5.87.0.RELEASE</jtwig-core.version>
     <skdf_jprotractor.version>0.14-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.13.1</junit.version>
