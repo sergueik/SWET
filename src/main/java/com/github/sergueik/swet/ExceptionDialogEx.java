@@ -1,6 +1,6 @@
 package com.github.sergueik.swet;
 /**
- * Copyright 2014 - 2019 Serguei Kouzmine
+ * Copyright 2014 - 2019,2024 Serguei Kouzmine
  */
 
 import java.util.ArrayList;
@@ -14,7 +14,9 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.omg.SendingContext.RunTime;
+// https://docs.oracle.com/javase/8/docs/api/org/omg/SendingContext/RunTime.html
+// The import org.omg.SendingContext.RunTime is never used
+// import org.omg.SendingContext.RunTime;
 
 import com.github.sergueik.swet.Utils;
 
@@ -27,6 +29,7 @@ import org.eclipse.swt.SWTException;
  */
 
 public class ExceptionDialogEx {
+
 
 	private Shell shell = null;
 	private static boolean debug = false;
