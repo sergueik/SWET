@@ -28,21 +28,35 @@ REM if "%APP_PACKAGE%"=="" set APP_PACKAGE=com.github.sergueik.swet
 set DEFAULT_MAIN_CLASS=SimpleToolBarEx
 set SCM_CONNECTION=
 
+REM testing
+rem call :CALL_MAVEN project.groupId
+rem echo VALUE=%VALUE%
+rem [ERROR] No plugin found for prefix 'help' in the current project and in the plugin groups [org.apache.maven.plugins, org.codehaus.mojo] available from the repositories [local (C:\Users\sergueik\.m2\repository), central (https://repo.maven.apache.org/maven2)] -> [Help 1]
+rem VALUE=[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoPluginFoundForPrefixException
+
 call :CALL_JAVASCRIPT /project/artifactId
+if "%VALUE%"=="[ERROR]" set VALUE=
 set APP_NAME=%VALUE%
 
 if NOT "%APP_PACKAGE%"=="" goto :app_package_set_explicitly
 call :CALL_JAVASCRIPT /project/groupId
+if "%VALUE%"=="[ERROR]" set VALUE=
+if "%VALUE%"=="" call :CALL_MAVEN project.groupId
+set APP_PACKAGE=%VALUE%
+
 set APP_PACKAGE=%VALUE%
 :app_package_set_explicitly
 
 call :CALL_JAVASCRIPT /project/version
+if "%VALUE%"=="[ERROR]" set VALUE=
 set APP_VERSION=%VALUE%
 
 call :CALL_JAVASCRIPT /project/properties/mainClass
+if "%VALUE%"=="[ERROR]" set VALUE=
 set DEFAULT_MAIN_CLASS=%VALUE%
 
 call :CALL_JAVASCRIPT /project/scm/connection
+if "%VALUE%"=="[ERROR]" set VALUE=
 set SCM_CONNECTION=%VALUE:scm:git:=%
 
 set APP_JAR=%APP_NAME%.jar
@@ -68,7 +82,7 @@ call :SHOW_VARIABLE SCM_CONNECTION
 
 :CONTINUE
 
-CALL :SHOW_LAST_ARGUMENT %*
+call :SHOW_LAST_ARGUMENT %*
 
 set CLEAN=%1
 
@@ -102,12 +116,12 @@ if /i NOT "%SKIP_BUILD%" == "true" (
 REM Compile
 
 if /i "%CLEAN%" EQU "clean" (
-  ECHO "DO CLEAN"  
-  call mvn -Dmaven.test.skip=true clean package install
+  echo "DO CLEAN"  
+  call mvn -q -Dmaven.test.skip=true clean package install
 ) else (
-  ECHO "DO INCREMENTAL"  
+  echo "DO INCREMENTAL"  
 
-  call mvn -Dmaven.test.skip=true package install
+  call mvn -q -Dmaven.test.skip=true package install
 )
 )
 )
@@ -124,6 +138,14 @@ echo %COMMAND%>&2
 %COMMAND%
 ENDLOCAL
 exit /b
+
+:CALL_MAVEN
+rem SETLOCAL
+set VALUE=
+set EXPRESSION=%~1
+for /f "delims=" %%_ in ('call mvn help:evaluate -Dexpression=%EXPRESSION% -DforceStdout 2^>NUL ') do set VALUE=%%_
+goto :EOF
+
 
 :CALL_JAVASCRIPT
 

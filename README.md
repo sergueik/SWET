@@ -507,6 +507,53 @@ run.ps1 : A positional parameter cannot be foundthat accepts argument '//div[@so
 ```
 ![exception display dialog](screenshots/capture-exception-dialog-1.png)
 
+to emulate the realistic application exception:
+
+```java
+	public static void main(String[] arg) {
+		debug = true;
+		try {
+			testFunction1();
+		} catch (Exception e) {
+			// when using in SWT application,
+			// need to defer initialization to after the application is started
+			// to avoid org.eclipse.swt.SWTException: Invalid thread access
+			// ExceptionDialogEx x = ExceptionDialogEx.getInstance();
+
+			ExceptionDialogEx.getInstance().render(e);
+		}
+	}
+	private static void testFunction1() throws Exception {
+		testFunction2();
+	}
+
+	private static void testFunction2() throws Exception {
+		testFunction3();
+	}
+
+	// throwing exception from a function to illustrate the calling stack
+	private static void testFunction3() throws Exception {
+		throw new Exception("This is a dummy exception thrown by testFunction3");
+	}
+
+
+```
+the method logs:
+```cmd
+java   -cp target\SWTsample.jar;target\lib\* com.github.sergueik.swet.ExceptionDialogEx
+```
+```text
+Adding stack trace: com.github.sergueik.swet.ExceptionDialogEx.testFunction3(ExceptionDialogEx.java:58)
+Adding stack trace: com.github.sergueik.swet.ExceptionDialogEx.testFunction2(ExceptionDialogEx.java:53)
+Adding stack trace: com.github.sergueik.swet.ExceptionDialogEx.testFunction1(ExceptionDialogEx.java:49)
+Adding stack trace: com.github.sergueik.swet.ExceptionDialogEx.main(ExceptionDialogEx.java:138)
+Adding stack trace element: java.lang.Thread.getStackTrace(Thread.java:1552)
+Adding stack trace element: com.github.sergueik.swet.ExceptionDialogEx.createMultiStatus(ExceptionDialogEx.java:119)
+Adding stack trace element: com.github.sergueik.swet.ExceptionDialogEx.render(ExceptionDialogEx.java:72)
+Adding stack trace element: com.github.sergueik.swet.ExceptionDialogEx.main(ExceptionDialogEx.java:145)
+
+```
+
 ![exception display dialog expanded](screenshots/capture-exception-dialog-2.png)
 
 ### License
