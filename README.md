@@ -505,6 +505,10 @@ leads to
 ```powershell
 run.ps1 : A positional parameter cannot be foundthat accepts argument '//div[@someclass]/a'.
 ```
+![exception display dialog](screenshots/capture-exception-dialog-1.png)
+
+![exception display dialog expanded](screenshots/capture-exception-dialog-2.png)
+
 ### License
 
 __SWET__is licensed under Apache License, Version 2.0

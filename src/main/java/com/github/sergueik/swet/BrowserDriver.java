@@ -108,8 +108,9 @@ public class BrowserDriver {
 		} else if (browser.equals("chrome")) {
 			// Exception in thread "main" java.lang.NoSuchMethodError: com.google.common.base.Preconditions.checkState(ZLjava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V at org.openqa.selenium.remote.service.DriverService.findExecutable(DriverService.java:125)
 			driver = new ChromeDriver(capabilities);
-		} else if (browser.equals("internet explorer")) {
-			driver = new InternetExplorerDriver(capabilities);
+	//	} else if (browser.equals("internet explorer")) {
+	//		// NOTE: o suitable constructor found
+	//		driver = new InternetExplorerDriver(capabilities);
 		} else if (browser.equals("android")) {
 			driver = new ChromeDriver(capabilities);
 		} else if (browser.equals("iphone")) {

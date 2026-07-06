@@ -25,7 +25,7 @@
     <!-- NOTE: do not use dot in the mainClass property -->
     <mainClass>SimpleToolBarEx</mainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <commandline-parser.version>0.8.0-SNAPSHOT</commandline-parser.version>
+    <commandline-parser.version>0.12.0-SNAPSHOT</commandline-parser.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-collections4.version>4.2</commons-collections4.version>
     <commons-exec.version>1.3</commons-exec.version>
@@ -40,10 +40,10 @@
     <hamcrest-all.version>1.3</hamcrest-all.version>
     <java.version>1.8</java.version>
     <jna-platform.version>5.4.0</jna-platform.version>
-    <jprotractor.version>1.13-SNAPSHOT</jprotractor.version>
+    <jprotractor.version>1.7.0-SNAPSHOT</jprotractor.version>
     <json.version>20231013</json.version>
     <jtwig-core.version>5.87.0.RELEASE</jtwig-core.version>
-    <skdf_jprotractor.version>0.14-SNAPSHOT</skdf_jprotractor.version>
+    <skdf_jprotractor.version>0.16-SNAPSHOT</skdf_jprotractor.version>
     <junit.version>4.13.1</junit.version>
     <log4j-core.version>2.17.1</log4j-core.version>
     <slf4j.version>1.7.5</slf4j.version>
