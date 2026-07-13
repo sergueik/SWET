@@ -58,7 +58,7 @@
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- <opal.version>1.0.9</opal.version> -->
-    <poi.version>3.17</poi.version>
+    <poi.version>4.1.1</poi.version>
     <poiooxml.version>3.17</poiooxml.version>
     <selenium.version>3.13.0</selenium.version>
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
